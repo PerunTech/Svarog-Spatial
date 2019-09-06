@@ -3,6 +3,22 @@
  */
 export const Util = {
     /**
+     * @property create
+     * (proto: Object, properties?: Object): Object
+     *
+     * Compatibility polyfill for `Object.create`
+     *
+     * @return new Object
+     */
+    create: Object.create || (function () {
+        function F() {}
+        return function (proto) {
+            F.prototype = proto;
+            return new F();
+        };
+    })(),
+
+    /**
      * @function extend
      * (dest: Object, src?: Object): Object
      *
@@ -26,20 +42,25 @@ export const Util = {
     },
 
     /**
-     * @property create
-     * (proto: Object, properties?: Object): Object
+     * @function setOptions
+     * (obj: Object, options: Object): Object
      *
-     * Compatibility polyfill for `Object.create`
+     * Merges the given properties to the `options` of the `obj` object, returning the resulting options.
      *
-     * @return new Object
+     * @param {Object} obj
+     * @param {Object} options
+     *
+     * @return obj.options
      */
-    create: Object.create || (function () {
-        function F() {}
-        return function (proto) {
-            F.prototype = proto;
-            return new F();
-        };
-    })(),
+    setOptions(obj, options) {
+        if (!obj.hasOwnProperty('options')) {
+            obj.options = obj.options ? create(obj.options) : {};
+        }
+        for (var i in options) {
+            obj.options[i] = options[i];
+        }
+        return obj.options;
+    }
 
     /**
      * @function bind
