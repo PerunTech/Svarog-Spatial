@@ -6,3 +6,5 @@
 
     window.S = S
 })()
+
+export {Util} from './core/Util'
