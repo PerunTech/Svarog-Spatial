@@ -53,14 +53,37 @@ export const Util = {
      * @return obj.options
      */
     setOptions(obj, options) {
-        if (!obj.hasOwnProperty('options')) {
-            obj.options = obj.options ? create(obj.options) : {};
+        if (!this.hasProp(obj, 'options')) {
+            obj.options = obj.options ? this.create(obj.options) : {};
         }
         for (var i in options) {
             obj.options[i] = options[i];
         }
         return obj.options;
-    }
+    },
+
+    /**
+     * @function hasProp
+     * (obj: Object, prop: string | number | symbol): boolean
+     *
+     * Checks if `obj` has own property `prop`.
+     *
+     * Solves rule:
+     *      Do not access Object.prototype method 'hasOwnProperty' from target object.
+     *
+     * Rather silly formulation to write hasProp question and then specify object and prop.
+     * May append this to Core entity so we can write obj.hasProp(prop).
+     *
+     * `#revise_me`
+     *
+     * @param {Object} obj
+     * @param {String | Number | Symbol} prop
+     *
+     * @return boolean
+     */
+    hasProp(obj, prop) {
+        return Object.prototype.hasOwnProperty.apply(obj, prop)
+    },
 
     /**
      * @function bind
