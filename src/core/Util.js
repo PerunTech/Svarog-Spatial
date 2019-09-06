@@ -1,5 +1,7 @@
+/**
+ * @namespace Util
+ */
 export const Util = {
-
     /**
      * @function extend
      * (dest: Object, src?: Object): Object
@@ -162,6 +164,21 @@ export const Util = {
             min = range[0],
             d = max - min;
         return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
-    }
+    },
 
+    /**
+     * @function formatNum
+     * (num: Number, digits?: Number): Number
+     *
+     * Returns the number `num` rounded to `digits` decimals, or to 6 decimals by default.
+     *
+     * @param {Number} num
+     * @param {Number} digits
+     *
+     * @return round n
+     */
+    formatNum(num, digits) {
+        digits = (digits === undefined ? 6 : digits);
+        return +(Math.round(num + ('e+' + digits)) + ('e-' + digits));
+    }
 }
