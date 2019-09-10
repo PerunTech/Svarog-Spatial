@@ -19,6 +19,29 @@ export const Util = {
     })(),
 
     /**
+     * @function get
+     * (path: String, obj: Object): Object || undefined
+     *
+     * Access `obj` by string `path`.
+     *
+     * Supports nested structures.
+     * Supports dot and bracket notation.
+     * Removes string blank spaces.
+     *
+     * @param {String} path
+     * @param {Object} obj
+     *
+     * @returns obj.path || undefined
+     */
+    get(path, obj) {
+        return path
+            .replace(/\[([^\]]+)]/g, '.$1') // support dot(.) and bracket([]) accessors
+            .split('.') // init array on accesing elements
+            .filter(s => s) // remove blanks
+            .reduce((k, v) => k && k[v], obj);  // support nested, null check on accesing keys
+    },
+
+    /**
      * @function extend
      * (dest: Object, src?: Object): Object
      *
@@ -63,29 +86,6 @@ export const Util = {
     },
 
     /**
-     * @function hasProp
-     * (obj: Object, prop: string | number | symbol): boolean
-     *
-     * Checks if `obj` has own property `prop`.
-     *
-     * Solves rule:
-     *      Do not access Object.prototype method 'hasOwnProperty' from target object.
-     *
-     * Rather silly formulation to write hasProp question and then specify object and prop.
-     * May append this to Core entity so we can write obj.hasProp(prop).
-     *
-     * `#revise_me`
-     *
-     * @param {Object} obj
-     * @param {String | Number | Symbol} prop
-     *
-     * @return boolean
-     */
-    hasProp(obj, prop) {
-        return Object.prototype.hasOwnProperty.apply(obj, prop)
-    },
-
-    /**
      * @function bind
      * (fn: Function, …): Function
      *
@@ -108,6 +108,29 @@ export const Util = {
         return function () {
             return fn.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
         };
+    },
+
+    /**
+     * @function hasProp
+     * (obj: Object, prop: string | number | symbol): boolean
+     *
+     * Checks if `obj` has own property `prop`.
+     *
+     * Solves rule:
+     *      Do not access Object.prototype method 'hasOwnProperty' from target object.
+     *
+     * Rather silly formulation to write hasProp question and then specify object and prop.
+     * May append this to Core entity so we can write obj.hasProp(prop).
+     *
+     * `#revise_me`
+     *
+     * @param {Object} obj
+     * @param {String | Number | Symbol} prop
+     *
+     * @return boolean
+     */
+    hasProp(obj, prop) {
+        return Object.prototype.hasOwnProperty.apply(obj, prop)
     },
 
     /**
