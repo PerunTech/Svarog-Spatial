@@ -8,3 +8,4 @@
 })()
 
 export {Util} from './core/Util'
+export {Core} from './core/Core'

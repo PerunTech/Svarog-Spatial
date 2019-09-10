@@ -134,7 +134,7 @@ Core.addHook = function (fn) { // (Function) || (String, args...)
 
 /**
  * Thanks to
- * 	- Vladimir Agafonkin, Leaflet
+ *  - Vladimir Agafonkin, Leaflet
  *  - John Resig, jQuery
  *  - Dean Edwards, Base.js, originator
  */
