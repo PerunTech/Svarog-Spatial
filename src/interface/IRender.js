@@ -105,9 +105,37 @@ export const IRender = (function (L) {
             // Coords arg
             if (Util.isArray(x)) { return L.point(x[0], x[1]); }
 
-            return L.point(x, y, r)
-        }
+            return L.point(x, y, r);
+        },
 
+        crs () {
+            return L.CRS;
+        },
+
+        /**
+         * @function transfomation
+         *
+         * @factory `transformation(a: Number, b: Number, c: Number, d: Number): Transformation`
+         * Instantiates a Transformation object with the given coefficients.
+         *
+         * @alternative
+         * @factory `transformation(coefficients: Array): Transformation`
+         * Expects an coefficients array of the form
+         * `[a: Number, b: Number, c: Number, d: Number]`.
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @param {Number} c
+         * @param {Number} d
+         *
+         * @returns Transformation {}
+         */
+        transformation (a, b, c, d) {
+            // Coef array arg
+            if (Util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
+
+            return L.transformation(a, b, c, d);
+        }
 
     }
 })(L)
