@@ -36,9 +36,9 @@ export const Util = {
     get(path, obj) {
         return path
             .replace(/\[([^\]]+)]/g, '.$1') // support dot(.) and bracket([]) accessors
-            .split('.') // init array on accesing elements
+            .split('.') // init array on accessing elements
             .filter(s => s) // remove blanks
-            .reduce((k, v) => k && k[v], obj);  // support nested, null check on accesing keys
+            .reduce((k, v) => k && k[v], obj);  // support nested, null check on accessing keys
     },
 
     /**
@@ -130,7 +130,7 @@ export const Util = {
      * @return boolean
      */
     hasProp(obj, prop) {
-        return Object.prototype.hasOwnProperty.apply(obj, prop)
+        return Object.prototype.hasOwnProperty.call(obj, prop)
     },
 
     /**
@@ -247,5 +247,17 @@ export const Util = {
     formatNum(num, digits) {
         digits = (digits === undefined ? 6 : digits);
         return +(Math.round(num + ('e+' + digits)) + ('e-' + digits));
+    },
+
+    /**
+     * @property isArray
+     * isArray(obj): Boolean
+     *
+     * Compatibility polyfill for [Array.isArray]
+     *
+     * @returns Boolean
+     */
+    isArray: Array.isArray || function (obj) {
+        return (Object.prototype.toString.call(obj) === '[object Array]');
     }
 }

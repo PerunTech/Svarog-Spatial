@@ -10,6 +10,4 @@
 export {Util} from './core/Util'
 export {Core} from './core/Core'
 export {IRender} from './interface/IRender'
-
-import {IRender} from './interface/IRender'
-console.log(IRender.get('[Marker][prototype][options]'))
+export {Proj} from './core/Proj'
