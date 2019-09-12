@@ -41,6 +41,15 @@ export const Proj = (function () {
             options: {
                 transformation: IRender.transformation(1, 0, -1, 0)
             },
+            /**
+             * Mean Earth Radius = 6371000, as recommended for use by
+             * the International Union of Geodesy and Geophysics.
+             *
+             * The Earth radius R vraies from 6356.752 km at the poles to 6378.137 km at the equator.
+             * Perhaps this number can be tweaked based on mean latitude of the project country,
+             * in order to improve accuracy.
+             */
+            R: 6371000,
 
             init: function (code, def, opt = {}) {
                 this.projection = projection(code, def, opt.bounds)
@@ -105,6 +114,48 @@ export const Proj = (function () {
                 if (nextScale === undefined) { return Infinity; }
 
                 return (scale - downScale) / (nextScale - downScale) + downZoom;
+            },
+
+            /**
+             * @function distance
+             * (latlng1: LatLng, latlng2: LatLng): distance [m] {Number}
+             *
+             * Uses `Haversine` formula to calculate the distance between two geographical points.
+             * Calculates great circle distance on an assumed sphere, which the Earth is not.
+             *
+             * Mean error appromixation is 0.5% and the calculation is best on small distances, less than 5km,
+             * which is what we need.
+             * It is far better than the spherical law of cosine approximation, due to use of sine,
+             * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
+             * large errors due to rounding. (JS engine does 15 digits though, currently)
+             *
+             * Its use is mostly visual rather than technical, still if the accuracy is insufficient
+             * we should consider Vincenty' formula (accurate to 0.1mm)
+             * (this is a very fine site in general)
+             * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
+             *
+             * @param {LatLng} latlng1
+             * @param {LatLng} latlng2
+             *
+             * @return distance in meters
+             */
+            distance: function (latlng1, latlng2) {
+                let rad = Math.PI / 180;
+                // convert latitude degrees to radians for easier trigonometry
+                let phi1 = latlng1.lat * rad,
+                    phi2 = latlng2.lat * rad;
+
+                // sine of latitude difference, in radians
+                let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
+                //sine of longitutde difference, in radiance
+                let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
+
+                // square of half the chord length between pA and pB
+                let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
+                // andgular distance, in radiance
+                let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
+
+                return this.R * c;  // distance in meters
             },
 
             _closestElement: function () {}
