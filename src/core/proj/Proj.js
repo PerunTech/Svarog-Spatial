@@ -5,15 +5,17 @@ import {IProj} from '../../interface/IProj'
 export const Proj = (function () {
     /**
      * @class Projection
-     * @extends Core
+     * @extends {Core}
      */
     let Projection = Core.extend({
-        // constructor function
+        /**
+         * @constructs Projection
+         */
         init: function(code, def, bounds) {
             this._proj = IProj.define(code, def);
             this.bounds = bounds;
         },
-
+        
         project: function (latlng) {
             let p = this._proj.forward([latlng.lng, latlng.lat]);
 
@@ -29,20 +31,21 @@ export const Proj = (function () {
 
     return {
         /**
-         * @factory projection
-         *
          * Defines a projection.
+         * 
+         * &nbsp;
          *
-         * @param {String} code
-         *        CRS code, as specified by the European Petroleum Survey Group.
-         *        (e.g. EPSG: 4326)
-         * @param {String} def
-         *        Proj4 defintion of the projection.
-         *        (e.g. '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
-         * @param {Object} bounds
-         *        rectangular area in pixel coordinates
+         * @factory projection(code: String, def: String, bounds: Object): Projection  
+         *   
+         * @param {String} code - CRS code, as specified by the European Petroleum Survey Group. 
+         * @param {String} def - Proj4 defintion of the projection specified by the `code`.
+         * @param {Object} bounds - Rectangular area in pixel coordinates.
+         * 
+         * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;
+         * 
+         * @example
+         *      projection('EPSG: 4326', '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
          *
-         * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes
          */
         projection: function (code, def, bounds) {
             return new Projection(code, def, bounds);

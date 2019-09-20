@@ -1,14 +1,17 @@
 import L from 'leaflet'
 import {Util} from '../core/Util'
 
+/**
+ * @interface IRender
+ */
 export const IRender = (function (L) {
     return {
         /**
-         * @function get
-         * (path?: String): Object
-         *
+         * 
+         * 
+         * @function get (path?: String): Object
+         * 
          * @param {String} path
-         *
          * @returns (render.path || undefined) || render root
          */
         get (path = null) {
@@ -16,18 +19,18 @@ export const IRender = (function (L) {
         },
 
         /**
-         * @function call
-         * (path: String, context?: Object, args?: List): Object
+         * Execute function specified by `path` with the provided arguments `args` in the provided `context`.
+         * `#revise_me`
+         * 
+         * &nbsp;
          *
-         * Execute fn specified by `path` with the provided arguments `args` in the provided `context`.
-         *
+         * @function call (path: String, context?: Object, args?: List): Object
+         * 
          * @param {String} path
          * @param {Object} context
          * @param {Array} args
-         *
-         * @returns fn() || null
-         *
-         * `#revise_me`
+         * 
+         * @returns Fn.call(context, args) || null;
          */
         call (path, context = this, args = []) {
             let fn = this.get(path)
@@ -38,26 +41,24 @@ export const IRender = (function (L) {
         },
 
         /**
-         * @function latLng
+         * Creates an object representing a geographical point with the given
+         * latitude `lat` and longitude `lng` (and optionally altitude `alt`).
+         * 
+         * &nbsp;
          *
-         * @factory `latLng(latitude: Number, longitude: Number, altitude?: Number): LatLng`
-         * Creates an object representing a geographical point
-         * with the given latitude `lat` and longitude `lng` (and optionally altitude `alt`).
-         *
-         * @alternative
-         * @factory `latLng(coords: Array): LatLng`
-         * Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
-         *
-         * @alternative
-         * @factory `latLng(coords: Object): LatLng`
-         * Expects an plain object of the form `{lat: Number, lng: Number}`
-         * or `{lat: Number, lng: Number, alt: Number}` instead.
-         *
-         * @param {Number} lat
-         * @param {Number} lng
-         * @param {Number} alt
-         *
-         * @return LatLng
+         * @factory latLng(latitude: Number, longitude: Number, altitude?: Number): LatLng
+         * 
+         * @alternative Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
+         * @factory latLng(coords: Array): LatLng
+         * 
+         * @alternative Expects an object of the form `{lat: Num, lng: Num}` or `{lat: Num, lng: Num, alt: Num}`.
+         * @factory latLng(coords: Object): LatLng
+         * 
+         * @param {Number} lat - Latitude.
+         * @param {Number} lng - Longitutde.
+         * @param {Number} alt - Altitude.
+         * 
+         * @return LatLng;
          */
         latLng (lat, lng, alt) {
             // Argument check
@@ -77,25 +78,24 @@ export const IRender = (function (L) {
         },
 
         /**
-         * @function point
-         *
-         * @factory `point(x: Number, y: Number, round?: Boolean)`
          * Creates a Point object with the given `x` and `y` coordinates.
-         * If optional `round` is set to true, rounds the `x` and `y` values.
-         *
-         * @alternative
-         * @factory `point(coords: Number[])`
-         * Expects an array of the form `[x, y]` instead.
-         *
-         * @alternative
-         * @factory `point(coords: Object)`
-         * Expects a plain object of the form `{x: Number, y: Number}` instead.
-         *
-         * @param {Number} x
-         * @param {Number} y
-         * @param {Boolean} r
-         *
-         * @returns Point
+         * If optional `r` is set to true, rounds the `x` and `y` values.
+         * 
+         * &nbsp;
+         * 
+         * @factory point(x: Number, y: Number, round?: Boolean)
+         * 
+         * @alternative Expects an array of the form `[x, y]` instead.
+         * @factory point(coords: Number[])
+         * 
+         * @alternative Expects a plain object of the form `{x: Number, y: Number}` instead.
+         * @factory point(coords: Object)
+         * 
+         * @param {Number} x - The x coordinate.
+         * @param {Number} y - The y coordinate.
+         * @param {Boolean} r - Round flag.
+         * 
+         * @returns Point;
          */
         point (x, y, r) {
             // Argument check
@@ -108,27 +108,30 @@ export const IRender = (function (L) {
             return L.point(x, y, r);
         },
 
-        crs () {
+        iCRS () {
             return L.CRS;
         },
 
         /**
-         * @function transfomation
-         *
-         * @factory `transformation(a: Number, b: Number, c: Number, d: Number): Transformation`
          * Instantiates a Transformation object with the given coefficients.
          *
-         * @alternative
-         * @factory `transformation(coefficients: Array): Transformation`
-         * Expects an coefficients array of the form
-         * `[a: Number, b: Number, c: Number, d: Number]`.
+         * Transforms projected coordinates to pixel coordinates. Represents an affine transformation,
+         * a set of coefficients `a`, `b`, `c`, `d` for transforming a point of a form `(x, y)`
+         * into `(a*x + b, c*y + d)` and back.
+         * 
+         * &nbsp;
          *
-         * @param {Number} a
-         * @param {Number} b
-         * @param {Number} c
-         * @param {Number} d
-         *
-         * @returns Transformation {}
+         * @factory transformation(a: Number, b: Number, c: Number, d: Number): Transformation
+         * 
+         * @alternative Expects an coefficients array of the form `[a: Number, b: Number, c: Number, d: Number]`.
+         * @factory transformation(coefficients: Array): Transformation
+         * 
+         * @param {Number} a - Multiplicator of x.
+         * @param {Number} b - Offset of x.
+         * @param {Number} c - Multiplicator of y.
+         * @param {Number} d - Offset of y.
+         * 
+         * @returns Transformation {};
          */
         transformation (a, b, c, d) {
             // Coef array arg

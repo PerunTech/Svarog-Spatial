@@ -1,14 +1,21 @@
 /**
+ * Global utility functions
+ * 
  * @namespace Util
  */
 export const Util = {
     /**
-     * @property create
-     * (proto: Object, properties?: Object): Object
-     *
      * Compatibility polyfill for `Object.create`
+     * 
+     * &nbsp;
+     * 
+     * @function create (proto: Object, properties?: Object): Object
+     * 
+     * @param {Object} proto - The object which should be the prototype of the newly-created object.
+     * @param {Object} properties - An object whose enumerable own properties specify property descriptors
+     *        to be added to the newly-created object.
      *
-     * @return new Object
+     * @return A new object with the specified prototype object and properties;
      */
     create: Object.create || (function () {
         function F() {}
@@ -19,19 +26,20 @@ export const Util = {
     })(),
 
     /**
-     * @function get
-     * (path: String, obj: Object): Object || undefined
-     *
      * Access `obj` by string `path`.
      *
      * Supports nested structures.
      * Supports dot and bracket notation.
      * Removes string blank spaces.
+     * 
+     * &nbsp;
+     * 
+     * @function get (path: String, obj: Object): Object || undefined
      *
-     * @param {String} path
-     * @param {Object} obj
+     * @param {String} path - Accessor path, represented as string.
+     * @param {Object} obj - Object to access.
      *
-     * @returns obj.path || undefined
+     * @returns obj.path || undefined;
      */
     get(path, obj) {
         return path
@@ -42,15 +50,17 @@ export const Util = {
     },
 
     /**
-     * @function extend
-     * (dest: Object, src?: Object): Object
+     * Merges the properties of the `src` object (or multiple objects)
+     * into `dest` object and returns the latter.
+     * 
+     * &nbsp;
+     * 
+     * @function extend (dest: Object, src?: Object): Object
      *
-     * Merges the properties of the `src` object (or multiple objects) into `dest` object and
-     * returns the latter.
+     * @param {Object} dest - Destination object of the merge.
+     * @param {...Object} [src] - Source object(s) to be merged.
      *
-     * @param {Object} dest
-     *
-     * @return dest
+     * @return dest;
      */
     extend(dest) {
         let i, j, len, src;
@@ -61,40 +71,45 @@ export const Util = {
                 dest[i] = src[i];
             }
         }
+
         return dest;
     },
 
     /**
-     * @function setOptions
-     * (obj: Object, options: Object): Object
+     * Merges the given `options` properties to the .options of `obj`,
+     * returning the resulting `obj.options`.
+     * 
+     * &nbsp;
+     * 
+     * @function setOptions (obj: Object, options: Object): Object
      *
-     * Merges the given properties to the `options` of the `obj` object, returning the resulting options.
+     * @param {Object} obj - Object whose options property is the target of the merge.
+     * @param {Object} options - Options object whose own properties are to be merged in the target. 
      *
-     * @param {Object} obj
-     * @param {Object} options
-     *
-     * @return obj.options
+     * @return obj.options;
      */
     setOptions(obj, options) {
         if (!this.hasProp(obj, 'options')) {
-            obj.options = obj.options ? this.create(obj.options) : {};
+            obj.options = obj.options ? this.create(obj.options) : {}; 
         }
-        for (var i in options) {
+        for (let i in options) {
             obj.options[i] = options[i];
         }
+
         return obj.options;
     },
 
     /**
-     * @function bind
-     * (fn: Function, …): Function
+     * Returns a new function bound to the arguments passed, like `Function.prototype.bind`.
+     * 
+     * &nbsp;
+     * 
+     * @function bind (fn: Function, …): Function
      *
-     * Returns a new function bound to the arguments passed, like `Function.prototype.bind`
+     * @param {Function} fn - Function to be binded.
+     * @param {Object} obj - Binding context (i.e. this) of the function. 
      *
-     * @param {Function} fn
-     * @param {Object} obj
-     *
-     * @return fn
+     * @return Fn;
      */
     bind(fn, obj) {
         let slice = Array.prototype.slice;
@@ -111,41 +126,42 @@ export const Util = {
     },
 
     /**
-     * @function hasProp
-     * (obj: Object, prop: string | number | symbol): boolean
-     *
      * Checks if `obj` has own property `prop`.
-     *
+     * 
      * Solves rule:
      *      Do not access Object.prototype method 'hasOwnProperty' from target object.
-     *
+     * 
      * Rather silly formulation to write hasProp question and then specify object and prop.
      * May append this to Core entity so we can write obj.hasProp(prop).
-     *
      * `#revise_me`
+     * 
+     * &nbsp;
+     * 
+     * @function hasProp (obj: Object, prop: string | number | symbol): boolean
      *
-     * @param {Object} obj
-     * @param {String | Number | Symbol} prop
+     * @param {Object} obj - Object to be checked.
+     * @param {String | Number | Symbol} prop - Property to be found on obj.
      *
-     * @return boolean
+     * @returns boolean;
      */
     hasProp(obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     },
 
     /**
-     * @function debounce
-     * (Fn: Function, time: Number, exec: Boolean): Function
-     *
      *  Returns a function, that, as long as it continues to be invoked, will not be triggered `<Fn>`.
      *  The function will be called after it stops being called for N milliseconds `<time>`.
      *  If `exec` is passed, trigger the function on the leading edge, instead of the trailing.
+     * 
+     * &nbsp;
+     * 
+     * @function debounce (Fn: Function, time: Number, exec: Boolean): Function
      *
-     * @param {Function} Fn
-     * @param {Number} time
-     * @param {Boolean} exec
+     * @param {Function} Fn - Function to be debounced.
+     * @param {Number} time - Time interval of the debounce, in milliseconds.
+     * @param {Boolean} exec - Trigger flag, leading / trailing edge.
      *
-     * @return Function executed with a delay between repeated calls (think dom events and api/ws calls)
+     * @returns Function executed with a delay between repeated calls (think dom events and api/ws calls);
      */
     debounce (Fn, time, exec = false) {
         // timer
@@ -170,9 +186,6 @@ export const Util = {
     },
 
     /**
-     * @function throttle
-     * (fn: Function, time: Number, context: Object): Function
-     *
      * Returns a function which executes function `fn` with the given scope `context`,
      * so that the `this` keyword refers to `context` inside `fn`'s code.
      *
@@ -180,10 +193,16 @@ export const Util = {
      *
      * The arguments received by the bound function will be any arguments passed when binding the function,
      * followed by any arguments passed when invoking the bound function.
+     * 
+     * &nbsp;
+     * 
+     * @function throttle (fn: Function, time: Number, context: Object): Function
      *
-     * @param {*} fn
-     * @param {*} time
-     * @param {*} context
+     * @param {*} fn - Function to be throttled.
+     * @param {*} time - Time interval for the throttle, in milliseconds.
+     * @param {*} context - Context that is binded to the function when the call is executed.
+     * 
+     * @returns Function executed only once per the given time interval;
      */
     throttle(fn, time, context) {
         let lock, args, wrapperFn, later;
@@ -214,17 +233,18 @@ export const Util = {
     },
 
     /**
-     * @function wrapNum
-     * (x: Number, range: Number[], includeMax?: Boolean): Number
-     *
      * Returns the number `x` modulo `range` in such a way so it lies within `range[0]` and `range[1]`.
      * The returned value will be always smaller than `range[1]` unless `includeMax` is set to `true`.
+     * 
+     * &nbsp;
+     * 
+     * @function wrapNum (x: Number, range: Number[], includeMax?: Boolean): Number
      *
-     * @param {Number} x
-     * @param {Number} range
-     * @param {Boolean} includeMax
+     * @param {Number} x - Number whose modulo range is to be calculated.
+     * @param {Number} range - Range value for the calculation.
+     * @param {Boolean} includeMax - Flag, should we include maxRange = 1 as a valid result.
      *
-     * @retun n modulo
+     * @retun x modulo;
      */
     wrapNum(x, range, includeMax) {
         let max = range[1],
@@ -234,15 +254,17 @@ export const Util = {
     },
 
     /**
-     * @function formatNum
-     * (num: Number, digits?: Number): Number
-     *
+     * `Round` polyfill.
      * Returns the number `num` rounded to `digits` decimals, or to 6 decimals by default.
+     * 
+     * &nbsp;
+     * 
+     * @function formatNum (num: Number, digits?: Number): Number
      *
-     * @param {Number} num
-     * @param {Number} digits
+     * @param {Number} num - Number to be rounded.
+     * @param {Number} digits - Specifies how many places to round for.
      *
-     * @return round n
+     * @return rounded Number;
      */
     formatNum(num, digits) {
         digits = (digits === undefined ? 6 : digits);
@@ -250,12 +272,15 @@ export const Util = {
     },
 
     /**
-     * @property isArray
-     * isArray(obj): Boolean
-     *
      * Compatibility polyfill for [Array.isArray]
+     * 
+     * &nbsp;
+     * 
+     * @function isArray (obj): Boolean
+     * 
+     * @param {Object} obj - The object to be checked.
      *
-     * @returns Boolean
+     * @returns Boolean;
      */
     isArray: Array.isArray || function (obj) {
         return (Object.prototype.toString.call(obj) === '[object Array]');

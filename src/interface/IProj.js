@@ -1,7 +1,6 @@
 import proj4 from 'proj4'
 
 export const IProj = (function () {
-
     return {
         define (code, def) {
             if (def) {

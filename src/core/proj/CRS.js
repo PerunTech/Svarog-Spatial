@@ -4,53 +4,234 @@ import {Proj} from './Proj'
 import {IRender} from '../../interface/IRender'
 
 /**
+ * Mean Earth Radius = 6371000 m, as recommended for use by
+ * the International Union of Geodesy and Geophysics.
+ *
+ * The Earth radius R varies from 6356.752 km at the poles to 6378.137 km at the equator.
+ * Perhaps this number can be tweaked based on mean latitude of the project country,
+ * in order to improve accuracy.
+ *
+ * @private
+ * @constant
+ * @type {Number}
+ */
+const R = 6371000;
+
+/**
+ * CRS._scales setter. 
+ * 
+ * Calculates and converts distances => resolutions => scales. 
+ * Consequently overriding is in the opposite direction, scales => resolutions => distances.
+ * 
+ * &nbsp;
+ * 
+ * @private
+ * @function _setScales (options: Object): Number[]
+ * 
+ * @param {Object} options - CRS configuration object.
+ * @param {Number []} [options.scales] - Array of scales. [pixels / projected coordinates]
+ * @param {Number []} [options.resolutions] - Array of resolutions. [projected coordinates / pixels]
+ * @param {Number []} [options.distances] - Array of available distances. [numbers in meters]
+ * 
+ * @returns Calculated scales [];
+ */
+let _setScales = function ({scales : s, resolutions: r, distances: d}) {
+    return s ? s
+        : r ? _setResolutions(r)
+        : d ? _setDistances(d)
+        : [];
+}
+
+/**
+ * Document_me
+ * `#revise_me`
+ * 
+ * @param {*} arr 
+ */
+let _setResolutions = function (arr) {
+    return arr.map((r) => { return 1 / r; });
+}
+
+/**
+ * Document_me
+ * `#revise_me`
+ * 
+ * @param {*} arr 
+ */
+let _setDistances = function (arr) {
+    /**
+     * Get monitor dpi
+     * Find how many pixels is 1 cm on screen, 1cm is your ref point[in pixels] from which you generate scales
+     * Create custom scale
+     * @param {*} b
+     * @param {*} a
+     * @param {*} i
+     * @param {*} c
+     */
+    const _dpi = (function (b, a, i, c) {
+        c = (d, e) => e >= d ? (a = d + (e - d) / 2, b(a) > 0 && (a === d || b(a - 1) <= 0) ? a 
+        : b(a) <= 0 ? c(a + 1, e) 
+        : c(d, a - 1)) : -1
+
+        for (i = 1; b(i) <= 0;) i *= 2
+
+        return c(i / 2, i) | 0;
+    })( x => matchMedia(`(max-resolution: ${x}dpi)`).matches )
+
+    // How many pixels in 1cm of screen(width)[ppm = pixels per meter]
+    const _ppm = (_dpi / 2.54).toFixed(4)
+    // gets a list of scales to iterate over and returns a list of resolutions as a number[pixels/meter](do we want cm instead of m?)
+    const _r = arr.map((d) => { return (d / 100) / _ppm; }) 
+
+    return _setResolutions(_r);
+}
+
+/**
+ * CRS.options.transfomation setter.
+ * Sets transformation based on the options.origin provided.
+ * 
+ * &nbsp;
+ * 
+ * @private
+ * @function _setTransformation (opt: Object): Transformation
+ * 
+ * @param {Object} opt - CRS configuration object.
+ * 
+ * @returns Transformation;
+ */
+let _setTransformation = function (opt) {
+    return opt.origin
+        ? IRender.transformation(1, -opt.origin[0], -1, opt.origin[1])
+        : opt.transformation;
+}
+
+/**
+ * Get the closest lowest element in an array.
+ * 
+ * &nbsp;
+ * 
+ * @private
+ * @function _closestElement (arr: Number[], el: Number): Number
+ * 
+ * @param {Number[]} arr - Array of numbers.
+ * @param {Number} el - The limit integer against which the term closest is measured.
+ * 
+ * @returns The closest lowest integer element; 
+ */
+let _closestElement = function (arr, el) {
+    let nLow;
+
+    for (let i = arr.length; i--;) {
+        if (arr[i] <= el && (nLow === undefined || nLow < arr[i])) {
+            nLow = arr[i];
+        }
+    }
+
+    return nLow;
+}
+
+/**
  * @class CRS
- * @extends Core
+ * @extends {Core}
  * @implements iCRS
  */
 let CRS = Core.extend({
-    // merge custom crs implementation,
-    // methods required in fundamental map and assets operations
-    includes: IRender.crs(),
-    //config
+    /** Implement crs interface, merge methods. */
+    includes: IRender.iCRS(),
+
+    /** Spherical Mercator code, web standard. Default code. */
+    code: 'EPSG:3857',
+
+    /** A proj4 definition string of 3857 - Spherical Mercator. Default definition. */
+    def: '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 '
+        +'+units=m +nadgrids=@null +wktext +no_defs',
+
+    /** Configuration object */
     options: {
-        transformation: IRender.transformation(1, 0, -1, 0)
+        /**
+         * Transforms projected coordinates to pixel coordinates.
+         *
+         * Represents an affine transformation: a set of coefficients `a`, `b`, `c`, `d`
+         * for transforming a point of a form `(x, y)` into `(a*x + b, c*y + d)` and back.
+         *
+         * default transformation, default coef = [1, 0, -1, 0].
+         */
+        transformation: IRender.transformation(1, 0, -1, 0),
+
+        /**
+         * The pixel origin of the map.
+         *
+         * Locates the coordinates of the upper left corner of the boundary of the map,
+         * represented in the current projection. In other words, locates tile (0,0), the first tile.
+         *
+         * For default EPSG: 3857 bounds are +/- 20037508.342789244 at the equator R.
+         */
+        origin: [
+            Util.formatNum(-Math.PI * R, 2),    // min x
+            Util.formatNum(Math.PI * R, 2),     // max y
+            ],
+
+        /**
+         * Array representation of the map scales as real-world distances in meters.
+         * Corresponds to different zoom levels of the map.
+         */
+        distances: [
+            5000000,
+            2500000,
+            1000000, // 10 km
+            750000,
+            500000,
+            250000,
+            100000, // 1000m or 1 km
+            75000,
+            50000,
+            25000,
+            10000, // 100m
+            7500,
+            5000,
+            2500,
+            1000, // 1000 cm = 10 m
+            750,
+            500,
+            250,
+            100 // 1m
+        ]
     },
+
+    /** Earth radius, in meters [m]. */
+    R: R,
+
     /**
-     * Mean Earth Radius = 6371000 m, as recommended for use by
-     * the International Union of Geodesy and Geophysics.
-     *
-     * The Earth radius R vraies from 6356.752 km at the poles to 6378.137 km at the equator.
-     * Perhaps this number can be tweaked based on mean latitude of the project country,
-     * in order to improve accuracy.
+     * @constructs CRS
      */
-    R: 6371000, // in meters [m]
+    init: function (code, def, opt) {
+        this.code = code || this.code;
+        this.def = def || this.def;
 
-    // constructor
-    init: function (code, def, opt = {}) {
-        this.projection = Proj.projection(code, def, opt.bounds)
-        this.code = code;
-
+        // Merge options, override defaults
         Util.setOptions(this, opt);
 
-        this.transformation = this._setTransformation(this.options);
-        this._scales = this._setScales(this.options);
+        this.projection = Proj.projection(this.code, this.def, this.options.bounds)
+        this.transformation = _setTransformation(this.options);
+        this._scales = _setScales(this.options);
         this.infinite = !this.options.bounds;
     },
 
     /**
-     * @function scale
-     * (zoom: Number): Number
-     * @override iCRS.scale
-     *
+     * Calculate the current scale.
+     * 
      * Returns the scale used when transforming projected coordinates
      * into pixel coordinates for a particular zoom.
-     *
      * The original iCRS implementation uses `256 * 2^zoom` for Mercator-based CRS.
+     * 
+     * &nbsp;
      *
-     * @param {Number} zoom
-     *
-     * @returns Scale number value
+     * @override iCRS.scale
+     * @function scale (zoom: Number): Number
+     * 
+     * @param {Number} zoom - The current zoom value.
+     * 
+     * @returns Scale number value;
      */
     scale: function (zoom) {
         let iZoom = Math.floor(zoom),
@@ -72,20 +253,22 @@ let CRS = Core.extend({
     },
 
     /**
-     * @function zoom
-     * (scale: Number): Number
-     * @override iCRS.zoom
-     *
+     * Calculate the current zoom.
+     * 
      * Inverse of `this.scale`. Calculates the zoom level corresponding to a scale factor of `scale`.
-     *
      * The original iCRS implementaion uses `Math.log(scale / 256) / Math.LN2` for calculation.
      *
-     * @param {Number} scale
-     *
-     * @returns Zoom number value
+     * &nbsp;
+     * 
+     * @override iCRS.zoom
+     * @function zoom (scale: Number): Number
+     * 
+     * @param {Number} scale - The current scale value.
+     * 
+     * @returns Zoom number value;
      */
     zoom: function (scale) {
-        let downScale = this._closestElement(this._scales, scale),
+        let downScale = _closestElement(this._scales, scale),
             downZoom = this._scales.indexOf(downScale),
             nextScale,
             nextZoom;
@@ -102,9 +285,6 @@ let CRS = Core.extend({
     },
 
     /**
-     * @function distance
-     * (latlng1: LatLng, latlng2: LatLng): distance [m] {Number}
-     *
      * Uses `Haversine` formula to calculate the distance between two geographical points.
      * Calculates great circle distance on an assumed sphere, which the Earth is not.
      *
@@ -112,18 +292,23 @@ let CRS = Core.extend({
      * which is what we need.
      * It is far better than the spherical law of cosine approximation, due to use of sine,
      * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
-     * large errors due to rounding. (JS engine does 15 digits though, currently)
+     * large errors due to rounding (JS engine does 15 digits though, currently).
+     * Similar case can be made for arctangent in the angular distance caclucation `c` below.
      *
      * Its use is mostly visual rather than technical, still if the accuracy is insufficient
      * we should consider Vincenty' formula (accurate to 0.1mm)
      * (this is a very fine site in general)
      * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
      * `#revise_me`
+     * 
+     * &nbsp;
      *
-     * @param {LatLng} latlng1
-     * @param {LatLng} latlng2
-     *
-     * @return distance in meters
+     * @function distance (latlng1: LatLng, latlng2: LatLng): distance [m] {Number}
+     * 
+     * @param {LatLng} latlng1 - latitude / longitude pair A.
+     * @param {LatLng} latlng2 - latitude / longitude pair B.
+     * 
+     * @returns {Number} distance in meters [A to B];
      */
     distance: function (latlng1, latlng2) {
         let rad = Math.PI / 180;
@@ -132,7 +317,7 @@ let CRS = Core.extend({
             phi2 = latlng2.lat * rad;
         // sine of latitude difference, in radians
         let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
-        //sine of longitutde difference, in radiance
+        //sine of longitude difference, in radiance
         let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
         // square of half the chord length between pA and pB
         let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
@@ -141,63 +326,51 @@ let CRS = Core.extend({
 
         return this.R * c;  // distance in meters
     },
-
-    // `#revise_me`, may move to crs instance scope and provide runtime accessor.
-    _setTransformation: function (opt) {
-        return opt.origin
-            ? IRender.transformation(1, -opt.origin[0], -1, opt.origin[1])
-            : opt.transformation;
-    },
-
-    // `#revise_me`, may move to crs instance scope and provide runtime accessor.
-    // access may create more problems than solutions,
-    // why change scales definition in middle of operation?
-    _setScales: function (opt) {
-        let scales = [];
-        // exit if config has scales
-        if (opt.scales) { return opt.scales; }
-
-        if (opt.resolutions) {
-            for (let i = opt.resolutions.length - 1; i >= 0; i--) {
-                if (opt.resolutions[i]) {
-                    scales[i] = 1 / opt.resolutions[i];
-                }
-            }
-        }
-
-        return scales;
-    },
-
-    // Get the closest lowest element in an array.
-    // `#revise_me`, may move to private scope in root CRS or Util if use is found.
-    _closestElement: function (arr, el) {
-        let nLow;
-		for (let i = arr.length; i--;) {
-			if (arr[i] <= el && (nLow === undefined || nLow < arr[i])) {
-				nLow = arr[i];
-			}
-        }
-
-		return nLow;
-    }
 })
 
 /**
- * @factory crs
+ * Coordinate reference system (CRS) factory.
+ * 
+ * &nbsp;
+ * 
+ * Arguments `code` and `def` are supplied in pair, the code must match the definition.
+ * If omitted, factory will default to Spherical Mercator, EPSG: 3857.
  *
- * @param {String} code
- *        CRS code, as specified by the European Petroleum Survey Group.
- *        (e.g. EPSG: 4326)
- * @param {String} def
- *        Proj4 defintion of the projection.
- *        (e.g. '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
- * @param {Object} opt
- *        Configuration object
- *
- * @return CRS
+ * Argument `opt` is a configuration object. Properties may include:
+ *  - `transformation`: Transforms projected coordinates to pixel coordinates.
+ *  - `origin`: The pixel origin of the map. Represented in projected coordinates.
+ *  - `bounds`: Rectangular area in pixel coordinates.
+ *  - `scales`: Array of scales. [pixels / projected coordinates]
+ *  - `resolutions`: Array of resolutions. [projected coordinates / pixels]
+ *  - `distances`: Array of available distances. [numbers in meters]
+ * 
+ * Scales, resolutions and distances are different representations of the same thing. Provide only one of these!
+ * If multiple of these are provided to factory, scales will override resolutions which in turn override distances.
+ * Scales are used internally, the other two are internally converted.
+ * 
+ * Distances are calculated based on monitor dpi, thus the final scales output will vary between application instances.
+ * Variation in scales will break server-side caching of rasters served via WMS, these require a fixed set of scales
+ * values in the grid-set matrix. Avoid distances when caching is required. 
+ * 
+ * &nbsp;
+ * 
+ * @factory crs (code: String, def: String, opt?: Object): CRS
+ * 
+ * @param {String} code - CRS code of the desired projection, as specified by the European Petroleum Survey Group.
+ * @param {String} def - Proj4 definition of the desired projection. Must match the supplied code.
+ * @param {Object} [opt] - Configuration object.
+ * 
+ * @returns CRS;
+ * 
+ * @example
+ *      crs('EPSG: 4326',
+ *          '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
+ *          {
+ *              origin: [-180.0, 90],
+ *              distances: [ 5000000, 2500000, 1000000, 750000, 500000, 250000, 100000, 75000,
+ *                           50000, 25000, 10000, 7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
+ *          });
  */
 export const crs = function (code, def, opt = {}) {
-    // implement factory
-    // add resolution generation per config, consider monitor dpi
     return new CRS(code, def, opt);
 }
