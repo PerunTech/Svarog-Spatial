@@ -1,22 +1,23 @@
 import {Util} from './Util';
 
 /**
+ * Base class of the module
+ * 
  * @class Core
- *
- * Template of the module
  */
 export function Core() {}
 
 /**
- * @function extend
- * (props: Object): Function
- *
  * [Extends the current class](#class-inheritance) given the properties to be included.
  * Returns a Javascript function that is a class constructor (i.e. to be called with `new`).
+ * 
+ * &nbsp;
+ * 
+ * @function extend (props: Object): Function
  *
- * @param {Object} props
+ * @param {Object} props - The properties to be included in the class.
  *
- * @return new `Class`
+ * @return new `Class`;
  */
 Core.extend = function (props) {
 	// The (`magic`) word init is similar to a constructor function.
@@ -81,14 +82,15 @@ Core.extend = function (props) {
 };
 
 /**
- * @function include
- * (properties: Object): this
- *
  * [Includes a mixin](#class-includes) into the current class.
+ * 
+ * &nbsp;
+ * 
+ * @function include (properties: Object): this
  *
- * @param {Object} props
+ * @param {Object} props - The properties to be included in `this`.
  *
- * @return `this`
+ * @return `this`;
  */
 Core.include = function (props) {
 	Util.extend(this.prototype, props);
@@ -96,29 +98,33 @@ Core.include = function (props) {
 };
 
 /**
- * @function mergeOptions
- * (options: Object): this
- *
  * [Merges `options`](#class-options) into the defaults of the class.
+ * 
+ * &nbsp;
+ * 
+ * @function mergeOptions (options: Object): this
  *
- * @param {Object} options
+ * @param {Object} options - Configuration object.
  *
- * @return `this`
+ * @return `this`;
  */
 Core.mergeOptions = function (options) {
 	Util.extend(this.prototype.options, options);
+
 	return this;
 };
 
 /**
- * @function addHook
- * (fn: Function): this
- *
  * Adds a [constructor hook](#class-constructor-hooks) to the class.
+ * 
+ * &nbsp;
+ * 
+ * @function addHook (fn: Function): this
  *
- * @param {Function} fn
+ * @param {Function} fn - Function to be added as hook.
+ * @param {[*]} args - Arguments to be passed to the hook function.
  *
- * @return `this`
+ * @return `this`;
  */
 Core.addHook = function (fn) { // (Function) || (String, args...)
 	let args = Array.prototype.slice.call(arguments, 1);
@@ -129,6 +135,7 @@ Core.addHook = function (fn) { // (Function) || (String, args...)
 
 	this.prototype._hooks = this.prototype._hooks || [];
 	this.prototype._hooks.push(init);
+
 	return this;
 };
 

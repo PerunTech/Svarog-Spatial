@@ -1,6 +1,6 @@
 import {Core} from '../Core'
 import {Util} from 'leaflet'
-import {Proj} from './Proj'
+import {projection} from './Proj'
 import {IRender} from '../../interface/IRender'
 
 /**
@@ -21,7 +21,7 @@ const R = 6371000;
  * CRS._scales setter. 
  * 
  * Calculates and converts distances => resolutions => scales. 
- * Consequently overriding is in the opposite direction, scales => resolutions => distances.
+ * Consequently data flow is in the opposite direction, scales before resolutions before distances.
  * 
  * &nbsp;
  * 
@@ -43,30 +43,43 @@ let _setScales = function ({scales : s, resolutions: r, distances: d}) {
 }
 
 /**
- * Document_me
- * `#revise_me`
+ * Coverts resolutions to scales.
  * 
- * @param {*} arr 
+ * &nbsp;
+ * 
+ * @private
+ * @function _setResolutions (arr: Number[]): Number[]
+ * 
+ * @param {Number []} arr - Array of resolutions.
+ * 
+ * @returns Scales [];
  */
 let _setResolutions = function (arr) {
     return arr.map((r) => { return 1 / r; });
 }
 
 /**
- * Document_me
- * `#revise_me`
+ * Converts distances to scales, via resoltuion calculation.
  * 
- * @param {*} arr 
+ * Considers current monitor dpi in the calculation, thus output may vary.
+ * Variable output most ceratinly breaks raster server-side caching.
+ * Use with caution, may need to re-test for possible mixups in metrics, such as [m] instead of [cm].
+ * 
+ * &nbsp;
+ * 
+ * @private
+ * @function _setDistances (arr: Number[]): Number[]
+ * 
+ * @param {Number []} arr - Array of distances.
+ * 
+ * @returns Scales[];
  */
 let _setDistances = function (arr) {
     /**
-     * Get monitor dpi
-     * Find how many pixels is 1 cm on screen, 1cm is your ref point[in pixels] from which you generate scales
-     * Create custom scale
-     * @param {*} b
-     * @param {*} a
-     * @param {*} i
-     * @param {*} c
+     * The current monitor dpi.
+     * 
+     * @const
+     * @type {Number}
      */
     const _dpi = (function (b, a, i, c) {
         c = (d, e) => e >= d ? (a = d + (e - d) / 2, b(a) > 0 && (a === d || b(a - 1) <= 0) ? a 
@@ -78,9 +91,20 @@ let _setDistances = function (arr) {
         return c(i / 2, i) | 0;
     })( x => matchMedia(`(max-resolution: ${x}dpi)`).matches )
 
-    // How many pixels in 1cm of screen(width)[ppm = pixels per meter]
+    /**
+     * Number of pixels in 1cm of screen width. [ppm = pixels per meter]
+     * 
+     * @constant
+     * @type {Number}
+     */
     const _ppm = (_dpi / 2.54).toFixed(4)
-    // gets a list of scales to iterate over and returns a list of resolutions as a number[pixels/meter](do we want cm instead of m?)
+
+    /**
+     * Calculate resolutions from distances via a ref number of pixels.
+     * 
+     * @constant
+     * @type {Number}
+     */
     const _r = arr.map((d) => { return (d / 100) / _ppm; }) 
 
     return _setResolutions(_r);
@@ -88,6 +112,7 @@ let _setDistances = function (arr) {
 
 /**
  * CRS.options.transfomation setter.
+ * 
  * Sets transformation based on the options.origin provided.
  * 
  * &nbsp;
@@ -211,7 +236,7 @@ let CRS = Core.extend({
         // Merge options, override defaults
         Util.setOptions(this, opt);
 
-        this.projection = Proj.projection(this.code, this.def, this.options.bounds)
+        this.projection = projection(this.code, this.def, this.options.bounds)
         this.transformation = _setTransformation(this.options);
         this._scales = _setScales(this.options);
         this.infinite = !this.options.bounds;
@@ -366,9 +391,10 @@ let CRS = Core.extend({
  *      crs('EPSG: 4326',
  *          '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
  *          {
- *              origin: [-180.0, 90],
- *              distances: [ 5000000, 2500000, 1000000, 750000, 500000, 250000, 100000, 75000,
- *                           50000, 25000, 10000, 7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
+ *              origin: [-180.0, 90.0],
+ *              distances: [ 5000000, 2500000, 1000000, 750000, 500000,
+ *                           250000, 100000, 75000, 50000, 25000, 10000,
+ *                           7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
  *          });
  */
 export const crs = function (code, def, opt = {}) {

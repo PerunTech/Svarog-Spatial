@@ -7,11 +7,21 @@
     window.S = S
 })()
 
+//core
 export {Util} from './core/Util'
 export {Core} from './core/Core'
+// core/proj
+export {projection} from './core/proj/Proj'
+export {crs} from './core/proj/CRS'
+//interface
 export {IRender} from './interface/IRender'
-export {Proj} from './core/proj/Proj'
+export {IProj} from './interface/IProj'
 
+
+
+////////////////
+///// TEST /////
+////////////////
 
 import {crs} from './core/proj/CRS'
 import {Util} from './core/Util'
@@ -49,4 +59,8 @@ let t1 = crs('EPSG:3857',
 );
 console.log(t1)
 
-
+import {IProj} from './interface/IProj'
+IProj.test = (function () {
+    console.log('added property to shallow immutable interface')
+}) 
+console.log(IProj)
