@@ -4,9 +4,9 @@ import { Interface } from '../core/Interface';
 /**
  * API for the core projection library.
  * 
- * @interface IProj
+ * @interface iProj
  */
-export const IProj = Interface.define(proj4, {
+export const iProj = Interface.define(proj4, {
     /**
      * Define a projection.
      * 

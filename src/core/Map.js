@@ -1,6 +1,6 @@
 import { Core } from "./Core";
 import  L  from 'leaflet'
-import { IMap } from "../interface/IMap";
+import { iMap } from "../interface/IMap";
 
 // keep internal ref of render map instance
 // Do not provide constructor, this is a singleton. In JS an object literal {} is a singleton.

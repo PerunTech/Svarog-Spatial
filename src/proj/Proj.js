@@ -1,6 +1,6 @@
 import { Core } from '../core/Core';
 import { iFactory } from '../interface/IFactory';
-import { IProj } from '../interface/IProj';
+import { iProj } from '../interface/IProj';
 
 /**
  * @private
@@ -12,7 +12,7 @@ let Projection = Core.extend({
      * @constructs Projection
      */
     init: function(code, def, bounds) {
-        this._proj = IProj.define(code, def);
+        this._proj = iProj.define(code, def);
         this.bounds = bounds;
     },
     

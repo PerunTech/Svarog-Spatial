@@ -16,9 +16,9 @@ export { projection } from './proj/Proj';
 export { crs } from './proj/CRS';
 //interface
 export { iFactory } from './interface/IFactory';
-export { IProj } from './interface/IProj';
-export { IMap } from './interface/IMap'
-export { IStore } from './interface/IStore'
+export { iProj } from './interface/IProj';
+export { iMap } from './interface/IMap'
+export { iStore } from './interface/IStore'
 
 
 
@@ -29,7 +29,9 @@ export { IStore } from './interface/IStore'
 import {iFactory} from './interface/IFactory'
 import {Interface} from './core/Interface'
 
+
 console.log(new Interface())
+
 
 let test_selfInit = Object.getPrototypeOf(iFactory).constructor()
 console.log(test_selfInit)

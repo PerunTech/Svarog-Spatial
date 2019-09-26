@@ -5,10 +5,10 @@ import { Interface } from "../core/Interface";
 // Has to work with map instance
 
 /**
- * @interface IMap
+ * @interface iMap
  */
-export const IMap = Interface.define(Map, {
+export const iMap = Interface.define(Map, {
     setView: function () {
-        console.log('Imap interface member called.')
+        console.log('imap interface member called.')
     }
 })

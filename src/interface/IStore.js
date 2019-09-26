@@ -1,6 +1,6 @@
 import { Interface } from "../core/Interface";
 
 /**
- * @interface IStore
+ * @interface iStore
  */
-export const IStore = Interface.define({}, {})
+export const iStore = Interface.define({}, {})
