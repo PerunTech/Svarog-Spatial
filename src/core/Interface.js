@@ -4,6 +4,8 @@ import { Util } from './Util';
  * API templater.
  * Defines behavioral properties implemented by all interfaces.
  * 
+ * &nbsp;
+ * 
  * @abstract
  * @class Interface
  */

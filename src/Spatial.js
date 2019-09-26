@@ -26,14 +26,7 @@ export { iStore } from './interface/IStore'
 ///// TEST /////
 ////////////////
 
-import {iFactory} from './interface/IFactory'
-import {Interface} from './core/Interface'
-
-
-console.log(new Interface())
-
-
-let test_selfInit = Object.getPrototypeOf(iFactory).constructor()
-console.log(test_selfInit)
-
+import { iMap } from './interface/IMap'
+console.log(iMap)
+console.log(new iMap.constructor('mapContainer'))
 

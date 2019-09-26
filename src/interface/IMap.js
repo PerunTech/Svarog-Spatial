@@ -2,13 +2,9 @@
 import { Map } from 'leaflet'
 import { Interface } from "../core/Interface";
 
-// Has to work with map instance
-
 /**
  * @interface iMap
  */
-export const iMap = Interface.define(Map, {
-    setView: function () {
-        console.log('imap interface member called.')
-    }
-})
+export const iMap = Interface.define(Map.prototype, Map.prototype)  
+// 2nd <i> argument can be:
+//      Object.assign({  /*do our interface implementation and curry-pass to prototype */ }, Map.prototype)
