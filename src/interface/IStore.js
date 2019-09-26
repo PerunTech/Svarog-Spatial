@@ -1,4 +1,4 @@
-import { Interface } from "./Interface";
+import { Interface } from "../core/Interface";
 
 /**
  * @interface IStore

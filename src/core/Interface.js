@@ -13,11 +13,9 @@ export function Interface () {}
  * Defines an API.
  * 
  * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
- * Applies only to the immediate properties of object `i` and their future modification. If the value
- * of those properties are objects themselves, those objects are not frozen and may be the target of property addition,
- * removal or value re-assignment operations.
- * 
- * `To do`: may implement duck-typing checks. 
+ * Applies only to the immediate properties of object `i` and their future modification. 
+ * If the value of those properties are objects themselves, those objects are not frozen
+ * and may be the target of property addition, removal or value re-assignment operations.
  * 
  * &nbsp;
  * 
@@ -29,14 +27,25 @@ export function Interface () {}
  * @returns Readonly<API>;
  */
 Interface.define = function (o, i) {
-    // if we want to do something on intialization for all interfaces, we do it here.
+    /**
+     * If we want to do something on intialization for all interfaces, we do it here.
+     * Ensures that a single instance is created only. 
+     * Ensures that inherited properties of our interface are forgotten. 
+     * 
+     * @constructs API
+     */
     let API = function () {
+        // Apparently, you can contruct new objects out of object<API>.prototype.constructor.
+        // Thus, you can create an API here, then access the above path in the created object,
+        // in order to crete a new copied API out of that.
+        // Do not allow this.
+        if ( !(this instanceof API) ) { throw new Error('Do not instantiate self.'); }
+        
         // Shallow-copy our interface to the API construct.  
         Object.assign(this, i);
     }
     // Do not inherit prototype of the interface we define.
-    // If someone accidentally made the interface inherit other classes,
-    // start anew, with a clean slate.
+    // If someone accidentally made the interface inherit other classes, start anew, with a clean slate.
     // API.prototype = Object.getPrototypeOf(i);
 
     /**
@@ -49,7 +58,7 @@ Interface.define = function (o, i) {
      * 
      * @param {String} [path] Accessor path, represented as string.
      * 
-     * @returns (render.path || undefined) || render root;
+     * @returns (implementation_object.path || undefined) || implementation_object root;
      */
     API.prototype.get = function (path = null) {
         return path ? Util.get(path, o) : o;

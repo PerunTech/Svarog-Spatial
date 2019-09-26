@@ -17,6 +17,8 @@ export { crs } from './proj/CRS';
 //interface
 export { iFactory } from './interface/IFactory';
 export { IProj } from './interface/IProj';
+export { IMap } from './interface/IMap'
+export { IStore } from './interface/IStore'
 
 
 
@@ -24,4 +26,5 @@ export { IProj } from './interface/IProj';
 ///// TEST /////
 ////////////////
 
+import {iFactory} from './interface/IFactory'
 
