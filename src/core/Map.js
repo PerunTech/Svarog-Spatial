@@ -86,7 +86,7 @@ export const Map = Core.extend({
     },
     
     getCenter () {
-        console.log(' I have succesfully overriden map mixin .getCenter()');
+        console.log(' I have succesfully overriden map mixin .getCenter(), which is stupid');
         return super.getCenter(); //eslint-disable-line
     }
 })   

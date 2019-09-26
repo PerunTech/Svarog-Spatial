@@ -286,5 +286,22 @@ export const Util = {
      */
     isArray: Array.isArray || function (obj) {
         return (Object.prototype.toString.call(obj) === '[object Array]');
+    },
+
+    /**
+     * Abstract class check. Prevents instances of abstract classes. 
+     * 
+     * &nbsp;
+     * 
+     * @function isAbstract (Class: Function): Error || void
+     * 
+     * @param {Function} Class - A constructor function. 
+     * 
+     * @returns Error || void;
+     */
+    isAbstract(Class) {
+        if (this instanceof Class) {
+            throw new Error(Class.name + ' is an abstract class and can not be instantiated.');
+        } 
     }
 }

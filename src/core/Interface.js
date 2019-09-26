@@ -7,7 +7,7 @@ import { Util } from './Util';
  * @abstract
  * @class Interface
  */
-export function Interface () {}
+export function Interface () { Util.isAbstract.call(this, Interface); }
 
 /**
  * Defines an API.

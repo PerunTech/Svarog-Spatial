@@ -6,7 +6,7 @@ import { Util } from './Util';
  * @abstract
  * @class Core
  */
-export function Core() {}
+export function Core() { Util.isAbstract.call(this, Core); }
 
 /**
  * [Extends the current class](#class-inheritance) given the properties to be included.

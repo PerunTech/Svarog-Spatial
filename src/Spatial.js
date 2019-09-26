@@ -27,4 +27,11 @@ export { IStore } from './interface/IStore'
 ////////////////
 
 import {iFactory} from './interface/IFactory'
+import {Interface} from './core/Interface'
+
+console.log(new Interface())
+
+let test_selfInit = Object.getPrototypeOf(iFactory).constructor()
+console.log(test_selfInit)
+
 
