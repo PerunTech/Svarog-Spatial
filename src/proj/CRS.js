@@ -1,7 +1,7 @@
-import {Core} from '../Core'
-import {Util} from 'leaflet'
-import {projection} from './Proj'
-import {IRender} from '../../interface/IRender'
+import { Core } from '../core/Core';
+import { Util } from 'leaflet';
+import { projection } from './Proj';
+import { iFactory } from '../interface/IFactory';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -126,7 +126,7 @@ let _setDistances = function (arr) {
  */
 let _setTransformation = function (opt) {
     return opt.origin
-        ? IRender.transformation(1, -opt.origin[0], -1, opt.origin[1])
+        ? iFactory.transformation(1, -opt.origin[0], -1, opt.origin[1])
         : opt.transformation;
 }
 
@@ -162,7 +162,7 @@ let _closestElement = function (arr, el) {
  */
 let CRS = Core.extend({
     /** Implement crs interface, merge methods. */
-    includes: IRender.iCRS(),
+    includes: iFactory.iCRS(),
 
     /** Spherical Mercator code, web standard. Default code. */
     code: 'EPSG:3857',
@@ -181,7 +181,7 @@ let CRS = Core.extend({
          *
          * default transformation, default coef = [1, 0, -1, 0].
          */
-        transformation: IRender.transformation(1, 0, -1, 0),
+        transformation: iFactory.transformation(1, 0, -1, 0),
 
         /**
          * The pixel origin of the map.
@@ -324,7 +324,6 @@ let CRS = Core.extend({
      * we should consider Vincenty' formula (accurate to 0.1mm)
      * (this is a very fine site in general)
      * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
-     * `#revise_me`
      * 
      * &nbsp;
      *

@@ -250,6 +250,7 @@ export const Util = {
         let max = range[1],
             min = range[0],
             d = max - min;
+
         return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
     },
 
@@ -268,6 +269,7 @@ export const Util = {
      */
     formatNum(num, digits) {
         digits = (digits === undefined ? 6 : digits);
+        
         return +(Math.round(num + ('e+' + digits)) + ('e-' + digits));
     },
 

@@ -1,8 +1,9 @@
-import {Util} from './Util';
+import { Util } from './Util';
 
 /**
  * Base class of the module
  * 
+ * @abstract
  * @class Core
  */
 export function Core() {}
@@ -94,6 +95,7 @@ Core.extend = function (props) {
  */
 Core.include = function (props) {
 	Util.extend(this.prototype, props);
+	
 	return this;
 };
 

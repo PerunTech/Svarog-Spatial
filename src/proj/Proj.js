@@ -1,6 +1,6 @@
-import {Core} from '../Core'
-import {IRender} from '../../interface/IRender'
-import {IProj} from '../../interface/IProj'
+import { Core } from '../core/Core';
+import { iFactory } from '../interface/IFactory';
+import { IProj } from '../interface/IProj';
 
 /**
  * @private
@@ -31,7 +31,7 @@ let Projection = Core.extend({
     project: function (latlng) {
         let pf = this._proj.forward([latlng.lng, latlng.lat]);
 
-        return IRender.point(pf[0], pf[1]);
+        return iFactory.point(pf[0], pf[1]);
     },
 
     /**
@@ -49,7 +49,7 @@ let Projection = Core.extend({
     unproject: function (p, unbounded) {
         let pi = this._proj.inverse([p.x, p.y]);
 
-        return IRender.latLng(pi[1], pi[0], unbounded);
+        return iFactory.latLng(pi[1], pi[0], unbounded);
     }
 })
 
