@@ -12,6 +12,8 @@ export const iMap = Interface.define(Map.prototype, {
      * Access this in order to shadow / extend / override operations of the prototype.
      * Fetch your implementation and return it in your wrapper function.
      * 
+     * `#revise_me` - this may be a bad idea. Exposed proto to outside.
+     * 
      * &nbsp;
      * 
      * @function getProto (): Map.prototype
@@ -35,19 +37,26 @@ export const iMap = Interface.define(Map.prototype, {
      * @returns Map;  
      */
     init (el, opt) {
-        return this.getProto().constructor(el, opt);
+        let mapConstructor = this.getProto().constructor;
+
+        return new mapConstructor(el, opt);
     },
 
-    /**
-     * Test method.
-     * 
-     * @function getCenter (): proto.getCenter()
-     * 
-     * @returns proto.getCenter();
-     */
-    getCenter () {
-        console.log('shadow prototype method, do your thing and curry-pass to the implementation');
-        
-        return this.getProto().getCenter();
+    // shadow prototype test methods, do our thing and curry-pass to the implementation
+    // require the current map instance, a private ref in Map.
+    getBounds (map) {
+        return this.getProto().getBounds.call(map);
+    },
+
+    getCenter (map) {
+        return this.getProto().getCenter.call(map);
+    },
+
+    getPane (map) {
+        return this.proto().getPane.call(map);
+    },
+
+    getZoom (map) {
+        return this.proto().getZoom.call(map);
     }
 })

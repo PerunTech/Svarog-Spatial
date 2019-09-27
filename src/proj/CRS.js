@@ -243,6 +243,48 @@ let CRS = Core.extend({
     },
 
     /**
+     * Uses `Haversine` formula to calculate the distance between two geographical points.
+     * Calculates great circle distance on an assumed sphere, which the Earth is not.
+     *
+     * Mean error appromixation is 0.5% and the calculation is best on small distances, less than 5km,
+     * which is what we need.
+     * It is far better than the spherical law of cosine approximation, due to use of sine,
+     * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
+     * large errors due to rounding (JS engine does 15 digits though, currently).
+     * Similar case can be made for arctangent in the angular distance caclucation `c` below.
+     *
+     * Its use is mostly visual rather than technical, still if the accuracy is insufficient
+     * we should consider Vincenty' formula (accurate to 0.1mm)
+     * (this is a very fine site in general)
+     * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
+     * 
+     * &nbsp;
+     *
+     * @function distance (latlng1: LatLng, latlng2: LatLng): number <distance in [m]>
+     * 
+     * @param {LatLng} latlng1 - latitude / longitude pair A.
+     * @param {LatLng} latlng2 - latitude / longitude pair B.
+     * 
+     * @returns {number} distance in meters [A to B];
+     */
+    distance: function (latlng1, latlng2) {
+        let rad = Math.PI / 180;
+        // convert latitude degrees to radians for easier trigonometry
+        let phi1 = latlng1.lat * rad,
+            phi2 = latlng2.lat * rad;
+        // sine of latitude difference, in radians
+        let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
+        //sine of longitude difference, in radiance
+        let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
+        // square of half the chord length between pA and pB
+        let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
+        // andgular distance, in radiance
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
+
+        return this.R * c;  // distance in meters
+    },
+
+    /**
      * Calculate the current scale.
      * 
      * Returns the scale used when transforming projected coordinates
@@ -307,48 +349,6 @@ let CRS = Core.extend({
         if (nextScale === undefined) { return Infinity; }
 
         return (scale - downScale) / (nextScale - downScale) + downZoom;
-    },
-
-    /**
-     * Uses `Haversine` formula to calculate the distance between two geographical points.
-     * Calculates great circle distance on an assumed sphere, which the Earth is not.
-     *
-     * Mean error appromixation is 0.5% and the calculation is best on small distances, less than 5km,
-     * which is what we need.
-     * It is far better than the spherical law of cosine approximation, due to use of sine,
-     * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
-     * large errors due to rounding (JS engine does 15 digits though, currently).
-     * Similar case can be made for arctangent in the angular distance caclucation `c` below.
-     *
-     * Its use is mostly visual rather than technical, still if the accuracy is insufficient
-     * we should consider Vincenty' formula (accurate to 0.1mm)
-     * (this is a very fine site in general)
-     * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
-     * 
-     * &nbsp;
-     *
-     * @function distance (latlng1: LatLng, latlng2: LatLng): number <distance in [m]>
-     * 
-     * @param {LatLng} latlng1 - latitude / longitude pair A.
-     * @param {LatLng} latlng2 - latitude / longitude pair B.
-     * 
-     * @returns {number} distance in meters [A to B];
-     */
-    distance: function (latlng1, latlng2) {
-        let rad = Math.PI / 180;
-        // convert latitude degrees to radians for easier trigonometry
-        let phi1 = latlng1.lat * rad,
-            phi2 = latlng2.lat * rad;
-        // sine of latitude difference, in radians
-        let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
-        //sine of longitude difference, in radiance
-        let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
-        // square of half the chord length between pA and pB
-        let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
-        // andgular distance, in radiance
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
-
-        return this.R * c;  // distance in meters
     },
 })
 

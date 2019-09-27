@@ -25,12 +25,7 @@ export { iStore } from './interface/IStore';
 ////////////////
 ///// TEST /////
 ////////////////
-/*
-import {iMap} from './interface/IMap'
-console.log(iMap.getProto())
-console.log(iMap.getCenter())
-*/
-import { iFactory } from './interface/IFactory'
-console.log(iFactory)
 
-
+import {Map} from './core/Map'
+let _map = new Map('mapContainer', {})
+console.log(_map.getBounds())
