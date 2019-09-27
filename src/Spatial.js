@@ -28,4 +28,4 @@ export { iStore } from './interface/IStore';
 
 import {Map} from './core/Map'
 let _map = new Map('mapContainer', {})
-console.log(_map.getBounds())
+console.log(_map)

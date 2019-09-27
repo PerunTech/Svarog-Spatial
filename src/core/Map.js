@@ -26,40 +26,36 @@ Map.pm.disableDraw
 Map.pm.enableDraw
 */
 
-export const Map = Core.extend(
-    (function () {  // IIFE for private scope
-        /**
-         * Map instance.
-         * 
-         * @private
-         * @type {Map}
-         */
-        let _map;
+/**
+ * The actual map instance.
+ * 
+ * @private
+ * @type {Map}
+ */
+let _map;
 
-        return {
-            /**
-             * 
-             */
-            init: function (el, opt) {
-                // init internal map
-                _map = iMap.init(el, opt);
-            },
+export const Map = Core.extend({
+    /**
+     * @constructs Map
+     */
+    init: function (el, opt) {
+        // init internal map
+        _map = iMap.init(el, opt);
+    },
 
-            getBounds () {
-                return iMap.getBounds(_map);
-            },
+    getBounds () {
+        return iMap.getBounds(_map);
+    },
 
-            getCenter () {
-                return iMap.getCenter(_map);
-            },
+    getCenter () {
+        return iMap.getCenter(_map);
+    },
 
-            getPane () {
-                return iMap.getPane(_map);
-            },
+    getPane () {
+        return iMap.getPane(_map);
+    },
 
-            getZoom () {
-                return iMap.getZoom(_map);
-            }
-        }
-    })()
-)
+    getZoom () {
+        return iMap.getZoom(_map);
+    }
+})
