@@ -14,11 +14,11 @@ export function Core() { Util.isAbstract.call(this, Core); }
  * 
  * &nbsp;
  * 
- * @function extend (props: Object): Function
+ * @function extend (props: Object): Class
  *
  * @param {Object} props - The properties to be included in the class.
  *
- * @return new `Class`;
+ * @return `Class`;
  */
 Core.extend = function (props) {
 	// The (`magic`) word init is similar to a constructor function.
@@ -121,7 +121,7 @@ Core.mergeOptions = function (options) {
  * 
  * &nbsp;
  * 
- * @function addHook (fn: Function): this
+ * @function addHook (fn: Function, ...args: any[]): this
  *
  * @param {Function} fn - Function to be added as hook.
  * @param {[*]} args - Arguments to be passed to the hook function.

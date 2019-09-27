@@ -33,10 +33,10 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function assign (target: any, ...src: any): target & ...src
+     * @function assign (target: Object, ...src: Object): target & ...src
      * 
-     * @param {*} target - The taget object to copy to.
-     * @param  {...any} src - The source object(s) to copy from.
+     * @param {Object} target - The taget object to copy to.
+     * @param  {...Object} src - The source object(s) to copy from.
      * 
      * @returns target & ...src;
      */
@@ -60,9 +60,9 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function get (path: String, obj: Object): Object || undefined
+     * @function get (path: string, obj: Object): obj.path || undefined
      *
-     * @param {String} path - Accessor path, represented as string.
+     * @param {string} path - Accessor path, represented as string.
      * @param {Object} obj - Object to access.
      *
      * @returns obj.path || undefined;
@@ -81,7 +81,7 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function extend (dest: Object, src?: Object): Object
+     * @function extend (dest: Object, src?: ...Object): Object
      *
      * @param {Object} dest - Destination object of the merge.
      * @param {...Object} [src] - Source object(s) to be merged.
@@ -166,7 +166,7 @@ export const Util = {
      * @function hasProp (obj: Object, prop: string | number | symbol): boolean
      *
      * @param {Object} obj - Object to be checked.
-     * @param {String | Number | Symbol} prop - Property to be found on obj.
+     * @param {string | number | symbol} prop - Property to be found on obj.
      *
      * @returns boolean;
      */
@@ -181,11 +181,11 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function debounce (Fn: Function, time: Number, exec: Boolean): Function
+     * @function debounce (Fn: Function, time: number, exec: boolean): Function
      *
      * @param {Function} Fn - Function to be debounced.
-     * @param {Number} time - Time interval of the debounce, in milliseconds.
-     * @param {Boolean} exec - Trigger flag, leading / trailing edge.
+     * @param {number} time - Time interval of the debounce, in milliseconds.
+     * @param {boolean} [exec=false] - Trigger flag, leading / trailing edge.
      *
      * @returns Function executed with a delay between repeated calls (think dom events and api/ws calls);
      */
@@ -222,11 +222,11 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function throttle (fn: Function, time: Number, context: Object): Function
+     * @function throttle (fn: Function, time: number, context: Object): Function
      *
-     * @param {*} fn - Function to be throttled.
-     * @param {*} time - Time interval for the throttle, in milliseconds.
-     * @param {*} context - Context that is binded to the function when the call is executed.
+     * @param {Function} fn - Function to be throttled.
+     * @param {number} time - Time interval for the throttle, in milliseconds.
+     * @param {Object} context - Context that is binded to the function when the call is executed.
      * 
      * @returns Function executed only once per the given time interval;
      */
@@ -264,11 +264,11 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function wrapNum (x: Number, range: Number[], includeMax?: Boolean): Number
+     * @function wrapNum (x: number, range: Number[], includeMax?: boolean): number
      *
-     * @param {Number} x - Number whose modulo range is to be calculated.
-     * @param {Number} range - Range value for the calculation.
-     * @param {Boolean} includeMax - Flag, should we include maxRange = 1 as a valid result.
+     * @param {number} x - Number whose modulo range is to be calculated.
+     * @param {Number[]} range - Range value for the calculation.
+     * @param {boolean} [includeMax] - Flag, should we include maxRange = 1 as a valid result.
      *
      * @retun x modulo;
      */
@@ -286,12 +286,12 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function formatNum (num: Number, digits?: Number): Number
+     * @function formatNum (num: number, digits?: number): number
      *
-     * @param {Number} num - Number to be rounded.
-     * @param {Number} digits - Specifies how many places to round for.
+     * @param {number} num - Number to be rounded.
+     * @param {number} [digits] - Specifies how many places to round for.
      *
-     * @return rounded Number;
+     * @return rounded number;
      */
     formatNum(num, digits) {
         digits = (digits === undefined ? 6 : digits);
@@ -304,11 +304,11 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function isArray (obj): Boolean
+     * @function isArray (Object): boolean
      * 
      * @param {Object} obj - The object to be checked.
      *
-     * @returns Boolean;
+     * @returns boolean;
      */
     isArray: Array.isArray || function (obj) {
         return (Object.prototype.toString.call(obj) === '[object Array]');

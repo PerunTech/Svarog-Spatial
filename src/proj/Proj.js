@@ -58,10 +58,10 @@ let Projection = Core.extend({
  * 
  * &nbsp;
  *
- * @factory projection(code: String, def: String, bounds: Object): Projection  
+ * @factory projection(code: string, def: string, bounds: Object): Projection  
  *   
- * @param {String} code - CRS code, as specified by the European Petroleum Survey Group. 
- * @param {String} def - Proj4 defintion of the projection specified by the `code`.
+ * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
+ * @param {string} def - Proj4 defintion of the projection specified by the `code`.
  * @param {Object} bounds - Rectangular area in pixel coordinates.
  * 
  * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;

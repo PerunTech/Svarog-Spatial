@@ -12,10 +12,10 @@ export const iProj = Interface.define(proj4, {
      * 
      * &nbsp;
      * 
-     * @function define (code: String, def: String): Projection
+     * @function define (code: string, def: string): Projection
      * 
-     * @param {String} code - CRS code, as specified by the European Petroleum Survey Group. 
-     * @param {String} def  - Proj4 defintion of the projection specified by the code.
+     * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
+     * @param {string} def  - Proj4 defintion of the projection specified by the code.
      * 
      * @returns Projection;
      */

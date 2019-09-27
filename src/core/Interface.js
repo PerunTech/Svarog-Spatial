@@ -21,10 +21,10 @@ export function Interface () { Util.isAbstract.call(this, Interface); }
  * 
  * &nbsp;
  * 
- * @function define (o: any, i: any): Readonly<API>
+ * @function define (o: any, i: Object): Readonly<API>
  * 
  * @param {*} o - The implementation object.
- * @param {*} i - The interface. 
+ * @param {Object} i - The interface. 
  * 
  * @returns Readonly<API>;
  */
@@ -56,9 +56,9 @@ Interface.define = function (o, i) {
      * 
      * &nbsp;
      * 
-     * @function get (path?: String): Object
+     * @function get (path?: string): Object
      * 
-     * @param {String} [path] Accessor path, represented as string.
+     * @param {string} [path=null] Accessor path, represented as string.
      * 
      * @returns (implementation_object.path || undefined) || implementation_object root;
      */
@@ -72,9 +72,9 @@ Interface.define = function (o, i) {
      * 
      * &nbsp;
      *
-     * @function call (path: String, context?: Object, args?: List): Object
+     * @function call (path: string, context?: Object, args?: Array): Object
      * 
-     * @param {String} path - Accessor path, represented as string.
+     * @param {string} path - Accessor path, represented as string.
      * @param {Object} [context] - Context of the function call. The `this` object on invocation.
      * @param {Array} [args] - Arguments to be passed to the called function.
      * 

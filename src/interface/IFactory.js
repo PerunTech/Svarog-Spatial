@@ -40,7 +40,7 @@ export const iFactory = Interface.define(L, {
      * 
      * &nbsp;
      *
-     * @factory latLng(latitude: Number, longitude: Number, altitude?: Number): LatLng
+     * @factory latLng(latitude: number, longitude: number, altitude?: number): LatLng
      * 
      * @alternative Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
      * @factory latLng(coords: Array): LatLng
@@ -48,9 +48,9 @@ export const iFactory = Interface.define(L, {
      * @alternative Expects an object of the form `{lat: Num, lng: Num}` or `{lat: Num, lng: Num, alt: Num}`.
      * @factory latLng(coords: Object): LatLng
      * 
-     * @param {Number} lat - Latitude.
-     * @param {Number} lng - Longitutde.
-     * @param {Number} [alt] - Altitude.
+     * @param {number} lat - Latitude.
+     * @param {number} lng - Longitutde.
+     * @param {number} [alt] - Altitude.
      * 
      * @return LatLng;
      */
@@ -77,17 +77,17 @@ export const iFactory = Interface.define(L, {
      * 
      * &nbsp;
      * 
-     * @factory point(x: Number, y: Number, round?: Boolean)
+     * @factory point(x: number, y: number, round?: boolean): Point
      * 
      * @alternative Expects an array of the form `[x, y]` instead.
-     * @factory point(coords: Number[])
+     * @factory point(coords: Number[]): Point
      * 
-     * @alternative Expects a plain object of the form `{x: Number, y: Number}` instead.
-     * @factory point(coords: Object)
+     * @alternative Expects a plain object of the form `{x: number, y: number}` instead.
+     * @factory point(coords: Object): Point
      * 
-     * @param {Number} x - The x coordinate.
-     * @param {Number} y - The y coordinate.
-     * @param {Boolean} [r] - Round flag.
+     * @param {number} x - The x coordinate.
+     * @param {number} y - The y coordinate.
+     * @param {boolean} [r] - Round flag.
      * 
      * @returns Point;
      */
@@ -111,15 +111,15 @@ export const iFactory = Interface.define(L, {
      * 
      * &nbsp;
      *
-     * @factory transformation(a: Number, b: Number, c: Number, d: Number): Transformation
+     * @factory transformation(a: number, b: number, c: number, d: number): Transformation
      * 
-     * @alternative Expects an coefficients array of the form `[a: Number, b: Number, c: Number, d: Number]`.
+     * @alternative Expects an coefficients array of the form `[a: number, b: number, c: number, d: number]`.
      * @factory transformation(coefficients: Array): Transformation
      * 
-     * @param {Number} a - Multiplicator of x.
-     * @param {Number} b - Offset of x.
-     * @param {Number} c - Multiplicator of y.
-     * @param {Number} d - Offset of y.
+     * @param {number} a - Multiplicator of x.
+     * @param {number} b - Offset of x.
+     * @param {number} c - Multiplicator of y.
+     * @param {number} d - Offset of y.
      * 
      * @returns Transformation {};
      */

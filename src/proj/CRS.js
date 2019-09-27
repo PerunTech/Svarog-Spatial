@@ -13,7 +13,7 @@ import { iFactory } from '../interface/IFactory';
  *
  * @private
  * @constant
- * @type {Number}
+ * @type {number}
  */
 const R = 6371000;
 
@@ -79,7 +79,7 @@ let _setDistances = function (arr) {
      * The current monitor dpi.
      * 
      * @const
-     * @type {Number}
+     * @type {number}
      */
     const _dpi = (function (b, a, i, c) {
         c = (d, e) => e >= d ? (a = d + (e - d) / 2, b(a) > 0 && (a === d || b(a - 1) <= 0) ? a 
@@ -95,7 +95,7 @@ let _setDistances = function (arr) {
      * Number of pixels in 1cm of screen width. [ppm = pixels per meter]
      * 
      * @constant
-     * @type {Number}
+     * @type {number}
      */
     const _ppm = (_dpi / 2.54).toFixed(4)
 
@@ -103,7 +103,7 @@ let _setDistances = function (arr) {
      * Calculate resolutions from distances via a ref number of pixels.
      * 
      * @constant
-     * @type {Number}
+     * @type {number}
      */
     const _r = arr.map((d) => { return (d / 100) / _ppm; }) 
 
@@ -136,10 +136,10 @@ let _setTransformation = function (opt) {
  * &nbsp;
  * 
  * @private
- * @function _closestElement (arr: Number[], el: Number): Number
+ * @function _closestElement (arr: Number[], el: number): number
  * 
  * @param {Number[]} arr - Array of numbers.
- * @param {Number} el - The limit integer against which the term closest is measured.
+ * @param {number} el - The limit integer against which the term closest is measured.
  * 
  * @returns The closest lowest integer element; 
  */
@@ -252,9 +252,9 @@ let CRS = Core.extend({
      * &nbsp;
      *
      * @override iCRS.scale
-     * @function scale (zoom: Number): Number
+     * @function scale (zoom: number): number
      * 
-     * @param {Number} zoom - The current zoom value.
+     * @param {number} zoom - The current zoom value.
      * 
      * @returns Scale number value;
      */
@@ -286,9 +286,9 @@ let CRS = Core.extend({
      * &nbsp;
      * 
      * @override iCRS.zoom
-     * @function zoom (scale: Number): Number
+     * @function zoom (scale: number): number
      * 
-     * @param {Number} scale - The current scale value.
+     * @param {number} scale - The current scale value.
      * 
      * @returns Zoom number value;
      */
@@ -327,12 +327,12 @@ let CRS = Core.extend({
      * 
      * &nbsp;
      *
-     * @function distance (latlng1: LatLng, latlng2: LatLng): distance [m] {Number}
+     * @function distance (latlng1: LatLng, latlng2: LatLng): number <distance in [m]>
      * 
      * @param {LatLng} latlng1 - latitude / longitude pair A.
      * @param {LatLng} latlng2 - latitude / longitude pair B.
      * 
-     * @returns {Number} distance in meters [A to B];
+     * @returns {number} distance in meters [A to B];
      */
     distance: function (latlng1, latlng2) {
         let rad = Math.PI / 180;
@@ -378,10 +378,10 @@ let CRS = Core.extend({
  * 
  * &nbsp;
  * 
- * @factory crs (code: String, def: String, opt?: Object): CRS
+ * @factory crs (code: string, def: string, opt?: Object): CRS
  * 
- * @param {String} code - CRS code of the desired projection, as specified by the European Petroleum Survey Group.
- * @param {String} def - Proj4 definition of the desired projection. Must match the supplied code.
+ * @param {string} code - CRS code of the desired projection, as specified by the European Petroleum Survey Group.
+ * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
  * @param {Object} [opt] - Configuration object.
  * 
  * @returns CRS;
