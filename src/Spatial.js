@@ -26,7 +26,8 @@ export { iStore } from './interface/IStore';
 ///// TEST /////
 ////////////////
 
-import {iFactory} from './interface/IFactory'
-console.log(iFactory)
+import {iMap} from './interface/IMap'
+console.log(iMap.getProto())
+console.log(iMap.getCenter())
 
 

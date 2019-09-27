@@ -10,6 +10,24 @@ export const iFactory = Interface.define(L, {
     /**
      * Coordinate reference system interface.
      * 
+     * Includes:
+     *  - latLngToPoint(latlng: LatLngExpression, zoom: number): Point;
+     *  - pointToLatLng(point: PointExpression, zoom: number): LatLng;
+     *  - project(latlng: LatLng | LatLngLiteral): Point;
+     *  - unproject(point: PointExpression): LatLng;
+     *  - scale(zoom: number): number;
+     *  - zoom(scale: number): number;
+     *  - getProjectedBounds(zoom: number): Bounds;
+     *  - distance(latlng1: LatLngExpression, latlng2: LatLngExpression): number;
+     *  - wrapLatLng(latlng: LatLng | LatLngLiteral): LatLng;
+     * 
+     *  - code?: string;
+     *  - wrapLng?: [number, number];
+     *  - wrapLat?: [number, number];
+     *  - infinite: boolean;
+     * 
+     * &nbsp;
+     * 
      * @interface iCRS
      */
     iCRS () {

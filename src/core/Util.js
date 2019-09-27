@@ -33,12 +33,12 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function assign (target: any, ...src: any): target
+     * @function assign (target: any, ...src: any): target & ...src
      * 
      * @param {*} target - The taget object to copy to.
      * @param  {...any} src - The source object(s) to copy from.
      * 
-     * @returns target;
+     * @returns target & ...src;
      */
     assign: Object.assign || (function () {
         return function (target) {
