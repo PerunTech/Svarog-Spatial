@@ -1,6 +1,7 @@
-import L from 'leaflet';
 import { Util } from '../core/Util';
 import { Interface } from '../core/Interface';
+import L from 'leaflet';
+// import { CRS, latLng, LatLng, point, Point, transformation } from 'leaflet'
 
 /**
  * @interface iFactory

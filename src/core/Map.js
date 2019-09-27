@@ -1,5 +1,4 @@
 import { Core } from "./Core";
-import  L  from 'leaflet'
 import { iMap } from "../interface/IMap";
 
 // keep internal ref of render map instance
@@ -73,6 +72,33 @@ Returns the world's bounds in pixel coordinates for zoom level zoom.
 If zoom is omitted, the map's current zoom level is used.
 */
 
+
+/*
+Map.getBounds()
+
+Map.getCenter()
+
+Map.getZoom()
+
+Map.getPane()
+
+Map.setView()
+
+Map.fitBounds()
+
+Map.flyTo()
+
+Map.hasLayer()
+
+
+<<<< Map.pm >>>>
+
+Map.pm.disableDraw
+
+Map.pm.enableDraw
+*/
+
+
 /*
 export const Map = Core.extend(  L.map('mapContainer', {}), 
     function init () { this.test = 'I am a test member'; }
@@ -80,7 +106,7 @@ export const Map = Core.extend(  L.map('mapContainer', {}),
 */
 
 export const Map = Core.extend({
-    includes: [L.map('mapContainer', {center: [-34.568, 52.56789], zoom: 8}), {mixArray: 't1', mixArgs: 't2'}],
+    includes: iMap,
     init: function () {
         this.test = 'I am a test member';
     },

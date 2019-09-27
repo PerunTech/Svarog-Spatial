@@ -17,8 +17,8 @@ export { crs } from './proj/CRS';
 //interface
 export { iFactory } from './interface/IFactory';
 export { iProj } from './interface/IProj';
-export { iMap } from './interface/IMap'
-export { iStore } from './interface/IStore'
+export { iMap } from './interface/IMap';
+export { iStore } from './interface/IStore';
 
 
 
@@ -26,7 +26,7 @@ export { iStore } from './interface/IStore'
 ///// TEST /////
 ////////////////
 
-import { iMap } from './interface/IMap'
-console.log(iMap)
-console.log(new iMap.constructor('mapContainer'))
+import {iFactory} from './interface/IFactory'
+console.log(iFactory)
+
 

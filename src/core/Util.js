@@ -26,6 +26,32 @@ export const Util = {
     })(),
 
     /**
+     * Copy the values of all of the enumerable own properties from one or more source objects to a target object.
+     * Returns the target object.
+     * 
+     * Compatibility polyfill for `Object.assign`.
+     * 
+     * &nbsp;
+     * 
+     * @function assign (target: any, ...src: any): target
+     * 
+     * @param {*} target - The taget object to copy to.
+     * @param  {...any} src - The source object(s) to copy from.
+     * 
+     * @returns target;
+     */
+    assign: Object.assign || (function () {
+        return function (target) {
+            for (let i = 1; i < arguments.length; i+=1) {
+                let src = arguments[i]
+                Object.keys(src).map(k => { target[k] = src[k]; })
+            }
+
+            return target;
+        }
+    })(),
+
+    /**
      * Access `obj` by string `path`.
      *
      * Supports nested structures.
@@ -51,7 +77,7 @@ export const Util = {
 
     /**
      * Merges the properties of the `src` object (or multiple objects)
-     * into `dest` object and returns the latter.
+     * into `dest` object and returns the latter. Includes `prototype`.
      * 
      * &nbsp;
      * 
@@ -303,5 +329,8 @@ export const Util = {
         if (this instanceof Class) {
             throw new Error(Class.name + ' is an abstract class and can not be instantiated.');
         } 
-    }
+    },
+
+
+
 }

@@ -40,11 +40,12 @@ Interface.define = function (o, i) {
         // Apparently, you can contruct new objects out of object<API>.prototype.constructor.
         // Thus, you can create an API here, then access the above path in the created object,
         // in order to crete a new copied API out of that.
-        // Do not allow this.
+        // Do not allow this. We shall do this only once.
         if ( !(this instanceof API) ) { throw new Error('Do not instantiate self.'); }
         
         // Shallow-copy our interface to the API construct.  
-        Object.assign(this, i);
+        Util.assign(this, i);
+
     }
     // Do not inherit prototype of the interface we define.
     // If someone accidentally made the interface inherit other classes, start anew, with a clean slate.
