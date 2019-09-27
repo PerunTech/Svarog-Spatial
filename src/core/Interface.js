@@ -45,7 +45,6 @@ Interface.define = function (o, i) {
         
         // Shallow-copy our interface to the API construct.  
         Util.assign(this, i);
-
     }
     // Do not inherit prototype of the interface we define.
     // If someone accidentally made the interface inherit other classes, start anew, with a clean slate.
