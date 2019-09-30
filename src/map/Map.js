@@ -1,4 +1,4 @@
-import { Core } from "./Core";
+import { Core } from "../core/Core";
 import { iMap } from "../interface/IMap";
 
 /*
