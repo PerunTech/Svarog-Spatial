@@ -37,9 +37,9 @@ export const iMap = Interface.define(Map.prototype, {
      * @returns Map;  
      */
     init (el, opt) {
-        let mapConstructor = this.getProto().constructor;
+        let proto = this.getProto();
 
-        return new mapConstructor(el, opt);
+        return new proto.constructor(el, opt);
     },
 
     // shadow prototype test methods, do our thing and curry-pass to the implementation
@@ -52,11 +52,24 @@ export const iMap = Interface.define(Map.prototype, {
         return this.getProto().getCenter.call(map);
     },
 
-    getPane (map) {
-        return this.proto().getPane.call(map);
+    getPane (map, name) {
+        return this.getProto().getPane.call(map, name);
     },
 
     getZoom (map) {
-        return this.proto().getZoom.call(map);
+        return this.getProto().getZoom.call(map);
+    },
+    
+
+    fitBounds (map, bounds, opt) {
+        return this.getProto().fitBounds.call(map, bounds, opt);
+    },
+
+    flyTo (map, cnt, zoom, opt) {
+        return this.getProto().flyTo.call(map, cnt, zoom, opt);
+    },
+
+    setView (map, cnt, zoom) {
+        return this.getProto().setView.call(map, cnt, zoom);
     }
 })

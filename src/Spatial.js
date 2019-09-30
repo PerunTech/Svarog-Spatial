@@ -25,7 +25,3 @@ export { iStore } from './interface/IStore';
 ////////////////
 ///// TEST /////
 ////////////////
-
-import {Map} from './core/Map'
-let _map = new Map('mapContainer', {})
-console.log(_map)
