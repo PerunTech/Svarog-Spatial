@@ -1,17 +1,36 @@
-import { Core } from "../core/Core";
-import { iMap } from "../interface/IMap";
-
 /*
-Map.setOrigin()
+Map.getBounds()
 
-Map.hasLayer()
+Map.getCenter()
+
+Map.getZoom()
+
+Map.getPane()
+
+Map.getBBox()
+
+Map.setView()
+
+Map.fitBounds()
+
+Map.flyTo()
+
+--Map.setOrigin()
+
+--Map.hasLayer()
+
 
 <<<< Map.pm >>>>
 
-Map.pm.disableDraw
+--Map.pm.disableDraw
 
-Map.pm.enableDraw
+--Map.pm.enableDraw
 */
+
+
+import { Class } from "../core/Class";
+import { iMap } from "../interface/IMap";
+
 
 /**
  * The actual map instance.
@@ -21,11 +40,11 @@ Map.pm.enableDraw
  */
 let _map;
 
-export const Map = Core.extend({
+export const Map = Class.extend({
     /**
      * @constructs Map
      */
-    init: function (el, opt) {
+    init (el, opt) {
         // init internal map
         _map = iMap.init(el, opt);
     },

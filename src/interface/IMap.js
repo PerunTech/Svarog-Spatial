@@ -4,7 +4,7 @@ import { Map } from 'leaflet'
 /**
  * @interface iMap
  */
-export const iMap = Interface.define(Map.prototype, {
+export const iMap = Interface.define({
     /**
      * Implementation object getter. 
      * 

@@ -1,7 +1,9 @@
-import { Core } from '../core/Core';
-import { Util } from 'leaflet';
-import { projection } from './Proj';
-import { iFactory } from '../interface/IFactory';
+import { Class } from '../core/Class';
+import { Util } from '../core/Util';
+import { Factory } from './Factory';
+
+import { protoCRS } from '../prototype/ProtoCRS';
+import { iCRS } from '../interface/ICRS.js';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -126,7 +128,7 @@ let _setDistances = function (arr) {
  */
 let _setTransformation = function (opt) {
     return opt.origin
-        ? iFactory.transformation(1, -opt.origin[0], -1, opt.origin[1])
+        ? Factory.transformation(1, -opt.origin[0], -1, opt.origin[1])
         : opt.transformation;
 }
 
@@ -157,12 +159,15 @@ let _closestElement = function (arr, el) {
 
 /**
  * @class CRS
- * @extends {Core}
+ * @extends {Class}
  * @implements iCRS
  */
-let CRS = Core.extend({
-    /** Implement crs interface, merge methods. */
-    includes: iFactory.iCRS(),
+export const CRS = Class.extend({
+    /** Implement crs details, merge methods. */
+    includes: protoCRS,
+
+    // CRS interface
+    implements: iCRS,
 
     /** Spherical Mercator code, web standard. Default code. */
     code: 'EPSG:3857',
@@ -181,7 +186,7 @@ let CRS = Core.extend({
          *
          * default transformation, default coef = [1, 0, -1, 0].
          */
-        transformation: iFactory.transformation(1, 0, -1, 0),
+        transformation: Factory.transformation(1, 0, -1, 0),
 
         /**
          * The pixel origin of the map.
@@ -229,14 +234,14 @@ let CRS = Core.extend({
     /**
      * @constructs CRS
      */
-    init: function (code, def, opt) {
+    init (code, def, opt) {
         this.code = code || this.code;
         this.def = def || this.def;
 
         // Merge options, override defaults
         Util.setOptions(this, opt);
 
-        this.projection = projection(this.code, this.def, this.options.bounds)
+        this.projection = Factory.projection(this.code, this.def, this.options.bounds)
         this.transformation = _setTransformation(this.options);
         this._scales = _setScales(this.options);
         this.infinite = !this.options.bounds;
@@ -267,7 +272,7 @@ let CRS = Core.extend({
      * 
      * @returns {number} distance in meters [A to B];
      */
-    distance: function (latlng1, latlng2) {
+    distance (latlng1, latlng2) {
         let rad = Math.PI / 180;
         // convert latitude degrees to radians for easier trigonometry
         let phi1 = latlng1.lat * rad,
@@ -300,7 +305,7 @@ let CRS = Core.extend({
      * 
      * @returns Scale number value;
      */
-    scale: function (zoom) {
+    scale (zoom) {
         let iZoom = Math.floor(zoom),
             baseScale,
             nextScale,
@@ -334,7 +339,7 @@ let CRS = Core.extend({
      * 
      * @returns Zoom number value;
      */
-    zoom: function (scale) {
+    zoom (scale) {
         let downScale = _closestElement(this._scales, scale),
             downZoom = this._scales.indexOf(downScale),
             nextScale,
@@ -351,51 +356,3 @@ let CRS = Core.extend({
         return (scale - downScale) / (nextScale - downScale) + downZoom;
     },
 })
-
-/**
- * Coordinate reference system (CRS) factory.
- * 
- * &nbsp;
- * 
- * Arguments `code` and `def` are supplied in pair, the code must match the definition.
- * If omitted, factory will default to Spherical Mercator, EPSG: 3857.
- *
- * Argument `opt` is a configuration object. Properties may include:
- *  - `transformation`: Transforms projected coordinates to pixel coordinates.
- *  - `origin`: The pixel origin of the map. Represented in projected coordinates.
- *  - `bounds`: Rectangular area in pixel coordinates.
- *  - `scales`: Array of scales. [pixels / projected coordinates]
- *  - `resolutions`: Array of resolutions. [projected coordinates / pixels]
- *  - `distances`: Array of available distances. [numbers in meters]
- * 
- * Scales, resolutions and distances are different representations of the same thing. Provide only one of these!
- * If multiple of these are provided to factory, scales will override resolutions which in turn override distances.
- * Scales are used internally, the other two are internally converted.
- * 
- * Distances are calculated based on monitor dpi, thus the final scales output will vary between application instances.
- * Variation in scales will break server-side caching of rasters served via WMS, these require a fixed set of scales
- * values in the grid-set matrix. Avoid distances when caching is required. 
- * 
- * &nbsp;
- * 
- * @factory crs (code: string, def: string, opt?: Object): CRS
- * 
- * @param {string} code - CRS code of the desired projection, as specified by the European Petroleum Survey Group.
- * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
- * @param {Object} [opt] - Configuration object.
- * 
- * @returns CRS;
- * 
- * @example
- *      crs('EPSG: 4326',
- *          '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
- *          {
- *              origin: [-180.0, 90.0],
- *              distances: [ 5000000, 2500000, 1000000, 750000, 500000,
- *                           250000, 100000, 75000, 50000, 25000, 10000,
- *                           7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
- *          });
- */
-export const crs = function (code, def, opt = {}) {
-    return new CRS(code, def, opt);
-}

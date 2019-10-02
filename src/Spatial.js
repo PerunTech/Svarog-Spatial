@@ -7,21 +7,19 @@
     window.S = S
 })()
 
-//core - should not be exported
-// export { Util } from './core/Util';
-// export { Core } from './core/Core';
-// export { Interface } from './core/Interface'
-// proj
-export { projection } from './proj/Proj';
-export { crs } from './proj/CRS';
-//interface
-export { iFactory } from './interface/IFactory';
-export { iProj } from './interface/IProj';
-export { iMap } from './interface/IMap';
-export { iStore } from './interface/IStore';
-
-
+// class
+export { CRS } from './class/CRS';
+export { Factory } from './class/Factory';
+export { Map } from './class/Map';
+export { Projection } from './class/Proj';
 
 ////////////////
 ///// TEST /////
 ////////////////
+import {Factory} from './class/Factory'
+
+let t1 = Factory.projection(undefined, 'EPSG:3857',
+            '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m'
+            + '+nadgrids=@null +wktext +no_defs',
+);
+console.log(t1)

@@ -4,9 +4,9 @@ import { Util } from './Util';
  * Base class of the module
  * 
  * @abstract
- * @class Core
+ * @class Class
  */
-export function Core() { Util.isAbstract.call(this, Core); }
+export function Class() { Util.isAbstract.call(this, Class); }
 
 /**
  * [Extends the current class](#class-inheritance) given the properties to be included.
@@ -20,7 +20,7 @@ export function Core() { Util.isAbstract.call(this, Core); }
  *
  * @return `Class`;
  */
-Core.extend = function (props) {
+Class.extend = function (props) {
 	// The (`magic`) word init is similar to a constructor function.
 	// If the class that is extended contains a method `init`, it will execute on initialization.
 	// Do the conventional actions in the init constructor (set options/props, designate methods, assemble object).
@@ -28,6 +28,12 @@ Core.extend = function (props) {
 	let Class = function () {
 		//call constructor
 		if (this.init) { this.init.apply(this, arguments); }
+
+		// check if class implements required interface methods
+		if (!Util.isComplete(this)) { 
+			throw new Error('Failed instantiation. Class does not correctly implements required methods.')
+		}
+
 		// call hooks
 		this.initHooks();
 	}
@@ -93,7 +99,7 @@ Core.extend = function (props) {
  *
  * @return `this`;
  */
-Core.include = function (props) {
+Class.include = function (props) {
 	Util.extend(this.prototype, props);
 	
 	return this;
@@ -110,7 +116,7 @@ Core.include = function (props) {
  *
  * @return `this`;
  */
-Core.mergeOptions = function (options) {
+Class.mergeOptions = function (options) {
 	Util.extend(this.prototype.options, options);
 
 	return this;
@@ -128,7 +134,7 @@ Core.mergeOptions = function (options) {
  *
  * @return `this`;
  */
-Core.addHook = function (fn) { // (Function) || (String, args...)
+Class.addHook = function (fn) { // (Function) || (String, args...)
 	let args = Array.prototype.slice.call(arguments, 1);
 
 	let init = typeof fn === 'function' ? fn : function () {

@@ -6,7 +6,7 @@
 export const Util = {
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a target object.
-     * Returns the target object.
+     * Returns the target object. Excludes `prototype`.
      * 
      * Compatibility polyfill for `Object.assign`.
      * 
@@ -42,7 +42,7 @@ export const Util = {
      *
      * @return Fn;
      */
-    bind(fn, obj) {
+    bind (fn, obj) {
         let slice = Array.prototype.slice;
 
         if (fn.bind) {
@@ -127,7 +127,7 @@ export const Util = {
      *
      * @return dest;
      */
-    extend(dest) {
+    extend (dest) {
         let i, j, len, src;
 
         for (j = 1, len = arguments.length; j < len; j++) {
@@ -153,7 +153,7 @@ export const Util = {
      *
      * @return rounded number;
      */
-    formatNum(num, digits) {
+    formatNum (num, digits) {
         digits = (digits === undefined ? 6 : digits);
         
         return +(Math.round(num + ('e+' + digits)) + ('e-' + digits));
@@ -175,12 +175,16 @@ export const Util = {
      *
      * @returns obj.path || undefined;
      */
-    get(path, obj) {
+    get (path, obj) {
         return path
             .replace(/\[([^\]]+)]/g, '.$1') // support dot(.) and bracket([]) accessors
             .split('.') // init array on accessing elements
             .filter(s => s) // remove blanks
             .reduce((k, v) => k && k[v], obj);  // support nested, null check on accessing keys
+    },
+
+    getType (o) {
+        return Object.getPrototypeOf(o).constructor.name;
     },
 
     /**
@@ -190,7 +194,7 @@ export const Util = {
      *      Do not access Object.prototype method 'hasOwnProperty' from target object.
      * 
      * Rather silly formulation to write hasProp question and then specify object and prop.
-     * May append this to Core entity so we can write obj.hasProp(prop).
+     * May append this to Class entity so we can write obj.hasProp(prop).
      * `#revise_me`
      * 
      * &nbsp;
@@ -202,7 +206,7 @@ export const Util = {
      *
      * @returns boolean;
      */
-    hasProp(obj, prop) {
+    hasProp (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     },
 
@@ -217,7 +221,7 @@ export const Util = {
      * 
      * @returns Error || void;
      */
-    isAbstract(Class) {
+    isAbstract (Class) {
         if (this instanceof Class) {
             throw new Error(Class.name + ' is an abstract class and can not be instantiated.');
         } 
@@ -238,6 +242,27 @@ export const Util = {
         return (Object.prototype.toString.call(obj) === '[object Array]');
     },
 
+    isComplete (Class) {
+		if (Class.implements) {
+            // the interface object 'i' which is implemented.
+            // Supports multiple interface implementations via Array argument. 
+			let i = Util.isArray(Class.implements) 
+				? Util.assign({}, ...Class.implements)
+				: Class.implements;
+
+            for (let k in i) {
+                if (this.hasProp(i, k)) {
+                    // Does class implements method?
+                    if ( !(k in Class) ) { console.log(k); return false; }
+                    // Does the implemented method is appropriate type?
+                    if ( !(i[k] === this.getType(Class[k])) ) { console.log(i[k]); return false; }
+                }
+            }
+        }
+        
+        return true;
+    },
+
     /**
      * Merges the given `options` properties to the .options of `obj`,
      * returning the resulting `obj.options`.
@@ -251,7 +276,7 @@ export const Util = {
      *
      * @return obj.options;
      */
-    setOptions(obj, options) {
+    setOptions (obj, options) {
         if (!this.hasProp(obj, 'options')) {
             obj.options = obj.options ? this.create(obj.options) : {}; 
         }
@@ -281,7 +306,7 @@ export const Util = {
      * 
      * @returns Function executed only once per the given time interval;
      */
-    throttle(fn, time, context) {
+    throttle (fn, time, context) {
         let lock, args, wrapperFn, later;
 
         later = function () {
@@ -323,7 +348,7 @@ export const Util = {
      *
      * @retun x modulo;
      */
-    wrapNum(x, range, includeMax) {
+    wrapNum (x, range, includeMax) {
         let max = range[1],
             min = range[0],
             d = max - min;
