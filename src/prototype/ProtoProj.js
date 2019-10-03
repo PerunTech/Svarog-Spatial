@@ -1,5 +1,12 @@
 import proj4 from 'proj4';
 
+/**
+ * Provides `proj4` functionality to our module. 
+ * 
+ * &nbsp;
+ * 
+ * @module protoProj
+ */
 export const protoProj = {
     /**
      * Define a projection.

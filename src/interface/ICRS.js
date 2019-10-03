@@ -1,5 +1,8 @@
 import { Interface } from "../core/Interface";
 
+/**
+ * @interface iCRS
+ */
 export const iCRS = Interface.define({
     // instance fields
     code: 'String',
@@ -13,6 +16,7 @@ export const iCRS = Interface.define({
     project: 'Function',
     unproject: 'Function',
     distance: 'Function',
+    getCode: 'Function',
     scale: 'Function',
     zoom: 'Function'
 })

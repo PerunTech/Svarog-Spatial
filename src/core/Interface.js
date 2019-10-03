@@ -45,6 +45,9 @@ Interface.define = function (i) {
         Util.assign(this, i);
     }
 
+    /**
+     * `#revise_me`, rubbish, do something useful, and change name signature
+     */
     Interface.prototype.get = function () {
         return this;
     }

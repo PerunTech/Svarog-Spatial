@@ -10,6 +10,9 @@ import { protoProj } from '../prototype/ProtoProj'
  */
 export const Projection = Class.extend({
 
+    /**
+     * @implements iProj
+     */
     implements: iProj,
 
     /**

@@ -164,9 +164,14 @@ let _closestElement = function (arr, el) {
  */
 export const CRS = Class.extend({
     /** Implement crs details, merge methods. */
+    /**
+     * @mixes protoCRS
+     */
     includes: protoCRS,
 
-    // CRS interface
+    /**
+     * @implements iCRS
+     */
     implements: iCRS,
 
     /** Spherical Mercator code, web standard. Default code. */
@@ -287,6 +292,17 @@ export const CRS = Class.extend({
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
 
         return this.R * c;  // distance in meters
+    },
+
+    /**
+     * CRS code getter.
+     * 
+     * @function getCode (): string
+     * 
+     * @returns string;
+     */
+    getCode () {
+        return this.code;
     },
 
     /**

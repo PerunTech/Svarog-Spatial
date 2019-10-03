@@ -6,13 +6,30 @@ import { Projection } from './Proj';
 import { iFactory } from '../interface/IFactory';
 import { protoFactory } from '../prototype/ProtoFactory';
 
+/**
+ * Module factory. 
+ * 
+ * Mixes local classes with plugin implementations. Hides the lovely word `new`.
+ * Provides variations in the instantiation approach. Provides a healthy separation
+ * between a caller and a constructor.
+ * 
+ * @class Factory
+ */
 const _Factory = Class.extend((function () {
 
     let _proto = protoFactory;
 
     return {
+        /**
+         * @implements iFactory
+         */
         implements: iFactory,
     
+        /**
+         * @constructs Factory
+         * 
+         * @param {Object} proto - The implementation object that produces instances of the factory types.
+         */
         init (proto) {
             if (proto) { _proto = proto; }
         },
@@ -66,125 +83,131 @@ const _Factory = Class.extend((function () {
             return new CRS(code, def, opt);
         },
 
-
-            /**
-             * Creates an object representing a geographical point with the given
-             * latitude `lat` and longitude `lng` (and optionally altitude `alt`).
-             * 
-             * &nbsp;
-             *
-             * @factory latLng(latitude: number, longitude: number, altitude?: number): LatLng
-             * 
-             * @alternative Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
-             * @factory latLng(coords: Array): LatLng
-             * 
-             * @alternative Expects an object of the form `{lat: Num, lng: Num}` or `{lat: Num, lng: Num, alt: Num}`.
-             * @factory latLng(coords: Object): LatLng
-             * 
-             * @param {number} lat - Latitude.
-             * @param {number} lng - Longitutde.
-             * @param {number} [alt] - Altitude.
-             * 
-             * @return LatLng;
-             */
-            latLng (lat, lng, alt) {
-                // Argument check
-                if (lat instanceof _proto.LatLng || lat === undefined || lat === null ) { return lat; }
-                // Object arg
-                if (typeof lat === 'object' && 'lat' in lat) {
-                    return _proto.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
-                }
-                // Coords arg
-                if (Util.isArray(lat) && typeof lat[0] !== 'object') {
-                    if (lat.length === 3) { return _proto.latLng(lat[0], lat[1], lat[2]); }
-                    if (lat.length === 2) { return _proto.latLng(lat[0], lat[1]); }
-                    return null;
-                }
-    
-                return _proto.latLng(lat, lng, alt);
-            },
-    
-            /**
-             * Creates a Point object with the given `x` and `y` coordinates.
-             * If optional `r` is set to true, rounds the `x` and `y` values.
-             * 
-             * &nbsp;
-             * 
-             * @factory point(x: number, y: number, round?: boolean): Point
-             * 
-             * @alternative Expects an array of the form `[x, y]` instead.
-             * @factory point(coords: Number[]): Point
-             * 
-             * @alternative Expects a plain object of the form `{x: number, y: number}` instead.
-             * @factory point(coords: Object): Point
-             * 
-             * @param {number} x - The x coordinate.
-             * @param {number} y - The y coordinate.
-             * @param {boolean} [r] - Round flag.
-             * 
-             * @returns Point;
-             */
-            point (x, y, r) {
-                // Argument check
-                if (x instanceof _proto.Point || x === undefined || x === null) { return x; }
-                // Object arg
-                if (typeof x === 'object' && 'x' in x && 'y' in x) { return _proto.point(x.x, x.y); }
-                // Coords arg
-                if (Util.isArray(x)) { return _proto.point(x[0], x[1]); }
-    
-                return _proto.point(x, y, r);
-            },
-    
-            /**
-             * Defines a projection.
-             * 
-             * &nbsp;
-             *
-             * @factory projection(proto: Object, code: string, def: string, bounds: Object): Projection  
-             *  
-             * @param {Object} proto - The prototype implementation. 
-             * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
-             * @param {string} def - Proj4 defintion of the projection specified by the `code`.
-             * @param {Object} bounds - Rectangular area in pixel coordinates.
-             * 
-             * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;
-             * 
-             * @example
-             *      projection('EPSG: 4326', '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
-             *
-             */
-            projection (proto, code, def, bounds) {
-                return new Projection(proto, code, def, bounds);
-            },
-    
-            /**
-             * Instantiates a Transformation object with the given coefficients.
-             *
-             * Transforms projected coordinates to pixel coordinates. Represents an affine transformation,
-             * a set of coefficients `a`, `b`, `c`, `d` for transforming a point of a form `(x, y)`
-             * into `(a*x + b, c*y + d)` and back.
-             * 
-             * &nbsp;
-             *
-             * @factory transformation(a: number, b: number, c: number, d: number): Transformation
-             * 
-             * @alternative Expects an coefficients array of the form `[a: number, b: number, c: number, d: number]`.
-             * @factory transformation(coefficients: Array): Transformation
-             * 
-             * @param {number} a - Multiplicator of x.
-             * @param {number} b - Offset of x.
-             * @param {number} c - Multiplicator of y.
-             * @param {number} d - Offset of y.
-             * 
-             * @returns Transformation {};
-             */
-            transformation (a, b, c, d) {
-                // Coef array arg
-                if (Util.isArray(a)) { return _proto.transformation(a[0], a[1], a[2], a[3]); }
-    
-                return _proto.transformation(a, b, c, d);
+        /**
+         * Creates an object representing a geographical point with the given
+         * latitude `lat` and longitude `lng` (and optionally altitude `alt`).
+         * 
+         * &nbsp;
+         *
+         * @factory latLng(latitude: number, longitude: number, altitude?: number): LatLng
+         * 
+         * @alternative Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
+         * @factory latLng(coords: Array): LatLng
+         * 
+         * @alternative Expects an object of the form `{lat: Num, lng: Num}` or `{lat: Num, lng: Num, alt: Num}`.
+         * @factory latLng(coords: Object): LatLng
+         * 
+         * @param {number} lat - Latitude.
+         * @param {number} lng - Longitutde.
+         * @param {number} [alt] - Altitude.
+         * 
+         * @return LatLng;
+         */
+        latLng (lat, lng, alt) {
+            // Argument check
+            if (lat instanceof _proto.LatLng || lat === undefined || lat === null ) { return lat; }
+            // Object arg
+            if (typeof lat === 'object' && 'lat' in lat) {
+                return _proto.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
             }
+            // Coords arg
+            if (Util.isArray(lat) && typeof lat[0] !== 'object') {
+                if (lat.length === 3) { return _proto.latLng(lat[0], lat[1], lat[2]); }
+                if (lat.length === 2) { return _proto.latLng(lat[0], lat[1]); }
+                return null;
+            }
+
+            return _proto.latLng(lat, lng, alt);
+        },
+    
+        /**
+         * Creates a Point object with the given `x` and `y` coordinates.
+         * If optional `r` is set to true, rounds the `x` and `y` values.
+         * 
+         * &nbsp;
+         * 
+         * @factory point(x: number, y: number, round?: boolean): Point
+         * 
+         * @alternative Expects an array of the form `[x, y]` instead.
+         * @factory point(coords: Number[]): Point
+         * 
+         * @alternative Expects a plain object of the form `{x: number, y: number}` instead.
+         * @factory point(coords: Object): Point
+         * 
+         * @param {number} x - The x coordinate.
+         * @param {number} y - The y coordinate.
+         * @param {boolean} [r] - Round flag.
+         * 
+         * @returns Point;
+         */
+        point (x, y, r) {
+            // Argument check
+            if (x instanceof _proto.Point || x === undefined || x === null) { return x; }
+            // Object arg
+            if (typeof x === 'object' && 'x' in x && 'y' in x) { return _proto.point(x.x, x.y); }
+            // Coords arg
+            if (Util.isArray(x)) { return _proto.point(x[0], x[1]); }
+
+            return _proto.point(x, y, r);
+        },
+
+        /**
+         * Defines a projection.
+         * 
+         * &nbsp;
+         *
+         * @factory projection(proto: Object, code: string, def: string, bounds: Object): Projection  
+         *  
+         * @param {Object} proto - The prototype implementation. 
+         * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
+         * @param {string} def - Proj4 defintion of the projection specified by the `code`.
+         * @param {Object} bounds - Rectangular area in pixel coordinates.
+         * 
+         * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;
+         * 
+         * @example
+         *      projection('EPSG: 4326', '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+         *
+         */
+        projection (proto, code, def, bounds) {
+            return new Projection(proto, code, def, bounds);
+        },
+
+        /**
+         * Instantiates a Transformation object with the given coefficients.
+         *
+         * Transforms projected coordinates to pixel coordinates. Represents an affine transformation,
+         * a set of coefficients `a`, `b`, `c`, `d` for transforming a point of a form `(x, y)`
+         * into `(a*x + b, c*y + d)` and back.
+         * 
+         * &nbsp;
+         *
+         * @factory transformation(a: number, b: number, c: number, d: number): Transformation
+         * 
+         * @alternative Expects an coefficients array of the form `[a: number, b: number, c: number, d: number]`.
+         * @factory transformation(coefficients: Array): Transformation
+         * 
+         * @param {number} a - Multiplicator of x.
+         * @param {number} b - Offset of x.
+         * @param {number} c - Multiplicator of y.
+         * @param {number} d - Offset of y.
+         * 
+         * @returns Transformation {};
+         */
+        transformation (a, b, c, d) {
+            // Coef array arg
+            if (Util.isArray(a)) { return _proto.transformation(a[0], a[1], a[2], a[3]); }
+
+            return _proto.transformation(a, b, c, d);
+        }
     }})()
 )
 
+/**
+ * `revise_me`, temp. set to export an instance of the Factory,
+ * revert to class eventually, allow for run-time changes of the proto used here.
+ * 
+ * This is actually a proper singleton (not what we want), the class is private and cannot be accessed.
+ * Definitely change. 
+ */
 export const Factory = new _Factory();

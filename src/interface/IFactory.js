@@ -18,4 +18,4 @@ export const iFactory = Interface.define({
 
     // transformation(a: number, b: number, c: number, d: number): Transformation
     transformation: 'Function',
-})
+});

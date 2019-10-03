@@ -1,5 +1,10 @@
 import L from 'leaflet';
 
+/**
+ * Defers factory calls to Leaflet implementations.
+ * 
+ * @module protoFactory
+ */
 export const protoFactory = {
 
     latLng (lat, lng, alt) {

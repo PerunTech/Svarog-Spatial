@@ -183,6 +183,17 @@ export const Util = {
             .reduce((k, v) => k && k[v], obj);  // support nested, null check on accessing keys
     },
 
+    /**
+     * Object type getter. Accesses the constructor that created the object and returns its type.
+     * 
+     * &nbsp;
+     * 
+     * @function getType (o: Object | Any): string
+     * 
+     * @param {*} o - The object whose type is looked for.
+     * 
+     * @returns string;
+     */
     getType (o) {
         return Object.getPrototypeOf(o).constructor.name;
     },
@@ -211,7 +222,7 @@ export const Util = {
     },
 
     /**
-     * Abstract class check. Prevents instances of abstract classes. 
+     * Check if class is abstract. Prevents instances of abstract classes. 
      * 
      * &nbsp;
      * 
@@ -242,20 +253,44 @@ export const Util = {
         return (Object.prototype.toString.call(obj) === '[object Array]');
     },
 
+    /**
+     * ["If it walks like a duck and quacks like a duck, then it is a duck."](@duck-typing)
+     * 
+     * Check whether a class implements all the required properties of its interface.
+     * More specifically, if the name of the property is correct (i.e callable by reference from outside)
+     * and the type of the property is correct (primitives cannot be called as functions,
+     * so if you fant a function you don't get a string), then the class is complete.
+     * 
+     * For input (arguments number and type) and output value checks,
+     * consider TypeScript or other programming language. This is good enough here.
+     * 
+     * Is executed on every instance creation that inherits (directly and indirectly) from Class.
+     * So practically most of the classes in the module.
+     * 
+     * &nbsp;
+     * 
+     * @function isComplete (Class: Class): boolean
+     * 
+     * @param {Class} Class - The Class instance.
+     * 
+     * @returns boolean; 
+     */
     isComplete (Class) {
-		if (Class.implements) {
+        let impl = Class.implements
+
+		if (impl) {
             // the interface object 'i' which is implemented.
             // Supports multiple interface implementations via Array argument. 
-			let i = Util.isArray(Class.implements) 
-				? Util.assign({}, ...Class.implements)
-				: Class.implements;
+			let i = Util.isArray(impl) 
+				? Util.assign({}, ...impl)
+				: impl;
 
             for (let k in i) {
                 if (this.hasProp(i, k)) {
                     // Does class implements method?
-                    if ( !(k in Class) ) { console.log(k); return false; }
+                    if ( !(k in Class) ) { return false; }
                     // Does the implemented method is appropriate type?
-                    if ( !(i[k] === this.getType(Class[k])) ) { console.log(i[k]); return false; }
+                    if ( !(i[k] === this.getType(Class[k])) ) { return false; }
                 }
             }
         }
