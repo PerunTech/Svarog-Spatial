@@ -1,9 +1,7 @@
-import { Class } from '../core/Class';
-import { Util } from '../core/Util';
+import L from 'leaflet';
+import { Class } from './Class';
+import { Util } from './Util';
 import { Factory } from './Factory';
-
-import { protoCRS } from '../prototype/ProtoCRS';
-import { iCRS } from '../interface/ICRS.js';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -163,16 +161,11 @@ let _closestElement = function (arr, el) {
  * @implements iCRS
  */
 export const CRS = Class.extend({
-    /** Implement crs details, merge methods. */
     /**
-     * @mixes protoCRS
+     * Merges necessary internal methods to our class.
+     * @mixes L.CRS
      */
-    includes: protoCRS,
-
-    /**
-     * @implements iCRS
-     */
-    implements: iCRS,
+    includes: L.CRS,
 
     /** Spherical Mercator code, web standard. Default code. */
     code: 'EPSG:3857',

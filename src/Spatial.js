@@ -8,18 +8,12 @@
 })()
 
 // class
-export { CRS } from './class/CRS';
-export { Factory } from './class/Factory';
-export { Map } from './class/Map';
-export { Projection } from './class/Proj';
+export { CRS } from './CRS';
+export { Factory } from './Factory';
+export { Map } from './Map';
+export { Projection } from './Proj';
 
 ////////////////
 ///// TEST /////
 ////////////////
-import {Factory} from './class/Factory'
 
-let t1 = Factory.projection(undefined, 'EPSG:3857',
-            '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m'
-            + '+nadgrids=@null +wktext +no_defs',
-);
-console.log(t1)
