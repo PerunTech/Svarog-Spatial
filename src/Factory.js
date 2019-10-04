@@ -24,14 +24,6 @@ export const Factory = {
      * Arguments `code` and `def` are supplied in pair, the code must match the definition.
      * If omitted, factory will default to Spherical Mercator, EPSG: 3857.
      *
-     * Argument `opt` is a configuration object. Properties may include:
-     *  - `transformation`: Transforms projected coordinates to pixel coordinates.
-     *  - `origin`: The pixel origin of the map. Represented in projected coordinates.
-     *  - `bounds`: Rectangular area in pixel coordinates.
-     *  - `scales`: Array of scales. [pixels / projected coordinates]
-     *  - `resolutions`: Array of resolutions. [projected coordinates / pixels]
-     *  - `distances`: Array of available distances. [numbers in meters]
-     * 
      * Scales, resolutions and distances are different representations of the same thing.
      * Provide only one of these! If multiple of these are provided to factory,
      * scales will override resolutions which in turn override distances. Scales are used internally,
@@ -48,6 +40,12 @@ export const Factory = {
      * @param {string} code - Code of the desired projection, as specified by the European Petroleum Survey Group.
      * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
      * @param {Object} [opt] - Configuration object.
+     * @param {Transformation} [opt.transformation] - Transforms projected coordinates to pixel coordinates.
+     * @param {number[]} [opt.origin] - The pixel origin of the map. Represented in projected coordinates.
+     * @param {number[]} [opt.bounds] - Rectangular area in pixel coordinates.
+     * @param {number[]} [opt.scales] - Array of scales. [pixels / projected coordinates]
+     * @param {number[]} [opt.resolutions] - Array of resolutions. [projected coordinates / pixels]
+     * @param {number[]} [opt.distances] - Array of available distances. [numbers in meters]
      * 
      * @returns CRS;
      * 

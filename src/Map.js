@@ -169,7 +169,7 @@ export const Map = {
      * 
      * @param {LatLng} cnt - The map center to go to, as a latitude / longitude pair. 
      * @param {number} zoom - The zoom level.
-     * @param {Object} opt - Configuration object.
+     * @param {Object} [opt] - Configuration object.
      * @param {boolean} [opt.animate = null] - null: omit for animation if origin is in view,
      *                  false: no animation, true: animation always.
      * @param {number} [opt.duration = 0.25] - Duration of animated panning, in seconds.
