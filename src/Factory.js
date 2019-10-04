@@ -13,7 +13,7 @@ import { Projection } from './Proj';
  * &nbsp;
  * 
  * @public
- * @class Factory
+ * @namespace Factory
  */
 export const Factory = {
     /**
