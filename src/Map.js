@@ -16,19 +16,18 @@ export const Map = {
     /**
      * @constructs Map
      * 
-     * @param {string | HTML_element} el - Id of a HTML-Element as string | the HTML-ELement itself.
      * @param {Object} [opt] - Configuration object.
      */
-    init (el, opt = {}) {
-        _map = L.map(el, opt);
+    init (opt = {}) {
+        // move html element to constants.js
+        _map = L.map('mapContainer', opt);
     },
 
     /**
      * Get the current bounding box of the map.
      * 
      * `#revise_me`, account for CRS difference | match between data and map.
-     * This will not work with EPSG: 3857 or similar, 
-     * spherical projections use latitude / longitude (no x,y to be found).
+     * This will not work with spherical projections, which use latitude / longitude (no x,y to be found).
      * Will need to reproject, especially when data is in different CRS than the Map.
      * 
      * &nbsp;

@@ -12,7 +12,11 @@ export { CRS } from './CRS';
 export { Factory } from './Factory';
 export { Map } from './Map';
 export { Projection } from './Proj';
+export { MapView } from './Map.view'
 
 ////////////////
 ///// TEST /////
 ////////////////
+
+import { MapView } from './Map.view'
+console.log(MapView)
