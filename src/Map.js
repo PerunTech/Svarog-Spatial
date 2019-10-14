@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from 'leaflet';
 
 /**
  * Ref to the actual map instance.
@@ -19,8 +19,8 @@ export const Map = {
      * @param {Object} [opt] - Configuration object.
      */
     init (opt = {}) {
-        // move html element to constants.js
-        _map = L.map('mapContainer', opt);
+        // html element hardcode?
+        if (!_map) { _map = L.map('mapContainer', opt); }
     },
 
     /**
@@ -190,6 +190,7 @@ export const Map = {
  * <Notes>
  * 
  * Missing methods to be implemented:
+ *  - Map.add(obj) 
  *  - Map.setOrigin()
  *  - Map.hasLayer()
  *  - Map.pm.enableDraw

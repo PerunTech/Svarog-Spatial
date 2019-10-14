@@ -12,11 +12,13 @@ export { CRS } from './CRS';
 export { Factory } from './Factory';
 export { Map } from './Map';
 export { Projection } from './Proj';
-export { MapView } from './Map.view'
+export * from './TestReducers'
+// export { MapContainer } from './MapControl'
 
 ////////////////
 ///// TEST /////
 ////////////////
+import { store } from './model/Store'
+console.log(store)
+console.log(store.getState())
 
-import { MapView } from './Map.view'
-console.log(MapView)
