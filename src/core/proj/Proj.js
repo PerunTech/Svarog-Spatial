@@ -1,6 +1,6 @@
 import proj4 from 'proj4';
-import { Class } from './Class';
-import { Factory } from './Factory';
+import { Class } from '../Class';
+import { Factory } from '../../Factory';
 
 /**
  * Define a projection.

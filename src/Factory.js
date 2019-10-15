@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import { Util } from './Util';
-import { CRS } from './CRS';
-import { Projection } from './Proj';
+import { Util } from './core/Util';
+import { CRS } from './core/proj/CRS';
+import { Projection } from './core/proj/Proj';
 
 /**
  * Class factory.

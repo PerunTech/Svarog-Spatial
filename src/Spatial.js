@@ -8,17 +8,19 @@
 })()
 
 // class
-export { CRS } from './CRS';
+export { CRS } from './core/proj/CRS';
 export { Factory } from './Factory';
 export { Map } from './Map';
-export { Projection } from './Proj';
+export { Projection } from './core/proj/Proj';
 export * from './TestReducers'
 // export { MapContainer } from './MapControl'
 
 ////////////////
 ///// TEST /////
 ////////////////
-import { store } from './model/Store'
-console.log(store)
-console.log(store.getState())
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Loading } from './ui/loading/Loading'
 
+ReactDOM.render(<Loading messageList={['aaa', 'bbb', 'ccc']} />,
+    document.getElementById('mapContainer'))

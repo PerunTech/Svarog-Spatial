@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { Map } from './Map'
+import { Map } from './Map';
 import { MapLoading } from './MapLoading';
 
 const _MapContainer = () => {

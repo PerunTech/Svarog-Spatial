@@ -52,9 +52,7 @@ export const Map = {
      * 
      * @returns Bounds;
      */
-    getBounds () {
-        return _map.getBounds();
-    },
+    getBounds () { return _map.getBounds(); },
 
     /**
      * Get the current center of the map.
@@ -65,9 +63,7 @@ export const Map = {
      * 
      * @returns LatLng;
      */
-    getCenter () {
-        return _map.getCenter();
-    },
+    getCenter () { return _map.getCenter(); },
 
     /**
      * An exit for the adventurous. Retrieves the current map instance.
@@ -79,9 +75,7 @@ export const Map = {
      * 
      * @returns Map;
      */
-    getInstance () {
-        return _map;
-    },
+    getInstance () { return _map; },
 
     /**
      * Get the required pane of the map.
@@ -95,9 +89,7 @@ export const Map = {
      * 
      * @returns HTML element | Object;
      */
-    getPane (name) {
-        return name ? _map.getPane(name) : _map.getPanes();
-    },
+    getPane (name) { return name ? _map.getPane(name) : _map.getPanes(); },
     
     /**
      * Get the current zoom of the map.
@@ -108,9 +100,7 @@ export const Map = {
      * 
      * @returns number; 
      */
-    getZoom () {
-        return _map.getZoom();
-    },
+    getZoom () { return _map.getZoom(); },
 
     /**
      * Sets a map view that contains the given geographical bounds with the maximum zoom level possible.
@@ -124,9 +114,7 @@ export const Map = {
      * 
      * @returns Map;
      */
-    fitBounds (bounds, opt = {}) {
-        return _map.fitBounds(bounds, opt);
-    },
+    fitBounds (bounds, opt = {}) { return _map.fitBounds(bounds, opt); },
 
     /**
      * Activate a flying animation which moves the map to the given center and zoom.
@@ -155,7 +143,7 @@ export const Map = {
         easeLinearity: 1,
         duration: 10,
         noMoveStart: true}) {
-        
+            
         return _map.flyTo(cnt, zoom, opt);
     },
 
@@ -181,9 +169,7 @@ export const Map = {
      * 
      * @returns Map;
      */
-    setView (cnt, zoom, opt) {
-        return _map.setVIew(cnt, zoom, opt);
-    }
+    setView (cnt, zoom, opt) { return _map.setVIew(cnt, zoom, opt); }
 }
 
 /**

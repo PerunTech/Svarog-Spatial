@@ -31,6 +31,32 @@ export const Util = {
     })(),
 
     /**
+     * Merges the properties of the `src` object (or multiple objects)
+     * into `dest` object and returns the latter. Includes `prototype`.
+     * 
+     * &nbsp;
+     * 
+     * @function assignDeep (dest: Object, src?: ...Object): Object
+     *
+     * @param {Object} dest - Destination object of the merge.
+     * @param {...Object} [src] - Source object(s) to be merged.
+     *
+     * @return dest;
+     */
+    assignDeep (dest) {
+        let i, j, len, src;
+
+        for (j = 1, len = arguments.length; j < len; j++) {
+            src = arguments[j];
+            for (i in src) {
+                dest[i] = src[i];
+            }
+        }
+
+        return dest;
+    },
+
+    /**
      * Returns a new function bound to the arguments passed, like `Function.prototype.bind`.
      * 
      * &nbsp;
@@ -112,32 +138,6 @@ export const Util = {
           // Call immediately if you're dong a leading-end execution
             (exec && !deltaT) && Fn.apply(context, args)
         }
-    },
-
-    /**
-     * Merges the properties of the `src` object (or multiple objects)
-     * into `dest` object and returns the latter. Includes `prototype`.
-     * 
-     * &nbsp;
-     * 
-     * @function extend (dest: Object, src?: ...Object): Object
-     *
-     * @param {Object} dest - Destination object of the merge.
-     * @param {...Object} [src] - Source object(s) to be merged.
-     *
-     * @return dest;
-     */
-    extend (dest) {
-        let i, j, len, src;
-
-        for (j = 1, len = arguments.length; j < len; j++) {
-            src = arguments[j];
-            for (i in src) {
-                dest[i] = src[i];
-            }
-        }
-
-        return dest;
     },
 
     /**
@@ -389,5 +389,5 @@ export const Util = {
             d = max - min;
 
         return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
-    },
+    }
 }
