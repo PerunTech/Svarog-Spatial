@@ -16,11 +16,12 @@ export const Map = {
     /**
      * @constructs Map
      * 
+     * @param {string | HTML_element} el - Id of a HTML-Element as string | the HTML-ELement itself.
      * @param {Object} [opt] - Configuration object.
      */
-    init (opt = {}) {
+    init (el, opt = {}) {
         // html element hardcode?
-        if (!_map) { _map = L.map('mapContainer', opt); }
+        if (!_map) { _map = L.map(el, opt); }
     },
 
     /**

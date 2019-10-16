@@ -10,7 +10,7 @@
 // class
 export { CRS } from './core/proj/CRS';
 export { Factory } from './Factory';
-export { Map } from './Map';
+export { Map } from './core/map/Map';
 export { Projection } from './core/proj/Proj';
 export * from './TestReducers'
 // export { MapContainer } from './MapControl'
@@ -20,7 +20,7 @@ export * from './TestReducers'
 ////////////////
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Loading } from './ui/loading/Loading'
+import { Provider } from './core/model/Provider'
+import { MapControl } from './core/map/MapControl'
 
-ReactDOM.render(<Loading messageList={['aaa', 'bbb', 'ccc']} />,
-    document.getElementById('mapContainer'))
+ReactDOM.render(<Provider children={<MapControl />} />, document.getElementById('app'))

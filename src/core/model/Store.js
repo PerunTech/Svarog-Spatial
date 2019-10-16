@@ -1,4 +1,5 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { thunk } from './Thunk'
 
 /**
  * Redux store instance.
@@ -31,7 +32,7 @@ export const store = (function () {
      * 
      * @constant appState
      */
-    const appState = createStore(_createRootReducer());
+    const appState = createStore(_createRootReducer(), applyMiddleware(thunk));
 
     /**
      * Adds the reducer to application state.

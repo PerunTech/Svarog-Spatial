@@ -1,6 +1,6 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import style from './Ellipser.module.css'
+import React from 'react';
+import PropTypes from 'prop-types';
+import style from './Ellipser.module.css';
 
 /**
  * Renders rotating elipses and a message.
