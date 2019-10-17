@@ -16,12 +16,15 @@ export const Map = {
     /**
      * @constructs Map
      * 
-     * @param {string | HTML_element} el - Id of a HTML-Element as string | the HTML-ELement itself.
+     * @param {string | HTML_element} [el] - Id of a HTML-Element as string | the HTML-ELement itself.
      * @param {Object} [opt] - Configuration object.
      */
-    init (el, opt = {}) {
-        // html element hardcode?
-        if (!_map) { _map = L.map(el, opt); }
+    init (el = 'mapContainer', opt = {}) {
+        _map = L.map(el, opt)
+            .setView(opt.center, opt.zoom)
+            .on('moveend', opt.moveend);
+
+        L.control.scale().addTo(_map);
     },
 
     /**
@@ -38,10 +41,11 @@ export const Map = {
      * @returns Bounding Box;
      */
     getBBox () {
+        console.log(this.getBounds())
         let psw = this.getBounds().getSouthWest();
         let pne = this.getBounds().getNorthEast();
 
-        return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y;
+        return psw.lat + ',' + psw.lng + ',' + pne.lat + ',' + pne.lng;
     },
     
     /**

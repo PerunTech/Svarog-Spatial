@@ -8,7 +8,7 @@ import style from './Ellipser.module.css';
  * 
  * &nbsp;
  * 
- * @function Ellipser (message?: string, nEllipses?: number): JSX
+ * @function Ellipser (message?: string, ellipseCount?: number): JSX
  * 
  * @param {Object} [props] - Properties.
  * @param {string} [props.message] - The message to be shown.

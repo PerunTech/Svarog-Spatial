@@ -5,7 +5,7 @@ import { store } from './Store'
 
 /**
  * Provides Redux store access to connected components.
- * To be used as wrapper of root document element.
+ * To be used as wrapper of the root React element (so you don't need to spam it everywhere).
  * 
  * &nbsp;
  * 

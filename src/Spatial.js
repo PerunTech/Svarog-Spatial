@@ -12,7 +12,7 @@ export { CRS } from './core/proj/CRS';
 export { Factory } from './Factory';
 export { Map } from './core/map/Map';
 export { Projection } from './core/proj/Proj';
-export * from './TestReducers'
+export * from './Reducer'
 // export { MapContainer } from './MapControl'
 
 ////////////////

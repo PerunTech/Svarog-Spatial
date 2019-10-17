@@ -22,6 +22,6 @@ export const thunk = (function () {
 /**
  * <Notes> 
  * 
- * If we need access to our custom made api available in all action creators ("thunked"),
+ * If we need access to our custom made api available in all action creators - "thunks",
  * pass third parameter on line 15 => { return action(dispatch, getState, api); }.
  */
