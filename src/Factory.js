@@ -179,4 +179,4 @@ export const Factory = {
 
         return L.transformation(a, b, c, d);
     }
-}
+};

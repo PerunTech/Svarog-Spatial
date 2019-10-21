@@ -12,15 +12,21 @@ export { CRS } from './core/proj/CRS';
 export { Factory } from './Factory';
 export { Map } from './core/map/Map';
 export { Projection } from './core/proj/Proj';
-export * from './Reducer'
-// export { MapContainer } from './MapControl'
+
+// Reducers
+export * from './core/map/MapState'
+
+
 
 ////////////////
 ///// TEST /////
 ////////////////
+import { store } from './core/model/Store'
+console.log(store.getState())
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from './core/model/Provider'
-import { MapControl } from './core/map/MapControl'
+import { MapContainer } from './core/map/MapContainer'
 
-ReactDOM.render(<Provider children={<MapControl />} />, document.getElementById('app'))
+ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))

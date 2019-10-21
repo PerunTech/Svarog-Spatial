@@ -43,7 +43,7 @@ Interface.define = function (i) {
 
     // Prohibit modification to our interface object.
     return Object.freeze(new Interface());
-}
+};
 
 /**
  * <Notes>

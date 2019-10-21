@@ -16,15 +16,47 @@ export const Map = {
     /**
      * @constructs Map
      * 
-     * @param {string | HTML_element} [el] - Id of a HTML-Element as string | the HTML-ELement itself.
+     * @param {string | HTML_element} el - Id of a HTML-Element as string | the HTML-ELement itself.
      * @param {Object} [opt] - Configuration object.
      */
-    init (el = 'mapContainer', opt = {}) {
+    init (el, opt = {}) {
         _map = L.map(el, opt)
-            .setView(opt.center, opt.zoom)
-            .on('moveend', opt.moveend);
+        L.control.scale().addTo(_map); // move this somewhere else. Facade control? `#revise_me`
+    },
 
-        L.control.scale().addTo(_map);
+    /**
+     * Adds object to map.
+     * 
+     * All (read 'most') application constructs that belong on a map (use common sense)
+     * own an `addTo(container)` method, thus the signature is asset.addTo(map).
+     * We inverse this relationship to Map.add(asset) as a consequence of not working
+     * with the map instance directly (see _map, top of file).
+     * 
+     * Its counterpart is `remove(asset)`.
+     * 
+     * &nbsp;
+     * 
+     * @function add (asset: Object): asset || Error
+     * 
+     * @param {Object} asset - The object to be added to the map.
+     * 
+     * @returns asset || Error; 
+     */
+    add (asset) {
+        if (!asset.addTo) 
+            throw new Error('This object does not belong in a map.');
+        
+        return asset.addTo(_map);
+    },
+
+    remove (asset) { asset.removeFrom(_map)},
+
+    register (event, callback, context) {
+        _map.on(event, callback, context)
+    },
+
+    unregister (event, callback, context) {
+        _map.off(event, callback, context)
     },
 
     /**
@@ -41,7 +73,6 @@ export const Map = {
      * @returns Bounding Box;
      */
     getBBox () {
-        console.log(this.getBounds())
         let psw = this.getBounds().getSouthWest();
         let pne = this.getBounds().getNorthEast();
 
@@ -175,7 +206,7 @@ export const Map = {
      * @returns Map;
      */
     setView (cnt, zoom, opt) { return _map.setVIew(cnt, zoom, opt); }
-}
+};
 
 /**
  * <Notes>

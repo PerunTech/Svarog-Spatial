@@ -1,74 +1,84 @@
+import { Util } from '../Util'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from './Thunk'
 
 /**
- * Redux store instance.
+ * Internal composite of all registered reducers of the module.
+ * 
+ * @private
+ * @namespace _reducers
  */
-export const store = (function () {
-    /**
-     * Internal composite of all registered reducers of the module.
-     * 
-     * @private
-     * @namespace _reducers
-     */
-    const _reducers = {};
+const _reducers = {};
 
-    /**
-     * Creates root reducer function.
-     * 
-     * &nbsp;
-     * 
-     * @private
-     * @function _createRootReducer (): Function
-     * 
-     * @returns Reducer function;
-     */
-    function _createRootReducer () {
-        return combineReducers({ ..._reducers });
-    } 
+/**
+ * Creates root reducer function.
+ * 
+ * &nbsp;
+ * 
+ * @private
+ * @function _createRootReducer (): Function
+ * 
+ * @returns Reducer function;
+ */
+function _createRootReducer () {
+    return combineReducers({ ..._reducers });
+} 
 
-    /**
-     * The whole state tree of the application.
-     * 
-     * @constant appState
-     */
-    const appState = createStore(_createRootReducer(), applyMiddleware(thunk));
+/**
+ * Redux store instance.
+ * The whole state tree of the application.
+ */
+export const store = createStore(_createRootReducer(), applyMiddleware(thunk));
 
-    /**
-     * Adds the reducer to application state.
-     * 
-     * &nbsp;
-     * 
-     * @function addReducer (key: string, reducer: Function): void
-     * 
-     * @param {string} key - The string reference for the added reducer.
-     * @param {Function} reducer - The reducer function to be added.
-     * 
-     * @returns void;
-     */
-    appState.addReducer = function (key, reducer) {
-        _reducers[key] = reducer;
-        appState.replaceReducer(_createRootReducer());
-    }
+/**
+ * `#revise_me`
+ * 
+ * @function createReducer (initialState: Object): void
+ * 
+  * @param {Object} initialState - The state slice to be managed by the reducer.
+  * 
+  * @returns void;
+ */
+store.createReducer = (key, initialState) => 
+    store.addReducer(key, (state = initialState, action) => {
+        return Util.hasProp(state, action.type)
+            ? Util.assign({}, state, {[action.type]: action.value})
+            : state;
+});
 
-    /**
-     * Removes the reducer from application state.
-     * 
-     * &nbsp;
-     * 
-     * @function removeReducer (key: string): void
-     * 
-     * @param {string} key - The string reference for the removed reducer.
-     * 
-     * @returns void;
-     */
-    appState.removeReducer = function (key) {
-        delete _reducers[key];
-        appState.replaceReducer(_createRootReducer());
-    }
-    
-    return appState;
-})();
+
+/**
+ * Adds the reducer to application state.
+ * 
+ * &nbsp;
+ * 
+ * @function addReducer (key: string, reducer: Function): void
+ * 
+ * @param {string} key - The string reference for the added reducer.
+ * @param {Function} reducer - The reducer function to be added.
+ * 
+ * @returns void;
+ */
+store.addReducer = function (key, reducer) {
+    _reducers[key] = reducer;
+    this.replaceReducer(_createRootReducer());
+};
+
+/**
+ * Removes the reducer from application state.
+ * 
+ * &nbsp;
+ * 
+ * @function removeReducer (key: string): void
+ * 
+ * @param {string} key - The string reference for the removed reducer.
+ * 
+ * @returns void;
+ */
+store.removeReducer = function (key) {
+    delete _reducers[key];
+    this.replaceReducer(_createRootReducer());
+};
 
 /**
  * <Notes>

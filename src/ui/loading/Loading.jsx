@@ -19,7 +19,8 @@ export function Loading ({messageList = [], interval = 5000}) {
     let [message, setMessage] = useState();
 
     useEffect(() => {
-        // Pass a named function to setInterval and call self. Sets message immediately rather than after interval.
+        // Pass a named function to setInterval and call self. 
+        // Sets message immediately rather than after interval.
         let intID = setInterval(function fn () {
             setMessage(messageList[Math.floor(Math.random() * messageList.length)])
             return fn;

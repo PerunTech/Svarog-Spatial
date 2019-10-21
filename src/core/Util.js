@@ -188,14 +188,14 @@ export const Util = {
      * 
      * &nbsp;
      * 
-     * @function getType (o: Object | Any): string
+     * @function getType (obj: Object | Any): string
      * 
-     * @param {*} o - The object whose type is looked for.
+     * @param {*} obj - The object whose type is looked for.
      * 
      * @returns string;
      */
-    getType (o) {
-        return Object.getPrototypeOf(o).constructor.name;
+    getType (obj) {
+        return Object.getPrototypeOf(obj).constructor.name;
     },
 
     /**
@@ -203,18 +203,14 @@ export const Util = {
      * 
      * Solves rule:
      *      Do not access Object.prototype method 'hasOwnProperty' from target object.
-     * 
-     * Rather silly formulation to write hasProp question and then specify object and prop.
-     * May append this to Class entity so we can write obj.hasProp(prop).
-     * `#revise_me`
-     * 
+     *  
      * &nbsp;
-     * 
+     *  
      * @function hasProp (obj: Object, prop: string | number | symbol): boolean
-     *
+     * 
      * @param {Object} obj - Object to be checked.
      * @param {string | number | symbol} prop - Property to be found on obj.
-     *
+     * 
      * @returns boolean;
      */
     hasProp (obj, prop) {
@@ -390,4 +386,4 @@ export const Util = {
 
         return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
     }
-}
+};
