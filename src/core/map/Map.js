@@ -8,6 +8,7 @@ import L from 'leaflet';
 let _map;
 
 /**
+ * Facade for the map implementation.
  * 
  * @public
  * @namespace Map
@@ -49,12 +50,53 @@ export const Map = {
         return asset.addTo(_map);
     },
 
-    remove (asset) { asset.removeFrom(_map)},
+    /**
+     * Removes asset from the map.
+     * `#revise_me`, add throwable, re-check asset logic. Untested.
+     * 
+     * &nbsp;
+     * 
+     * @function remove (asset: Object): asset
+     * 
+     * @param {Object} asset - The object to be removed from the map.
+     * 
+     * @returns asset;
+     */
+    remove (asset) { return asset.removeFrom(_map); },
 
+    /**
+     * Adds an event listener to the map.
+     * 
+     * &nbsp;
+     * 
+     * @function register (event: string, callback: Function, context?: Object): void
+     * 
+     * @param {string} event - Event type, represented as string.
+     * @param {Function} callback - The function to be executed when the event fires.
+     * @param {Object} [context] - The context of the function execution (the `this` object).
+     * 
+     * @returns void; 
+     */
     register (event, callback, context) {
         _map.on(event, callback, context)
     },
 
+
+    /**
+     * Removes an event listener from the map.
+     * 
+     * &nbsp;
+     * 
+     * @function unregister (event: string, callback?: Function, context?: Object): void
+     * 
+     * @param {string} event - Event type, represented as string.
+     * @param {Function} [callback] - The callback function to be removed for the specified event. 
+     *            Omit in order to to remove all calbacks from a specified event.
+     * @param {Object} [context] - The context of the function. If supplied on register,
+     *            you must supply the same object here to succesfully remove.
+     * 
+     * @returns void;
+     */
     unregister (event, callback, context) {
         _map.off(event, callback, context)
     },

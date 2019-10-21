@@ -2,10 +2,11 @@ import { store } from '../model/Store'
 
 // map state
 store.createReducer('mapState', {
-    bbox: '',
-    geomSID: 0,
-    refreshMap: false,
     zoom: 0,
+    center: {lat: 0, lng: 0},
+    bbox: '',
+    sid: 0,
+    refreshMap: false
 })
 
 

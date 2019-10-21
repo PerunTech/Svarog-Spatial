@@ -10,11 +10,13 @@ export const RenderCycle = {
         raster();
         // getOrigin
         Map.register('moveend',  Util.debounce(() => {
-            store.dispatch({ zoom: Map.getZoom(), bbox: Map.getBBox() });
+            store.dispatch({ zoom: Map.getZoom(), center: Map.getCenter(), bbox: Map.getBBox() });
         }, 1000));
     }, 
 
-    fetch () {},
+    fetch () {
+        console.log(store.getState())
+    },
     render () {},
     refresh () {}
 };
