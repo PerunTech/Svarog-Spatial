@@ -36,11 +36,11 @@ _MapContainer.propTypes = {
 };
 
 const subscriber = state => {
-    const { mapState } = state
+    const { map } = state
     return { 
-        bbox: mapState.bbox,
-        sid: mapState.sid,
-        refreshMap: mapState.refreshMap
+        bbox: map.bbox,
+        sid: map.sid,
+        refreshMap: map.refreshMap
 }};
 
 export const MapContainer = connect(subscriber)(_MapContainer);

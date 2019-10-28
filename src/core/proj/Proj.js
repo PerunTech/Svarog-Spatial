@@ -1,6 +1,6 @@
 import proj4 from 'proj4';
 import { Class } from '../Class';
-import { Factory } from '../../Factory';
+import { factory } from '../../Factory';
 
 /**
  * Define a projection.
@@ -19,7 +19,7 @@ function _defineProj (code, def) {
     if (def) {
         proj4.defs(code, def);
     } else if (proj4.defs[code] === undefined) {
-        var urn = code.split(':');
+        let urn = code.split(':');
         if (urn.length > 3) {
             code = urn[urn.length - 3] + ':' + urn[urn.length - 1];
         }
@@ -60,7 +60,7 @@ export const Projection = Class.extend({
     project (latlng) {
         let pf = this._proj.forward([latlng.lng, latlng.lat]);
 
-        return Factory.point(pf[0], pf[1]);
+        return factory.point(pf[0], pf[1]);
     },
 
     /**
@@ -78,6 +78,6 @@ export const Projection = Class.extend({
     unproject (p, unbounded) {
         let pi = this._proj.inverse([p.x, p.y]);
 
-        return Factory.latLng(pi[1], pi[0], unbounded);
+        return factory.latLng(pi[1], pi[0], unbounded);
     }
 })

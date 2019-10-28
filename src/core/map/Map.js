@@ -78,7 +78,7 @@ export const Map = {
      * @returns void; 
      */
     register (event, callback, context) {
-        _map.on(event, callback, context)
+        _map.on(event, callback, context);
     },
 
 
@@ -98,7 +98,7 @@ export const Map = {
      * @returns void;
      */
     unregister (event, callback, context) {
-        _map.off(event, callback, context)
+        _map.off(event, callback, context);
     },
 
     /**

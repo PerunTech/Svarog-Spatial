@@ -1,4 +1,4 @@
-import { Util } from "../Util";
+import { util } from "../Util";
 
 /**
  * Extends Redux store abilities, as middleware between all actions and reducers. 
@@ -22,7 +22,7 @@ export const thunk = (function () {
         if (typeof action === 'function') {
             return action(dispatch, getState);
         }
-        if (typeof action === 'object' && !Util.hasProp(action, 'type')) {
+        if (typeof action === 'object' && !util.hasProp(action, 'type')) {
             return Object.keys(action).map(key => {
                 return next({ type: key, value: action[key] });
             })

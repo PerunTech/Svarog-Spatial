@@ -1,4 +1,4 @@
-import { Util } from './Util';
+import { util } from './Util';
 
 /**
  * Base class of the module
@@ -6,7 +6,7 @@ import { Util } from './Util';
  * @abstract
  * @class Class
  */
-export function Class() { Util.isAbstract.call(this, Class); }
+export function Class() { util.isAbstract.call(this, Class); }
 
 /**
  * [Extends the current class](#class-inheritance) given the properties to be included.
@@ -30,7 +30,7 @@ Class.extend = function (props) {
 		if (this.init) { this.init.apply(this, arguments); }
 
 		// check if class implements required interface methods
-		if (!Util.isComplete(this)) { 
+		if (!util.isComplete(this)) { 
 			throw new Error('Failed instantiation. Class does not correctly implements required methods.')
 		}
 
@@ -39,35 +39,35 @@ Class.extend = function (props) {
 	}
 
 	let parentProto = Class.__super__ = this.prototype;
-	let proto = Util.create(parentProto);
+	let proto = util.create(parentProto);
 
 	proto.constructor = Class;
 	Class.prototype = proto;
 
 	// inherit parent's statics
 	for (let i in this) {
-		if (Util.hasProp(this, i) && i !== 'prototype' && i !== '__super__') {
+		if (util.hasProp(this, i) && i !== 'prototype' && i !== '__super__') {
 			Class[i] = this[i];
 		}
 	}
 
 	// mix static properties into the class
 	if (props.statics) {
-		Util.assignDeep(Class, props.statics);
+		util.assignDeep(Class, props.statics);
 		delete props.statics;
 	}
 
 	// mix includes into the prototype
 	if (props.includes) {
-		Util.assignDeep.apply(null, [proto].concat(props.includes));
+		util.assignDeep.apply(null, [proto].concat(props.includes));
 		delete props.includes;
 	}
 
 	// merge options
-	if (proto.options) { props.options = Util.assignDeep(Util.create(proto.options), props.options); }
+	if (proto.options) { props.options = util.assignDeep(util.create(proto.options), props.options); }
 
 	// mix given properties into the prototype
-	Util.assignDeep(proto, props);
+	util.assignDeep(proto, props);
 
 	// init hooks namespace, add method for calling all hooks
 	proto._hooks = [];
@@ -100,7 +100,7 @@ Class.extend = function (props) {
  * @return `this`;
  */
 Class.include = function (props) {
-	Util.assignDeep(this.prototype, props);
+	util.assignDeep(this.prototype, props);
 	
 	return this;
 };
@@ -117,7 +117,7 @@ Class.include = function (props) {
  * @return `this`;
  */
 Class.mergeOptions = function (options) {
-	Util.assignDeep(this.prototype.options, options);
+	util.assignDeep(this.prototype.options, options);
 
 	return this;
 };

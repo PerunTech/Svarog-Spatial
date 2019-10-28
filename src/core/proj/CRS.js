@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import { Class } from '../Class';
-import { Util } from '../Util';
-import { Factory } from '../../Factory';
+import { util } from '../Util';
+import { factory } from '../../Factory';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -126,7 +126,7 @@ let _setDistances = function (arr) {
  */
 let _setTransformation = function (opt) {
     return opt.origin
-        ? Factory.transformation(1, -opt.origin[0], -1, opt.origin[1])
+        ? factory.transformation(1, -opt.origin[0], -1, opt.origin[1])
         : opt.transformation;
 }
 
@@ -184,7 +184,7 @@ export const CRS = Class.extend({
          *
          * default transformation, default coef = [1, 0, -1, 0].
          */
-        transformation: Factory.transformation(1, 0, -1, 0),
+        transformation: factory.transformation(1, 0, -1, 0),
 
         /**
          * The pixel origin of the map.
@@ -195,8 +195,8 @@ export const CRS = Class.extend({
          * For default EPSG: 3857 bounds are +/- 20037508.342789244 at the equator R.
          */
         origin: [
-            Util.formatNum(-Math.PI * R, 2),    // min x
-            Util.formatNum(Math.PI * R, 2),     // max y
+            util.formatNum(-Math.PI * R, 2),    // min x
+            util.formatNum(Math.PI * R, 2),     // max y
             ],
 
         /**
@@ -237,9 +237,9 @@ export const CRS = Class.extend({
         this.def = def || this.def;
 
         // Merge options, override defaults
-        Util.setOptions(this, opt);
+        util.setOptions(this, opt);
 
-        this.projection = Factory.projection(this.code, this.def, this.options.bounds)
+        this.projection = factory.projection(this.code, this.def, this.options.bounds)
         this.transformation = _setTransformation(this.options);
         this._scales = _setScales(this.options);
         this.infinite = !this.options.bounds;

@@ -1,9 +1,11 @@
 /**
- * Global utility functions
+ * Global utility functions.
  * 
- * @namespace Util
+ * &nbsp;
+ * 
+ * @namespace util
  */
-export const Util = {
+export const util = {
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a target object.
      * Returns the target object. Excludes `prototype`.
@@ -170,12 +172,12 @@ export const Util = {
      * 
      * @function get (path: string, obj: Object): obj.path || undefined
      *
-     * @param {string} path - Accessor path, represented as string.
      * @param {Object} obj - Object to access.
+     * @param {string} path - Accessor path, represented as string.
      *
      * @returns obj.path || undefined;
      */
-    get (path, obj) {
+    get (obj, path) {
         return path
             .replace(/\[([^\]]+)]/g, '.$1') // support dot(.) and bracket([]) accessors
             .split('.') // init array on accessing elements
@@ -277,8 +279,8 @@ export const Util = {
 		if (impl) {
             // the interface object 'i' which is implemented.
             // Supports multiple interface implementations via Array argument. 
-			let i = Util.isArray(impl) 
-				? Util.assign({}, ...impl)
+			let i = this.isArray(impl) 
+				? this.assign({}, ...impl)
 				: impl;
 
             for (let k in i) {

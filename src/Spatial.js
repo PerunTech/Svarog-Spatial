@@ -9,13 +9,12 @@
 
 // class
 export { CRS } from './core/proj/CRS';
-export { Factory } from './Factory';
+export { factory } from './Factory';
 export { Map } from './core/map/Map';
 export { Projection } from './core/proj/Proj';
 
 // Reducers
-export * from './core/map/MapState'
-
+export * from './core/model/State'
 
 
 ////////////////

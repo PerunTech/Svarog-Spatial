@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Util } from './core/Util';
+import { util } from './core/Util';
 import { CRS } from './core/proj/CRS';
 import { Projection } from './core/proj/Proj';
 
@@ -13,9 +13,9 @@ import { Projection } from './core/proj/Proj';
  * &nbsp;
  * 
  * @public
- * @namespace Factory
+ * @namespace factory
  */
-export const Factory = {
+export const factory = {
     /**
      * Coordinate reference system (CRS) factory.
      * 
@@ -91,7 +91,7 @@ export const Factory = {
             return L.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
         }
         // Coords arg
-        if (Util.isArray(lat) && typeof lat[0] !== 'object') {
+        if (util.isArray(lat) && typeof lat[0] !== 'object') {
             if (lat.length === 3) { return L.latLng(lat[0], lat[1], lat[2]); }
             if (lat.length === 2) { return L.latLng(lat[0], lat[1]); }
             return null;
@@ -126,7 +126,7 @@ export const Factory = {
         // Object arg
         if (typeof x === 'object' && 'x' in x && 'y' in x) { return L.point(x.x, x.y); }
         // Coords arg
-        if (Util.isArray(x)) { return L.point(x[0], x[1]); }
+        if (util.isArray(x)) { return L.point(x[0], x[1]); }
 
         return L.point(x, y, r);
     },
@@ -175,7 +175,7 @@ export const Factory = {
      */
     transformation (a, b, c, d) {
         // Coef array arg
-        if (Util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
+        if (util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
 
         return L.transformation(a, b, c, d);
     }

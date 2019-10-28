@@ -1,4 +1,4 @@
-import { Util } from './Util';
+import { util } from './Util';
 
 /**
  * A contract of behavior between a class entity and its environment.
@@ -8,7 +8,7 @@ import { Util } from './Util';
  * @abstract
  * @class Interface
  */
-export function Interface () { Util.isAbstract.call(this, Interface); }
+export function Interface () { util.isAbstract.call(this, Interface); }
 
 /**
  * Defines an Interface.
@@ -30,7 +30,7 @@ Interface.define = function (i) {
             throw new Error('Cannot instantiate self. Interfaces are final');
         }
         // Shallow-copy our interface definitions to the Interface construct. 
-        Util.assign(this, i);
+        util.assign(this, i);
     }
 
     /**

@@ -1,4 +1,4 @@
-import { Util } from '../Util'
+import { util } from '../Util'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from './Thunk'
 
@@ -31,21 +31,40 @@ function _createRootReducer () {
 export const store = createStore(_createRootReducer(), applyMiddleware(thunk));
 
 /**
- * `#revise_me`
+ * Adds a state slice to store.
  * 
- * @function createReducer (initialState: Object): void
+ * Simplifies state management, provides working with object literals instead of reducer functions.
+ * Internally creates a reducer for the given state slice.
  * 
-  * @param {Object} initialState - The state slice to be managed by the reducer.
-  * 
-  * @returns void;
+ * &nbsp;  
+ * 
+ * @function addState (key: string, initialState: Object): void
+ * 
+ * @param {string} key - The string reference to be used for the added state slice.
+ * @param {Object} initialState - The state slice to be managed by the reducer.
+ * 
+ * @returns void;
  */
-store.createReducer = (key, initialState) => 
+store.addState = (key, initialState) => 
     store.addReducer(key, (state = initialState, action) => {
-        return Util.hasProp(state, action.type)
-            ? Util.assign({}, state, {[action.type]: action.value})
+        return util.hasProp(state, action.type)
+            ? util.assign({}, state, {[action.type]: action.value})
             : state;
 });
 
+/**
+ * Removes a state slice from store.
+ * 
+ * &nbsp;
+ * 
+ * @function removeState (key:string):void
+ * 
+ * @param {string} key - The string reference for the removed state slice.
+ * 
+ * @returns void;
+ */
+store.removeState = key => store.removeReducer(key);
+    
 
 /**
  * Adds the reducer to application state.
