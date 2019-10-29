@@ -2,13 +2,12 @@ import axios from 'axios';
 import { util } from './core/Util';
 import { store } from './core/model/Store';
 
-
 /**
  * Axios instance defaults.
- * Applies to all requests made via this module.
+ * Applies to all requests made via this module, unless explicitly overriden.
  */
 util.assign(axios.defaults, {
-    baseURL: window.location.host + '/services'
+    baseURL: window.location.origin + '/services'
 });
 
 /**
@@ -43,7 +42,7 @@ function _resolveParams ({url}) {
     // return input configuration object, potentially transformed.
     // util.assign guarantees a shallow-merged single entity, thus the argument index here is always 0.
     return arguments[0];
-} 
+}
 
 /**
  * Web service utilities.
