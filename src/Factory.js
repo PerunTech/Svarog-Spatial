@@ -17,6 +17,35 @@ import { Projection } from './core/proj/Proj';
  */
 export const factory = {
     /**
+     * `#revise_me`, a lot of work to implement different factory inputs.
+     * Consider different CRS between data and map, some inputs are cartesian while other are lat/long.
+     * Try to support as many combinations of different inputs (a; a&b: a&b&c&d) as possible. 
+     * If the scope of this fn body is found to be too wide, defer responsibility to caller, do simple here.
+     * 
+     * Implemented the single string representation of bbox input, i.e argument a = 'x1,y1,x2,y2'.
+     * Supports server api calls for computed bboxes. 
+     * 
+     * @function boundingBox (a: any, b: any, c: any, d: any): BBox
+     * 
+     * @param {Object | Array | string | number} a
+     * @param {Object | Array | string | number} b
+     * @param {Object | Array | string | number} c
+     * @param {Object | Array | string | number} d
+     * 
+     * @returns BBox; 
+     */
+    boundingBox (a, b, c, d) {
+        // the purpose of this function body is to convert abcd to swne.
+        let coords, sw, ne;
+
+        coords = a.split(',');
+        sw = this.latLng(coords[0], coords[1]);
+        ne = this.latLng(coords[2], coords[3]);
+
+        return L.latLngBounds(sw,ne);
+    },
+
+    /**
      * Coordinate reference system (CRS) factory.
      * 
      * &nbsp;
@@ -99,6 +128,7 @@ export const factory = {
 
         return L.latLng(lat, lng, alt);
     },
+
     
     /**
      * Creates a Point object with the given `x` and `y` coordinates.
