@@ -143,6 +143,25 @@ export const util = {
     },
 
     /**
+     * Flattens a nested array of any arbitrary levels to a composed, single-level array. 
+     * 
+     * &nbsp;
+     * 
+     * @function flatDeep (arr: any[]): []
+     * 
+     * @param {Array} arr - The array to be flattened.
+     * 
+     * @returns [];
+     */
+    flatDeep (arr) {
+        return arr.reduce((acc, val) => 
+            acc.concat(this.isArray(val) 
+                ? this.flatDeep(val)
+                : val),
+            []);
+    },
+
+    /**
      * `Round` polyfill.
      * Returns the number `num` rounded to `digits` decimals, or to 6 decimals by default.
      * 
@@ -365,6 +384,23 @@ export const util = {
         };
 
         return wrapperFn;
+    },
+
+    /**
+     * Throws an error with the given `msg`. 
+     * 
+     * Useful for ternary operators, as throwables do not evaluate to expressions, but functions do.
+     * 
+     * &nbsp; 
+     * 
+     * @function throwError (msg?: string): Error
+     * 
+     * @param {string} [msg] - The message to be thrown.
+     * 
+     * @returns Error;
+     */
+    throwError (msg) {
+        throw new Error(msg);
     },
 
     /**

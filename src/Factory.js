@@ -25,24 +25,26 @@ export const factory = {
      * Implemented the single string representation of bbox input, i.e argument a = 'x1,y1,x2,y2'.
      * Supports server api calls for computed bboxes. 
      * 
-     * @function boundingBox (a: any, b: any, c: any, d: any): BBox
+     * @function boundingBox (a: number[], b: number[]): BBox
      * 
-     * @param {Object | Array | string | number} a
-     * @param {Object | Array | string | number} b
-     * @param {Object | Array | string | number} c
-     * @param {Object | Array | string | number} d
+     * @param {number | number[]} a     
+     * @param {number | number[]} b
+     * @param {number} c
+     * @param {number} d
      * 
      * @returns BBox; 
      */
     boundingBox (a, b, c, d) {
-        // the purpose of this function body is to convert abcd to swne.
-        let coords, sw, ne;
+        let len = arguments.length, 
+            recompose = arr => [[arr[0], arr[1]], [arr[2], arr[3]]];
 
-        coords = a.split(',');
-        sw = this.latLng(coords[0], coords[1]);
-        ne = this.latLng(coords[2], coords[3]);
-
-        return L.latLngBounds(sw,ne);
+        return ![1,2,4].includes(len)
+            ? util.throwError('Invalid number of arguments. A box is made out of 1, 2 or 4 entities.')
+            : len === 1 && util.isArray(a)
+                ? L.latLngBounds(recompose(util.flatDeep(a)))
+                : len === 2 && util.isArray(a) && util.isArray(b)
+                    ? L.latLngBounds(a, b)
+                    : len === 4 && L.latLngBounds([a, b], [c, d]);
     },
 
     /**

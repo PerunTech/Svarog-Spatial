@@ -73,7 +73,7 @@ export const http = {
      * 
      * &nbsp;
      * 
-     * @function call (key:string): Promise<*>
+     * @function call (key:string, opt?: Object): Promise<*>
      * 
      * @param {string} key - Web service type reference. A registered key in store.state.http[<key>],
      *                 its value is a completely described http configuration object.
