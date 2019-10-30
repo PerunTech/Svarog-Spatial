@@ -17,34 +17,32 @@ import { Projection } from './core/proj/Proj';
  */
 export const factory = {
     /**
-     * `#revise_me`, a lot of work to implement different factory inputs.
-     * Consider different CRS between data and map, some inputs are cartesian while other are lat/long.
-     * Try to support as many combinations of different inputs (a; a&b: a&b&c&d) as possible. 
-     * If the scope of this fn body is found to be too wide, defer responsibility to caller, do simple here.
+     * Bounding box factory.
      * 
-     * Implemented the single string representation of bbox input, i.e argument a = 'x1,y1,x2,y2'.
-     * Supports server api calls for computed bboxes. 
+     * Arguments should be two pairs ([x1, y1], [x2, y2]) of geographically correct values. These two points
+     * should stand diagonally opposite of each other as corners of a rectangle. Think south-west point and
+     * north-east point, i.e bottom left and top right.
      * 
-     * @function boundingBox (a: number[], b: number[]): BBox
+     * Any combination of Array|string|number is supported for the arguments, i.e ('x1,y1,x2,y2)
+     * or ([[x1],[y1],[x2],[y2]) etc. Objects are not supported, transformation to Array is deferred to the caller.
      * 
-     * @param {number | number[]} a     
-     * @param {number | number[]} b
-     * @param {number} c
-     * @param {number} d
+     * `#revise_me`, Consider different CRS between data and map, some inputs are cartesian while other are lat/long.
+     * If coordinates need to be reprojected, transformation should occur in the middle of the pipe, 
+     * after normalizing and before assembly. At that point, data looks [number, number, ...number],
+     * so a simple map functor will do. 
      * 
+     * &nbsp;
+     * 
+     * @factory boundingBox (coords: ...Array | string | number): BBox
+     * 
+     * @param {...Array | string | number} coords - Two meaningful pairs of diagonally opposite coordinates.
+     *                                     Expressable in any combination of arrays / strings / numbers. 
      * @returns BBox; 
      */
-    boundingBox (a, b, c, d) {
-        let len = arguments.length, 
-            recompose = arr => [[arr[0], arr[1]], [arr[2], arr[3]]];
-
-        return ![1,2,4].includes(len)
-            ? util.throwError('Invalid number of arguments. A box is made out of 1, 2 or 4 entities.')
-            : len === 1 && util.isArray(a)
-                ? L.latLngBounds(recompose(util.flatDeep(a)))
-                : len === 2 && util.isArray(a) && util.isArray(b)
-                    ? L.latLngBounds(a, b)
-                    : len === 4 && L.latLngBounds([a, b], [c, d]);
+    boundingBox () {
+        return L.latLngBounds(function assemble (arr) {
+                return [[arr[0], arr[1]], [arr[2], arr[3]]];
+            }(util.normalize([...arguments], Number)));
     },
 
     /**
@@ -58,7 +56,7 @@ export const factory = {
      * Scales, resolutions and distances are different representations of the same thing.
      * Provide only one of these! If multiple of these are provided to factory,
      * scales will override resolutions which in turn override distances. Scales are used internally,
-     * the other two are internally converted.
+     * the other two are converted.
      * 
      * Distances are calculated based on monitor dpi, thus the final scales output will vary between
      * application instances. Variation in scales will break server-side caching of rasters served via WMS,

@@ -147,18 +147,15 @@ export const util = {
      * 
      * &nbsp;
      * 
-     * @function flatDeep (arr: any[]): []
+     * @function flattenDeep (arr: any[]): []
      * 
      * @param {Array} arr - The array to be flattened.
      * 
      * @returns [];
      */
-    flatDeep (arr) {
+    flattenDeep (arr) {
         return arr.reduce((acc, val) => 
-            acc.concat(this.isArray(val) 
-                ? this.flatDeep(val)
-                : val),
-            []);
+            acc.concat(this.isArray(val) ? this.flatDeep(val) : val), []);
     },
 
     /**
@@ -174,9 +171,7 @@ export const util = {
      *
      * @return rounded number;
      */
-    formatNum (num, digits) {
-        digits = (digits === undefined ? 6 : digits);
-        
+    formatNum (num, digits = 6) {        
         return +(Math.round(num + ('e+' + digits)) + ('e-' + digits));
     },
 
@@ -313,6 +308,28 @@ export const util = {
         }
         
         return true;
+    },
+
+    /**
+     * Creates a flat array of elements coerced to the given `type`.
+     * 
+     * The input `obj` can be any javascript primitive or an arbitrarily nested object / array,
+     * for which its values (and keys) can be converted into the specified type. 
+     * 
+     * All values will be trimmed for all whitespaces and separated into separate elements
+     * for any colon, semicolon or escape slash.
+     * 
+     * &nbsp;
+     * 
+     * @function normalize (obj: any type?: PrimitiveConstructor): [type, type, ...type]
+     * 
+     * @param {*} obj - Any JavaScript object.
+     * @param {Object} [type] - A JavaScript primitive constructor type, i.e Number/String (capital).
+     * 
+     * @returns [type, type, ...type]
+     */
+    normalize (obj, type = String) {
+        return obj.toString().replace(/\s+/g, '').split(/[;,/]/).map(type);
     },
 
     /**
