@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from '../model/Connect';
+import { useMount, useUpdate } from '../../Hooks'
 import { MAP_CONTAINER } from '../../Constants';
-import {RenderCycle as RC} from './RenderCycle';
+import {renderCycle as rc} from './RenderCycle';
 
 /**
  * The React container of the rendered map. 
@@ -21,10 +22,10 @@ import {RenderCycle as RC} from './RenderCycle';
  */
 function _MapContainer ({ bbox, sid, refreshMap }) {
 
-    useEffect(() => { RC.start(); }, []);
-    useEffect(() => { RC.fetch(); }, [bbox]);
-    useEffect(() => { RC.render(); }, [sid]);
-    useEffect(() => { RC.refresh(); }, [refreshMap]);
+    useMount(rc.start);
+    useUpdate(rc.fetch, [bbox]);
+    useUpdate(rc.render, [sid]);
+    useUpdate(rc.refresh, [refreshMap]);
 
     return <div id={MAP_CONTAINER} className={MAP_CONTAINER} style={{height: '100vh', border: '4px inset'}} />
 }
@@ -35,8 +36,8 @@ _MapContainer.propTypes = {
     refreshMap: PropTypes.bool,
 };
 
-const subscriber = state => {
-    const { map } = state
+const subscriber = ({map}) => {
+    console.log(map.sid)
     return { 
         bbox: map.bbox,
         sid: map.sid,

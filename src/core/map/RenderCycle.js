@@ -6,8 +6,9 @@ import { raster } from '../../Raster';
 import { http } from '../../HTTP'
 import { MAP_CONTAINER, MAP_CONFIG } from '../../Constants';
 
-export const RenderCycle = {
+export const renderCycle = {
     start() {
+        console.log('start')
         // iniialize map and raster set.
         Map.init(MAP_CONTAINER, MAP_CONFIG);
         raster(); //temp, `#revise_me`
@@ -23,7 +24,19 @@ export const RenderCycle = {
         }).catch(err => console.log(err));
     }, 
 
-    fetch () {},
-    render () {},
-    refresh () {}
+    fetch () {
+        console.log('fetch')
+        //mock for fetching vector data, fire sid on successful fetch cycle => which activates this.render().
+        setTimeout(() => { 
+            console.log('dispatch sid');
+            store.dispatch({sid: Math.random()});
+        }, 2000)
+    },
+
+    render () {
+        console.log('render')
+    },
+    refresh () {
+        console.log('refresh')
+    }
 };
