@@ -1,4 +1,4 @@
-import { util } from './Util';
+import { util } from '../index';
 
 /**
  * A contract of behavior between a class entity and its environment.
@@ -8,7 +8,7 @@ import { util } from './Util';
  * @abstract
  * @class Interface
  */
-export function Interface () { util.isAbstract.call(this, Interface); }
+export function Interface () {}
 
 /**
  * Defines an Interface.

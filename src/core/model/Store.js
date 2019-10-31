@@ -1,6 +1,5 @@
-import { util } from '../Util'
+import { util, thunk } from '../index'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { thunk } from './Thunk'
 
 /**
  * Internal composite of all registered reducers of the module.

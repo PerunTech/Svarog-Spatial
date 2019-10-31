@@ -7,25 +7,17 @@
     window.S = S
 })()
 
-// class
-export { CRS } from './core/proj/CRS';
-export { factory } from './Factory';
-export { Map } from './core/map/Map';
-export { Projection } from './core/proj/Proj';
+// Core
 
-// Reducers
-export * from './core/model/State'
-
+export * from './core/index';
 
 ////////////////
 ///// TEST /////
 ////////////////
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from './core/model/Provider'
-import { MapContainer } from './core/map/MapContainer'
+import { Provider, MapContainer } from './core/index'
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
 
-// import {renderCycle} from './core/map/RenderCycle'
-// renderCycle.fetch()
+

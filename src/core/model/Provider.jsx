@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { Provider as StoreProvider } from 'react-redux';
-import { store } from './Store'
+import { store } from '../index'
 
 /**
  * Provides Redux store access to connected components.

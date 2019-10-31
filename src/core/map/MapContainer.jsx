@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from '../model/Connect';
+import { connect, renderCycle as rc } from '../index';
 import { useMount, useUpdate } from '../../Hooks'
 import { MAP_CONTAINER } from '../../Constants';
-import {renderCycle as rc} from './RenderCycle';
+
 
 /**
  * The React container of the rendered map. 

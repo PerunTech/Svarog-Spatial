@@ -154,8 +154,9 @@ export const util = {
      * @returns [];
      */
     flattenDeep (arr) {
-        return arr.reduce((acc, val) => 
-            acc.concat(this.isArray(val) ? this.flatDeep(val) : val), []);
+        return arr
+            .filter(x => ![null, '', undefined].includes(x))
+            .reduce((acc, val) =>  acc.concat(this.isArray(val) ? this.flattenDeep(val) : val), []);
     },
 
     /**
@@ -231,23 +232,6 @@ export const util = {
      */
     hasProp (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
-    },
-
-    /**
-     * Check if class is abstract. Prevents instances of abstract classes. 
-     * 
-     * &nbsp;
-     * 
-     * @function isAbstract (Class: Function): Error || void
-     * 
-     * @param {Function} Class - A constructor function. 
-     * 
-     * @returns Error || void;
-     */
-    isAbstract (Class) {
-        if (this instanceof Class) {
-            throw new Error(Class.name + ' is an abstract class and can not be instantiated.');
-        } 
     },
 
     /**

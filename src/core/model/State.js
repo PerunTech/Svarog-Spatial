@@ -1,4 +1,4 @@
-import { store } from '../model/Store'
+import { store } from '../index'
 
 /**
  * The application state tree.

@@ -1,4 +1,4 @@
-import { util } from './Util';
+import { util } from '../index';
 
 /**
  * Base class of the module
@@ -6,7 +6,7 @@ import { util } from './Util';
  * @abstract
  * @class Class
  */
-export function Class() { util.isAbstract.call(this, Class); }
+export function Class() {}
 
 /**
  * [Extends the current class](#class-inheritance) given the properties to be included.

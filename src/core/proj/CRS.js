@@ -1,7 +1,5 @@
 import L from 'leaflet';
-import { Class } from '../Class';
-import { util } from '../Util';
-import { factory } from '../../Factory';
+import { Class, util, factory } from '../index';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
