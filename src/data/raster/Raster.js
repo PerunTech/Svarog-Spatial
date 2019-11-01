@@ -7,5 +7,5 @@ export const raster = function () {
         { maxZoom: 18 }
     )
 
-    Map.add(testTile);
+    testTile.addTo(Map);
 };

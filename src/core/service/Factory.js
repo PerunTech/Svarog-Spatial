@@ -1,5 +1,4 @@
-import L from 'leaflet';
-import { util, CRS, Projection } from '../index';
+import { util, iSpatial, CRS, Projection } from '../index';
 
 /**
  * Class factory.
@@ -38,7 +37,7 @@ export const factory = {
      * @returns BBox; 
      */
     boundingBox () {
-        return L.latLngBounds(function assemble (arr) {
+        return iSpatial.latLngBounds(function assemble (arr) {
                 return [[arr[0], arr[1]], [arr[2], arr[3]]];
             }(util.normalize([...arguments], Number)));
     },
@@ -112,19 +111,19 @@ export const factory = {
      */
     latLng (lat, lng, alt) {
         // Argument check
-        if (lat instanceof L.LatLng || lat === undefined || lat === null ) { return lat; }
+        if (lat instanceof iSpatial.LatLng || lat === undefined || lat === null ) { return lat; }
         // Object arg
         if (typeof lat === 'object' && 'lat' in lat) {
-            return L.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
+            return iSpatial.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
         }
         // Coords arg
         if (util.isArray(lat) && typeof lat[0] !== 'object') {
-            if (lat.length === 3) { return L.latLng(lat[0], lat[1], lat[2]); }
-            if (lat.length === 2) { return L.latLng(lat[0], lat[1]); }
+            if (lat.length === 3) { return iSpatial.latLng(lat[0], lat[1], lat[2]); }
+            if (lat.length === 2) { return iSpatial.latLng(lat[0], lat[1]); }
             return null;
         }
 
-        return L.latLng(lat, lng, alt);
+        return iSpatial.latLng(lat, lng, alt);
     },
 
     
@@ -150,13 +149,13 @@ export const factory = {
      */
     point (x, y, r) {
         // Argument check
-        if (x instanceof L.Point || x === undefined || x === null) { return x; }
+        if (x instanceof iSpatial.Point || x === undefined || x === null) { return x; }
         // Object arg
-        if (typeof x === 'object' && 'x' in x && 'y' in x) { return L.point(x.x, x.y); }
+        if (typeof x === 'object' && 'x' in x && 'y' in x) { return iSpatial.point(x.x, x.y); }
         // Coords arg
-        if (util.isArray(x)) { return L.point(x[0], x[1]); }
+        if (util.isArray(x)) { return iSpatial.point(x[0], x[1]); }
 
-        return L.point(x, y, r);
+        return iSpatial.point(x, y, r);
     },
 
     /**
@@ -203,8 +202,8 @@ export const factory = {
      */
     transformation (a, b, c, d) {
         // Coef array arg
-        if (util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
+        if (util.isArray(a)) { return iSpatial.transformation(a[0], a[1], a[2], a[3]); }
 
-        return L.transformation(a, b, c, d);
+        return iSpatial.transformation(a, b, c, d);
     }
 };

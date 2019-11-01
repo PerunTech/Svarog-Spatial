@@ -53,21 +53,21 @@ Class.extend = function (props) {
 
 	// mix static properties into the class
 	if (props.statics) {
-		util.assignDeep(Class, props.statics);
+		util.cloneDeep(Class, props.statics);
 		delete props.statics;
 	}
 
 	// mix includes into the prototype
 	if (props.includes) {
-		util.assignDeep.apply(null, [proto].concat(props.includes));
+		util.cloneDeep.apply(null, [proto].concat(props.includes));
 		delete props.includes;
 	}
 
 	// merge options
-	if (proto.options) { props.options = util.assignDeep(util.create(proto.options), props.options); }
+	if (proto.options) { props.options = util.cloneDeep(util.create(proto.options), props.options); }
 
 	// mix given properties into the prototype
-	util.assignDeep(proto, props);
+	util.cloneDeep(proto, props);
 
 	// init hooks namespace, add method for calling all hooks
 	proto._hooks = [];
@@ -100,7 +100,7 @@ Class.extend = function (props) {
  * @return `this`;
  */
 Class.include = function (props) {
-	util.assignDeep(this.prototype, props);
+	util.cloneDeep(this.prototype, props);
 	
 	return this;
 };
@@ -117,7 +117,7 @@ Class.include = function (props) {
  * @return `this`;
  */
 Class.mergeOptions = function (options) {
-	util.assignDeep(this.prototype.options, options);
+	util.cloneDeep(this.prototype.options, options);
 
 	return this;
 };

@@ -47,7 +47,7 @@ export const store = createStore(_createRootReducer(), applyMiddleware(thunk));
 store.addState = (key, initialState) => 
     store.addReducer(key, (state = initialState, action) => {
         return util.hasProp(state, action.type)
-            ? util.assign({}, state, {[action.type]: action.value})
+            ? util.clone({}, state, {[action.type]: action.value})
             : state;
 });
 

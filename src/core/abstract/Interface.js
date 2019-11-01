@@ -30,7 +30,7 @@ Interface.define = function (i) {
             throw new Error('Cannot instantiate self. Interfaces are final');
         }
         // Shallow-copy our interface definitions to the Interface construct. 
-        util.assign(this, i);
+        util.clone(this, i);
     }
 
     /**

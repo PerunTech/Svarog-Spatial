@@ -1,5 +1,4 @@
-import L from 'leaflet';
-import { Class, util, factory } from '../index';
+import { util, factory, iSpatial } from '../index';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -8,6 +7,8 @@ import { Class, util, factory } from '../index';
  * The Earth radius R varies from 6356.752 km at the poles to 6378.137 km at the equator.
  * Perhaps this number can be tweaked based on mean latitude of the project country,
  * in order to improve accuracy.
+ * 
+ * Expressed in meters [m].
  *
  * @private
  * @constant
@@ -16,7 +17,202 @@ import { Class, util, factory } from '../index';
 const R = 6371000;
 
 /**
- * CRS._scales setter. 
+ * @class CRS
+ * @implements iCRS
+ */
+export function CRS (code, def, opt) {
+    this.code = code;
+    this.def = def;
+    // Merge options, override defaults
+    this.options = util.clone(_opt, opt);
+
+    this.projection = factory.projection(this.code, this.def, this.options.bounds)
+    this.transformation = _setTransformation(this.options);
+    this.scales = _setScales(this.options);
+    this.infinite = !this.options.bounds;
+}
+
+CRS.prototype = util.clone(iSpatial.CRS, {
+    /** Earth radius, in meters [m] */
+    R: R,
+
+    /**
+     * Uses `Haversine` formula to calculate the distance between two geographical points.
+     * Calculates great circle distance on an assumed sphere, which the Earth is not.
+     *
+     * Mean error appromixation is 0.5% and the calculation is best on small distances, less than 5km,
+     * which is what we need.
+     * It is far better than the spherical law of cosine approximation, due to use of sine,
+     * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
+     * large errors due to rounding (JS engine does 15 digits though, currently).
+     * Similar case can be made for arctangent in the angular distance caclucation `c` below.
+     *
+     * Its use is mostly visual rather than technical, still if the accuracy is insufficient
+     * we should consider Vincenty' formula (accurate to 0.1mm)
+     * (this is a very fine site in general)
+     * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
+     * 
+     * &nbsp;
+     *
+     * @function distance (latlng1: LatLng, latlng2: LatLng): number <distance in [m]>
+     * 
+     * @param {LatLng} latlng1 - latitude / longitude pair A.
+     * @param {LatLng} latlng2 - latitude / longitude pair B.
+     * 
+     * @returns {number} distance in meters [A to B];
+     */
+    distance (latlng1, latlng2) {
+        let rad = Math.PI / 180;
+        // convert latitude degrees to radians for easier trigonometry
+        let phi1 = latlng1.lat * rad,
+            phi2 = latlng2.lat * rad;
+        // sine of latitude difference, in radians
+        let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
+        //sine of longitude difference, in radiance
+        let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
+        // square of half the chord length between pA and pB
+        let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
+        // andgular distance, in radiance
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
+
+        return this.R * c;  // distance in meters
+    },
+
+    /**
+     * CRS code getter.
+     * 
+     * @function getCode (): string
+     * 
+     * @returns string;
+     */
+    getCode () {
+        return this.code;
+    },
+
+    /**
+     * Calculate the current scale.
+     * 
+     * Returns the scale used when transforming projected coordinates
+     * into pixel coordinates for a particular zoom.
+     * The original iCRS implementation uses `256 * 2^zoom` for Mercator-based CRS.
+     * 
+     * &nbsp;
+     *
+     * @override iCRS.scale
+     * @function scale (zoom: number): number
+     * 
+     * @param {number} zoom - The current zoom value.
+     * 
+     * @returns Scale number value;
+     */
+    scale (zoom) {
+        let iZoom = Math.floor(zoom),
+            baseScale,
+            nextScale,
+            scaleDiff,
+            zDiff;
+
+        if (zoom === iZoom) {
+            return this.scales[zoom];
+        } else {
+            baseScale = this.scales[iZoom];
+            nextScale = this.scales[iZoom + 1];
+            scaleDiff = nextScale - baseScale;
+            zDiff = zoom - iZoom;
+
+            return baseScale + scaleDiff * zDiff;
+        }
+    },
+
+    /**
+     * Calculate the current zoom.
+     * 
+     * Inverse of `this.scale`. Calculates the zoom level corresponding to a scale factor of `scale`.
+     * The original iCRS implementaion uses `Math.log(scale / 256) / Math.LN2` for calculation.
+     *
+     * &nbsp;
+     * 
+     * @override iCRS.zoom
+     * @function zoom (scale: number): number
+     * 
+     * @param {number} scale - The current scale value.
+     * 
+     * @returns Zoom number value;
+     */
+    zoom (scale) {
+        let downScale = _closestElement(this.scales, scale),
+            downZoom = this.scales.indexOf(downScale),
+            nextScale,
+            nextZoom;
+
+        // Check if scale is downScale => return array index
+        if (scale === downScale) { return downZoom; }
+        if (downScale === undefined) { return -Infinity; }
+        // Interpolate
+        nextZoom = downZoom + 1;
+        nextScale = this.scales[nextZoom];
+        if (nextScale === undefined) { return Infinity; }
+
+        return (scale - downScale) / (nextScale - downScale) + downZoom;
+    },
+}, {
+    constructor: CRS
+})
+
+/** Configuration object */
+const _opt = {
+    /**
+     * Transforms projected coordinates to pixel coordinates.
+     *
+     * Represents an affine transformation: a set of coefficients `a`, `b`, `c`, `d`
+     * for transforming a point of a form `(x, y)` into `(a*x + b, c*y + d)` and back.
+     *
+     * default transformation, default coef = [1, 0, -1, 0].
+     */
+    transformation: factory.transformation(1, 0, -1, 0),
+    /**
+     * The pixel origin of the map.
+     *
+     * Locates the coordinates of the upper left corner of the boundary of the map,
+     * represented in the current projection. In other words, locates tile (0,0), the first tile.
+     *
+     * For default EPSG: 3857 bounds are +/- 20037508.342789244 at the equator R.
+     */
+    origin: [ 
+        +(Math.round(Math.PI * R + ('e+' + 2)) + ('e-' + 2)),
+        +(Math.round(Math.PI * R + ('e+' + 2)) + ('e-' + 2))
+    ],
+
+
+    /**
+     * Array representation of the map scales as real-world distances in meters.
+     * Corresponds to different zoom levels of the map.
+     */
+    distances: [
+        5000000,
+        2500000,
+        1000000, // 10 km
+        750000,
+        500000,
+        250000,
+        100000, // 1000m or 1 km
+        75000,
+        50000,
+        25000,
+        10000, // 100m
+        7500,
+        5000,
+        2500,
+        1000, // 1000 cm = 10 m
+        750,
+        500,
+        250,
+        100 // 1m
+    ]
+}
+
+/**
+ * CRS.scales setter. 
  * 
  * Calculates and converts distances => resolutions => scales. 
  * Consequently data flow is in the opposite direction, scales before resolutions before distances.
@@ -152,214 +348,3 @@ let _closestElement = function (arr, el) {
 
     return nLow;
 }
-
-/**
- * @class CRS
- * @extends {Class}
- * @implements iCRS
- */
-export const CRS = Class.extend({
-    /**
-     * Merges necessary internal methods to our class.
-     * @mixes L.CRS
-     */
-    includes: L.CRS,
-
-    /** Spherical Mercator code, web standard. Default code. */
-    code: 'EPSG:3857',
-
-    /** A proj4 definition string of 3857 - Spherical Mercator. Default definition. */
-    def: '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 '
-        +'+units=m +nadgrids=@null +wktext +no_defs',
-
-    /** Configuration object */
-    options: {
-        /**
-         * Transforms projected coordinates to pixel coordinates.
-         *
-         * Represents an affine transformation: a set of coefficients `a`, `b`, `c`, `d`
-         * for transforming a point of a form `(x, y)` into `(a*x + b, c*y + d)` and back.
-         *
-         * default transformation, default coef = [1, 0, -1, 0].
-         */
-        transformation: factory.transformation(1, 0, -1, 0),
-
-        /**
-         * The pixel origin of the map.
-         *
-         * Locates the coordinates of the upper left corner of the boundary of the map,
-         * represented in the current projection. In other words, locates tile (0,0), the first tile.
-         *
-         * For default EPSG: 3857 bounds are +/- 20037508.342789244 at the equator R.
-         */
-        origin: [
-            util.formatNum(-Math.PI * R, 2),    // min x
-            util.formatNum(Math.PI * R, 2),     // max y
-            ],
-
-        /**
-         * Array representation of the map scales as real-world distances in meters.
-         * Corresponds to different zoom levels of the map.
-         */
-        distances: [
-            5000000,
-            2500000,
-            1000000, // 10 km
-            750000,
-            500000,
-            250000,
-            100000, // 1000m or 1 km
-            75000,
-            50000,
-            25000,
-            10000, // 100m
-            7500,
-            5000,
-            2500,
-            1000, // 1000 cm = 10 m
-            750,
-            500,
-            250,
-            100 // 1m
-        ]
-    },
-
-    /** Earth radius, in meters [m]. */
-    R: R,
-
-    /**
-     * @constructs CRS
-     */
-    init (code, def, opt) {
-        this.code = code || this.code;
-        this.def = def || this.def;
-
-        // Merge options, override defaults
-        util.setOptions(this, opt);
-
-        this.projection = factory.projection(this.code, this.def, this.options.bounds)
-        this.transformation = _setTransformation(this.options);
-        this._scales = _setScales(this.options);
-        this.infinite = !this.options.bounds;
-    },
-
-    /**
-     * Uses `Haversine` formula to calculate the distance between two geographical points.
-     * Calculates great circle distance on an assumed sphere, which the Earth is not.
-     *
-     * Mean error appromixation is 0.5% and the calculation is best on small distances, less than 5km,
-     * which is what we need.
-     * It is far better than the spherical law of cosine approximation, due to use of sine,
-     * while the latter uses cosine which approaches 0.9999~ on very small distances and may result in
-     * large errors due to rounding (JS engine does 15 digits though, currently).
-     * Similar case can be made for arctangent in the angular distance caclucation `c` below.
-     *
-     * Its use is mostly visual rather than technical, still if the accuracy is insufficient
-     * we should consider Vincenty' formula (accurate to 0.1mm)
-     * (this is a very fine site in general)
-     * https://www.movable-type.co.uk/scripts/latlong-vincenty.html
-     * 
-     * &nbsp;
-     *
-     * @function distance (latlng1: LatLng, latlng2: LatLng): number <distance in [m]>
-     * 
-     * @param {LatLng} latlng1 - latitude / longitude pair A.
-     * @param {LatLng} latlng2 - latitude / longitude pair B.
-     * 
-     * @returns {number} distance in meters [A to B];
-     */
-    distance (latlng1, latlng2) {
-        let rad = Math.PI / 180;
-        // convert latitude degrees to radians for easier trigonometry
-        let phi1 = latlng1.lat * rad,
-            phi2 = latlng2.lat * rad;
-        // sine of latitude difference, in radians
-        let delta_phi = Math.sin((latlng2.lat - latlng1.lat) * rad / 2);
-        //sine of longitude difference, in radiance
-        let delta_lambda = Math.sin((latlng2.lng - latlng1.lng) * rad / 2);
-        // square of half the chord length between pA and pB
-        let a = delta_phi * delta_phi + Math.cos(phi1) * Math.cos(phi2) * delta_lambda * delta_lambda;
-        // andgular distance, in radiance
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
-
-        return this.R * c;  // distance in meters
-    },
-
-    /**
-     * CRS code getter.
-     * 
-     * @function getCode (): string
-     * 
-     * @returns string;
-     */
-    getCode () {
-        return this.code;
-    },
-
-    /**
-     * Calculate the current scale.
-     * 
-     * Returns the scale used when transforming projected coordinates
-     * into pixel coordinates for a particular zoom.
-     * The original iCRS implementation uses `256 * 2^zoom` for Mercator-based CRS.
-     * 
-     * &nbsp;
-     *
-     * @override iCRS.scale
-     * @function scale (zoom: number): number
-     * 
-     * @param {number} zoom - The current zoom value.
-     * 
-     * @returns Scale number value;
-     */
-    scale (zoom) {
-        let iZoom = Math.floor(zoom),
-            baseScale,
-            nextScale,
-            scaleDiff,
-            zDiff;
-
-        if (zoom === iZoom) {
-            return this._scales[zoom];
-        } else {
-            baseScale = this._scales[iZoom];
-            nextScale = this._scales[iZoom + 1];
-            scaleDiff = nextScale - baseScale;
-            zDiff = zoom - iZoom;
-
-            return baseScale + scaleDiff * zDiff;
-        }
-    },
-
-    /**
-     * Calculate the current zoom.
-     * 
-     * Inverse of `this.scale`. Calculates the zoom level corresponding to a scale factor of `scale`.
-     * The original iCRS implementaion uses `Math.log(scale / 256) / Math.LN2` for calculation.
-     *
-     * &nbsp;
-     * 
-     * @override iCRS.zoom
-     * @function zoom (scale: number): number
-     * 
-     * @param {number} scale - The current scale value.
-     * 
-     * @returns Zoom number value;
-     */
-    zoom (scale) {
-        let downScale = _closestElement(this._scales, scale),
-            downZoom = this._scales.indexOf(downScale),
-            nextScale,
-            nextZoom;
-
-        // Check if scale is downScale => return array index
-        if (scale === downScale) { return downZoom; }
-        if (downScale === undefined) { return -Infinity; }
-        // Interpolate
-        nextZoom = downZoom + 1;
-        nextScale = this._scales[nextZoom];
-        if (nextScale === undefined) { return Infinity; }
-
-        return (scale - downScale) / (nextScale - downScale) + downZoom;
-    },
-})

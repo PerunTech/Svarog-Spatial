@@ -1,12 +1,9 @@
 import { util, store, Map, factory, http } from '../index';
 import { raster } from '../../data/index';
-import { MAP_CONTAINER, MAP_CONFIG } from '../../Constants';
 
 export const renderCycle = {
     start() {
-        console.log('start')
-        // iniialize map and raster set.
-        Map.init(MAP_CONTAINER, MAP_CONFIG);
+        Map.render(),
         raster(); //temp, `#revise_me`
 
         // Get the bounding box of interest for this session.

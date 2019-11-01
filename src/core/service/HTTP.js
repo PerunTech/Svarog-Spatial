@@ -5,7 +5,7 @@ import { util, store } from '../index';
  * Axios instance defaults.
  * Applies to all requests made via this module, unless explicitly overriden.
  */
-util.assign(axios.defaults, {
+util.clone(axios.defaults, {
     baseURL: window.location.origin + '/services'
 });
 
@@ -34,12 +34,12 @@ function _resolveParams ({url}) {
         arguments[0].url = url.split('/').map(str => { 
             // Distinguish parameters substrings from other subparts of the path. Signature is {path}.
             return str.charAt(0) === '{' && str.charAt(str.length - 1) === '}' 
-                ? util.get(state, str.slice(1, -1))
+                ? util.access(state, str.slice(1, -1))
                 : str;
             }).join('/');
     }
     // return input configuration object, potentially transformed.
-    // util.assign guarantees a shallow-merged single entity, thus the argument index here is always 0.
+    // util.clone guarantees a shallow-merged single entity, thus the argument index here is always 0.
     return arguments[0];
 }
 
@@ -93,7 +93,7 @@ export const http = {
      * @returns Promise<*>; 
      */
     call (key, opt = {}) {
-        return axios(_resolveParams(util.assign({ ...store.getState().http[key] }, opt)));
+        return axios(_resolveParams(util.clone({ ...store.getState().http[key] }, opt)));
     },
     
     /**

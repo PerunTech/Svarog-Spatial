@@ -20,4 +20,12 @@ import { Provider, MapContainer } from './core/index'
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
 
-
+/*
+import { factory, CRS } from './core/index'
+const test = factory.crs(
+    'EPSG: 4326',
+    '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+)
+console.log(test)
+console.log(test instanceof CRS)
+*/
