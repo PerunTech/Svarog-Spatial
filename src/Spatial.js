@@ -29,3 +29,6 @@ const test = factory.crs(
 console.log(test)
 console.log(test instanceof CRS)
 */
+
+import { markerTool } from './tools/draw/Marker'
+markerTool.enable()
