@@ -3,8 +3,10 @@ import {useRef, useEffect} from 'react'
 /**
  * Executes function arguments when component is mounted ( initial render only ).
  * 
- * A simple custom hook for useEffect(fn, []). 
- * `Do not use` if you don't know what the empty array argument in useEffect means.
+ * A simple custom hook for useEffect(fn, []). `Do not use` if you don't know
+ * what the empty array argument in useEffect means. 
+ * 
+ * If the function `fn` contains arguments, bind it via fn.bind(context, args) in the caller.
  * 
  * &nbsp;
  * 
@@ -21,7 +23,9 @@ export function useMount (...fns) { useEffect(() => { fns.map(fn => fn()) }, [])
  * only runs when its dependency array changes (like useEffect).
  * 
  * Requires an individual declaration for each effect and its dependency (same as useEffect).
- * Implements `useEffect` with a ref internally. 
+ * Implements `useEffect` with a ref internally.
+ * 
+ * If the function `fn` contains arguments, bind it via fn.bind(context, args) in the caller.
  * 
  * &nbsp;
  * 

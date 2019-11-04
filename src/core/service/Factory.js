@@ -126,7 +126,10 @@ export const factory = {
         return iSpatial.latLng(lat, lng, alt);
     },
 
-    
+    marker (p, opt) {
+        return iSpatial.marker(p, opt);
+    },
+
     /**
      * Creates a Point object with the given `x` and `y` coordinates.
      * If optional `r` is set to true, rounds the `x` and `y` values.
