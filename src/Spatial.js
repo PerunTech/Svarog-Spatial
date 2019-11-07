@@ -15,6 +15,7 @@ core.util.clone(Spatial, {
     version: '0.0.1',
     init (token) { alert(token); }
 })
-console.log(Spatial)
-// Register on global scope.
+
+// Register on global scope. Export default.
 window.Spatial = Spatial;
+export default Spatial;
