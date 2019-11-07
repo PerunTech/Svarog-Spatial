@@ -5,7 +5,10 @@ module.exports = {
   entry: './src/Spatial.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'perun-spatial.min.js'
+    filename: 'perun-spatial.min.js',
+    library: 'perun-spatial',
+    libraryTarget: 'this',
+    libraryExport: 'default'
   },
   module: {
     rules: [
@@ -44,4 +47,13 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx']
   },
+  externals: [
+    {
+      "prop-types": "prop-types",
+      "react": "react",
+      "react-dom": "react-dom",
+      "react-redux": "react-redux",
+      "redux": "redux"
+    }
+  ]
 };

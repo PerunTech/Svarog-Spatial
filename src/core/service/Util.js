@@ -72,7 +72,7 @@ export const util = {
      * @returns target & ...src;
      */
     clone (target, ...src) {
-        return Object.assign(target, src) || (function () {
+        return Object.assign(target, ...src) || (function () {
             return function (target) {
                 // Cast target into Object if it is not.
                 // Reference is retained, no new objects are created, target is returned (augmented below).
