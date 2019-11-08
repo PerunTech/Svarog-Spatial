@@ -12,7 +12,7 @@ export const util = {
      */
 
     create (properties, prototype) {
-        return this.clone(this.inherit(prototype), properties);
+        return Object.setPrototypeOf(properties, prototype);
     },
 
     /**

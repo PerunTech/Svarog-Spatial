@@ -1,12 +1,15 @@
+import { name, version, description } from '../package.json';
 // Import all publishable modules.
 import * as core from './core';
 import * as data from './data';
-import * as hooks from './Hooks'
+import * as hooks from './Hooks';
 
 // Assemble plugin. 
-const Spatial = core.util.create(
+const plugin = core.util.create(
 { // Set instance properties.
-    version: '0.0.1',
+    name: name,
+    version: version,
+    description: description,
     init (token) { alert(token); }
 }, 
 { // Set prototype properties.
@@ -16,8 +19,8 @@ const Spatial = core.util.create(
 });
 
 // Register on global scope. Export default.
-window.Spatial = Spatial;
-export default Spatial;
+window[name] = plugin;
+export default plugin;
 
 
 
@@ -65,6 +68,6 @@ console.log(test)
 console.log(test instanceof CRS)
 */
 
-// import { marker } from './tools/Marker'
-// markerCreator.enable()
-// console.log(marker);
+import { drawMarker } from './tools/draw/Marker'
+console.log(drawMarker);
+// drawMarker.enable()
