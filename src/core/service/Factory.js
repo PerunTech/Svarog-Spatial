@@ -126,6 +126,10 @@ export const factory = {
         return iSpatial.latLng(lat, lng, alt);
     },
 
+    layerGroup (layers = [], opt = {}) {
+        return iSpatial.layerGroup(layers, opt);
+    },
+
     marker (p, opt) {
         return iSpatial.marker(p, opt);
     },
@@ -159,6 +163,10 @@ export const factory = {
         if (util.isArray(x)) { return iSpatial.point(x[0], x[1]); }
 
         return iSpatial.point(x, y, r);
+    },
+
+    polyline (latLngs, opt) {
+        return iSpatial.polyline(latLngs, opt);
     },
 
     /**

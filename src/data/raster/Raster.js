@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { Map } from '../../core/index'
+import { Map } from '../../core'
 
 export const raster = function () {
     const testTile = L.tileLayer(

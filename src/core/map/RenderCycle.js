@@ -1,18 +1,17 @@
 import { util, store, Map, factory, http } from '../index';
-import { raster } from '../../data/index';
+import { raster } from '../../data';
 
 export const renderCycle = {
     start() {
         Map.render(),
         raster(); //temp, `#revise_me`
-
-        // Get the bounding box of interest for this session.
+        // Get the bounding box of interest for this session. 
+        // Regiser Map listeners, move frame to interest.
         http.call('origin').then(response => {
-                // Register map movement event listener.
                 Map.register('moveend', util.debounce(() => {
                     store.dispatch({ zoom: Map.getZoom(), center: Map.getCenter(), bbox: Map.getBBox() });
                 }, 1000));
-                // Move map to response bounds.
+
                 Map.fitBounds(factory.boundingBox(response.data)); 
             }).catch(err => console.log(err));
     }, 

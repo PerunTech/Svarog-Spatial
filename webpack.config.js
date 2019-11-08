@@ -46,14 +46,5 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx']
-  },
-  externals: [
-    {
-      "prop-types": "prop-types",
-      "react": "react",
-      "react-dom": "react-dom",
-      "react-redux": "react-redux",
-      "redux": "redux"
-    }
-  ]
+  }
 };

@@ -39,7 +39,7 @@ Class.extend = function (props) {
 	}
 
 	let parentProto = Class.__super__ = this.prototype;
-	let proto = util.create(parentProto);
+	let proto = util.inherit(parentProto);
 
 	proto.constructor = Class;
 	Class.prototype = proto;
@@ -64,7 +64,7 @@ Class.extend = function (props) {
 	}
 
 	// merge options
-	if (proto.options) { props.options = util.cloneDeep(util.create(proto.options), props.options); }
+	if (proto.options) { props.options = util.cloneDeep(util.inherit(proto.options), props.options); }
 
 	// mix given properties into the prototype
 	util.cloneDeep(proto, props);

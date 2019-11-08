@@ -16,7 +16,7 @@ import {useRef, useEffect} from 'react'
  * 
  * @returns void;
  */
-export function useMount (...fns) { useEffect(() => { fns.map(fn => fn()) }, []); } //eslint-disable-line
+export function useMount (...fns) { useEffect(() => { fns.map(fn => fn()); }, []); } //eslint-disable-line
 
 /**
  * A custom hook which `does not execute on intial render` ( unlike useEffect ) and

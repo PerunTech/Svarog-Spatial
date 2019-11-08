@@ -11,6 +11,10 @@ export const util = {
      * `Object composition, prototypal inheritance.`
      */
 
+    create (properties, prototype) {
+        return this.clone(this.inherit(prototype), properties);
+    },
+
     /**
      * Object delegation, differential inheritance.
      * 
@@ -28,11 +32,11 @@ export const util = {
      * Changes to the source `proto` are reflected in all objects that inherit from it,
      * such as the result object of this function. Expresses is-a relationship. 
      * 
-     * Compatibility polyfill for `Object.create`
+     * Compatibility polyfill for `Object.create`.
      * 
      * &nbsp;
      * 
-     * @function create (proto: Object, properties?: Object): Object
+     * @function inherit (proto: Object, properties?: Object): Object
      * 
      * @param {Object} proto - The object which should be the prototype of the newly-created object.
      * @param {Object} [properties] - An object whose enumerable own properties specify property descriptors
@@ -40,7 +44,7 @@ export const util = {
      *
      * @return A new object with the specified prototype object and properties;
      */
-    create (proto, properties) {
+    inherit (proto, properties) {
         return Object.create(proto, properties) || (function () {
             function F() {}
             return function (proto) {
@@ -94,10 +98,14 @@ export const util = {
     },
 
     /**
-     * Concatenation of a full prototype chain. 
+     * Concatenation of a full prototype chain, i.e aggregation.
      * 
      * Merges the properties of the `src` object (or multiple objects)
      * into `target` object and returns the latter. Includes `prototype` of all `src` objects.
+     * 
+     * Flattens `src(s)` unto `target` instance.
+     * 
+     * Aggre
      * 
      * &nbsp;
      * 
