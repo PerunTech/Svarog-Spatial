@@ -1,4 +1,5 @@
-import { util, iSpatial, CRS, Projection } from '../index';
+import { util } from '../index';
+import L from 'leaflet';
 
 /**
  * Class factory.
@@ -13,6 +14,9 @@ import { util, iSpatial, CRS, Projection } from '../index';
  * @namespace factory
  */
 export const factory = {
+    /** Merge leaflet */
+    ...L,
+
     /**
      * Bounding box factory.
      * 
@@ -37,56 +41,9 @@ export const factory = {
      * @returns BBox; 
      */
     boundingBox () {
-        return iSpatial.latLngBounds(function assemble (arr) {
+        return L.latLngBounds(function assemble (arr) {
                 return [[arr[0], arr[1]], [arr[2], arr[3]]];
             }(util.normalize([...arguments], Number)));
-    },
-
-    /**
-     * Coordinate reference system (CRS) factory.
-     * 
-     * &nbsp;
-     * 
-     * Arguments `code` and `def` are supplied in pair, the code must match the definition.
-     * If omitted, factory will default to Spherical Mercator, EPSG: 3857.
-     *
-     * Scales, resolutions and distances are different representations of the same thing.
-     * Provide only one of these! If multiple of these are provided to factory,
-     * scales will override resolutions which in turn override distances. Scales are used internally,
-     * the other two are converted.
-     * 
-     * Distances are calculated based on monitor dpi, thus the final scales output will vary between
-     * application instances. Variation in scales will break server-side caching of rasters served via WMS,
-     * these require a fixed set of scales values in the grid-set matrix. Avoid distances when caching is required. 
-     * 
-     * &nbsp;
-     * 
-     * @factory crs (code: string, def: string, opt?: Object): CRS
-     * 
-     * @param {string} code - Code of the desired projection, as specified by the European Petroleum Survey Group.
-     * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
-     * @param {Object} [opt] - Configuration object.
-     * @param {Transformation} [opt.transformation] - Transforms projected coordinates to pixel coordinates.
-     * @param {number[]} [opt.origin] - The pixel origin of the map. Represented in projected coordinates.
-     * @param {number[]} [opt.bounds] - Rectangular area in pixel coordinates.
-     * @param {number[]} [opt.scales] - Array of scales. [pixels / projected coordinates]
-     * @param {number[]} [opt.resolutions] - Array of resolutions. [projected coordinates / pixels]
-     * @param {number[]} [opt.distances] - Array of available distances. [numbers in meters]
-     * 
-     * @returns CRS;
-     * 
-     * @example
-     *      crs('EPSG: 4326',
-     *          '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
-     *          {
-     *              origin: [-180.0, 90.0],
-     *              distances: [ 5000000, 2500000, 1000000, 750000, 500000,
-     *                           250000, 100000, 75000, 50000, 25000, 10000,
-     *                           7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
-     *          });
-     */
-    crs (code, def, opt = {}) {
-        return new CRS(code, def, opt);
     },
 
     /**
@@ -111,27 +68,31 @@ export const factory = {
      */
     latLng (lat, lng, alt) {
         // Argument check
-        if (lat instanceof iSpatial.LatLng || lat === undefined || lat === null ) { return lat; }
+        if (lat instanceof L.LatLng || lat === undefined || lat === null ) { return lat; }
         // Object arg
         if (typeof lat === 'object' && 'lat' in lat) {
-            return iSpatial.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
+            return L.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
         }
         // Coords arg
         if (util.isArray(lat) && typeof lat[0] !== 'object') {
-            if (lat.length === 3) { return iSpatial.latLng(lat[0], lat[1], lat[2]); }
-            if (lat.length === 2) { return iSpatial.latLng(lat[0], lat[1]); }
+            if (lat.length === 3) { return L.latLng(lat[0], lat[1], lat[2]); }
+            if (lat.length === 2) { return L.latLng(lat[0], lat[1]); }
             return null;
         }
 
-        return iSpatial.latLng(lat, lng, alt);
+        return L.latLng(lat, lng, alt);
     },
 
+    /** `#revise_me` */
     layerGroup (layers = [], opt = {}) {
-        return iSpatial.layerGroup(layers, opt);
+        const lg = L.layerGroup(layers, opt);
+        lg.addLayers = (iterable) => iterable.map(lg.addLayer);
+        
+        return lg;
     },
 
     marker (p, opt) {
-        return iSpatial.marker(p, opt);
+        return L.marker(p, opt);
     },
 
     /**
@@ -156,38 +117,17 @@ export const factory = {
      */
     point (x, y, r) {
         // Argument check
-        if (x instanceof iSpatial.Point || x === undefined || x === null) { return x; }
+        if (x instanceof L.Point || x === undefined || x === null) { return x; }
         // Object arg
-        if (typeof x === 'object' && 'x' in x && 'y' in x) { return iSpatial.point(x.x, x.y); }
+        if (typeof x === 'object' && 'x' in x && 'y' in x) { return L.point(x.x, x.y); }
         // Coords arg
-        if (util.isArray(x)) { return iSpatial.point(x[0], x[1]); }
+        if (util.isArray(x)) { return L.point(x[0], x[1]); }
 
-        return iSpatial.point(x, y, r);
+        return L.point(x, y, r);
     },
 
     polyline (latLngs, opt) {
-        return iSpatial.polyline(latLngs, opt);
-    },
-
-    /**
-     * Defines a projection.
-     * 
-     * &nbsp;
-     *
-     * @factory projection(proto: Object, code: string, def: string, bounds: Object): Projection  
-     *  
-     * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
-     * @param {string} def - Proj4 defintion of the projection specified by the `code`.
-     * @param {Object} bounds - Rectangular area in pixel coordinates.
-     * 
-     * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;
-     * 
-     * @example
-     *      projection('EPSG: 4326', '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
-     *
-     */
-    projection (code, def, bounds) {
-        return new Projection(code, def, bounds);
+        return L.polyline(latLngs, opt);
     },
 
     /**
@@ -213,8 +153,8 @@ export const factory = {
      */
     transformation (a, b, c, d) {
         // Coef array arg
-        if (util.isArray(a)) { return iSpatial.transformation(a[0], a[1], a[2], a[3]); }
+        if (util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
 
-        return iSpatial.transformation(a, b, c, d);
+        return L.transformation(a, b, c, d);
     }
 };

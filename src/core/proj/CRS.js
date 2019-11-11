@@ -1,40 +1,81 @@
-import { util, factory, iSpatial } from '../index';
+import { factory, projection } from '../index';
 
 /**
- * Mean Earth Radius = 6371000 m, as recommended for use by
- * the International Union of Geodesy and Geophysics.
- *
- * The Earth radius R varies from 6356.752 km at the poles to 6378.137 km at the equator.
- * Perhaps this number can be tweaked based on mean latitude of the project country,
- * in order to improve accuracy.
+ * Coordinate reference system (CRS) factory.
  * 
- * Expressed in meters [m].
+ * &nbsp;
+ * 
+ * Arguments `code` and `def` are supplied in pair, the code must match the definition.
+ * If omitted, factory will default to Spherical Mercator, EPSG: 3857.
  *
- * @private
- * @constant
- * @type {number}
+ * Scales, resolutions and distances are different representations of the same thing.
+ * Provide only one of these! If multiple of these are provided to factory,
+ * scales will override resolutions which in turn override distances. Scales are used internally,
+ * the other two are converted.
+ * 
+ * Distances are calculated based on monitor dpi, thus the final scales output will vary between
+ * application instances. Variation in scales will break server-side caching of rasters served via WMS,
+ * these require a fixed set of scales values in the grid-set matrix. Avoid distances when caching is required. 
+ * 
+ * &nbsp;
+ * 
+ * @factory crs (code: string, def: string, opt?: Object): crs
+ * 
+ * @param {string} code - Code of the desired projection, as specified by the European Petroleum Survey Group.
+ * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
+ * @param {Object} [opt] - Configuration object.
+ * @param {Transformation} [opt.transformation] - Transforms projected coordinates to pixel coordinates.
+ * @param {number[]} [opt.origin] - The pixel origin of the map. Represented in projected coordinates.
+ * @param {number[]} [opt.bounds] - Rectangular area in pixel coordinates.
+ * @param {number[]} [opt.scales] - Array of scales. [pixels / projected coordinates]
+ * @param {number[]} [opt.resolutions] - Array of resolutions. [projected coordinates / pixels]
+ * @param {number[]} [opt.distances] - Array of available distances. [numbers in meters]
+ * 
+ * @returns crs;
+ * 
+ * @example
+ *      crs('EPSG: 4326',
+ *          '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
+ *          {
+ *              origin: [-180.0, 90.0],
+ *              distances: [ 5000000, 2500000, 1000000, 750000, 500000,
+ *                           250000, 100000, 75000, 50000, 25000, 10000,
+ *                           7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
+ *          });
  */
-const R = 6371000;
+export function crs (code, def, opt) {
+    const options = {..._opt, ...opt};
+    const { CRS } = factory;
 
-/**
- * @class CRS
- * @implements iCRS
- */
-export function CRS (code, def, opt) {
-    this.code = code;
-    this.def = def;
-    // Merge options, override defaults
-    this.options = util.clone(_opt, opt);
-
-    this.projection = factory.projection(this.code, this.def, this.options.bounds)
-    this.transformation = _setTransformation(this.options);
-    this.scales = _setScales(this.options);
-    this.infinite = !this.options.bounds;
+    return {
+        ...CRS,
+        code: code,
+        def: def,
+        options: options,
+        projection: projection(this.code, this.def, options.bounds),
+        transformation: _setTransformation(options),
+        scales: _setScales(options),
+        infinite: !options.bounds,
+        ...proto
+    };
 }
 
-CRS.prototype = util.clone(iSpatial.CRS, {
-    /** Earth radius, in meters [m] */
-    R: R,
+const proto = {
+    /**
+     * Mean Earth Radius = 6371000 m, as recommended for use by
+     * the International Union of Geodesy and Geophysics.
+     *
+     * The Earth radius R varies from 6356.752 km at the poles to 6378.137 km at the equator.
+     * Perhaps this number can be tweaked based on mean latitude of the project country,
+     * in order to improve accuracy.
+     * 
+     * Expressed in meters [m].
+     *
+     * @private
+     * @constant
+     * @type {number}
+     */
+    R: 6371000,
 
     /**
      * Uses `Haversine` formula to calculate the distance between two geographical points.
@@ -79,26 +120,15 @@ CRS.prototype = util.clone(iSpatial.CRS, {
     },
 
     /**
-     * CRS code getter.
-     * 
-     * @function getCode (): string
-     * 
-     * @returns string;
-     */
-    getCode () {
-        return this.code;
-    },
-
-    /**
      * Calculate the current scale.
      * 
      * Returns the scale used when transforming projected coordinates
      * into pixel coordinates for a particular zoom.
-     * The original iCRS implementation uses `256 * 2^zoom` for Mercator-based CRS.
+     * The original proto.CRS implementation uses `256 * 2^zoom` for Mercator-based CRS.
      * 
      * &nbsp;
      *
-     * @override iCRS.scale
+     * @override proto.CRS.scale
      * @function scale (zoom: number): number
      * 
      * @param {number} zoom - The current zoom value.
@@ -155,11 +185,9 @@ CRS.prototype = util.clone(iSpatial.CRS, {
 
         return (scale - downScale) / (nextScale - downScale) + downZoom;
     },
-}, {
-    constructor: CRS
-})
+};
 
-/** Configuration object */
+/** Default configuration */
 const _opt = {
     /**
      * Transforms projected coordinates to pixel coordinates.
@@ -179,10 +207,9 @@ const _opt = {
      * For default EPSG: 3857 bounds are +/- 20037508.342789244 at the equator R.
      */
     origin: [ 
-        +(Math.round(Math.PI * R + ('e+' + 2)) + ('e-' + 2)),
-        +(Math.round(Math.PI * R + ('e+' + 2)) + ('e-' + 2))
+        +(Math.round(Math.PI * proto.R + ('e+' + 2)) + ('e-' + 2)),
+        +(Math.round(Math.PI * proto.R + ('e+' + 2)) + ('e-' + 2))
     ],
-
 
     /**
      * Array representation of the map scales as real-world distances in meters.
@@ -209,10 +236,10 @@ const _opt = {
         250,
         100 // 1m
     ]
-}
+};
 
 /**
- * CRS.scales setter. 
+ * crs.scales setter. 
  * 
  * Calculates and converts distances => resolutions => scales. 
  * Consequently data flow is in the opposite direction, scales before resolutions before distances.
@@ -222,7 +249,7 @@ const _opt = {
  * @private
  * @function _setScales (options: Object): Number[]
  * 
- * @param {Object} options - CRS configuration object.
+ * @param {Object} options - crs configuration object.
  * @param {Number []} [options.scales] - Array of scales. [pixels / projected coordinates]
  * @param {Number []} [options.resolutions] - Array of resolutions. [projected coordinates / pixels]
  * @param {Number []} [options.distances] - Array of available distances. [numbers in meters]
@@ -234,7 +261,7 @@ let _setScales = function ({scales : s, resolutions: r, distances: d}) {
         : r ? _setResolutions(r)
         : d ? _setDistances(d)
         : [];
-}
+};
 
 /**
  * Coverts resolutions to scales.
@@ -250,7 +277,7 @@ let _setScales = function ({scales : s, resolutions: r, distances: d}) {
  */
 let _setResolutions = function (arr) {
     return arr.map((r) => { return 1 / r; });
-}
+};
 
 /**
  * Converts distances to scales, via resoltuion calculation.
@@ -302,10 +329,10 @@ let _setDistances = function (arr) {
     const _r = arr.map((d) => { return (d / 100) / _ppm; }) 
 
     return _setResolutions(_r);
-}
+};
 
 /**
- * CRS.options.transfomation setter.
+ * crs.options.transfomation setter.
  * 
  * Sets transformation based on the options.origin provided.
  * 
@@ -314,7 +341,7 @@ let _setDistances = function (arr) {
  * @private
  * @function _setTransformation (opt: Object): Transformation
  * 
- * @param {Object} opt - CRS configuration object.
+ * @param {Object} opt - crs configuration object.
  * 
  * @returns Transformation;
  */
@@ -322,7 +349,7 @@ let _setTransformation = function (opt) {
     return opt.origin
         ? factory.transformation(1, -opt.origin[0], -1, opt.origin[1])
         : opt.transformation;
-}
+};
 
 /**
  * Get the closest lowest element in an array.
@@ -347,4 +374,4 @@ let _closestElement = function (arr, el) {
     }
 
     return nLow;
-}
+};

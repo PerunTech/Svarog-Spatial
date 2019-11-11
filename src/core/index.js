@@ -2,11 +2,10 @@
 export { util } from './service/Util'; // keep on top, root dependency.
 export { http } from './service/HTTP';
 export { factory } from './service/Factory';
-export { iSpatial } from './service/ISpatial';
 
 // Abstract
-export { Class } from './abstract/Class';
-export { Interface } from './abstract/Interface';
+// export { Class } from './abstract/Class';
+// export { Interface } from './abstract/Interface';
 
 // Model
 export { connect } from './model/Connect';
@@ -21,5 +20,5 @@ export { renderCycle } from './map/RenderCycle';
 export { Map } from './map/Map';
 
 // Proj
-export { CRS } from './proj/CRS';
-export { Projection } from './proj/Projection';
+export { crs } from './proj/CRS';
+export { projection } from './proj/Projection';

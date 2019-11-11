@@ -1,34 +1,38 @@
-import { util, factory, Map } from '../../core'
+import { Map, factory } from '../../core';
 
-export const drawMarker = {
-    enable () {
-        return Map.on({ click: this.disable.bind(this), mousemove: this.moveHint.bind(this) })
-            .fire('drawStart', { /** Pass something meaningfull */ });
-    },
-
-    disable () {
-        return this.renderMarker()
-            .removeLayer(this.hint)
-            .off({ click: this.disable, mousemove: this.moveHint }); 
-    }
-}
-
-const proto = {
-    // Fires marker creation event. Creates a marker entity and adds it to the map.
-    renderMarker () {
-        return Map.fire('create', { 
-            layer: factory.marker(this.hint.getLatLng(), this.opt.marker).addTo(Map) });
-    },
+export function drawMarker (opt = {}) {
+    /** default configuration, merge argument. */
+    const _opt = {
+        tooltip: {
+            className: 'draw-marker-hint',
+            permanent: true,
+            offset: factory.point(0, 10),
+            direction: 'bottom',
+            opacity: 0.8
+        },
+        marker: {/** use factory.marker.default.opt */},
+        ...opt
+    };
 
     // create visual hint as marker, trails mouse movement.
-    createHint () {
-        return factory.marker([0, 0], this.opt.marker)
-            .bindTooltip(this.opt.tooltip)
-            .openTooltip()
-            .addTo(Map); 
-    },
+    const hint = factory.marker([0, 0], _opt.marker)
+        .bindTooltip('new marker')
+        .openTooltip()
+        .addTo(Map); 
 
     // recalculates hint position when the mouse moves.
-    moveHint ({latlng}) { return this.hint.setLatLng(latlng); }
-};
+    function moveHint ({latlng}) { return hint.setLatLng(latlng); }
+    
+    return {
+        enable () {
+            return Map.on({ click: this.disable, mousemove: moveHint })
+                .fire('drawStart', { /** Pass something meaningfull */ });
+        },
 
+        disable () {
+            return Map.fire('create', { layer: factory.marker(hint.getLatLng(), _opt.marker).addTo(Map) })
+                .removeLayer(hint)
+                .off({ click: this.disable, mousemove: moveHint }); 
+        }
+    };
+}

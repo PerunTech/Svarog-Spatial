@@ -4,7 +4,7 @@ import * as core from './core';
 import * as data from './data';
 import * as hooks from './Hooks';
 
-// Assemble plugin. 
+// Assemble plugin.
 const plugin = core.util.create(
 { // Set instance properties.
     name: name,
@@ -46,9 +46,6 @@ export default plugin;
 
 
 
-
-
-
 ////////////////
 ///// TEST /////
 ////////////////
@@ -58,15 +55,7 @@ import { Provider, MapContainer } from './core'
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
 
-/*
-import { factory, CRS } from './core'
-const test = factory.crs(
-    'EPSG: 4326',
-    '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-)
-console.log(test)
-console.log(test instanceof CRS)
-*/
+
 
 import { drawMarker } from './tools/draw/Marker'
 console.log(drawMarker);

@@ -1,4 +1,4 @@
-import { iSpatial } from '../index';
+import { factory } from '../index';
 
 const el = document.createElement('div');
 el.id = 'map';
@@ -10,7 +10,7 @@ el.style.border = '4px inset';
  * 
  * @namespace Map
  */
-export const Map = iSpatial.map(el, {
+export const Map = factory.map(el, {
     center: [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
     zoom: 8,
     minZoom: 0,

@@ -11,15 +11,15 @@ export const util = {
      * `Object composition, prototypal inheritance.`
      */
 
-    create (properties, prototype) {
-        return Object.setPrototypeOf(properties, prototype);
+    create (object, prototype = Object) {
+        return Object.setPrototypeOf(object, prototype);
     },
 
     /**
      * Object delegation, differential inheritance.
      * 
      * Base JavaScript inheritance. Creates an object that has the specified prototype,
-     * and that optionally contains specified properties.
+     * and that optionally contains specified property descriptors.
      * 
      * Can create objects 'ex nihilo' (out of nothing) by calling create(null).
      * The result is an object whose prototype points to null (end of chain).

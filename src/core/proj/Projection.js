@@ -2,49 +2,67 @@ import proj4 from 'proj4';
 import { factory } from '../index';
 
 /**
- * @class Projection
- */
-export function Projection (code, def, bounds) {
-    this._proj = _defineProj(code, def);
-    this.bounds = bounds;
-}
-    
-/**
- * Converts a latitude / longitude pair to a (x,y) point,
- * given the instance projection.
+ * Defines a projection.
  * 
  * &nbsp;
+ *
+ * @factory projection(proto: Object, code: string, def: string, bounds: Object): Projection  
+ *  
+ * @param {string} code - CRS code, as specified by the European Petroleum Survey Group. 
+ * @param {string} def - Proj4 defintion of the projection specified by the `code`.
+ * @param {Object} bounds - Rectangular area in pixel coordinates.
  * 
- * @function project (latlng: LatLng): Point
+ * @returns Projection, as defined in proj4 (MetaCRS sub) and extended for our purposes;
  * 
- * @param {LatLng} latlng - A latitude / longitude pair.
- * 
- * @returns Point; 
+ * @example
+ *      projection('EPSG: 4326', '+proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+ *
  */
-Projection.prototype.project = latlng => {
-    let pf = this._proj.forward([latlng.lng, latlng.lat]);
-
-    return factory.point(pf[0], pf[1]);
-},
-
-/**
- * Converts a (x,y) point to a latitude / longitude pair,
- * given the instance projection.
- * 
- * &nbsp;
- * 
- * @function unproject (p: Point): LatLng
- * 
- * @param {Point} p - A point[x, y].
- * 
- * @returns LatLng; 
- */
-Projection.prototype.unproject = (p, unbounded) => {
-    let pi = this._proj.inverse([p.x, p.y]);
-    
-    return factory.latLng(pi[1], pi[0], unbounded);
+export function projection (code, def, bounds) {
+    return {
+        _proj: _defineProj(code, def),
+        bounds: bounds,
+        ...proto
+    };
 }
 
+const proto = {
+    /**
+     * Converts a latitude / longitude pair to a (x,y) point,
+     * given the instance projection.
+     * 
+     * &nbsp;
+     * 
+     * @function project (latlng: LatLng): Point
+     * 
+     * @param {LatLng} latlng - A latitude / longitude pair.
+     * 
+     * @returns Point; 
+     */
+    project (latlng) {
+        let pf = this._proj.forward([latlng.lng, latlng.lat]);
+    
+        return factory.point(pf[0], pf[1]);
+    },
+
+    /**
+     * Converts a (x,y) point to a latitude / longitude pair,
+     * given the instance projection.
+     * 
+     * &nbsp;
+     * 
+     * @function unproject (p: Point): LatLng
+     * 
+     * @param {Point} p - A point[x, y].
+     * 
+     * @returns LatLng; 
+     */
+    unproject (p, unbounded) {
+        let pi = this._proj.inverse([p.x, p.y]);
+        
+        return factory.latLng(pi[1], pi[0], unbounded);
+    }
+};
 
 /**
  * Define a projection.
