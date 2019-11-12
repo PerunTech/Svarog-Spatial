@@ -215,27 +215,8 @@ const _opt = {
      * Array representation of the map scales as real-world distances in meters.
      * Corresponds to different zoom levels of the map.
      */
-    distances: [
-        5000000,
-        2500000,
-        1000000, // 10 km
-        750000,
-        500000,
-        250000,
-        100000, // 1000m or 1 km
-        75000,
-        50000,
-        25000,
-        10000, // 100m
-        7500,
-        5000,
-        2500,
-        1000, // 1000 cm = 10 m
-        750,
-        500,
-        250,
-        100 // 1m
-    ]
+    distances: [ 5000000, 2500000, 1000000, 750000, 500000, 250000, 100000, 75000,
+        50000, 25000, 10000, 7500, 5000, 2500, 1000, 750, 500, 250, 100 ]
 };
 
 /**

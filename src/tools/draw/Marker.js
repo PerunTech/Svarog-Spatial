@@ -21,18 +21,18 @@ export function drawMarker (opt = {}) {
         .addTo(Map); 
 
     // recalculates hint position when the mouse moves.
-    function moveHint ({latlng}) { return hint.setLatLng(latlng); }
+    function syncHint ({latlng}) { hint.setLatLng(latlng); }
     
     return {
         enable () {
-            return Map.on({ click: this.disable, mousemove: moveHint })
-                .fire('drawStart', { /** Pass something meaningfull */ });
+            return Map.on({ click: this.disable, mousemove: syncHint })
+                .fire('drawStart', { layer: hint });
         },
 
         disable () {
             return Map.fire('create', { layer: factory.marker(hint.getLatLng(), _opt.marker).addTo(Map) })
                 .removeLayer(hint)
-                .off({ click: this.disable, mousemove: moveHint }); 
+                .off({ click: this.disable, mousemove: syncHint }); 
         }
     };
 }

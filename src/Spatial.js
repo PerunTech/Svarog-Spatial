@@ -57,6 +57,5 @@ ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementByI
 
 
 
-import { drawMarker } from './tools/draw/Marker'
-console.log(drawMarker);
-// drawMarker.enable()
+import { drawLine } from './tools/draw/Line'
+drawLine({}).enable()

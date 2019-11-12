@@ -34,3 +34,9 @@ Map.render = function () {
     
     this.invalidateSize();
 };
+
+Map.setCursor = function (type) {
+    this.getContainer().style.cursor = type;
+    
+    return this;
+};

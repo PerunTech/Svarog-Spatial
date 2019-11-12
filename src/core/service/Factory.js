@@ -83,12 +83,8 @@ export const factory = {
         return L.latLng(lat, lng, alt);
     },
 
-    /** `#revise_me` */
     layerGroup (layers = [], opt = {}) {
-        const lg = L.layerGroup(layers, opt);
-        lg.addLayers = (iterable) => iterable.map(lg.addLayer);
-        
-        return lg;
+        return L.layerGroup(layers, opt);
     },
 
     marker (p, opt) {
