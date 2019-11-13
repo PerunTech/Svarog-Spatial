@@ -1,4 +1,6 @@
 import { name, version, description } from '../package.json';
+// Import all assets
+import './assets';
 // Import all publishable modules.
 import * as core from './core';
 import * as data from './data';
@@ -44,8 +46,6 @@ export default plugin;
 
 
 
-
-
 ////////////////
 ///// TEST /////
 ////////////////
@@ -55,7 +55,6 @@ import { Provider, MapContainer } from './core'
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
 
-
-
-import { drawLine } from './tools/draw/Line'
-drawLine({}).enable()
+import { draw } from './tools/Draw';
+// draw.marker()
+draw.polygon()

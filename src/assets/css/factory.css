@@ -334,12 +334,12 @@
 	border-radius: 5px;
 	}
 .leaflet-control-layers-toggle {
-	background-image: url(img/layers.png);
+	background-image: url(../img/layers.png);
 	width: 50px;
 	height: 50px;
 	}
 .leaflet-retina .leaflet-control-layers-toggle {
-	background-image: url(img/layers-2x.png);
+	background-image: url(../img/layers-2x.png);
 	background-size: 26px 26px;
 	}
 .leaflet-touch .leaflet-control-layers-toggle {
@@ -379,7 +379,7 @@
 
 /* Default icon URLs */
 .leaflet-default-icon-path {
-	background-image: url(img/marker-icon.png);
+	background-image: url(../img/marker-icon.png);
 	}
 
 
@@ -655,62 +655,4 @@
     position: relative;
     margin-top: -25%;
     left: -50%;
-}
-
-
-
-
-/* Tools css */
-
-.marker-icon,
-.marker-icon:focus {
-  background-color: #ffffff;
-  border: 1px solid #3388ff;
-  border-radius: 50%;
-  margin: -8px 0 0 -8px !important;
-  width: 14px !important;
-  height: 14px !important;
-  outline: 0;
-  transition: opacity ease 0.3s;
-}
-
-.marker-icon-middle,
-.marker-icon-middle:focus {
-  opacity: 0.7;
-  margin: -6px 0 0 -6px !important;
-  width: 10px !important;
-  height: 10px !important;
-}
-
-.leaflet-pm-draggable {
-  cursor: move !important;
-}
-
-.cursor-marker {
-  cursor: crosshair;
-  pointer-events: none;
-  display: block !important;
-}
-
-.cursor-marker.visible {
-  display: block !important;
-}
-
-.leaflet-pm-invalid {
-  stroke: red;
-  transition: fill ease 0s, stroke ease 0s;
-}
-
-.rect-style-marker,
-.rect-start-marker {
-  opacity: 0;
-}
-
-.rect-style-marker.visible,
-.rect-start-marker.visible {
-  opacity: 1 !important;
-}
-
-.hidden {
-  display: none;
 }

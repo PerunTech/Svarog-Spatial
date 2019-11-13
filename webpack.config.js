@@ -1,7 +1,7 @@
 let path = require('path');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/Spatial.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -41,7 +41,14 @@ module.exports = {
             },
           },
         ],
-      }
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 8192,
+        }
+      },
     ]
   },
   resolve: {
