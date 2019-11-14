@@ -1,7 +1,7 @@
 let path = require('path');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/Spatial.js',
   output: {
     path: path.resolve(__dirname, 'dist'),

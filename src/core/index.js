@@ -19,6 +19,9 @@ export { MapContainer } from './map/MapContainer';
 export { renderCycle } from './map/RenderCycle';
 export { Map } from './map/Map';
 
+// Control
+export { control } from './control/Control';
+
 // Proj
 export { crs } from './proj/CRS';
 export { projection } from './proj/Projection';

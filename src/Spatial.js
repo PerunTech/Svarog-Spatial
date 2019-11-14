@@ -4,6 +4,7 @@ import './assets';
 // Import all publishable modules.
 import * as core from './core';
 import * as data from './data';
+import * as ui from './ui';
 import * as hooks from './Hooks';
 
 // Assemble plugin.
@@ -17,6 +18,7 @@ const plugin = core.util.create(
 { // Set prototype properties.
     ...core,
     ...data,
+    ...ui,
     ...hooks
 });
 
@@ -51,10 +53,6 @@ export default plugin;
 ////////////////
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, MapContainer } from './core'
+import { Provider, MapContainer, } from './core'
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
-
-import { draw } from './tools/Draw';
-// draw.marker()
-draw.polygon()
