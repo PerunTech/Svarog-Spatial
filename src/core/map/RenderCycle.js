@@ -12,7 +12,11 @@ export const renderCycle = {
                     store.dispatch({ zoom: Map.getZoom(), center: Map.getCenter(), bbox: Map.getBBox() });
                 }, 1000));
 
-                Map.fitBounds(factory.boundingBox(response.data)); 
+                Map.fitBounds(
+                    factory.boundingBox(
+                        store.dispatch({
+                            origin: util.normalize(response.data, Number)
+                }))); 
             }).catch(err => console.log(err));
     }, 
 

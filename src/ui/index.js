@@ -3,10 +3,9 @@ export { Button } from './elements/Button';
 export { ButtonSet } from './elements/ButtonSet';
 
 //menu
-export { navigateMenu } from './menus/NavigateMenu';
-export { drawMenu } from './menus/DrawMenu';
-export { editMenu } from './menus/EditMenu';
-export { measureMenu } from './menus/MeasureMenu';
+export { navToolbar } from './toolbars/Navigation';
+export { rpToolbar } from './toolbars/RefParcel';
+export { measToolbar } from './toolbars/Measurement';
 
 // ui
 export { Ellipser } from './loading/Ellipser';

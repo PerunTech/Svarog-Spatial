@@ -16,6 +16,7 @@ export const state = {
     map: {
         zoom: 0,
         center: {lat: 0, lng: 0},
+        origin: '',
         bbox: '',
         sid: 0,
         refreshMap: false
