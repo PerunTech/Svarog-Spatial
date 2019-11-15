@@ -18,9 +18,7 @@ export { state } from './model/State';
 export { MapContainer } from './map/MapContainer';
 export { renderCycle } from './map/RenderCycle';
 export { Map } from './map/Map';
-
-// Control
-export { control } from './control/Control';
+export { control } from './map/Control';
 
 // Proj
 export { crs } from './proj/CRS';

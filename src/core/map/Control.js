@@ -32,15 +32,15 @@ import { factory, Map } from '../index';
  * @param {React.Component | Element} UI - The user interface element / composition.
  * @param {Object} [props] - Props for your React UI.
  * @param {Object} [opt] - Configuratiuon object.
- * @param {Object} [opt.position] - Rendering position in the map frame. 
+ * @param {string} [opt.position] - Rendering position in the map frame. 
  *                 Valid input is ('topleft', 'topright', 'bottomleft', 'bottomright').
- * @param {Object} [opt.className] - The css class of the Control.
+ * @param {string} [opt.className] - The css class of the Control.
  * 
  * @returns Control;
  */
 export function control (UI, props = {}, opt = _opt) {
     /**
-     * Injects UI into a new instance of Control. Automatically adds and renders
+     * Injects UI into a new extended instance of Control. Automatically adds and renders
      * the UI in the map, for convenience.
      * 
      * @class Control
