@@ -21,7 +21,7 @@ export const navButtons = [{
     }];
 
 export function NavTools () {
-    return <div id='navTools'>
+    return <div id='navTools' style={{cursor: 'pointer'}}>
         <a id='zoomIn_control'
             className='leaflet-control-zoom-in'
             title='Zoom In'

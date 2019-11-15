@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button } from '../index';
 
 export function ButtonSet ({buttons}) {
-    return <div id='drawTools' >
+    return <div id='buttonSet' >
         {buttons.map((props, i) => <Button key={i} {...props} />)}
     </div>
 }
