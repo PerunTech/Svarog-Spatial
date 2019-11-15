@@ -22,7 +22,7 @@ const _tool = Map.pm.Draw;
  * 
  * @namespace draw  
  */
-export const draw = {
+export const drawTools = {
     marker (opt = {}) { return _tool.enable('Marker', opt); },
 
     line (opt = {}) { return _tool.enable('Line', opt); },

@@ -1,4 +1,5 @@
 import { store, Map, factory } from '../core';
+import { drawTools } from '../tools';
 
 export const navTools = {
     origin () {
@@ -12,8 +13,14 @@ export const navTools = {
         console.log('go to location')
     },
 
-    view () {
-        console.log('go to view');
+    boxZoom () {
+        Map.on('pm:create', function fn ({layer}) {
+            // console.log(layer)
+            // console.log(layer.getBounds())
+            Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
+        });
+
+        return drawTools.rectangle({});
     }
 }
 

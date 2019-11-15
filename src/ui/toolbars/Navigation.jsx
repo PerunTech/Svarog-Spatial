@@ -17,7 +17,7 @@ export const navButtons = [{
         id: 'goToView',
         title: 'Go to View',
         icon: 'control-icon leaflet-pm-icon-rectangle',
-        onClick: navTools.view
+        onClick: navTools.boxZoom
     }];
 
 export function NavTools () {

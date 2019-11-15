@@ -19,6 +19,7 @@ export const Map = factory.map(el, {
     zoomControl: false,
     doubleClickZoom: false,
     scrollWheelZoom: true,
+    boxZoom: false,
     zoomAnimation: true,
     attributionControl: false,
     preferCanvas: false,
