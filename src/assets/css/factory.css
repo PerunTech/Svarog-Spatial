@@ -126,6 +126,8 @@
 	}
 .leaflet-bottom {
 	bottom: 0;
+	box-shadow: none !important;
+    background-color: transparent !important;
 	}
 .leaflet-left {
 	left: 0;
