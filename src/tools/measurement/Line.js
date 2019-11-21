@@ -131,7 +131,7 @@ export const measureLine = {
     }
 };
 
-fc.Polyline.incude(measureLine);
+fc.Polyline.include(measureLine);
     
 fc.Polyline.addInitHook(function() {
     measUtils.initHook.call(this);
