@@ -129,6 +129,10 @@
 	}
 .leaflet-left {
 	left: 0;
+	box-shadow: 2px 2px 1px 1px rgba(0, 0, 0, 0.4);
+	padding: 5px;
+	background-color: #eceae1;
+	border-radius: 2px;
 	}
 .leaflet-control {
 	float: left;
@@ -138,16 +142,16 @@
 	float: right;
 	}
 .leaflet-top .leaflet-control {
-	margin-top: 10px;
+	margin-top: 0px; /* 10px */
 	}
 .leaflet-bottom .leaflet-control {
-	margin-bottom: 10px;
+	margin-bottom: 0px; /* 10px */
 	}
 .leaflet-left .leaflet-control {
-	margin-left: 10px;
+	margin-left: 0px; /* 10px */
 	}
 .leaflet-right .leaflet-control {
-	margin-right: 10px;
+	margin-right: 0px; /* 10px */
 	}
 
 
@@ -305,8 +309,8 @@
 
 .leaflet-touch .leaflet-bar a {
 	width: 30px;
-	height: 30px;
-	line-height: 30px;
+	height: 31px;
+	line-height: 31px;
 	}
 
 
@@ -444,8 +448,10 @@
 	}
 .leaflet-touch .leaflet-control-layers,
 .leaflet-touch .leaflet-bar {
-	border: 2px solid rgba(0,0,0,0.2);
+	border: 1px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
+	margin-bottom: 5px;
+	box-shadow: 0.5px 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.3);
 	}
 
 

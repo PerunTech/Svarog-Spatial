@@ -9,14 +9,12 @@ export const navTools = {
         );
     },
 
-    location () {
+    point () {
         console.log('go to location')
     },
 
     boxZoom () {
         Map.on('pm:create', function fn ({layer}) {
-            // console.log(layer)
-            // console.log(layer.getBounds())
             Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
         });
 

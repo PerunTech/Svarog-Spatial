@@ -10,3 +10,6 @@ export { measToolbar } from './toolbars/Measurement';
 // ui
 export { Ellipser } from './loading/Ellipser';
 export { Loading } from './loading/Loading';
+
+// scale
+export { scale } from './scale/Scale';

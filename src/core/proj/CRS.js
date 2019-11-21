@@ -1,4 +1,5 @@
 import { factory, projection } from '../index';
+import { R } from '../../Constants';
 
 /**
  * Coordinate reference system (CRS) factory.
@@ -75,7 +76,7 @@ const proto = {
      * @constant
      * @type {number}
      */
-    R: 6371000,
+    R: R,
 
     /**
      * Uses `Haversine` formula to calculate the distance between two geographical points.

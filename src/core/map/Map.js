@@ -29,11 +29,11 @@ export const Map = factory.map(el, {
     tapTolerance: 15,
 });
 
-Map.render = function () {
+Map.render = function render () {
     let container = document.getElementById('mapContainer');
     container.appendChild(el);
     
-    this.invalidateSize();
+    return this.invalidateSize();
 };
 
 Map.setCursor = function (type) {

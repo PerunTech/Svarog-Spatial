@@ -1,10 +1,11 @@
 /* Toolbar */
 
 .leaflet-pm-toolbar {
+  border: 1px solid rgba(0,0,0,0.2);
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
-  padding: 5px;
+  padding: 3px;
   box-sizing: border-box;
   position: relative;
   z-index: 3;
@@ -54,6 +55,7 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
   background-image: url('../icons/Scissors.svg');
 }
+
 
 .leaflet-buttons-control-button:hover {
   cursor: pointer;
@@ -109,4 +111,61 @@
 .button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
   cursor: pointer;
   background-color: #777;
+}
+
+/* ************ */
+/* Custom icons */
+/* ************ */
+
+.leaflet-buttons-control-button.large-icon {
+  padding: 3px;
+}
+
+/* Navigation */
+.leaflet-pm-toolbar .leaflet-pm-icon-origin {
+  background-image: url('../img/origin.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-location {
+  background-image: url('../img/location.png');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-view {
+  background-image: url('../img/view.png');
+}
+
+/*  Reference Parcel */
+.leaflet-pm-toolbar .leaflet-pm-icon-draw {
+  background-image: url('../img/draw.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-edit {
+  background-image: url('../img/edit.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-cut {
+  background-image: url('../img/cut.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-split {
+  background-image: url('../img/split.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-merge {
+  background-image: url('../img/merge.png');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-landscape {
+  background-image: url('../img/landscape.png');
+}
+
+/* Measurement */
+.leaflet-pm-toolbar .leaflet-pm-icon-length {
+  background-image: url('../img/length.png');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-area {
+  background-image: url('../img/area.png');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-angle {
+  background-image: url('../img/angle.png');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-erase {
+  background-image: url('../img/eraser.png');
 }

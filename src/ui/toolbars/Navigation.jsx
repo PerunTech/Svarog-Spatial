@@ -6,17 +6,17 @@ import { ButtonSet } from '../index';
 export const navButtons = [{ 
         id: 'goToOrigin',
         title: 'Go to Origin',
-        icon: 'control-icon leaflet-pm-icon-circle-marker',
+        icon: 'control-icon leaflet-pm-icon-origin',
         onClick: navTools.origin
     }, {
         id: 'goToLocation',
         title: 'Go to Location',
-        icon: 'control-icon leaflet-pm-icon-marker',
-        onClick: navTools.location
+        icon: 'control-icon leaflet-pm-icon-location',
+        onClick: navTools.point
     }, {
         id: 'goToView',
         title: 'Go to View',
-        icon: 'control-icon leaflet-pm-icon-rectangle',
+        icon: 'control-icon leaflet-pm-icon-view',
         onClick: navTools.boxZoom
     }];
 
@@ -41,4 +41,3 @@ export function NavTools () {
 }
 
 export const navToolbar = control(NavTools);
-// , {}, {className: 'leaflet-control-zoom leaflet-bar leaflet-control'}
