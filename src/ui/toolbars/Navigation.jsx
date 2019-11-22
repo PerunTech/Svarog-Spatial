@@ -1,23 +1,23 @@
 import React from 'react';
 import { control, Map } from '../../core';
-import { navTools } from '../../tools'
-import { ButtonSet } from '../index';
+import { navHandler } from '../../tools'
+import { ButtonSet } from '..';
 
 export const navButtons = [{ 
         id: 'goToOrigin',
         title: 'Go to Origin',
         icon: 'control-icon leaflet-pm-icon-origin',
-        onClick: navTools.origin
+        onClick: navHandler.origin
     }, {
         id: 'goToLocation',
         title: 'Go to Location',
         icon: 'control-icon leaflet-pm-icon-location',
-        onClick: navTools.point
+        onClick: navHandler.point
     }, {
         id: 'goToView',
         title: 'Go to View',
         icon: 'control-icon leaflet-pm-icon-view',
-        onClick: navTools.boxZoom
+        onClick: navHandler.boxZoom
     }];
 
 export function NavTools () {

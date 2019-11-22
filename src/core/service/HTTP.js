@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { util, store } from '../index';
+import { util, store } from '..';
 
 /**
  * Axios instance defaults.

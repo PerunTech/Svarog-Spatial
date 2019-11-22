@@ -1,7 +1,7 @@
-import { store, Map, factory } from '../core';
-import { drawTools } from '../tools';
+import { store, Map, factory } from '../../core';
+import { drawHandler } from '..';
 
-export const navTools = {
+export const navHandler = {
     origin () {
         return Map.fitBounds(
             factory.boundingBox(
@@ -18,7 +18,7 @@ export const navTools = {
             Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
         });
 
-        return drawTools.rectangle({});
+        return drawHandler.rectangle({});
     }
 }
 

@@ -1,4 +1,4 @@
-import { util, thunk } from '../index'
+import { util, thunk } from '..'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 /**

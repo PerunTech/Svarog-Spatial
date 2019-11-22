@@ -1,4 +1,4 @@
-import { Map } from '../core';
+import { Map } from '../../core';
 
 /**
  * Shortcut to the drawing handler implementation.
@@ -22,7 +22,7 @@ const _tool = Map.pm.Draw;
  * 
  * @namespace draw  
  */
-export const drawTools = {
+export const drawHandler = {
     marker (opt = {}) { return _tool.enable('Marker', opt); },
 
     line (opt = {}) { return _tool.enable('Line', opt); },

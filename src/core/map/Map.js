@@ -1,4 +1,4 @@
-import { factory } from '../index';
+import { factory } from '..';
 
 const el = document.createElement('div');
 el.id = 'map';

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, renderCycle as rc } from '../index';
+import { connect, renderCycle as rc } from '..';
 import { useMount, useUpdate } from '../../Hooks'
 
 /**

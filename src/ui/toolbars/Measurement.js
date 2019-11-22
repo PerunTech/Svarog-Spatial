@@ -1,5 +1,6 @@
 import { control } from '../../core';
-import { ButtonSet } from '../index';
+import { measHandler } from '../../tools';
+import { ButtonSet } from '..';
 
 const buttons = [{ 
         id: 'measLength',

@@ -1,4 +1,4 @@
-import { factory, projection } from '../index';
+import { factory, projection } from '..';
 import { R } from '../../Constants';
 
 /**

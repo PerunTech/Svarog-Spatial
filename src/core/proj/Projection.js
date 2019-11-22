@@ -1,5 +1,5 @@
 import proj4 from 'proj4';
-import { factory } from '../index';
+import { factory } from '..';
 
 /**
  * Defines a projection.

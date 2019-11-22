@@ -1,4 +1,4 @@
-import { util, store, Map, factory, http } from '../index';
+import { util, store, Map, factory, http } from '..';
 import { raster } from '../../data';
 
 export const renderCycle = {

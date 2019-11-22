@@ -1,5 +1,5 @@
 import { control } from '../../core';
-import { ButtonSet } from '../index';
+import { ButtonSet } from '..';
 
 const buttons = [{ 
         id: 'addParcel',

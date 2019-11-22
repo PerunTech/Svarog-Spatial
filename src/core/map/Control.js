@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { factory, Map } from '../index';
+import { factory, Map } from '..';
 
 /**
  * Render embedded user interface in the map frame. 

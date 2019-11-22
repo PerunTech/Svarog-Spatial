@@ -1,5 +1,8 @@
-export { drawTools } from './Draw';
-export { navTools } from './Navigation';
+// Handlers
+export { drawHandler } from './handlers/Draw';
+export { navHandler } from './handlers/Navigate';
+export { editHandler } from './handlers/Edit';
+export { measHandler } from './handlers/Measure';
 
 // Measurements
 export { measureMarker } from './measurement/Marker';

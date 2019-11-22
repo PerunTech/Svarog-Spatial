@@ -1,4 +1,4 @@
-import { util } from '../index';
+import { util } from '..';
 
 /**
  * A contract of behavior between a class entity and its environment.

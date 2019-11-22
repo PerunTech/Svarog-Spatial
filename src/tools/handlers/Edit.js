@@ -1,6 +1,6 @@
-import { factory } from '../core';
+import { factory } from '../../core';
 
-export const edit = {
+export const editHandler = {
     marker () { console.log(factory) },
 
     line () { console.log(factory.PM) },

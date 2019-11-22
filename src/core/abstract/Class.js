@@ -1,4 +1,4 @@
-import { util } from '../index';
+import { util } from '..';
 
 /**
  * Base class of the module

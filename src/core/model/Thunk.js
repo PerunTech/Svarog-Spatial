@@ -1,4 +1,4 @@
-import { util } from "../index";
+import { util } from "..";
 
 /**
  * Extends Redux store abilities, as middleware between all actions and reducers. 

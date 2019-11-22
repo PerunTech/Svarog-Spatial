@@ -1,4 +1,4 @@
-import { store } from '../index'
+import { store } from '..'
 
 /**
  * The application state tree.
