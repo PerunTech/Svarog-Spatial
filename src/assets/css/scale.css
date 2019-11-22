@@ -1,5 +1,5 @@
 .leaflet-control-better-scale {
-    height: 15px;
+    /*height: 15px;*/
     margin-bottom: 10px !important;
     margin-left: 10px !important;
 }
@@ -27,15 +27,16 @@
     overflow: hidden;
     position: absolute;
     height: 50%;
-    background-color: #444444;
+    background-color: #000000;
+    opacity: 0.9;
 }
 .leaflet-control-better-scale-ruler {
     overflow: hidden;
     position: relative;
     width: 100%;
     height: 7px;
-    background-color: White;
-    border: 1px solid #444444;
+    background-color: transparent;
+    border: 1px solid #000000ba;
 }
 .leaflet-control-better-scale-label-div {
     position: relative;
@@ -51,11 +52,27 @@
     font-size: 12px;
     height: 5px;
     top: -1px;
-     text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
 .leaflet-control-better-scale-first-number {
     left: 45%;
 }
 .leaflet-control-better-scale-second-number {
     left: 95%;
+}
+
+.compass {
+    width: 128px;
+    height: 128px;
+    margin-bottom: 10px;
+}
+
+.wind-rose {
+    background-image: url('../img/wind-rose.png');
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
 }

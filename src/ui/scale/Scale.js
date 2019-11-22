@@ -2,45 +2,45 @@ import { factory, Map } from '../../core';
 import { R } from '../../Constants';
 
 export const Scale = factory.Control.extend({
-    /* Configuration object*/
     options: {
-        position: "bottomleft",
+        position: 'bottomleft',
         maxWidth: 150,
         metric: !1,
         imperial: !0,
         updateWhenIdle: !1
     },
 
-    /* init hook */
     onAdd: function (map) {
         this._map = map;
-        let e = "leaflet-control-better-scale",
-            i = factory.DomUtil.create("div", e),
+        let e = 'leaflet-control-better-scale',
+            i = factory.DomUtil.create('div', e),
             n = this.options,
-            s = factory.DomUtil.create("div", e + "-ruler", i);
+            c = factory.DomUtil.create('div', 'compass', i),
+            s = factory.DomUtil.create('div', e + '-ruler', i);
         
-        factory.DomUtil.create("div", e + "-ruler-block " + e + "-upper-first-piece", s);
-        factory.DomUtil.create("div", e + "-ruler-block " + e + "-upper-second-piece", s);
-        factory.DomUtil.create("div", e + "-ruler-block " + e + "-lower-first-piece", s);
-        factory.DomUtil.create("div", e + "-ruler-block " + e + "-lower-second-piece", s);
+        factory.DomUtil.create('div', 'wind-rose', c);
+
+        factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-first-piece', s);
+        factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-second-piece', s);
+        factory.DomUtil.create('div', e + '-ruler-block ' + e + '-lower-first-piece', s);
+        factory.DomUtil.create('div', e + '-ruler-block ' + e + '-lower-second-piece', s);
         
         return this._addScales(n, e, i),
             this.ScaleContainer = i,
-            map.on(n.updateWhenIdle ? "moveend" : "move", this._update, this),
+            map.on(n.updateWhenIdle ? 'moveend' : 'move', this._update, this),
             map.whenReady(this._update, this),
             i;
     },
 
-    /* destroy hook */
     onRemove: function (map) {
-        map.off(this.options.updateWhenIdle ? "moveend" : "move", this._update, this);
+        map.off(this.options.updateWhenIdle ? 'moveend' : 'move', this._update, this);
     },
 
     _addScales: function (t, e, i) {
-        this._iScale = factory.DomUtil.create("div", e + "-label-div", i),
-        this._iScaleLabel = factory.DomUtil.create("div", e + "-label", this._iScale),
-        this._iScaleFirstNumber = factory.DomUtil.create("div", e + "-label " + e + "-first-number", this._iScale),
-        this._iScaleSecondNumber = factory.DomUtil.create("div", e + "-label " + e + "-second-number", this._iScale)
+        this._iScale = factory.DomUtil.create('div', e + '-label-div', i),
+        this._iScaleLabel = factory.DomUtil.create('div', e + '-label', this._iScale),
+        this._iScaleFirstNumber = factory.DomUtil.create('div', e + '-label ' + e + '-first-number', this._iScale),
+        this._iScaleSecondNumber = factory.DomUtil.create('div', e + '-label ' + e + '-second-number', this._iScale)
     },
 
     _update: function () {
@@ -64,7 +64,7 @@ export const Scale = factory.Control.extend({
 
     _updateMetric_old: function (t) {
         let e = this._getRoundNum(t);
-        this._iScale.style.width = this._getScaleWidth(e / t) + "px", this._iScaleLabel.innerHTML = 1e3 > e ? e + " m" : e / 1e3 + " km";
+        this._iScale.style.width = this._getScaleWidth(e / t) + 'px', this._iScaleLabel.innerHTML = 1e3 > e ? e + ' m' : e / 1e3 + ' km';
     },
 
     _updateMetric: function (t) {
@@ -74,20 +74,20 @@ export const Scale = factory.Control.extend({
             l = this._iScale,
             u = this._iScaleLabel;
 
-        u.innerHTML = "0",
+        u.innerHTML = '0',
         
         a > 500 
             ? (e = a / 1000, 
                 i = this._getRoundNum(e),
                 o = this._getRoundNum(e / 2),
-                l.style.width = this._getScaleWidth(i / e) + "px",
+                l.style.width = this._getScaleWidth(i / e) + 'px',
                 r.innerHTML = o,
-                h.innerHTML = i + "km")
+                h.innerHTML = i + 'km')
             : (n = this._getRoundNum(a),
                 s = this._getRoundNum(a / 2),
-                l.style.width = this._getScaleWidth(n / a) + "px",
+                l.style.width = this._getScaleWidth(n / a) + 'px',
                 r.innerHTML = s,
-                h.innerHTML = n + "m");
+                h.innerHTML = n + 'm');
     },
 
     _updateImperial: function (t) {
@@ -97,20 +97,20 @@ export const Scale = factory.Control.extend({
             l = this._iScale,
             u = this._iScaleLabel;
 
-        u.innerHTML = "0",
+        u.innerHTML = '0',
         
         a > 2640 
             ? (e = a / 5280,
                 i = this._getRoundNum(e),
                 o = this._getRoundNum(e / 2),
-                l.style.width = this._getScaleWidth(i / e) + "px",
+                l.style.width = this._getScaleWidth(i / e) + 'px',
                 r.innerHTML = o,
-                h.innerHTML = i + "mi")
+                h.innerHTML = i + 'mi')
             : (n = this._getRoundNum(a),
                 s = this._getRoundNum(a / 2),
-                l.style.width = this._getScaleWidth(n / a) + "px",
+                l.style.width = this._getScaleWidth(n / a) + 'px',
                 r.innerHTML = s,
-                h.innerHTML = n + "ft");
+                h.innerHTML = n + 'ft');
     },
 
     _getScaleWidth: function (t) {
@@ -119,7 +119,7 @@ export const Scale = factory.Control.extend({
 
     _getRoundNum: function (t) {
         if (t >= 2) {
-            let e = Math.pow(10, (Math.floor(t) + "").length - 1),
+            let e = Math.pow(10, (Math.floor(t) + '').length - 1),
                 i = t / e;
 
             return i = i >= 10 ? 10 : i >= 5 ? 5 : i >= 3 ? 3 : i >= 2 ? 2 : 1, e * i
@@ -133,5 +133,5 @@ export const Scale = factory.Control.extend({
 export const scale = function (options) {
     return new Scale(options)
 };
-
+// add-self?
 scale({ metric: true, imperial: false }).addTo(Map);
