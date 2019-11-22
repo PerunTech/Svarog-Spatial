@@ -120,8 +120,8 @@ export const measureLine = {
         return protoVal;
     }),
 
-    formatDistance: measUtils.formatDistance,
-    formatArea: measUtils.formatArea,
+    formatDistance: measUtils.formatDistance.bind(this),
+    formatArea: measUtils.formatArea.bind(this),
 
     _getRotation (ll1, ll2) {
         let p1 = this._map.project(ll1),

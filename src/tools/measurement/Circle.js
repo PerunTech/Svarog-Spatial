@@ -78,7 +78,7 @@ export const measureCircle = {
         return protoVal;
     }),
 
-    formatArea: measUtils.formatArea
+    formatArea: measUtils.formatArea.bind(this)
 };
 
 fc.Circle.include(measureCircle);
