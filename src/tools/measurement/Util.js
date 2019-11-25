@@ -1,5 +1,32 @@
 import { R } from '../../Constants';
 
+/**
+ * Handles the init hook for polylines and circles.
+ * Implements the showOnHover functionality if called for.
+ */
+export function addInitHook () {
+    let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
+
+    if (this.options.showMeasurements && !showOnHover) {
+        this.showMeasurements();
+    }
+    if (this.options.showMeasurements && showOnHover) {
+        this.on('mouseover', function() {
+            this.showMeasurements();
+        });
+        this.on('mouseout', function() {
+            this.hideMeasurements();
+        });
+    }
+}
+
+/**
+ * `#revise_me`, may move to /core/util if deemed useful elsewhere.
+ * 
+ * @param {Function} method 
+ * @param {Function} fn 
+ * @param {boolean} hookAfter
+ */
 export function override (method, fn, hookAfter) {
     if (!hookAfter) {
         return function() {
@@ -74,7 +101,7 @@ export function ringArea (coords) {
         rad = (deg) => deg * Math.PI / 180;
 
     if (coordsLength > 2) {
-        for (var i = 0; i < coordsLength; i++) {
+        for (let i = 0; i < coordsLength; i++) {
             if (i === coordsLength - 2) {// i = N-2
                 lowerIndex = coordsLength - 2;
                 middleIndex = coordsLength -1;
@@ -97,26 +124,10 @@ export function ringArea (coords) {
         area = area * R * R / 2;
     }
 
-        return Math.abs(area);
+    return Math.abs(area);
 }
 
 export function circleArea (d) {
     return 2 * Math.PI * R * R * (1 - Math.cos(d / R));
 }
 
-export function initHook () {
-    let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
-
-    if (this.options.showMeasurements && !showOnHover) {
-        this.showMeasurements();
-    }
-
-    if (this.options.showMeasurements && showOnHover) {
-        this.on('mouseover', function() {
-            this.showMeasurements();
-        });
-        this.on('mouseout', function() {
-            this.hideMeasurements();
-        });
-    }
-}

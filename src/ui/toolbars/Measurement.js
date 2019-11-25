@@ -6,22 +6,22 @@ const buttons = [{
         id: 'measLength',
         title: 'Measure Length',
         icon: 'control-icon leaflet-pm-icon-length',
-        onClick: () => console.log('measure length on map')
+        onClick: measHandler.length
     }, { 
         id: 'measArea',
         title: 'Measure Area',
         icon: 'control-icon leaflet-pm-icon-area',
-        onClick: () => console.log('measure area on map') 
+        onClick: measHandler.area
     }, { 
         id: 'measAngle',
         title: 'Measure Angle',
         icon: 'control-icon leaflet-pm-icon-angle',
-        onClick: () => console.log('measure angle on map') 
+        onClick: measHandler.angle 
     }, { 
         id: 'deleteMeas',
         title: 'Remove Measurements',
         icon: 'control-icon leaflet-pm-icon-erase',
-        onClick: () => console.log('remove measurements on map') 
+        onClick: measHandler.clearMeasurements 
     }];
 
 export const measToolbar = control(ButtonSet, {buttons});

@@ -13,9 +13,16 @@
  */
 export const R = 6371000;
 
-
+/**
+ * @constant
+ * @type {string}
+ */
 export const MAP_CONTAINER = 'mapContainer';
 
+/**
+ * @constant
+ * @type {Object}
+ */
 export const MAP_CONFIG = {
     center: [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
     zoom: 8,
@@ -32,4 +39,63 @@ export const MAP_CONFIG = {
     keyboardPanDelta: 80,
     tap: false,
     tapTolerance: 15,
+};
+
+/**
+ * @constant
+ * @type {string}
+ */
+export const MEASURE_LINE = {
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    // show tooltips
+    tooltips: true,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true,
+    // the vector that is currently being drawn (while measurement is active).
+    templineStyle: {
+        weight: 1.0,
+        stroke: true,
+        color: '#FFC400',
+        fillColor: '#FFC400',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    },
+    // the temporary line from the last drawn marker to the mouse cursor
+    hintlineStyle: {
+        weight: 1.0,
+        stroke: true,
+        color: '#FFC400',
+        fillColor: '#FFC400',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    },
+    // show a marker at the cursor
+    cursorMarker: false,
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    finishOn: null,
+    // custom marker style (only for Marker draw)
+    markerStyle: {
+        opacity: 0.5,
+        draggable: true
+    },
+    // configuration of the resulting vector, after measurement finished. 
+    pathOptions: {
+        weight: 1.0,
+        stroke: true,
+        color: '#FFC400',
+        fillColor: '#FFC400',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    }
 };

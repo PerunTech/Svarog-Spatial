@@ -1,11 +1,13 @@
-import { util, factory as fc } from '../../core';
-import * as measUtils from './Util';
+import { util, factory } from '../../core';
+import { override, addInitHook, formatArea, formatDistance, ringArea } from './Util';
+
+const { marker, layerGroup, Polyline, Polygon } = factory;
 
 export const measureLine = {
     showMeasurements: function(options) {
         if (!this._map || this._measurementLayer) return this;
 
-        this._measurementOptions = fc.extend({
+        this._measurementOptions = util.cloneDeep({
             showOnHover: (options && options.showOnHover) || false,
             minPixelDistance: 30,
             showDistances: true,
@@ -17,7 +19,7 @@ export const measureLine = {
             }
         }, options || {});
 
-        this._measurementLayer = fc.layerGroup().addTo(this._map);
+        this._measurementLayer = layerGroup().addTo(this._map);
         this.updateMeasurements();
 
         this._map.on('zoomend', this.updateMeasurements, this);
@@ -37,12 +39,12 @@ export const measureLine = {
         return this;
     },
 
-    updateMeasurements () {
+    updateMeasurements: function() {
         if (!this._measurementLayer) return this;
 
         let formatter, ll1, ll2, p1, p2, pixelDist, dist,
             latLngs = this.getLatLngs(),
-            isPolygon = this instanceof fc.Polygon,
+            isPolygon = this instanceof Polygon,
             options = this._measurementOptions,
             totalDist = 0;
 
@@ -68,32 +70,35 @@ export const measureLine = {
                 pixelDist = p1.distanceTo(p2);
 
                 if (pixelDist >= options.minPixelDistance) {
-                    fc.marker.measurement(
+                    marker.measurement(
                         this._map.layerPointToLatLng([(p1.x + p2.x) / 2, (p1.y + p2.y) / 2]),
                         formatter(dist),
                         options.lang.segmentLength,
-                        this._getRotation(ll1, ll2), options).addTo(this._measurementLayer);
+                        this._getRotation(ll1, ll2),
+                        options)
+                            .addTo(this._measurementLayer);
                 }
             }
 
             // Show total length for polylines
             if (!isPolygon) {
-                fc.marker.measurement(ll2, formatter(totalDist), options.lang.totalLength, 0, options)
+                marker.measurement(ll2, formatter(totalDist), options.lang.totalLength, 0, options)
                     .addTo(this._measurementLayer);
             }
         }
 
         if (isPolygon && options.showArea && latLngs.length > 2) {
-            formatter = options.formatArea || fc.bind(this.formatArea, this);
-            let area = measUtils.ringArea(latLngs);
-            fc.marker.measurement(this.getBounds().getCenter(), formatter(area), options.lang.totalArea, 0, options)
+            formatter = options.formatArea || util.bind(this.formatArea, this);
+            let area = ringArea(latLngs);
+            
+            marker.measurement(this.getBounds().getCenter(), formatter(area), options.lang.totalArea, 0, options)
                 .addTo(this._measurementLayer);
         }
 
         return this;
     },
 
-    onAdd: measUtils.override(fc.Polyline.prototype.onAdd, function (protoVal) {
+    onAdd: override(Polyline.prototype.onAdd, function(protoVal) {
         let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
         if (this.options.showMeasurements && !showOnHover) {
             this.showMeasurements(this.options.measurementOptions);
@@ -102,28 +107,25 @@ export const measureLine = {
         return protoVal;
     }),
 
-    onRemove: measUtils.override(fc.Polyline.prototype.onRemove, function(protoVal) {
+    onRemove: override(Polyline.prototype.onRemove, function(protoVal) {
         this.hideMeasurements();
-
         return protoVal;
     }, true),
 
-    setLatLngs: measUtils.override(fc.Polyline.prototype.setLatLngs, function(protoVal) {
+    setLatLngs: override(Polyline.prototype.setLatLngs, function(protoVal) {
         this.updateMeasurements();
-
         return protoVal;
     }),
 
-    spliceLatLngs: measUtils.override(fc.Polyline.prototype.spliceLatLngs, function(protoVal) {
+    spliceLatLngs: override(Polyline.prototype.spliceLatLngs, function(protoVal) {
         this.updateMeasurements();
-
         return protoVal;
     }),
 
-    formatDistance: measUtils.formatDistance.bind(this),
-    formatArea: measUtils.formatArea.bind(this),
+    formatDistance: formatDistance,
+    formatArea: formatArea,
 
-    _getRotation (ll1, ll2) {
+    _getRotation: function(ll1, ll2) {
         let p1 = this._map.project(ll1),
             p2 = this._map.project(ll2);
 
@@ -131,8 +133,8 @@ export const measureLine = {
     }
 };
 
-fc.Polyline.include(measureLine);
-    
-fc.Polyline.addInitHook(function() {
-    measUtils.initHook.call(this);
+Polyline.include(measureLine);
+
+Polyline.addInitHook(function() {
+    addInitHook.call(this);
 });

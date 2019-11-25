@@ -306,10 +306,8 @@ export const util = {
      *
      * @returns boolean;
      */
-    isArray (obj) {
-        return  Array.isArray(obj) || function (obj) {
-            return (Object.prototype.toString.call(obj) === '[object Array]');
-        }
+    isArray: Array.isArray || function (obj) {
+        return (Object.prototype.toString.call(obj) === '[object Array]');
     },
 
     /**

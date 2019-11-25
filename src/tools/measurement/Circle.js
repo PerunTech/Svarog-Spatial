@@ -1,19 +1,21 @@
-import { util, factory as fc } from '../../core';
-import * as measUtils from './Util';
+import { util, factory } from '../../core';
+import { override, circleArea, addInitHook, formatArea } from './Util';
+
+const { layerGroup, marker, Circle } = factory;
 
 export const measureCircle = {
-    showMeasurements: function(opt = {}) {
+    showMeasurements: function(options) {
         if (!this._map || this._measurementLayer) return this;
 
-        this._measurementOptions = util.clone({
+        this._measurementOptions = util.cloneDeep({
             showOnHover: false,
             showArea: true,
             lang: {
                 totalArea: 'Total area',
             }
-        }, opt);
+        }, options || {});
 
-        this._measurementLayer = fc.layerGroup().addTo(this._map);
+        this._measurementLayer = layerGroup().addTo(this._map);
         this.updateMeasurements();
 
         this._map.on('zoomend', this.updateMeasurements, this);
@@ -44,14 +46,14 @@ export const measureCircle = {
 
         if (options.showArea) {
             formatter = options.formatArea || util.bind(this.formatArea, this);
-            let area = measUtils.circleArea(this.getRadius());
+            let area = circleArea(this.getRadius());
             
-            fc.marker.measurement(latLng, formatter(area), options.lang.totalArea, 0, options)
+            marker.measurement(latLng, formatter(area), options.lang.totalArea, 0, options)
                 .addTo(this._measurementLayer);
         }
     },
 
-    onAdd: measUtils.override(fc.Circle.prototype.onAdd, function(protoVal) {
+    onAdd: override(Circle.prototype.onAdd, function(protoVal) {
         let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
         if (this.options.showMeasurements && !showOnHover) {
             this.showMeasurements(this.options.measurementOptions);
@@ -60,29 +62,26 @@ export const measureCircle = {
         return protoVal;
     }),
 
-    onRemove: measUtils.override(fc.Circle.prototype.onRemove, function(protoVal) {
+    onRemove: override(Circle.prototype.onRemove, function(protoVal) {
         this.hideMeasurements();
-
         return protoVal;
     }, true),
 
-    setLatLng: measUtils.override(fc.Circle.prototype.setLatLng, function(protoVal) {
+    setLatLng: override(Circle.prototype.setLatLng, function(protoVal) {
         this.updateMeasurements();
-
         return protoVal;
     }),
 
-    setRadius: measUtils.override(fc.Circle.prototype.setRadius, function(protoVal) {
+    setRadius: override(Circle.prototype.setRadius, function(protoVal) {
         this.updateMeasurements();
-
         return protoVal;
     }),
 
-    formatArea: measUtils.formatArea.bind(this)
+    formatArea: formatArea,
 };
 
-fc.Circle.include(measureCircle);
-    
-fc.Circle.addInitHook(function() {
-    measUtils.initHook.call(this);
+Circle.include(measureCircle);
+
+Circle.addInitHook(function() {
+    addInitHook.call(this);
 });
