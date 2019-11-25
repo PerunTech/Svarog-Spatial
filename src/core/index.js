@@ -23,3 +23,4 @@ export { control } from './map/Control';
 // Proj
 export { crs } from './proj/CRS';
 export { projection } from './proj/Projection';
+export { geoJson } from './proj/GeoJSON';
