@@ -2,7 +2,7 @@ import { control } from '../../core';
 import { measHandler } from '../../tools';
 import { ButtonSet } from '..';
 
-const buttons = [{ 
+const measButtons = [{ 
         id: 'measLength',
         title: 'Measure Length',
         icon: 'control-icon leaflet-pm-icon-length',
@@ -24,4 +24,4 @@ const buttons = [{
         onClick: measHandler.clearMeasurements 
     }];
 
-export const measToolbar = control(ButtonSet, {buttons});
+export const measToolbar = control(ButtonSet, { buttons: measButtons });

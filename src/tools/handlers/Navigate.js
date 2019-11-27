@@ -1,5 +1,6 @@
 import { store, Map, factory } from '../../core';
 import { drawHandler } from '..';
+import { NAVIGATE_VIEW } from '../../Constants';
 
 export const navHandler = {
     origin () {
@@ -18,7 +19,7 @@ export const navHandler = {
             Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
         });
 
-        return drawHandler.rectangle({});
+        return drawHandler.rectangle(NAVIGATE_VIEW);
     }
 }
 

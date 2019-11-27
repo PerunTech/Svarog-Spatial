@@ -1,7 +1,7 @@
 import { control } from '../../core';
 import { ButtonSet } from '..';
 
-const buttons = [{ 
+const rpButtons = [{ 
         id: 'addParcel',
         title: 'Add Parcel',
         icon: 'control-icon leaflet-pm-icon-draw',
@@ -34,4 +34,4 @@ const buttons = [{
     }];
 
 
-export const rpToolbar = control(ButtonSet, {buttons});
+export const rpToolbar = control(ButtonSet, { buttons: rpButtons });

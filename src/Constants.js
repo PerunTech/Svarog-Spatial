@@ -78,7 +78,7 @@ export const MEASURE_LINE = {
         showMeasurements: true
     },
     // show a marker at the cursor
-    cursorMarker: false,
+    cursorMarker: true,
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,
@@ -95,6 +95,59 @@ export const MEASURE_LINE = {
         fillColor: '#FFC400',
         opacity: 0.9,
         fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    }
+};
+
+/**
+ * @constant
+ * @type {string}
+ */
+export const NAVIGATE_VIEW = {
+    // snapping
+    snappable: false,
+    snapDistance: 20,
+    // show tooltips
+    tooltips: true,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true,
+    // the vector that is currently being drawn (while measurement is active).
+    templineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#00BFFF',
+        fillColor: 'none',
+        dashArray: [5, 5],
+        showMeasurements: true
+    },
+    // the temporary line from the last drawn marker to the mouse cursor
+    hintlineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#00BFFF',
+        fillColor: 'none',
+        dashArray: [5, 5],
+        showMeasurements: true
+    },
+    // show a marker at the cursor
+    cursorMarker: false,
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    finishOn: null,
+    // custom marker style (only for Marker draw)
+    markerStyle: {
+        opacity: 0.5,
+        draggable: true
+    },
+    // configuration of the resulting vector, after measurement finished. 
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#00BFFF',
+        fillColor: 'none',
         dashArray: [10, 10],
         showMeasurements: true
     }
