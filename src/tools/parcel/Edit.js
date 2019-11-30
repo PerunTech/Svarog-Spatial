@@ -1,7 +1,7 @@
 import { editHandler } from '..';
 import { control } from '../../core';
 import { Form } from '../../ui';
-import { EDIT_PARCEL } from '../../Constants';
+import { EDIT_PARCEL } from '../../config';
 
 export function editParcel (opt) {
     // Add map event, on enable (drawStart) => register activity

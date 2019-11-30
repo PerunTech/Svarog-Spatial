@@ -15,10 +15,10 @@ export { store } from './model/Store';
 export { state } from './model/State';
 
 // Map
-export { MapContainer } from './map/Container';
-export { renderCycle } from './map/RenderCycle';
 export { Map } from './map/Map';
 export { control } from './map/Control';
+export { renderCycle } from './map/RenderCycle';
+export { MapContainer } from './map/Container';
 
 // Proj
 export { crs } from './projection/CRS';

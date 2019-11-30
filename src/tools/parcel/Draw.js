@@ -1,7 +1,7 @@
 import { drawHandler } from '..';
 import { control, Map } from '../../core';
 import { Form } from '../../ui';
-import { DRAW_PARCEL, MOCK_FORM } from '../../Constants';
+import { DRAW_PARCEL, MOCK_FORM } from '../../config';
 
 export function drawParcel (opt) {
     // Add map event, on enable (drawStart) => register activity

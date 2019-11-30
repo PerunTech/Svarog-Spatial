@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, renderCycle as rc } from '..';
-import { useMount, useUpdate } from '../../Hooks'
+import { MAP_CONTAINER } from '../../config';
+import { useMount, useUpdate } from '../../ui';
 
 /**
  * The React container of the rendered map. 
@@ -25,7 +26,7 @@ function _MapContainer ({ bbox, sid, refreshMap }) {
     useUpdate(rc.render, [sid]);
     useUpdate(rc.refresh, [refreshMap]);
 
-    return <div id='mapContainer' />
+    return <div id={MAP_CONTAINER} />
 }
 
 _MapContainer.propTypes = {

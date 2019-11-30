@@ -1,5 +1,5 @@
 import { factory, projection } from '..';
-import { R } from '../../Constants';
+import { R } from '../../config';
 
 /**
  * Coordinate reference system (CRS) factory.

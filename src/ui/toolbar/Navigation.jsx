@@ -1,4 +1,4 @@
-import { control, Map } from '../../core';
+import { Map, control } from '../../core';
 import { navHandler } from '../../tools'
 import { ButtonSet } from '..';
 

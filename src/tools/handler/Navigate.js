@@ -1,6 +1,6 @@
 import { store, Map, factory } from '../../core';
 import { drawHandler } from '..';
-import { NAVIGATE_VIEW } from '../../Constants';
+import { NAVIGATE_VIEW } from '../../config';
 
 export const navHandler = {
     origin () {

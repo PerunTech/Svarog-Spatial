@@ -1,5 +1,5 @@
 import { factory, Map } from '../../core';
-import { R } from '../../Constants';
+import { R } from '../../config';
 
 export const Scale = factory.Control.extend({
     options: {

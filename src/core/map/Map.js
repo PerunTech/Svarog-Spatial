@@ -1,4 +1,5 @@
 import { factory } from '..';
+import { MAP_CONTAINER, MAP_CONFIG } from '../../config';
 
 const el = document.createElement('div');
 el.id = 'map';
@@ -10,27 +11,10 @@ el.style.border = '4px inset';
  * 
  * @namespace Map
  */
-export const Map = factory.map(el, {
-    center: [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
-    zoom: 8,
-    minZoom: 0,
-    maxZoom: 18,
-    dragging: true,
-    zoomControl: false,
-    doubleClickZoom: false,
-    scrollWheelZoom: true,
-    boxZoom: false,
-    zoomAnimation: true,
-    attributionControl: false,
-    preferCanvas: false,
-    keyboard: true,
-    keyboardPanDelta: 80,
-    tap: false,
-    tapTolerance: 15,
-});
+export const Map = factory.map(el, MAP_CONFIG);
 
 Map.render = function render () {
-    let container = document.getElementById('mapContainer');
+    let container = document.getElementById(MAP_CONTAINER);
     container.appendChild(el);
     
     return this.invalidateSize();

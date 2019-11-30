@@ -2,10 +2,11 @@ import { name, version, description } from '../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.
+import * as config from './config';
 import * as core from './core';
 import * as data from './data';
+import * as tools from './tools';
 import * as ui from './ui';
-import * as hooks from './Hooks';
 
 // Assemble plugin.
 const spatial = core.util.create(
@@ -16,10 +17,11 @@ const spatial = core.util.create(
     init (token) { alert(token); }
 }, 
 { // Set prototype properties.
-    ...core,
-    ...data,
-    ...ui,
-    ...hooks
+    config,
+    core,
+    data,
+    tools,
+    ui,
 });
 
 // Register on global scope. Export default.

@@ -1,6 +1,6 @@
 import { util, factory, Map } from "../../core";
 import { drawHandler } from '..';
-import { MEASURE_LINE } from '../../Constants';
+import { MEASURE_LINE } from '../../config';
 
 export const measHandler = {
     length (opt = {}) {

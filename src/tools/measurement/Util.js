@@ -1,4 +1,4 @@
-import { R } from '../../Constants';
+import { R } from '../../config';
 
 /**
  * Handles the init hook for polylines and circles.
