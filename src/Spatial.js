@@ -8,7 +8,7 @@ import * as ui from './ui';
 import * as hooks from './Hooks';
 
 // Assemble plugin.
-const plugin = core.util.create(
+const spatial = core.util.create(
 { // Set instance properties.
     name: name,
     version: version,
@@ -23,8 +23,8 @@ const plugin = core.util.create(
 });
 
 // Register on global scope. Export default.
-window[name] = plugin;
-export default plugin;
+window[name] = spatial;
+export default spatial;
 
 
 
@@ -51,6 +51,6 @@ export default plugin;
 ////////////////
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, MapContainer, } from './core'
+const { Provider, MapContainer } = core
 
 ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))

@@ -1,5 +1,4 @@
 import { factory } from '..';
-
 const { point, GeoJSON } = factory;
 
 /**

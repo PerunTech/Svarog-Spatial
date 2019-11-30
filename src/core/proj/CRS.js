@@ -137,22 +137,15 @@ const proto = {
      * @returns Scale number value;
      */
     scale (zoom) {
-        let iZoom = Math.floor(zoom),
-            baseScale,
-            nextScale,
-            scaleDiff,
-            zDiff;
+        let iZoom = Math.floor(zoom), baseScale, nextScale, scaleDiff, zDiff;
 
-        if (zoom === iZoom) {
-            return this.scales[zoom];
-        } else {
-            baseScale = this.scales[iZoom];
-            nextScale = this.scales[iZoom + 1];
-            scaleDiff = nextScale - baseScale;
-            zDiff = zoom - iZoom;
-
-            return baseScale + scaleDiff * zDiff;
-        }
+        return zoom === iZoom
+            ? this.scales[zoom]
+            : baseScale = this.scales[iZoom],
+                nextScale = this.scales[iZoom + 1],
+                scaleDiff = nextScale - baseScale,
+                zDiff = zoom - iZoom,
+                baseScale + scaleDiff * zDiff;
     },
 
     /**

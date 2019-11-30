@@ -57,7 +57,7 @@ export const MEASURE_LINE = {
     allowSelfIntersection: true,
     // the vector that is currently being drawn (while measurement is active).
     templineStyle: {
-        weight: 1.0,
+        weight: 2.0,
         stroke: true,
         color: '#FFC400',
         fillColor: '#FFC400',
@@ -68,7 +68,7 @@ export const MEASURE_LINE = {
     },
     // the temporary line from the last drawn marker to the mouse cursor
     hintlineStyle: {
-        weight: 1.0,
+        weight: 2.0,
         stroke: true,
         color: '#FFC400',
         fillColor: '#FFC400',
@@ -89,7 +89,7 @@ export const MEASURE_LINE = {
     },
     // configuration of the resulting vector, after measurement finished. 
     pathOptions: {
-        weight: 1.0,
+        weight: 2.0,
         stroke: true,
         color: '#FFC400',
         fillColor: '#FFC400',
@@ -119,18 +119,20 @@ export const NAVIGATE_VIEW = {
         weight: 2.0,
         stroke: true,
         color: '#00BFFF',
-        fillColor: 'none',
+        fillColor: '#00BFFF',
+        fillOpacity: 0.25,
         dashArray: [5, 5],
-        showMeasurements: true
+        // showMeasurements: true
     },
     // the temporary line from the last drawn marker to the mouse cursor
     hintlineStyle: {
         weight: 2.0,
         stroke: true,
         color: '#00BFFF',
-        fillColor: 'none',
+        fillColor: '#00BFFF',
+        fillOpacity: 0.25,
         dashArray: [5, 5],
-        showMeasurements: true
+        // showMeasurements: true
     },
     // show a marker at the cursor
     cursorMarker: false,
@@ -147,8 +149,9 @@ export const NAVIGATE_VIEW = {
         weight: 2.0,
         stroke: true,
         color: '#00BFFF',
-        fillColor: 'none',
+        fillColor: '#00BFFF',
+        fillOpacity: 0.25,
         dashArray: [10, 10],
-        showMeasurements: true
+        // showMeasurements: true
     }
 };

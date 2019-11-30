@@ -23,6 +23,7 @@ export const state = {
     }, 
     /** Web service requests configuration */
     http: {
+        default: {},
         origin: {
             url: '/sws/origin',
             method: 'get',
@@ -30,7 +31,7 @@ export const state = {
         },
     }
 }
-Object.keys(state).map(key => { store.addState(key, state[key]); })
+Object.keys(state).map(key => store.addState(key, state[key]))
 
 
 

@@ -15,7 +15,7 @@ export { store } from './model/Store';
 export { state } from './model/State';
 
 // Map
-export { MapContainer } from './map/MapContainer';
+export { MapContainer } from './map/Container';
 export { renderCycle } from './map/RenderCycle';
 export { Map } from './map/Map';
 export { control } from './map/Control';

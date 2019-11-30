@@ -19,7 +19,6 @@ export const Scale = factory.Control.extend({
             s = factory.DomUtil.create('div', e + '-ruler', i);
         
         factory.DomUtil.create('div', 'wind-rose', c);
-
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-first-piece', s);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-second-piece', s);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-lower-first-piece', s);
