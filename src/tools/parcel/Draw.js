@@ -1,88 +1,12 @@
 import { drawHandler } from '..';
 import { control, Map } from '../../core';
 import { Form } from '../../ui';
-import { DRAW_PARCEL } from '../../Constants';
-
+import { DRAW_PARCEL, MOCK_FORM } from '../../Constants';
 
 export function drawParcel (opt) {
     // Add map event, on enable (drawStart) => register activity
     // on disable (shape created?) => disable handler, disable form, unhook event etc...
-    return control(Form, {schema, uiSchema, formData}, {position: 'bottomright'}),
-        Map.setView(Map.getCenter(), 12),
-        Map.setMinZoom(12),
+    return control(Form, MOCK_FORM, {position: 'bottomright'}),
+        Map.setView(Map.getCenter(), 12).setMinZoom(12),
         drawHandler.polygon({...DRAW_PARCEL, ...opt});
-}
-
-const schema = {
-    "title": "A registration form",
-    "description": "A simple form example.",
-    "type": "object",
-    "required": [
-        "firstName",
-        "lastName"
-    ],
-    "properties": {
-        "firstName": {
-            "type": "string",
-            "title": "First name",
-            "default": "Chuck"
-        },
-        "lastName": {
-            "type": "string",
-            "title": "Last name"
-        },
-        "age": {
-            "type": "integer",
-            "title": "Age"
-        },
-        "bio": {
-            "type": "string",
-            "title": "Bio"
-        },
-        "password": {
-            "type": "string",
-            "title": "Password",
-            "minLength": 3
-        },
-        "telephone": {
-            "type": "string",
-            "title": "Telephone",
-            "minLength": 10
-        }
-    }
-}
-
-const uiSchema = {
-    "firstName": {
-        "ui:autofocus": true,
-        "ui:emptyValue": ""
-    },
-    "age": {
-        "ui:widget": "updown",
-        "ui:title": "Age of person",
-        "ui:description": "(earthian year)"
-    },
-    "bio": {
-        "ui:widget": "textarea"
-    },
-    "password": {
-        "ui:widget": "password",
-        "ui:help": "Hint: Make it strong!"
-    },
-    "date": {
-        "ui:widget": "alt-datetime"
-    },
-    "telephone": {
-        "ui:options": {
-            "inputType": "tel"
-        }
-    }
-}
-
-const formData = {
-    "firstName": "Chuck",
-    "lastName": "Norris",
-    "age": 75,
-    "bio": "Roundhouse kicking asses since 1940",
-    "password": "noneed"
 }
