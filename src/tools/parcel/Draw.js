@@ -1,6 +1,17 @@
-import React from 'react'
-import { Form } from './Form';
-import { control } from '../../core';
+import { drawHandler } from '..';
+import { control, Map } from '../../core';
+import { Form } from '../../ui';
+import { DRAW_PARCEL } from '../../Constants';
+
+
+export function drawParcel (opt) {
+    // Add map event, on enable (drawStart) => register activity
+    // on disable (shape created?) => disable handler, disable form, unhook event etc...
+    return control(Form, {schema, uiSchema, formData}, {position: 'bottomright'}),
+        Map.setView(Map.getCenter(), 12),
+        Map.setMinZoom(12),
+        drawHandler.polygon({...DRAW_PARCEL, ...opt});
+}
 
 const schema = {
     "title": "A registration form",
@@ -75,8 +86,3 @@ const formData = {
     "bio": "Roundhouse kicking asses since 1940",
     "password": "noneed"
 }
-
-export function TestForm () {
-    return <Form {...{schema, uiSchema, formData}} />
-} 
-control(TestForm, {}, {position: 'bottomright'});

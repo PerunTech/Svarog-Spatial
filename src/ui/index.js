@@ -16,5 +16,4 @@ export { scale } from './scale/Scale';
 
 // Form
 export { Form } from './form/Form';
-export { formManager } from './form/FormManager'
-export { TestForm } from './form/test'
+export { formManager } from './form/FormManager';

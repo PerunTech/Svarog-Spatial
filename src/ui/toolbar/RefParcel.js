@@ -1,16 +1,17 @@
 import { control } from '../../core';
+import { drawParcel, editParcel } from '../../tools'
 import { ButtonSet } from '..';
 
 const rpButtons = [{ 
         id: 'addParcel',
         title: 'Add Parcel',
         icon: 'control-icon leaflet-pm-icon-draw',
-        onClick: () => console.log('draw reference parcel on map')
+        onClick: drawParcel
     }, { 
         id: 'editParcel',
         title: 'Edit Parcel',
         icon: 'control-icon leaflet-pm-icon-edit',
-        onClick: () => console.log('edit reference parcel on map') 
+        onClick: editParcel 
     }, { 
         id: 'cutParcel',
         title: 'Cut Parcel',

@@ -82,11 +82,6 @@ export const MEASURE_LINE = {
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,
-    // custom marker style (only for Marker draw)
-    markerStyle: {
-        opacity: 0.5,
-        draggable: true
-    },
     // configuration of the resulting vector, after measurement finished. 
     pathOptions: {
         weight: 2.0,
@@ -139,11 +134,6 @@ export const NAVIGATE_VIEW = {
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,
-    // custom marker style (only for Marker draw)
-    markerStyle: {
-        opacity: 0.5,
-        draggable: true
-    },
     // configuration of the resulting vector, after measurement finished. 
     pathOptions: {
         weight: 2.0,
@@ -155,3 +145,58 @@ export const NAVIGATE_VIEW = {
         // showMeasurements: true
     }
 };
+
+/**
+ * @constant
+ * @type {string}
+ */
+export const DRAW_PARCEL = {
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    // show tooltips
+    tooltips: true,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true,
+    // the vector that is currently being drawn
+    templineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#0088AB',
+        fillColor: '#0088AB',
+        fillOpacity: 0.25,
+        showMeasurements: true
+    },
+    // the temporary line from the last drawn marker to the mouse cursor
+    hintlineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#0088AB',
+        fillColor: '#0088AB',
+        fillOpacity: 0.25,
+        dashArray: [5, 5],
+        showMeasurements: true
+    },
+    // show a marker at the cursor
+    cursorMarker: true,
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    finishOn: null,
+    // configuration of the resulting vector, after drawing has finished.
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#0088AB',
+        fillColor: '#0088AB',
+        fillOpacity: 0.25,
+        showMeasurements: true
+    }
+};
+
+/**
+ * @constant
+ * @type {string}
+ */
+export const EDIT_PARCEL = {}
