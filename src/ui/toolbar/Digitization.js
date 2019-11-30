@@ -2,7 +2,7 @@ import { control } from '../../core';
 import { drawParcel, editParcel } from '../../tools'
 import { ButtonSet } from '..';
 
-const rpButtons = [{ 
+const digiButtons = [{ 
         id: 'addParcel',
         title: 'Add Parcel',
         icon: 'control-icon leaflet-pm-icon-draw',
@@ -35,4 +35,4 @@ const rpButtons = [{
     }];
 
 
-export const rpToolbar = control(ButtonSet, { buttons: rpButtons });
+export const digiToolbar = control(ButtonSet, { buttons: digiButtons });

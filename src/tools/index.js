@@ -10,5 +10,5 @@ export { measureLine } from './measurement/Line';
 export { measureCircle } from './measurement/Circle';
 
 // Parcel
-export { drawParcel } from './parcel/Draw';
-export { editParcel } from './parcel/Edit';
+export { drawParcel } from './digitization/Draw';
+export { editParcel } from './digitization/Edit';

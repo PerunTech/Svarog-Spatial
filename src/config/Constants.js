@@ -14,6 +14,30 @@
 export const R = 6371000;
 
 /**
+ * The minimum allowed scale for digitization.
+ * 
+ * The above means the furthest allowed distance from the surface of the Earth,
+ * the constraint scale within the European Union is 1in5000, though 1in2000 is advised.
+ * Simpler said, the user should not draw parcels when he can see half the country on the map.
+ * 
+ * `#revise_me`, see what internal scale number rougly corresponds to 1in5000,
+ * once we implement the native CRS of the map.
+ * 
+ * @constant
+ * @type {number}
+ */
+export const MIN_DIGI_SCALE = 12;
+
+/**
+ * The minimum allowed surface area of spatial entities that are stored.
+ * The constraint area within the European Union is 100m2, i.e. 10x10 polygon. 
+ * 
+ * @constant
+ * @type {number}
+ */
+export const MIN_DIGI_AREA = 100;
+
+/**
  * @constant
  * @type {string}
  */

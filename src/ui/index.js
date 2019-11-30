@@ -7,7 +7,7 @@ export { ButtonSet } from './element/ButtonSet';
 
 //menu
 export { navToolbar } from './toolbar/Navigation';
-export { rpToolbar } from './toolbar/RefParcel';
+export { digiToolbar } from './toolbar/Digitization';
 export { measToolbar } from './toolbar/Measurement';
 
 // ui
