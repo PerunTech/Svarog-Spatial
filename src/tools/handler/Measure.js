@@ -4,7 +4,7 @@ import { MEASURE_LINE } from '../../config';
 
 export const measHandler = {
     length (opt = {}) {
-        return Map.once('pm:create', _disable),
+        return Map.on('pm:create', _disable),
             drawHandler.line(util.clone(MEASURE_LINE, opt));
     },
 
