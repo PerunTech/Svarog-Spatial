@@ -9,7 +9,6 @@
  * Expressed in meters [m].
  *
  * @constant
- * @type {number}
  */
 export const R = 6371000;
 
@@ -24,7 +23,6 @@ export const R = 6371000;
  * once we implement the native CRS of the map.
  * 
  * @constant
- * @type {number}
  */
 export const MIN_DIGI_SCALE = 12;
 
@@ -33,19 +31,16 @@ export const MIN_DIGI_SCALE = 12;
  * The constraint area within the European Union is 100m2, i.e. 10x10 polygon. 
  * 
  * @constant
- * @type {number}
  */
 export const MIN_DIGI_AREA = 100;
 
 /**
  * @constant
- * @type {string}
  */
 export const MAP_CONTAINER = 'mapContainer';
 
 /**
  * @constant
- * @type {Object}
  */
 export const MAP_CONFIG = {
     center: [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
@@ -67,7 +62,6 @@ export const MAP_CONFIG = {
 
 /**
  * @constant
- * @type {string}
  */
 export const MEASURE_LINE = {
     // snapping
@@ -121,7 +115,6 @@ export const MEASURE_LINE = {
 
 /**
  * @constant
- * @type {string}
  */
 export const NAVIGATE_VIEW = {
     // snapping
@@ -172,7 +165,6 @@ export const NAVIGATE_VIEW = {
 
 /**
  * @constant
- * @type {string}
  */
 export const DRAW_PARCEL = {
     // snapping
@@ -221,14 +213,12 @@ export const DRAW_PARCEL = {
 
 /**
  * @constant
- * @type {string}
  */
 export const EDIT_PARCEL = {}
 
 /**
  * @example
  * @constant
- * @type {string}
  */
 export const MOCK_FORM = {
     schema: {
