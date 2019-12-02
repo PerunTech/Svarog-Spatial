@@ -67,5 +67,5 @@ export function control (UI, props = {}, opt = _opt) {
 
 const _opt = {
     position: 'topleft', 
-    className: 'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control',
+    className: 'leaflet-control',
 };

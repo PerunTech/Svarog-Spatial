@@ -2,6 +2,7 @@
     /*height: 15px;*/
     margin-bottom: 10px !important;
     margin-left: 10px !important;
+    padding: 10px;
 }
 .leaflet-control-better-scale-upper-first-piece {
     top: 0%;

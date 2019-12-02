@@ -2,6 +2,7 @@
 
 .leaflet-pm-toolbar {
   border: 1px solid rgba(0,0,0,0.2);
+  left: 0px;
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
