@@ -19,7 +19,6 @@ export const state = {
         origin: '',
         bbox: '',
         sid: 0,
-        refreshMap: false
     }, 
     /** Web service requests configuration */
     http: {
@@ -29,6 +28,16 @@ export const state = {
             method: 'get',
             responseType: 'text'
         },
+    },
+    app: {
+        loading: false,
+        refreshing: false,
+        busy: false,
+        active: false,
+        passive: false
+    },
+    process: {
+        id: 'test'
     }
 }
 Object.keys(state).map(key => store.addState(key, state[key]))

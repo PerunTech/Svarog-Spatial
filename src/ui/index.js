@@ -2,6 +2,7 @@
 export { useMount, useUpdate } from './util/Hooks';
 
 // element
+export { Icon } from './element/Icon';
 export { IconButton } from './element/IconButton';
 
 // toolbar.navigation

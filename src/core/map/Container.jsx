@@ -10,21 +10,21 @@ import { useMount, useUpdate } from '../../ui';
  * 
  * &nbsp;
  * 
- * @function _MapContainer (bbox: string, sid: number, refreshMap: boolean): JSX.Element
+ * @function _MapContainer (bbox: string, sid: number, refreshing: boolean): JSX.Element
  * 
  * @param {Object} props - Properties.
  * @param {string} props.bbox - The current map bounding box.
  * @param {number} props.sid - The current map spatial id of the render cycle.
- * @param {boolean} props.refreshMap - A flag for a manual refresh of all rendered geometries.
+ * @param {boolean} props.refreshing - A flag for a manual refresh of all rendered geometries.
  * 
  * @returns JSX.Element;
  */
-function _MapContainer ({ bbox, sid, refreshMap }) {
+function _MapContainer ({ bbox, sid, refreshing }) {
 
     useMount(rc.start);
     useUpdate(rc.fetch, [bbox]);
     useUpdate(rc.render, [sid]);
-    useUpdate(rc.refresh, [refreshMap]);
+    useUpdate(rc.refresh, [refreshing]);
 
     return <div id={MAP_CONTAINER} />
 }
@@ -32,14 +32,12 @@ function _MapContainer ({ bbox, sid, refreshMap }) {
 _MapContainer.propTypes = {
     bbox: PropTypes.string,
     sid: PropTypes.number,
-    refreshMap: PropTypes.bool,
+    refreshing: PropTypes.bool,
 };
 
-const subscriber = ({map}) => {
+export const MapContainer = connect(({map, app}) => {
     return { 
         bbox: map.bbox,
         sid: map.sid,
-        refreshMap: map.refreshMap
-}};
-
-export const MapContainer = connect(subscriber)(_MapContainer);
+        refreshing: app.refreshing
+}})(_MapContainer);
