@@ -5,7 +5,7 @@ export { Form } from './elements/Form';
 
 // util
 export { useMount, useUpdate } from './util/Hooks';
-export { formManager } from './form/FormManager';
+export { formManager } from './util/FormManager';
 
 //toolbar
 export { Navigation } from './toolbar/Navigation';
@@ -18,4 +18,4 @@ export { Toolbar } from './elements/Toolbar';
 // components
 export { Ellipser } from './components/loading/Ellipser';
 export { Loading } from './components/loading/Loading';
-export { scale } from './scale/Scale';
+export { scale } from './components/scale/Scale';
