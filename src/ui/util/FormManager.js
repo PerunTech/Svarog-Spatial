@@ -1,5 +1,5 @@
 import { http } from '../../core';
-import { Form } from './Form';
+import { Form } from '../elements/Form';
 
 export const formManager = {
     getData (opt) { 

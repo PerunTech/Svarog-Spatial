@@ -43,8 +43,8 @@ export const MAP_CONTAINER = 'mapContainer';
  * @constant
  */
 export const MAP_CONFIG = {
-    center: [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
-    zoom: 8,
+    center:  [38.11470458, 13.35908296], // Palermo    // [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
+    zoom: 12,
     minZoom: 0,
     maxZoom: 18,
     dragging: true,
