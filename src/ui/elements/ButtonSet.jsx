@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes  from 'prop-types';
 
-export function ButtonSet ({id, children, className,}) {
+export function ButtonSet ({id, className, children}) {
     return <div id={id} className={className} >
         {children}
     </div>

@@ -15,7 +15,7 @@ _Toolbar.propTypes = {
 }
 
 export const Toolbar = connect(({process}) => { 
-        return  { activeId: process.id }; 
+        return { activeId: process.id }; 
     })(_Toolbar);
 
 /** `#revise_me` Move instantiation to somewhere more appropriate. */

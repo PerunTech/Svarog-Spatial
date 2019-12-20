@@ -24,7 +24,7 @@ export const state = {
     http: {
         default: {},
         origin: {
-            url: '/sws/origin',
+            url: '/sws/origin/{security.svSession}',
             method: 'get',
             responseType: 'text'
         },
@@ -41,6 +41,8 @@ export const state = {
     }
 }
 Object.keys(state).map(key => store.addState(key, state[key]))
+
+state['security.scSession']
 
 
 

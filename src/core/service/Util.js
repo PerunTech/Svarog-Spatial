@@ -11,7 +11,7 @@ export const util = {
      * `Object composition, prototypal inheritance.`
      */
 
-    create (object, prototype = Object) {
+    assemble (object, prototype = Object) {
         return Object.setPrototypeOf(object, prototype);
     },
 
@@ -36,7 +36,7 @@ export const util = {
      * 
      * &nbsp;
      * 
-     * @function inherit (proto: Object, properties?: Object): Object
+     * @function create (proto: Object, properties?: Object): Object
      * 
      * @param {Object} proto - The object which should be the prototype of the newly-created object.
      * @param {Object} [properties] - An object whose enumerable own properties specify property descriptors
@@ -44,7 +44,7 @@ export const util = {
      *
      * @return A new object with the specified prototype object and properties;
      */
-    inherit (proto, properties) {
+    create (proto, properties) {
         return Object.create(proto, properties) || (function () {
             function F() {}
             return function (proto) {
@@ -68,14 +68,14 @@ export const util = {
      * 
      * &nbsp;
      * 
-     * @function clone (target: Object, ...src: Object): target & ...src
+     * @function assign (target: Object, ...src: Object): target & ...src
      * 
      * @param {Object} target - The taget object to copy to.
      * @param  {...Object} src - The source object(s) to copy from.
      * 
      * @returns target & ...src;
      */
-    clone (target, ...src) {
+    assign (target, ...src) {
         return Object.assign(target, ...src) || (function () {
             return function (target) {
                 // Cast target into Object if it is not.

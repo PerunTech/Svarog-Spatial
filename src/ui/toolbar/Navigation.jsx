@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Icon, ButtonSet} from '..';
 import { navHandler } from '../../tools';
 import { Map } from '../../core';
+import { PROCESS_ENUM } from '../../config';
 
 export function Navigation ({activeId}) {
-    console.log(activeId)
     return <ButtonSet id='navigation' >
         <div 
             id='zoomIn'
@@ -43,7 +43,7 @@ export function Navigation ({activeId}) {
             <Icon className='control-icon leaflet-pm-icon-location' />
         </div>
         <div 
-            id='view'
+            id={PROCESS_ENUM.view}
             title='Go to View'
             className='button-container'
             onClick={navHandler.boxZoom} >
@@ -54,4 +54,4 @@ export function Navigation ({activeId}) {
 
 Navigation.propTypes = {
     activeId: PropTypes.string
-}
+};

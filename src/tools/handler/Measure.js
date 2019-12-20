@@ -5,12 +5,12 @@ import { MEASURE_LINE } from '../../config';
 export const measHandler = {
     length (opt = {}) {
         return Map.on('pm:create', _disable),
-            drawHandler.line(util.clone(MEASURE_LINE, opt));
+            drawHandler.line(util.assign(MEASURE_LINE, opt));
     },
 
     area (opt) {
         return Map.on('pm:create', _disable), 
-            drawHandler.polygon(util.clone(MEASURE_LINE, opt));
+            drawHandler.polygon(util.assign(MEASURE_LINE, opt));
     },
 
     angle () { /* this is tricky */ },

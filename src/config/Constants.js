@@ -34,14 +34,10 @@ export const MIN_DIGI_SCALE = 12;
  */
 export const MIN_DIGI_AREA = 100;
 
-/**
- * @constant
- */
+/** @constant */
 export const MAP_CONTAINER = 'mapContainer';
 
-/**
- * @constant
- */
+/** @constant */
 export const MAP_CONFIG = {
     center:  [38.11470458, 13.35908296], // Palermo    // [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
     zoom: 12,
@@ -60,9 +56,21 @@ export const MAP_CONFIG = {
     tapTolerance: 15,
 };
 
-/**
- * @constant
- */
+/** @constant */
+export const PROCESS_ENUM = {
+    view: 'view',
+    draw: 'draw',
+    edit: 'edit',
+    cut: 'cut',
+    split: 'split',
+    merge: 'merge',
+    landscape: 'landscape',
+    length: 'length',
+    area: 'area',
+    angle: 'angle',
+}  
+
+/** @constant */
 export const MEASURE_LINE = {
     // snapping
     snappable: true,
@@ -113,9 +121,7 @@ export const MEASURE_LINE = {
     }
 };
 
-/**
- * @constant
- */
+/** @constant */
 export const NAVIGATE_VIEW = {
     // snapping
     snappable: false,
@@ -163,9 +169,7 @@ export const NAVIGATE_VIEW = {
     }
 };
 
-/**
- * @constant
- */
+/** @constant */
 export const DRAW_PARCEL = {
     // snapping
     snappable: true,
@@ -211,9 +215,7 @@ export const DRAW_PARCEL = {
     }
 };
 
-/**
- * @constant
- */
+/** @constant */
 export const EDIT_PARCEL = {}
 
 /**

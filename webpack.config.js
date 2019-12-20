@@ -5,10 +5,7 @@ module.exports = {
   entry: './src/Spatial.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'perun-spatial.min.js',
-    library: 'perun-spatial',
-    libraryTarget: 'this',
-    libraryExport: 'default'
+    filename: 'perun-spatial.min.js'
   },
   module: {
     rules: [

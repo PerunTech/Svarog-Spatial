@@ -12,7 +12,7 @@ export { Navigation } from './toolbar/Navigation';
 export { Measurement } from './toolbar/Measurement';
 export { Digitization } from './toolbar/Digitization';
 
-// element , keep here until we move init children toolbar to somewhere else
+// elements , keep here until we move init children toolbar to somewhere else
 export { Toolbar } from './elements/Toolbar';
 
 // components

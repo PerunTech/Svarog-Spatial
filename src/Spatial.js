@@ -9,7 +9,7 @@ import * as tools from './tools';
 import * as ui from './ui';
 
 // Assemble plugin.
-const spatial = core.util.create(
+const spatial = core.util.assemble(
 { // Set instance properties.
     name: name,
     version: version,
