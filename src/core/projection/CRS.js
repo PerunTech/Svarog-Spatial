@@ -47,13 +47,12 @@ import { R } from '../../config';
 export function crs (code, def, opt) {
     const options = {..._opt, ...opt};
     const { CRS } = factory;
-
     return {
         ...CRS,
         code: code,
         def: def,
         options: options,
-        projection: projection(this.code, this.def, options.bounds),
+        projection: projection(code, def, options.bounds),
         transformation: _setTransformation(options),
         scales: _setScales(options),
         infinite: !options.bounds,
@@ -136,16 +135,17 @@ const proto = {
      * 
      * @returns Scale number value;
      */
+    
     scale (zoom) {
         let iZoom = Math.floor(zoom), baseScale, nextScale, scaleDiff, zDiff;
 
         return zoom === iZoom
             ? this.scales[zoom]
-            : baseScale = this.scales[iZoom],
+            : (baseScale = this.scales[iZoom],
                 nextScale = this.scales[iZoom + 1],
                 scaleDiff = nextScale - baseScale,
                 zDiff = zoom - iZoom,
-                baseScale + scaleDiff * zDiff;
+                baseScale + scaleDiff * zDiff);
     },
 
     /**

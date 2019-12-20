@@ -39,7 +39,9 @@ export const MAP_CONTAINER = 'mapContainer';
 
 /** @constant */
 export const MAP_CONFIG = {
-    center:  [38.11470458, 13.35908296], // Palermo    // [41.3108238809182, 11.49169921875], // Tyrrhenian Sea
+    // [38.11470458, 13.35908296], // Palermo
+    // [41.3108238809182, 11.49169921875], Tyrrhenian Sea
+    // center:  [7544373.74, 4577135.27], // Prilep    
     zoom: 12,
     minZoom: 0,
     maxZoom: 18,
