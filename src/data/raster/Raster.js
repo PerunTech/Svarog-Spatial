@@ -1,27 +1,56 @@
 import { Map, factory } from '../../core'
-/*
-export const raster = function () {
-    const testTile = factory.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { maxZoom: 18, }
-    ).addTo(Map);
 
-    // testTile.addTo(Map);
-    factory.control.layers({base: testTile}, {}, {collapsed: false}).addTo(Map);
-};
-*/
-
-export const raster = function () {
-    const testTile = factory.tileLayer.wms(
+// self initialize, map is already rendered due to oreder of exports in entry root
+export const raster = (function (base, overlay) {
+    return factory.control.layers(base, overlay, {collapsed: false}).addTo(Map);
+})({ 
+    "Ортофото, Македонија 2017": factory.tileLayer.wms(
         'http://192.168.9.88:8080/geoserver/mk/wms', { 
             layers: 'Macedonia_30cm',
             format: 'image/png',
             transparent: true,
-            // LABEL: 'Ортофотографија, Македонија 2017',
-            // TILED: true 
+            tiled: true 
         }
-    ).addTo(Map);
-
-    // testTile.addTo(Map);
-    factory.control.layers({base: testTile}, {}, {collapsed: false}).addTo(Map);
-};
+    ).addTo(Map)
+}, {
+    "Физички блокови": factory.tileLayer.wms(
+        'http://192.168.100.155:8888/geoserver/mk/wms', { 
+            layers: 'phy_block',
+            format: 'image/png',
+            transparent: true,
+            tiled: true 
+        }
+    ),
+    "Земјишни парцели": factory.tileLayer.wms(
+        'http://192.168.100.155:8888/geoserver/mk/wms', { 
+            layers: 'lpis_parcel',
+            format: 'image/png',
+            transparent: true,
+            tiled: true 
+        }
+    ),
+    "Административни единици": factory.tileLayer.wms(
+        'http://192.168.100.155:8888/geoserver/mk/wms', { 
+            layers: 'adm_units',
+            format: 'image/png',
+            transparent: true,
+            tiled: false 
+        }
+    ),
+    "Патишта и железници": factory.tileLayer.wms(
+        'http://192.168.100.155:8888/geoserver/mk/wms', { 
+            layers: 'transport',
+            format: 'image/png',
+            transparent: true,
+            tiled: true 
+        }
+    ),
+    "Реки": factory.tileLayer.wms(
+        'http://192.168.100.155:8888/geoserver/mk/wms', { 
+            layers: 'rivers',
+            format: 'image/png',
+            transparent: true,
+            tiled: true 
+        }
+    ),
+})

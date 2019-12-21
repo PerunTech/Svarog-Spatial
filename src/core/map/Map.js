@@ -19,8 +19,9 @@ const crs_mk = crs('EPSG:6316', '+proj=tmerc +lat_0=0 +lon_0=21 +k=0.9999 +x_0=7
  * @namespace Map
  */
 export const Map = factory.map(el, util.assign(MAP_CONFIG, {
-    center: crs_mk.projection.unproject({x: 7544373.74, y: 4577135.27}),
+    center: crs_mk.projection.unproject({x: 7565522.967096635, y: 4605426.241851369}),
     crs: crs_mk,
+    zoom: 3,
     origin: [7453631.01165012, 4523013.16848829],
 }));
 

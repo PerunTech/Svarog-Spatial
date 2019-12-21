@@ -1,10 +1,8 @@
 import { util, store, Map, factory, http } from '..';
-import { raster } from '../../data';
 
 export const renderCycle = {
     start() {
         Map.render();
-        raster(); //temp, `#revise_me`
         // Get the bounding box of interest for this session. 
         // Regiser Map listeners, move frame to interest.
         http.call('origin').then(response => {

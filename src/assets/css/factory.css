@@ -256,7 +256,8 @@
 
 /* general typography */
 .leaflet-container {
-	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: 12px/1.5 "Trebuchet MS", "Tahoma", "Verdana", "Arial", "sans-serif";
+	/*font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;*/
 	}
 
 
@@ -335,9 +336,9 @@
 /* layers control */
 
 .leaflet-control-layers {
-	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4);
 	background: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	}
 .leaflet-control-layers-toggle {
 	background-image: url(../img/layers.png);
@@ -366,7 +367,7 @@
 	background: #fff;
 	}
 .leaflet-control-layers-scrollbar {
-	overflow-y: scroll;
+	/*overflow-y: scroll;*/
 	padding-right: 5px;
 	}
 .leaflet-control-layers-selector {
