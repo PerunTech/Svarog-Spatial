@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.mapdb.Serializer;
 
 import com.prtech.svarog.SvCore;
+import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
@@ -126,7 +127,12 @@ public class GeobufEncoder {
 			// Assign default type descriptor if not specified already
 			String desc = (String) dbo.getVal("DESCRIPTOR");
 			if (desc == null)
-				dbo.setVal("DESCRIPTOR", SvCore.getDbt(dbo.getObject_type()).getVal("TABLE_NAME"));
+				try {
+					dbo.setVal("DESCRIPTOR", SvCore.getDbt(dbo.getObject_type()).getVal("TABLE_NAME"));
+				} catch (SvException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			
 			// Set feature properties 
 			dbo.getValuesMap().forEach((k,v) -> {
