@@ -52,18 +52,18 @@
 			<extensions>true</extensions>
 			<configuration>
 			  <instructions>
-				<Bundle-SymbolicName>com.prtech.svx_spatial</Bundle-SymbolicName>
+				<Bundle-SymbolicName>com.prtech.perun_spatial</Bundle-SymbolicName>
 				<Bundle-Name>${project.name}</Bundle-Name>
 				<Bundle-Version>${project.version}</Bundle-Version>
-				<Bundle-Vendor>Perun.Tech</Bundle-Vendor>
+				<Bundle-Vendor>Perun.Technologies</Bundle-Vendor>
 				<Bundle-Description>${project.description}</Bundle-Description>
-				<Bundle-Activator>com.prtech.svx_spatial.osgi.Activator</Bundle-Activator>
+				<Bundle-Activator>com.prtech.perun_spatial.Activator</Bundle-Activator>
 				<Export-Package>
-					com.prtech.svx_spatial.geobuf.*,
-					com.prtech.svx_spatial.osgi.*,
-					com.prtech.svx_spatial.service.*
+					com.prtech.perun_spatial.geobuf.*,
+					com.prtech.perun_spatial.osgi.*,
+					com.prtech.perun_spatial.service.*
 				</Export-Package>
-				<Private-Package>!com.prtech.svx_spatial.importer.*</Private-Package>
+				<Private-Package>!com.prtech.perun_spatial.importer.*</Private-Package>
 			  </instructions>
 		  	</configuration>
 		  </plugin>
