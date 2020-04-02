@@ -67,8 +67,8 @@
 		    <Bundle-Description>${project.description}</Bundle-Description>
 		    <Bundle-Activator>com.prtech.perun_spatial.Activator</Bundle-Activator>
 		    <Export-Package>
+			  com.prtech.perun_spatial.*,
 			  com.prtech.perun_spatial.geobuf.*,
-			  com.prtech.perun_spatial.osgi.*,
 			  com.prtech.perun_spatial.service.*
 		    </Export-Package>
 		    <Private-Package>!com.prtech.perun_spatial.importer.*</Private-Package>
