@@ -13,6 +13,25 @@
 export const R = 6371000;
 
 /**
+ * System bounds - spatial limits of the application.
+ * 
+ * Represented as simple latitude / longitutde pairs, first element is southwest corner,
+ * second element is northeast, i.e. bottomleft and topright. Always represented spherically,
+ * as this is what the render engine uses internally, regardless of the CRS of the data.
+ * 
+ * @constant
+ */
+export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569, lng: 24.017592 }];
+
+/**
+ * System center - a point location for the map to fallback to. 
+ * Represented as simple latitude / longitutde pair.
+ * 
+ * @constant
+ */
+export const SYS_CENTER = { lat: 41.590072, lng: 21.780699 };
+
+/**
  * The minimum allowed scale for digitization.
  * 
  * The above means the furthest allowed distance from the surface of the Earth,
@@ -39,10 +58,8 @@ export const MAP_CONTAINER = 'mapContainer';
 
 /** @constant */
 export const MAP_CONFIG = {
-    // [38.11470458, 13.35908296], // Palermo
-    // [41.3108238809182, 11.49169921875], Tyrrhenian Sea
-    // center:  [7544373.74, 4577135.27], // Prilep    
-    zoom: 12,
+    center: SYS_CENTER,
+    zoom: 3,
     minZoom: 0,
     maxZoom: 18,
     dragging: true,
@@ -60,6 +77,11 @@ export const MAP_CONFIG = {
 
 /** @constant */
 export const PROCESS_ENUM = {
+    'zoom-in': 'zoom-in', 
+    'zoom-out': 'zoom-out',
+    search: 'search',
+    origin: 'origin',
+    location: 'location',
     view: 'view',
     draw: 'draw',
     edit: 'edit',
@@ -70,6 +92,7 @@ export const PROCESS_ENUM = {
     length: 'length',
     area: 'area',
     angle: 'angle',
+    erase: 'erase'
 }  
 
 /** @constant */
@@ -227,7 +250,6 @@ export const EDIT_PARCEL = {}
 export const MOCK_FORM = {
     schema: {
         "title": "A registration form",
-        "description": "A simple form example.",
         "type": "object",
         "required": [
             "firstName",
@@ -271,7 +293,6 @@ export const MOCK_FORM = {
         "age": {
             "ui:widget": "updown",
             "ui:title": "Age of person",
-            "ui:description": "(earthian year)"
         },
         "bio": {
             "ui:widget": "textarea"
