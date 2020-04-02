@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import style from './Ellipser.module.css';
 
 /**
  * Renders rotating elipses and a message.
@@ -17,13 +16,12 @@ import style from './Ellipser.module.css';
  * @returns JSX.Element;
  */
 export function Ellipser ({message='', ellipseCount=7}) {
-    return <div id='ellipser' className={style.ellipser} >
-      <div id='ellipser-globe' className={style.ellipser_globe}>
-        {[...Array(ellipseCount)].map((v, i) => { return <div key={'e'+i} className={style.ellipse}></div> })}
+    return <div id='ellipser' className='ellipser' >
+      <div id='globe' className='globe'>
+        {[...Array(ellipseCount)].map((v, i) => { return <div key={'e'+i} className='ellipse' /> })}
       </div>
       {message}
     </div> 
-    
 }
 
 Ellipser.propTypes = {

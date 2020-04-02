@@ -1,0 +1,19 @@
+import React from 'react';
+import { ProcessButton } from '../..';
+import { draw } from '../../../tools';
+
+export function drawActions (handler) {
+    return <div id='drawActions' className='leaflet-pm-actions-container' >
+        <ProcessButton id='finish-shape' onClick={e => {
+            e.stopPropagation(),
+            draw.getHandler(handler.type)._finishShape(e); }} 
+        />
+        <ProcessButton id='delete-last-vertex' onClick={e =>{
+            e.stopPropagation(),
+            draw.getHandler(handler.type)._removeLastVertex(); }} 
+        />
+        <ProcessButton id='cancel-draw' onClick={e => {
+            e.stopPropagation(),
+            handler.disable(); }} />
+    </div>
+}

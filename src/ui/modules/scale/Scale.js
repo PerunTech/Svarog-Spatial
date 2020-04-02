@@ -128,7 +128,6 @@ export const Scale = factory.Control.extend({
     }
 });
 
-
 export const scale = function (options) {
     return new Scale(options)
 };

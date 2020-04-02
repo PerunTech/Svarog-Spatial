@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {cloneElement} from 'react';
 import PropTypes from 'prop-types';
 import RJSForm from 'react-jsonschema-form';
 
@@ -11,11 +11,13 @@ import RJSForm from 'react-jsonschema-form';
  * 
  * @returns JSX.Element;
  */
-export function Form (props) {
-    return <RJSForm {...props} />
+export function Form ({children, ...props}) {
+    return <RJSForm {...props} >
+        {children && (children instanceof Element ? children : cloneElement(children, props))}
+    </RJSForm>
 }
 
-Form.propTypes ={
+Form.propTypes = {
     schema: PropTypes.object.isRequired,
     uiSchema: PropTypes.object,
     formData: PropTypes.any,
@@ -23,9 +25,9 @@ Form.propTypes ={
         PropTypes.oneOfType([PropTypes.func, PropTypes.object])
     ),
     fields: PropTypes.objectOf(PropTypes.elementType),
-    ArrayFieldTemplate: PropTypes.elementType,
-    ObjectFieldTemplate: PropTypes.elementType,
-    FieldTemplate: PropTypes.elementType,
+    ArrayFieldTemplate: PropTypes.func,
+    ObjectFieldTemplate: PropTypes.func,
+    FieldTemplate: PropTypes.func,
     ErrorList: PropTypes.func,
     onChange: PropTypes.func,
     onError: PropTypes.func,
@@ -33,7 +35,7 @@ Form.propTypes ={
     onSubmit: PropTypes.func,
     id: PropTypes.string,
     className: PropTypes.string,
-    tagName: PropTypes.elementType,
+    tagName: PropTypes.func,
     name: PropTypes.string,
     method: PropTypes.string,
     target: PropTypes.string,
