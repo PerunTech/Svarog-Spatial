@@ -1,4 +1,4 @@
-import { name, version, description } from '../package.json';
+import { name, version, description } from '../../../../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.
@@ -9,12 +9,12 @@ import * as tools from './tools';
 import * as ui from './ui';
 
 // Assemble plugin.
-const spatial = core.util.assemble(
+const spatial = core.util.obj.assemble(
 { // Set instance properties.
     name: name,
     version: version,
     description: description,
-    init (token) { alert(token); }
+    init: ui.initializer.init
 }, 
 { // Set prototype properties.
     config,
@@ -27,32 +27,3 @@ const spatial = core.util.assemble(
 // Register on global scope. Export default.
 window[name] = spatial;
 export default spatial;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////
-///// TEST /////
-////////////////
-import React from 'react'
-import ReactDOM from 'react-dom'
-const { Provider, MapContainer } = core
-
-ReactDOM.render(<Provider children={<MapContainer />} />, document.getElementById('app'))
