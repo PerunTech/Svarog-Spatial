@@ -1,0 +1,78 @@
+/* -------------- */
+/* Control Layout */
+/* -------------- */
+.control-container {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    }
+.control-container div {
+    z-index: 1000;
+    }
+.control-container .control-top,
+.control-container .control-bottom,
+.control-container .control-left,
+.control-container .control-right {
+    background-color: #fff;
+    }
+
+
+
+/* ------------------------------- */
+/* Base elements position and size */
+/* ------------------------------- */
+.control-top {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    }
+.control-center {
+    flex: 1 1 auto;
+    display: inline-flex;
+    }
+.control-bottom {
+    /*min-height: 40px;*/ /* removed, content will define size*/
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+    }
+
+/* The following three are rendered inline in control-center */
+.control-left {
+    width: 250px;
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
+    }
+.control-map {
+    flex: 1 1 auto;
+    /* Creates new block context to paint in,
+    absolutely position children in corners here, see below */
+    position: relative; 
+    }
+.control-right {
+    width: 250px;
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    }
+
+
+
+/*
+ * Sub element position and size, these specify corner locations of the center content screen,
+ * where the map and all geometries are rendered. These locations should present minimal content
+ * as overlay over the map, mostly helper buttons and small indicators. For large components use 
+ * the main side blocks outlined above. 
+ *
+ * Size defined by content inside the control, position is fixed.
+ */
+.control-topleft {
+    position: absolute;
+    left: 0;
+    }
+.control-topright {
+    position: absolute;
+    right: 0;
+    }
+.control-bottomleft {
+    position: absolute;
+    bottom: 0;
+    }
+.control-bottomright {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    }
