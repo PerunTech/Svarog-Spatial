@@ -1,12 +1,19 @@
 let path = require('path');
 
-module.exports = {
-  mode: 'development',
-  entry: './src/Spatial.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'perun-spatial.min.js'
-  },
+module.exports = (mode, {env}) => {
+    return {
+        mode: mode,
+        entry: env === 'production' ? './frontend/Spatial.js' : './frontend/client.js',
+        output: {
+            path: path.resolve('./backend/www'),
+            filename: 'perun-spatial.min.js',
+            library: 'perun-spatial',
+            libraryTarget: 'umd',
+            globalObject: 'this'
+        },
+        devServer: {
+            contentBase: './backend/www',
+        },
   module: {
     rules: [
       {
