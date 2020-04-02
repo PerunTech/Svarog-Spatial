@@ -1,1 +1,1 @@
-export { raster } from './raster/Raster'
+export { raster } from './raster/Raster';
