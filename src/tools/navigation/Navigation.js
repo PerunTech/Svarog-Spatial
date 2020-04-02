@@ -1,8 +1,8 @@
 import { store, Map, factory } from '../../core';
-import { drawHandler } from '..';
+import { draw } from '..';
 import { NAVIGATE_VIEW } from '../../config';
 
-export const navHandler = {
+export const navigation = {
     origin () {
         return Map.fitBounds(
             factory.boundingBox(
@@ -19,7 +19,8 @@ export const navHandler = {
             Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
         });
 
-        return drawHandler.rectangle(NAVIGATE_VIEW);
-    }
-}
+        return draw.rectangle(NAVIGATE_VIEW);
+    },
 
+    search () {}
+}

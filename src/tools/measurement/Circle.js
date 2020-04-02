@@ -1,13 +1,13 @@
 import { util, factory } from '../../core';
-import { override, circleArea, addInitHook, formatArea } from './Util';
+import { circleArea, addInitHook, formatArea } from './Util';
 
 const { layerGroup, marker, Circle } = factory;
 
 export const measureCircle = {
-    showMeasurements: function(options) {
+    showMeasurements: function (options) {
         if (!this._map || this._measurementLayer) return this;
 
-        this._measurementOptions = util.cloneDeep({
+        this._measurementOptions = util.obj.assignDeep({
             showOnHover: false,
             showArea: true,
             lang: {
@@ -23,7 +23,7 @@ export const measureCircle = {
         return this;
     },
 
-    hideMeasurements: function() {
+    hideMeasurements: function () {
         if (!this._map) return this;
 
         this._map.on('zoomend', this.updateMeasurements, this);
@@ -35,17 +35,17 @@ export const measureCircle = {
         return this;
     },
 
-    updateMeasurements: function() {
+    updateMeasurements: function () {
         if (!this._measurementLayer) return;
 
         let latLng = this.getLatLng(),
             options = this._measurementOptions,
-            formatter = options.formatArea || util.bind(this.formatArea, this);
+            formatter = options.formatArea || util.fn.bind(this.formatArea, this);
 
         this._measurementLayer.clearLayers();
 
         if (options.showArea) {
-            formatter = options.formatArea || util.bind(this.formatArea, this);
+            formatter = options.formatArea || util.fn.bind(this.formatArea, this);
             let area = circleArea(this.getRadius());
             
             marker.measurement(latLng, formatter(area), options.lang.totalArea, 0, options)
@@ -53,7 +53,7 @@ export const measureCircle = {
         }
     },
 
-    onAdd: override(Circle.prototype.onAdd, function(protoVal) {
+    onAdd: util.fn.override(Circle.prototype.onAdd, function (protoVal) {
         let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
         if (this.options.showMeasurements && !showOnHover) {
             this.showMeasurements(this.options.measurementOptions);
@@ -62,17 +62,17 @@ export const measureCircle = {
         return protoVal;
     }),
 
-    onRemove: override(Circle.prototype.onRemove, function(protoVal) {
+    onRemove: util.fn.override(Circle.prototype.onRemove, function (protoVal) {
         this.hideMeasurements();
         return protoVal;
     }, true),
 
-    setLatLng: override(Circle.prototype.setLatLng, function(protoVal) {
+    setLatLng: util.fn.override(Circle.prototype.setLatLng, function (protoVal) {
         this.updateMeasurements();
         return protoVal;
     }),
 
-    setRadius: override(Circle.prototype.setRadius, function(protoVal) {
+    setRadius: util.fn.override(Circle.prototype.setRadius, function (protoVal) {
         this.updateMeasurements();
         return protoVal;
     }),
@@ -82,6 +82,6 @@ export const measureCircle = {
 
 Circle.include(measureCircle);
 
-Circle.addInitHook(function() {
+Circle.addInitHook(function () {
     addInitHook.call(this);
 });

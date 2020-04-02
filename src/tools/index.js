@@ -1,14 +1,17 @@
-// Handlers
-export { drawHandler } from './handler/Draw';
-export { navHandler } from './handler/Navigate';
-export { editHandler } from './handler/Edit';
-export { measHandler } from './handler/Measure';
+// Coordinate
+export { coordinate } from './coordinate/Coordinate';
+export { limits } from './coordinate/Limits';
 
-// Measurements
+// Draw
+export { draw } from './draw/Draw';
+
+// Edit
+export { edit } from './edit/Edit';
+
+// Measurement
 export { measureMarker } from './measurement/Marker';
 export { measureLine } from './measurement/Line';
 export { measureCircle } from './measurement/Circle';
 
-// Parcel
-export { drawParcel } from './digitization/Draw';
-export { editParcel } from './digitization/Edit';
+// Navigation
+export { navigation } from './navigation/Navigation';

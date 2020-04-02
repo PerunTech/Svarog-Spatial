@@ -11,35 +11,12 @@ export function addInitHook () {
         this.showMeasurements();
     }
     if (this.options.showMeasurements && showOnHover) {
-        this.on('mouseover', function() {
+        this.on('mouseover', function () {
             this.showMeasurements();
         });
-        this.on('mouseout', function() {
+        this.on('mouseout', function () {
             this.hideMeasurements();
         });
-    }
-}
-
-/**
- * `#revise_me`, may move to /core/util if deemed useful elsewhere.
- * 
- * @param {Function} method 
- * @param {Function} fn 
- * @param {boolean} hookAfter
- */
-export function override (method, fn, hookAfter) {
-    if (!hookAfter) {
-        return function() {
-            let protoVal = method.apply(this, arguments);
-            let args = Array.prototype.slice.call(arguments)
-            args.push(protoVal);
-            return fn.apply(this, args);
-        }
-    } else {
-        return function() {
-            fn.apply(this, arguments);
-            return method.apply(this, arguments);
-        }
     }
 }
 
@@ -130,4 +107,3 @@ export function ringArea (coords) {
 export function circleArea (d) {
     return 2 * Math.PI * R * R * (1 - Math.cos(d / R));
 }
-

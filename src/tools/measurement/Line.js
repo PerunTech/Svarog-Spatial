@@ -1,13 +1,13 @@
 import { util, factory } from '../../core';
-import { override, addInitHook, formatArea, formatDistance, ringArea } from './Util';
+import { addInitHook, formatArea, formatDistance, ringArea } from './Util';
 
 const { marker, layerGroup, Polyline, Polygon } = factory;
 
 export const measureLine = {
-    showMeasurements: function(options) {
+    showMeasurements: function (options) {
         if (!this._map || this._measurementLayer) return this;
 
-        this._measurementOptions = util.cloneDeep({
+        this._measurementOptions = util.obj.assignDeep({
             showOnHover: (options && options.showOnHover) || false,
             minPixelDistance: 30,
             showDistances: true,
@@ -27,7 +27,7 @@ export const measureLine = {
         return this;
     },
 
-    hideMeasurements: function() {
+    hideMeasurements: function () {
         if (!this._map) return this;
 
         this._map.off('zoomend', this.updateMeasurements, this);
@@ -39,7 +39,7 @@ export const measureLine = {
         return this;
     },
 
-    updateMeasurements: function() {
+    updateMeasurements: function () {
         if (!this._measurementLayer) return this;
 
         let formatter, ll1, ll2, p1, p2, pixelDist, dist,
@@ -49,14 +49,14 @@ export const measureLine = {
             totalDist = 0;
 
         // Outer ring is stored as an array in the first element, use that instead.
-        if (latLngs && latLngs.length && util.isArray(latLngs[0])) {
+        if (latLngs && latLngs.length && util.arr.isArray(latLngs[0])) {
             latLngs = latLngs[0];
         }
 
         this._measurementLayer.clearLayers();
 
         if (this._measurementOptions.showDistances && latLngs.length > 1) {
-            formatter = this._measurementOptions.formatDistance || util.bind(this.formatDistance, this);
+            formatter = this._measurementOptions.formatDistance || util.fn.bind(this.formatDistance, this);
 
             for (let i = 1, len = latLngs.length; (isPolygon && i <= len) || i < len; i++) {
                 ll1 = latLngs[i - 1];
@@ -88,7 +88,7 @@ export const measureLine = {
         }
 
         if (isPolygon && options.showArea && latLngs.length > 2) {
-            formatter = options.formatArea || util.bind(this.formatArea, this);
+            formatter = options.formatArea || util.fn.bind(this.formatArea, this);
             let area = ringArea(latLngs);
             
             marker.measurement(this.getBounds().getCenter(), formatter(area), options.lang.totalArea, 0, options)
@@ -98,7 +98,7 @@ export const measureLine = {
         return this;
     },
 
-    onAdd: override(Polyline.prototype.onAdd, function(protoVal) {
+    onAdd: util.fn.override(Polyline.prototype.onAdd, function (protoVal) {
         let showOnHover = this.options.measurementOptions && this.options.measurementOptions.showOnHover;
         if (this.options.showMeasurements && !showOnHover) {
             this.showMeasurements(this.options.measurementOptions);
@@ -107,17 +107,17 @@ export const measureLine = {
         return protoVal;
     }),
 
-    onRemove: override(Polyline.prototype.onRemove, function(protoVal) {
+    onRemove: util.fn.override(Polyline.prototype.onRemove, function (protoVal) {
         this.hideMeasurements();
         return protoVal;
     }, true),
 
-    setLatLngs: override(Polyline.prototype.setLatLngs, function(protoVal) {
+    setLatLngs: util.fn.override(Polyline.prototype.setLatLngs, function (protoVal) {
         this.updateMeasurements();
         return protoVal;
     }),
 
-    spliceLatLngs: override(Polyline.prototype.spliceLatLngs, function(protoVal) {
+    spliceLatLngs: util.fn.override(Polyline.prototype.spliceLatLngs, function (protoVal) {
         this.updateMeasurements();
         return protoVal;
     }),
@@ -125,7 +125,7 @@ export const measureLine = {
     formatDistance: formatDistance,
     formatArea: formatArea,
 
-    _getRotation: function(ll1, ll2) {
+    _getRotation: function (ll1, ll2) {
         let p1 = this._map.project(ll1),
             p2 = this._map.project(ll2);
 
@@ -135,6 +135,6 @@ export const measureLine = {
 
 Polyline.include(measureLine);
 
-Polyline.addInitHook(function() {
+Polyline.addInitHook(function () {
     addInitHook.call(this);
 });

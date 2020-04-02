@@ -20,9 +20,9 @@ const _tool = Map.pm.Draw;
  * that is used internally. Call your function by type and configure the operation
  * via the `opt` argument.
  * 
- * @namespace draw  
+ * @namespace draw
  */
-export const drawHandler = {
+export const draw = {
     marker (opt = {}) { return _tool.enable('Marker', opt); },
 
     line (opt = {}) { return _tool.enable('Line', opt); },
@@ -35,5 +35,7 @@ export const drawHandler = {
 
     circleMarker (opt = {}) { return _tool.enable('CircleMarker', opt); },
 
-    cut (opt = {}) { return _tool.enable('Cut', opt); }
+    cut (opt = {}) { return _tool.enable('Cut', opt); },
+
+    getHandler (type) { return type ? _tool[type] : _tool; }
 };

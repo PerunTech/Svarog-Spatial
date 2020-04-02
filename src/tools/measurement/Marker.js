@@ -7,7 +7,7 @@ export const measureMarker = {
         pane: 'markerPane'
     },
 
-    initialize: function(latlng, measurement, title, rotation, options) {
+    initialize: function (latlng, measurement, title, rotation, options) {
         factory.setOptions(this, options);
 
         this._latlng = latlng;
@@ -16,15 +16,16 @@ export const measureMarker = {
         this._rotation = rotation;
     },
 
-    addTo: function(map) {
+    addTo: function (map) {
         map.addLayer(this);
         return this;
     },
 
-    onAdd: function(map) {
+    onAdd: function (map) {
         this._map = map;
         let pane = this.getPane ? this.getPane() : map.getPanes().markerPane;
-        let el = this._element = DomUtil.create('div', 'leaflet-zoom-animated leaflet-measure-path-measurement', pane);
+        let className = 'leaflet-measure-path-measurement';
+        let el = this._element = DomUtil.create('div', 'leaflet-zoom-animated ' + className, pane);
         let inner = DomUtil.create('div', '', el);
         inner.title = this._title;
         inner.innerHTML = this._measurement;
@@ -34,19 +35,19 @@ export const measureMarker = {
         this._setPosition();
     },
 
-    onRemove: function(map) {
+    onRemove: function (map) {
         map.off('zoomanim', this._animateZoom, this);
         let pane = this.getPane ? this.getPane() : map.getPanes().markerPane;
         pane.removeChild(this._element);
         this._map = null;
     },
 
-    _setPosition: function() {
+    _setPosition: function () {
         DomUtil.setPosition(this._element, this._map.latLngToLayerPoint(this._latlng));
         this._element.style.transform += ' rotate(' + this._rotation + 'rad)';
     },
 
-    _animateZoom: function(opt) {
+    _animateZoom: function (opt) {
         let pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
         DomUtil.setPosition(this._element, pos);
         this._element.style.transform += ' rotate(' + this._rotation + 'rad)';
@@ -55,6 +56,6 @@ export const measureMarker = {
 
 Marker.Measurement = factory[Layer ? 'Layer' : 'Class'].extend(measureMarker);
 
-marker.measurement = function(latLng, measurement, title, rotation, options) {
+marker.measurement = function (latLng, measurement, title, rotation, options) {
     return new Marker.Measurement(latLng, measurement, title, rotation, options);
 };
