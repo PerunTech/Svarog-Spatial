@@ -14,6 +14,9 @@ module.exports = (mode, {env}) => {
         devServer: {
             contentBase: './backend/www',
         },
+        externals: env === 'production' 
+            ? { 'perun-core': 'perun-core' } 
+            : {},
         module: {
             rules: [
                 {
