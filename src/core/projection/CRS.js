@@ -25,6 +25,7 @@ import { R } from '../../config';
  * @param {string} code - Code of the desired projection, as specified by the European Petroleum Survey Group.
  * @param {string} def - Proj4 definition of the desired projection. Must match the supplied code.
  * @param {Object} [opt] - Configuration object.
+ * @param {string} [opt.description] - The name of the coordinate reference system. Fallbacks to code, if omitted.
  * @param {Transformation} [opt.transformation] - Transforms projected coordinates to pixel coordinates.
  * @param {number[]} [opt.origin] - The pixel origin of the map. Represented in projected coordinates.
  * @param {number[]} [opt.bounds] - Rectangular area in pixel coordinates.
@@ -51,6 +52,7 @@ export function crs (code, def, opt) {
         ...CRS,
         code: code,
         def: def,
+        desc: options.description || code,
         options: options,
         projection: projection(code, def, options.bounds),
         transformation: _setTransformation(options),
@@ -116,7 +118,7 @@ const proto = {
         // andgular distance, in radiance
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1- a));
 
-        return this.R * c;  // distance in meters
+        return this.R * c; // distance in meters
     },
 
     /**
@@ -231,11 +233,10 @@ const _opt = {
  * 
  * @returns Calculated scales [];
  */
-let _setScales = function ({scales : s, resolutions: r, distances: d}) {
-    return s ? s
-        : r ? _setResolutions(r)
+let _setScales = function ({scales: s, resolutions: r, distances: d}) {
+    return s || (r ? _setResolutions(r)
         : d ? _setDistances(d)
-        : [];
+        : []);
 };
 
 /**

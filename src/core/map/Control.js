@@ -32,8 +32,9 @@ import { factory, Map, Provider } from '..';
  * @param {React.Component | Element} UI - The user interface element / composition.
  * @param {Object} [props] - Props for your React UI.
  * @param {Object} [opt] - Configuratiuon object.
- * @param {string} [opt.position] - Rendering position in the map frame. 
- *                 Valid input is ('topleft', 'topright', 'bottomleft', 'bottomright').
+ * @param {string} [opt.position] - Rendering position in the map frame. Default is left.
+ *        Valid locations are 'top', 'bottom', 'left', 'right'. These are the main control blocks.
+ *        Sub-locations include 'topleft', 'topright', 'bottomleft', 'bottomright'. These are map overlay helpers.
  * @param {string} [opt.className] - The css class of the Control.
  * 
  * @returns Control;
@@ -45,16 +46,21 @@ export function control (UI, props = {}, opt = _opt) {
      * 
      * @class Control
      */
-    const control = factory.Control.extend({
+    const Control = factory.Control.extend({
         initialize: function (opt) {
             this.options = opt;
             this.container = factory.DomUtil.create('div', this.options.className);
         },
         
         onAdd () {
-            UI instanceof Element   // `#revise_me`, need to test this.
+            UI instanceof Element // `#revise_me`, need to test this.
                 ? this.container.appendChild(UI)
-                : ReactDOM.render(<Provider  children={<UI {...props} />} />, this.container)
+                : ReactDOM.render(<Provider children={<UI {...props} />} />, this.container)
+
+            factory.DomEvent
+                .disableClickPropagation(this.container)
+                .disableScrollPropagation(this.container)
+                .addListener(this.container, 'mousemove', factory.DomEvent.stopPropagation);
             
             return this.container; // This hook must return HTMLElement.
         },
@@ -62,10 +68,10 @@ export function control (UI, props = {}, opt = _opt) {
         onRemove () { /** Think something useful */}
     });
 
-    return new control({ ..._opt, ...opt }).addTo(Map);
+    return new Control({ ..._opt, ...opt }).addTo(Map);
 }
 
 const _opt = {
-    position: 'topleft', 
-    className: 'leaflet-control',
+    position: 'left', // Default is data panel, left side menu block.
+    className: 'leaflet-control', // Do not change this default, style rules depend on it.
 };

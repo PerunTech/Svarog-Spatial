@@ -6,7 +6,7 @@ import { util } from '..';
  * @abstract
  * @class Class
  */
-export function Class() {}
+export function Class () {}
 
 /**
  * [Extends the current class](#class-inheritance) given the properties to be included.

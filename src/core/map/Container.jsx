@@ -20,13 +20,12 @@ import { useMount, useUpdate } from '../../ui';
  * @returns JSX.Element;
  */
 function _MapContainer ({ bbox, sid, refreshing }) {
-
     useMount(rc.start);
     useUpdate(rc.fetch, [bbox]);
     useUpdate(rc.render, [sid]);
     useUpdate(rc.refresh, [refreshing]);
 
-    return <div id={MAP_CONTAINER} />
+    return <div id={MAP_CONTAINER} style={{height: '100vh'}} />
 }
 
 _MapContainer.propTypes = {

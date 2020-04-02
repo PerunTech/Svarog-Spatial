@@ -36,7 +36,7 @@ export function geoJson (geometry, opt) {
             // maybe extend factory arguments to allow to pass crs, rather than append on data
             // or simply pass convert function in opt { reproject: fn }
             if (crs && crs.projection) {
-                this.options.coordsToLatLng = function(coords) {
+                this.options.coordsToLatLng = function (coords) {
                     return crs.projection.unproject(point(coords[0], coords[1]));
                 };
             }

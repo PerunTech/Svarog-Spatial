@@ -89,7 +89,7 @@ function _defineProj (code, def) {
             code = urn[urn.length - 3] + ':' + urn[urn.length - 1];
         }
         if (proj4.defs[code] === undefined) {
-            throw 'No projection definition for code ' + code;
+            throw new Error('No projection definition for code ' + code);
         }
     }
 

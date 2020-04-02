@@ -1,5 +1,7 @@
+// Utilities
+export { util } from './utils/Util';
+
 // Service
-export { util } from './service/Util'; // keep on top, root dependency.
 export { http } from './service/HTTP';
 export { factory } from './service/Factory';
 
@@ -24,4 +26,3 @@ export { Map } from './map/Map';
 export { control } from './map/Control';
 export { renderCycle } from './map/RenderCycle';
 export { MapContainer } from './map/Container';
-

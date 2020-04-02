@@ -44,7 +44,7 @@ export const factory = {
     boundingBox () {
         return L.latLngBounds(function assemble (arr) {
                 return [[arr[0], arr[1]], [arr[2], arr[3]]];
-            }(util.normalize([...arguments], Number)));
+            }(util.arr.normalize([...arguments], Number)));
     },
 
     /**
@@ -75,7 +75,7 @@ export const factory = {
             return L.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
         }
         // Coords arg
-        if (util.isArray(lat) && typeof lat[0] !== 'object') {
+        if (util.arr.isArray(lat) && typeof lat[0] !== 'object') {
             if (lat.length === 3) { return L.latLng(lat[0], lat[1], lat[2]); }
             if (lat.length === 2) { return L.latLng(lat[0], lat[1]); }
             return null;
@@ -118,7 +118,7 @@ export const factory = {
         // Object arg
         if (typeof x === 'object' && 'x' in x && 'y' in x) { return L.point(x.x, x.y); }
         // Coords arg
-        if (util.isArray(x)) { return L.point(x[0], x[1]); }
+        if (util.arr.isArray(x)) { return L.point(x[0], x[1]); }
 
         return L.point(x, y, r);
     },
@@ -150,7 +150,7 @@ export const factory = {
      */
     transformation (a, b, c, d) {
         // Coef array arg
-        if (util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
+        if (util.arr.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
 
         return L.transformation(a, b, c, d);
     }

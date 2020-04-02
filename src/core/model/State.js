@@ -1,4 +1,5 @@
 import { store } from '..'
+import { MAP_CONFIG, SYS_CENTER } from '../../config';
 
 /**
  * The application state tree.
@@ -12,22 +13,43 @@ import { store } from '..'
  * generated automatically and combined on store creation.
  */
 export const state = {
-    /** Map properties */
+    /* Initialization data */
+    init: {
+        token: ''
+    },
+    /* Map properties */
     map: {
-        zoom: 0,
-        center: {lat: 0, lng: 0},
+        zoom: MAP_CONFIG.zoom,
+        minZoom: MAP_CONFIG.minZoom,
+        maxZoom: MAP_CONFIG.maxZoom,
+        center: SYS_CENTER,
         origin: '',
         bbox: '',
         sid: 0,
     }, 
-    /** Web service requests configuration */
+    /* Web service requests configuration */
     http: {
         default: {},
         origin: {
-            url: '/sws/origin/{security.svSession}',
+            url: '/services/sws/origin/{init.token}',
             method: 'get',
             responseType: 'text'
         },
+        drawParcel_data: {
+            url: '/services/ReactElements/getTableFormData/{init.token}/0/LPIS_PARCEL',
+            method: 'get',
+            responseType: 'application/json'
+        },
+        drawParcel_uiSchema: {
+            url: '/services/ReactElements/getTableUISchema/{init.token}/LPIS_PARCEL',
+            method: 'get',
+            responseType: 'application/json'
+        },
+        drawParcel_jsonSchema: {
+            url: '/services/ReactElements/getTableJSONSchema/{init.token}/LPIS_PARCEL',
+            method: 'get',
+            responseType: 'application/json'
+        }
     },
     app: {
         loading: false,
@@ -37,12 +59,11 @@ export const state = {
         passive: false
     },
     process: {
-        id: 'test'
+        activeId: 'test'
+    },
+    appState: {
+        appStatus: '',
+        processId: ''
     }
-}
-Object.keys(state).map(key => store.addState(key, state[key]))
-
-state['security.scSession']
-
-
-
+};
+Object.keys(state).map(key => store.addState(key, state[key]));

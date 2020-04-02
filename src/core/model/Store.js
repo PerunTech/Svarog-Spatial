@@ -46,8 +46,8 @@ export const store = createStore(_createRootReducer(), applyMiddleware(thunk));
  */
 store.addState = (key, initialState) => 
     store.addReducer(key, (state = initialState, action) => {
-        return util.hasProp(state, action.type)
-            ? util.assign({}, state, {[action.type]: action.value})
+        return util.obj.hasProp(state, action.type)
+            ? util.obj.assign({}, state, {[action.type]: action.value})
             : state;
 });
 
@@ -63,7 +63,6 @@ store.addState = (key, initialState) =>
  * @returns void;
  */
 store.removeState = key => store.removeReducer(key);
-    
 
 /**
  * Adds the reducer to application state.
