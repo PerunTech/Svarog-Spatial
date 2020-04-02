@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "description": "Perun spatial module",
   "scripts": {
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --mode=production --env=production",
+    "build-dev": "webpack --mode=development --env=development",
+    "dev": "webpack-dev-server --mode=development",
+    "test": "eslint --fix frontend/ || exit 0"
   },
   "repository": {
     "type": "git",
