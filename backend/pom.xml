@@ -5,13 +5,11 @@
   <groupId>perun-spatial</groupId>
   <artifactId>perun-spatial</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
-  <name>perun-spatial</name>
-  <url>http://maven.apache.org</url>
-
+  <packaging>bundle</packaging>
+  <name>Perun Spatial</name>
+  <description>Spatial data management, geometry tools and GIS services.</description>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
