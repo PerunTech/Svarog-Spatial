@@ -1,0 +1,79 @@
+/* ------- */
+/* Tooltip */
+/* ------- */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 0px;
+	background-color: transparent;
+	font-size: 13px;
+	color: #fff;
+	text-shadow: -1px 0 0 black, -1px -1px 0 black,
+				0 -1px 0 black, 1px -1px 0 black,
+				1px 0 0 black, 1px 1px 0 black,
+				0 1px 0 black, -1px 1px 0 black;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	}
+.leaflet-tooltip.leaflet-clickable {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	background: transparent;
+	content: "";
+	}
+
+/* Tooltip directions */
+.leaflet-tooltip-bottom {
+	/*margin-top: 6px;*/
+}
+.leaflet-tooltip-top {
+	/*margin-top: -6px;*/
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -1px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -1px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -1px;
+	margin-left: -1px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -1px;
+}
+.leaflet-tooltip-right {
+	margin-left: 1px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -1px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -1px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -1px;
+	border-right-color: #fff;
+    }

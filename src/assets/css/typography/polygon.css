@@ -1,0 +1,25 @@
+/* ------------- */
+/* Polygon label */
+/* ------------- */
+.leaflet_poly_label {
+    position: absolute;
+    font-size: 13px;
+    color: white;
+    text-shadow: -1px  0 0 black,
+                 -1px -1px 0 black,
+                  0 -1px 0 black,
+                  1px -1px 0 black,
+                  1px  0 0 black,
+                  1px  1px 0 black,
+                  0  1px 0 black,
+                 -1px  1px 0 black;
+    white-space: nowrap;
+    transform-origin: 0;
+    pointer-events: none;
+    margin-top: -20px;
+    }
+.leaflet_poly_label_div > div {
+    position: relative;
+    margin-top: -25%;
+    left: -50%;
+	}
