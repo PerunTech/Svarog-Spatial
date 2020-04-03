@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { React, ReactDOM} from 'perun-core';
 import { factory, Map, Provider } from '..';
 
 /**

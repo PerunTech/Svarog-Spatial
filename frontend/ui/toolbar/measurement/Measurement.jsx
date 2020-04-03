@@ -1,4 +1,4 @@
-import React from 'react';
+import { React } from 'perun-core';
 import { PROCESS_ENUM } from '../../../config';
 import { ButtonGroup, ProcessButton, length, area, angle, eraser, drawActions } from '../..';
 import { control } from '../../../core';

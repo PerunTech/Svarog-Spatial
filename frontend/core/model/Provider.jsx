@@ -1,6 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types'
-import { Provider as StoreProvider } from 'react-redux';
+import { React, PropTypes, Provider as StoreProvider} from 'perun-core';
 import { store } from '..';
 
 /**

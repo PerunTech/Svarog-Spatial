@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 import { Button, Icon } from '../..';
 
 export function Pinpoint ({coordinates, projection, valid, ...props}) {

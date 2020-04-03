@@ -1,4 +1,4 @@
-import React from 'react';
+import { React } from 'perun-core';
 import { Map } from '../../../core';
 import { Button, Icon } from '../..';
 

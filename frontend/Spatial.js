@@ -1,4 +1,4 @@
-import { name, version, description } from '../../../../package.json';
+import { name, version, description } from '../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.

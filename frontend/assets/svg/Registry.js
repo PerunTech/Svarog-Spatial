@@ -1,4 +1,4 @@
-import React from 'react';
+import { React } from 'perun-core';
 
 /**
  * Compendium of svg images.

@@ -1,4 +1,4 @@
-import { connect as reactConnect } from 'react-redux';
+import { connect as reactConnect } from 'perun-core';
 
 /**
  * Connects a React component to a Redux store.

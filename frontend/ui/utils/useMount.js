@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { React } from 'perun-core';
 
 /**
  * Executes function arguments when component is mounted ( initial render only ).
@@ -16,4 +16,4 @@ import { useEffect } from 'react';
  * 
  * @returns void;
  */
-export function useMount (...fns) { useEffect(() => { fns.map(fn => fn()); }, []); } //eslint-disable-line
+export function useMount (...fns) { React.useEffect(() => { fns.map(fn => fn()); }, []); } //eslint-disable-line

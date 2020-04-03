@@ -10,7 +10,8 @@
     "@geoman-io/leaflet-geoman-free": "^2.3.0",
     "leaflet": "~1.5.1",
     "perun-core": "git+ssh://git@gitlab.prtech.mk/perunv3/perun-core#staging",
-    "proj4": "~2.5.0"
+    "proj4": "~2.5.0",
+    "react-bootstrap": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes } from 'perun-core';
 import { control } from '../../core';
 import { CoordinatesControl, CRSControl, ScaleControl, Divider, Button } from '..';
 

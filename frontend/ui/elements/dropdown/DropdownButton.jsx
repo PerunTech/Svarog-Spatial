@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types'
+import { React, PropTypes} from 'perun-core';
 import { DropdownButton as DB } from 'react-bootstrap';
 
 export const DropdownButton = ({variant, size, ...props}) => 
