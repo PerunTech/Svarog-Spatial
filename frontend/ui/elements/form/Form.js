@@ -1,6 +1,4 @@
-import React, {cloneElement} from 'react';
-import PropTypes from 'prop-types';
-import RJSForm from 'react-jsonschema-form';
+import { React, PropTypes, Form as RJSForm} from 'perun-core';
 
 /**
  * Renders a generic form.
@@ -13,7 +11,7 @@ import RJSForm from 'react-jsonschema-form';
  */
 export function Form ({children, ...props}) {
     return <RJSForm {...props} >
-        {children && (children instanceof Element ? children : cloneElement(children, props))}
+        {children && (children instanceof Element ? children : React.cloneElement(children, props))}
     </RJSForm>
 }
 

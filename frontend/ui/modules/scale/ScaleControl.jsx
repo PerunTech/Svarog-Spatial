@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 import { connect, Map } from '../../../core';
 import { DropdownButton, Dropdown } from '../..';
 
@@ -12,7 +11,7 @@ import { DropdownButton, Dropdown } from '../..';
  * before any assumptions are made here. 
  */
 function _ScaleControl ({currZoom, minZoom, maxZoom}) {
-    const distances = useMemo(() => 
+    const distances = React.useMemo(() => 
         [...Map.getCRS().options.distances].splice(minZoom, maxZoom), [minZoom, maxZoom]);
 
     return <DropdownButton title={`1 : ${distances[currZoom]}`} drop='up' alignRight >

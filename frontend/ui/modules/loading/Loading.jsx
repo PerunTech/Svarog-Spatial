@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 import { Ellipser } from '../..';
 
 /**
@@ -16,9 +15,9 @@ import { Ellipser } from '../..';
  * @returns Ellipser; 
  */
 export function Loading ({messageList = [], interval = 5000}) {
-    let [message, setMessage] = useState();
+    let [message, setMessage] = React.useState();
 
-    useEffect(() => {
+    React.useEffect(() => {
         // Pass a named function to setInterval and call self. 
         // Sets message immediately rather than after interval.
         let intID = setInterval(function fn () {

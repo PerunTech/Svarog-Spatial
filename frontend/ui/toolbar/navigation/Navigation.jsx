@@ -1,4 +1,4 @@
-import React from 'react';
+import { React } from 'perun-core';
 import { PROCESS_ENUM } from '../../../config';
 import { Map, control } from '../../../core';
 import { navigation } from '../../../tools';

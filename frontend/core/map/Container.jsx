@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import {React, PropTypes} from 'perun-core';
 import { connect, renderCycle as rc } from '..';
 import { MAP_CONTAINER } from '../../config';
 import { useMount, useUpdate } from '../../ui';

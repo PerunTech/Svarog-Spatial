@@ -1,4 +1,4 @@
-import {useRef, useEffect} from 'react'
+import { React } from 'perun-core';
 
 /**
  * A custom hook which `does not execute on intial render` ( unlike useEffect ) and
@@ -19,6 +19,6 @@ import {useRef, useEffect} from 'react'
  * @returns void;
  */
 export function useUpdate (fn, deps) {
-    const didMount = useRef(false);
-    useEffect(() => { didMount.current ? fn() : didMount.current = true }, deps); //eslint-disable-line
+    const didMount = React.useRef(false);
+    React.useEffect(() => { didMount.current ? fn() : didMount.current = true }, deps); //eslint-disable-line
 }

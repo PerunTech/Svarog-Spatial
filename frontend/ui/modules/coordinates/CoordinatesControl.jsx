@@ -1,23 +1,22 @@
-import React, { useReducer, useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 import { SYS_CENTER } from '../../../config';
 import { util, Map } from '../../../core';
 import { Coordinates, Pinpoint } from '../..';
 
 export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function (necessary for the onChange hook). 
-    const [{coordinates, active}, dispatch] = useReducer((currState, update) => ({...currState, ...update}), {
+    const [{coordinates, active}, dispatch] = React.useReducer((currState, update) => ({...currState, ...update}), {
             coordinates: Object.values(SYS_CENTER).map(c => String(c)),
             active: false 
         });
 
     /* The map listener for latlng location on mouse cursor movement. Passive mode. */
-    const tracker = useCallback(util.fn.throttle(e => 
+    const tracker = React.useCallback(util.fn.throttle(e => 
         dispatch({ coordinates: _transform(e.latlng, props.precision) }),
         100), []);
     
     /* An effect is run on state.active change, mounts / unmounts mouse-recording tracker from the map. */
-    useEffect(() => { active
+    React.useEffect(() => { active
         ? Map.off('mousemove', tracker) 
         : Map.on('mousemove', tracker)}, [active, tracker]);
 

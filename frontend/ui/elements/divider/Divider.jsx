@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 
 export function Divider ({vertical, ...props}) {
     return vertical 

@@ -1,5 +1,4 @@
-import React, { cloneElement } from 'react';
-import PropTypes from 'prop-types';
+import { React, PropTypes} from 'perun-core';
 import style from './Wizard.module.css';
 
 /**
@@ -17,7 +16,7 @@ import style from './Wizard.module.css';
  */
 export function Step ({children, ...props}) {
     return <div className={style['wizard-step']}>
-        {children instanceof Element ? children : cloneElement(children, props)}
+        {children instanceof Element ? children : React.cloneElement(children, props)}
     </div>
 }
 
