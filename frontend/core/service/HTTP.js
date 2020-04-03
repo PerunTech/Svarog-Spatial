@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { axios } from 'perun-core';
 import { util, store } from '..';
 
 /**
