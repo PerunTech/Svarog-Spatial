@@ -9,7 +9,7 @@ import * as tools from './tools';
 import * as ui from './ui';
 
 // Assemble plugin.
-const spatial = core.util.obj.assemble(
+export const spatial = core.util.obj.assemble(
 { // Set instance properties.
     name: name,
     version: version,
@@ -23,7 +23,3 @@ const spatial = core.util.obj.assemble(
     tools,
     ui,
 });
-
-// Register on global scope. Export default.
-window[name] = spatial;
-export default spatial;
