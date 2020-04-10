@@ -3,7 +3,7 @@ let path = require('path');
 module.exports = (mode, {env}) => {
     return {
         mode: mode,
-        entry: env === 'production' ? './frontend/Spatial.js' : './frontend/client.js',
+        entry: env === 'production' ? './frontend/Spatial.js' : './frontend/Dev.js',
         output: {
             path: path.resolve('./backend/www'),
             filename: 'perun-spatial.min.js',
@@ -13,10 +13,9 @@ module.exports = (mode, {env}) => {
         },
         devServer: {
             contentBase: './backend/www',
+            port: 8091
         },
-        externals: env === 'production' 
-            ? { 'perun-core': 'perun-core' } 
-            : {},
+        externals: env === 'production' ? { 'perun-core': 'perun-core' } : {},
         module: {
             rules: [
                 {
@@ -62,4 +61,4 @@ module.exports = (mode, {env}) => {
             extensions: ['.js', '.jsx']
         }
     }
-}
+};
