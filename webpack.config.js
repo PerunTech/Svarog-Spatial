@@ -3,7 +3,7 @@ let path = require('path');
 module.exports = (mode, {env}) => {
     return {
         mode: mode,
-        entry: env === 'production' ? './frontend/Spatial.js' : './frontend/Dev.js',
+        entry: env === 'production' ? './frontend/Spatial.js' : './frontend/Init.js',
         output: {
             path: path.resolve('./backend/www'),
             filename: 'perun-spatial.min.js',
