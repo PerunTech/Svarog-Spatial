@@ -1,5 +1,5 @@
 import { pluginManager } from 'perun-core';
 import { name } from '../package.json'
-import * as spatial from './Spatial';
+import { spatial } from '.';
 
 pluginManager.registerPlugin(name, spatial);
