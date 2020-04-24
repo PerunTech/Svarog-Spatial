@@ -4,6 +4,8 @@ import { store, Provider, MapContainer } from '../core';
 export const initializer = {
     init (token) {
         return store.dispatch({token: token}),
-            <Provider children={<MapContainer />} />;
-    }
+            this;
+    },
+    render: () => <Provider children={<MapContainer />} />
 }
+initializer.render.displayName = 'spatial-root';

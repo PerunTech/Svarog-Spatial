@@ -13,7 +13,7 @@ module.exports = (mode, {env}) => {
         },
         devServer: {
             contentBase: './backend/www',
-            port: 8091
+            port: 8080
         },
         externals: env === 'production' ? { 'perun-core': 'perun-core' } : {},
         module: {
