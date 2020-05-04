@@ -1,8 +1,7 @@
-import { React, PropTypes} from 'perun-core';
-import { DropdownButton as DB } from 'react-bootstrap';
+import { React, PropTypes, elements} from 'perun-core';
 
 export const DropdownButton = ({variant, size, ...props}) => 
-    <DB {...props} variant={variant} size={size} />;
+    <elements.ReactBootstrap.DropdownButton {...props} variant={variant} size={size} />;
 
 DropdownButton.defaultProps = {
     variant: 'light',

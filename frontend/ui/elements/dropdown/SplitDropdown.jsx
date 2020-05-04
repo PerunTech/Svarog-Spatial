@@ -1,7 +1,7 @@
-import { React, PropTypes} from 'perun-core';
-import { SplitButton } from 'react-bootstrap';
+import { React, PropTypes, elements} from 'perun-core';
 
-export const SplitDropdown = ({variant, size, ...props}) => <SplitButton {...props} variant={variant} size={size} />;
+export const SplitDropdown = ({variant, size, ...props}) => 
+    <elements.ReactBootstrap.SplitButton {...props} variant={variant} size={size} />;
 
 SplitDropdown.defaultProps = {
     variant: 'light',

@@ -1,7 +1,9 @@
-import { React, PropTypes} from 'perun-core';
-import { Dropdown as DD } from 'react-bootstrap';
+import { React, PropTypes, elements} from 'perun-core';
 
-export const Dropdown = ({variant, size, ...props}) => <DD {...props} variant={variant} size={size} />;
+const DD = elements.ReactBootstrap.Dropdown;
+
+export const Dropdown = ({variant, size, ...props}) => 
+    <DD {...props} variant={variant} size={size} />;
 
 Dropdown.Toggle = DD.Toggle
 Dropdown.Menu = DD.Menu;
