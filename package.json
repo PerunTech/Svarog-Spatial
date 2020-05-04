@@ -10,22 +10,21 @@
     "@geoman-io/leaflet-geoman-free": "^2.3.0",
     "leaflet": "~1.5.1",
     "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core",
-    "proj4": "~2.5.0",
-    "react-bootstrap": "^1.0.0"
+    "proj4": "~2.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
-    "css-loader": "^3.2.0",
+    "css-loader": "^3.5.3",
     "eslint": "^6.3.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.1.2",
     "file-loader": "^4.2.0",
-    "style-loader": "^1.0.0",
+    "style-loader": "^1.2.1",
     "url-loader": "^2.2.0",
-    "webpack": "^4.41.0",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.10.3"
   },

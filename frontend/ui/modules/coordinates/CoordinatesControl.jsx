@@ -5,7 +5,8 @@ import { Coordinates, Pinpoint } from '../..';
 
 export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function (necessary for the onChange hook). 
-    const [{coordinates, active}, dispatch] = React.useReducer((currState, update) => ({...currState, ...update}), {
+    const [{coordinates, active}, dispatch] = React.useReducer((currState, update) => 
+        ({...currState, ...update}), {
             coordinates: Object.values(SYS_CENTER).map(c => String(c)),
             active: false 
         });
@@ -26,11 +27,11 @@ export function CoordinatesControl (props) {
             onChange={e => {
                 coordinates.splice(Number(e.target.name), 1, e.target.value);
                 dispatch({coordinates: coordinates}); }}
-            labeled
-            validated={active}
             onFocus={() => !active && dispatch({active: true, coordinates: ['', '']})} 
             onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget)
-                && dispatch({active: false})} />
+                && dispatch({active: false})} 
+            labeled
+            validated={active }/>
         <Pinpoint />
     </div>
 }

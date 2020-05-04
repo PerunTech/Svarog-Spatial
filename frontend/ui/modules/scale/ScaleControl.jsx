@@ -23,7 +23,7 @@ function _ScaleControl ({currZoom, minZoom, maxZoom}) {
                 onClick={() => Map.setView(Map.getCenter(), i)} >
                     {`1 : ${dist}`}
                 </Dropdown.Item>})}
-    </DropdownButton>
+        </DropdownButton>
 }
 
 _ScaleControl.propTypes = {
