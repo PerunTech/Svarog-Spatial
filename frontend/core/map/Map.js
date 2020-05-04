@@ -58,6 +58,16 @@ export const Map = factory.map(el, util.obj.assign(MAP_CONFIG, {
 Map.render = function render () {
     let container = document.getElementById(MAP_CONTAINER);
     container.appendChild(el);
+
+    /**
+     * Hack for lack of coordination between core and this plugin. 
+     * Header and footer are forced to always render by core.
+     * Hide them each time this plugin is initialized.
+     * Show them whenever the plugin is uninitialized.
+     * #revise_me
+     */ 
+    document.getElementById('navbar').style.display = 'none';
+    document.getElementById('footer').style.display = 'none';
     
     return this.invalidateSize();
 };
