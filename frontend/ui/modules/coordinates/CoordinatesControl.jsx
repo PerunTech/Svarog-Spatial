@@ -27,11 +27,12 @@ export function CoordinatesControl (props) {
             onChange={e => {
                 coordinates.splice(Number(e.target.name), 1, e.target.value);
                 dispatch({coordinates: coordinates}); }}
-            onFocus={() => !active && dispatch({active: true, coordinates: ['', '']})} 
-            onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget)
-                && dispatch({active: false})} 
+            onFocus={() => 
+                !active && dispatch({active: true, coordinates: ['', '']})} 
+            onBlur={e => 
+                !e.currentTarget.parentNode.contains(e.relatedTarget) && dispatch({active: false})} 
             labeled
-            validated={active }/>
+            validated={active} />
         <Pinpoint />
     </div>
 }
