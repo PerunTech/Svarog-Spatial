@@ -25,4 +25,10 @@
     padding: 0.25rem 0.25rem;
     font-size: 0.75rem;
 }
+.status-bar .author-link {
+    position: absolute;
+    left: 62px;
+    cursor: pointer;
+    text-decoration: underline;
+}
 

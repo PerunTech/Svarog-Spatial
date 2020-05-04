@@ -4,6 +4,13 @@ import { CoordinatesControl, CRSControl, ScaleControl, Divider } from '..';
 
 export function StatusBar (props) {
     return <React.Fragment >
+        <a 
+            href='http://www.perun.tech/' 
+            target='_blank'
+            rel= 'noopener noreferrer' 
+            className='author-link' >
+                Perun Technologies ©
+        </a>
         <CoordinatesControl />
         <Divider />
         <ScaleControl />
