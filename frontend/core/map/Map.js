@@ -75,19 +75,21 @@ Map.setCursor = function (type) {
     return this.getContainer().style.cursor = type, this;
 };
 Map.getCRS = function () { 
-    return crs_mk; 
+    return this.options.crs;
 }
-Map.transform = function (latlng) {
+Map.transform = function (latlng, precision) {
     return Map.getCRS().projection.project(
         latlng instanceof factory.LatLng 
             ? latlng 
-            : factory.latLng(latlng));
+            : factory.latLng(latlng),
+        precision);
 }
-Map.untransform = function (point) {
+Map.untransform = function (point, precision) {
     return Map.getCRS().projection.unproject(
         point instanceof factory.Point
             ? point
-            : factory.point(point));
+            : factory.point(point),
+        precision);
 }
 Map.getBBox = function () {
     return '';

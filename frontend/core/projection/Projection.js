@@ -36,16 +36,19 @@ const proto = {
      * 
      * &nbsp;
      * 
-     * @function project (latlng: LatLng): Point
+     * @function project (latlng: LatLng, precision?: number): Point
      * 
      * @param {LatLng} latlng - A latitude / longitude pair.
+     * @param {number} [precision] - Precision of the coordinates. Number of decimal places. Default is 4.
      * 
      * @returns Point; 
      */
-    project (latlng) {
-        let pf = this._proj.forward([latlng.lng, latlng.lat]);
+    project (latlng, precision = 4) {
+        let xyArr = this._proj.forward([latlng.lng, latlng.lat]);
     
-        return factory.point(pf[0], pf[1]);
+        return factory.point(
+            Number(xyArr[0].toFixed(precision)),
+            Number(xyArr[1].toFixed(precision)));
     },
 
     /**
@@ -54,16 +57,20 @@ const proto = {
      * 
      * &nbsp;
      * 
-     * @function unproject (p: Point): LatLng
+     * @function unproject (p: Point, precision?: number): LatLng
      * 
      * @param {Point} p - A point[x, y].
+     * @param {number} [precision] - Precision of the coordinates. Number of decimal places. Default is 6.
      * 
      * @returns LatLng; 
      */
-    unproject (p, unbounded) {
+    unproject (p, precision = 6, unbounded) {
         let pi = this._proj.inverse([p.x, p.y]);
         
-        return factory.latLng(pi[1], pi[0], unbounded);
+        return factory.latLng(
+            Number(pi[1].toFixed(precision)),
+            Number(pi[0].toFixed(precision)),
+            unbounded);
     }
 };
 

@@ -1,9 +1,15 @@
 import { React, PropTypes} from 'perun-core';
-import { coordinate as coordUtil, limits } from '../../../tools';
-import { Input, Button } from '../..';
+import { limits } from '../../../tools';
+import { Input } from '../..';
 
 export function Coordinates ({coordinates, onChange, ...props}) {
-    const { projected, labeled, validated, onBlur, ...inputProps } = props;
+    const { projected, validated, onBlur, ...inputProps } = props;
+
+    const format = React.useCallback(e => {
+        return e.target.value = Array.from(e.target.value).filter(c => 
+            '0123456789'.split('').includes(c)).join(''), 
+            e;
+    }, []);
 
     const isValid = (coordinate, idx) => !(coordinate.length > 3) 
         ? {}
@@ -12,23 +18,19 @@ export function Coordinates ({coordinates, onChange, ...props}) {
             : { isInvalid: true };
 
     return Object.values(coordinates).map((coordinate, idx) => {
-        return <React.Fragment key={idx} >
-            {labeled && <Button disabled className='as-label'>{idx === 0 ? 'X:' : 'Y:'}</Button>}
-            <div className='coordinate' onBlur={onBlur} >
-                <Input {...inputProps}
-                    id={String(idx)}
-                    value={coordinate}
-                    placeholder={limits.getRange(idx, true)}
-                    onChange={onChange} 
-                    {...(validated && isValid(coordinate, idx))} />
-                <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
-            </div>
-        </React.Fragment>
+        return <div key={idx} className='coordinate' onBlur={onBlur} >
+            <Input {...inputProps}
+                id={String(idx)}
+                value={coordinate}
+                onChange={e => onChange(format(e))}
+                placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
+                {...(validated && isValid(coordinate, idx))} />
+            <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
+        </div>
     })
 }
 
 Coordinates.defaultProps = {
     projected: true,
-    labeled: false,
     validated: true
 };

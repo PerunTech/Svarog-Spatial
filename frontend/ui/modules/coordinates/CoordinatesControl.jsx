@@ -4,7 +4,7 @@ import { util, Map } from '../../../core';
 import { Coordinates, Pinpoint } from '../..';
 
 export function CoordinatesControl (props) {
-    // Component state, composite, updateable by reducer function (necessary for the onChange hook). 
+    // Component state, composite, updateable by reducer function. 
     const [{coordinates, active}, dispatch] = React.useReducer((currState, update) => 
         ({...currState, ...update}), {
             coordinates: Object.values(SYS_CENTER).map(c => String(c)),
@@ -13,10 +13,10 @@ export function CoordinatesControl (props) {
 
     /* The map listener for latlng location on mouse cursor movement. Passive mode. */
     const tracker = React.useCallback(util.fn.throttle(e => 
-        dispatch({ coordinates: _transform(e.latlng, props.precision) }),
+        dispatch({ coordinates: Object.values(Map.transform(e.latlng, props.precision)) }),
         100), []);
     
-    /* An effect is run on state.active change, mounts / unmounts mouse-recording tracker from the map. */
+    /* An effect which mounts / unmounts mouse-recording tracker from the map when active state changes. */
     React.useEffect(() => { active
         ? Map.off('mousemove', tracker) 
         : Map.on('mousemove', tracker)}, [active, tracker]);
@@ -28,11 +28,8 @@ export function CoordinatesControl (props) {
                 coordinates.splice(Number(e.target.name), 1, e.target.value);
                 dispatch({coordinates: coordinates}); }}
             onFocus={() => !active && dispatch({active: true, coordinates: ['', '']})} 
-            onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget)
-                && dispatch({active: false})} 
-            labeled
-            validated={active }/>
-        <Pinpoint />
+            onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget) && dispatch({active: false})} 
+            validated={active} />
     </div>
 }
 
@@ -40,12 +37,6 @@ CoordinatesControl.defaultProps = {
     precision: 4
 };
 CoordinatesControl.propTypes = {
-    projected: PropTypes.bool,
     precision: PropTypes.number
 }
-
-const _transform = (latlng, precision) => 
-    Object.values(Map.transform(latlng)).map(coord =>
-        Number(coord).toFixed(precision));
-
-// !Object.values(coordinates).reduce((acc, {valid}) => acc && valid, true)
+//         <Pinpoint />
