@@ -25,11 +25,11 @@ export function CoordinatesControl (props) {
     /* Navigation helper, pans the map to the current coordinates when Enter is pressed. */
     const locate = React.useCallback(e => {
         if (e.keyCode === 13 && coordinates.reduce((acc, val, i) => 
-            acc && limits.isBounded(val, i, true), true)) {
+            acc && val.length > 3 && limits.isBounded(val, i, true), true)) {
                 Map.setView(Map.untransform({
-                    x: coordinates[0], 
-                    y: coordinates[1]}),
-                    Map.getZoom());
+                    x: Number(coordinates[0].padEnd(7, '000')),
+                    y: Number(coordinates[1].padEnd(7, '000'))
+                }), Map.getZoom());
             }
     }, [coordinates])
 

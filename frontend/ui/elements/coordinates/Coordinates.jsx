@@ -6,10 +6,8 @@ export function Coordinates ({coordinates, onChange, ...props}) {
     const { projected, validated, onBlur, ...inputProps } = props;
 
     const format = React.useCallback(e => {
-        e.target.value = Array.from(e.target.value).filter(c => 
-            '0123456789'.split('').includes(c)).join('');
-        
-        return e;
+        return e.target.value = Array.from(e.target.value).filter(c => 
+            '0123456789'.split('').includes(c)).join(''), e;
     }, []);
 
     const isValid = (coordinate, idx) => 
@@ -24,8 +22,7 @@ export function Coordinates ({coordinates, onChange, ...props}) {
                 value={coordinate}
                 onChange={e => onChange(format(e))}
                 placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
-                {...((coordinate.length > 3 && validated)
-                    && isValid(coordinate, idx))} />
+                {...((validated && coordinate.length > 3) && isValid(coordinate, idx))} />
             <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
         </div>
     })
