@@ -1,9 +1,15 @@
 import { React, PropTypes} from 'perun-core';
-import { coordinate as coordUtil, limits } from '../../../tools';
-import { Input, Button } from '../..';
+import { limits } from '../../../tools';
+import { Input } from '../..';
 
 export function Coordinates ({coordinates, onChange, ...props}) {
     const { projected, validated, onBlur, ...inputProps } = props;
+
+    const format = React.useCallback(e => {
+        return e.target.value = Array.from(e.target.value).filter(c => 
+            '0123456789'.split('').includes(c)).join(''), 
+            e;
+    }, []);
 
     const isValid = (coordinate, idx) => !(coordinate.length > 3) 
         ? {}
@@ -16,8 +22,8 @@ export function Coordinates ({coordinates, onChange, ...props}) {
             <Input {...inputProps}
                 id={String(idx)}
                 value={coordinate}
-                placeholder={idx === 0 ? 'Абсциса X' : 'Ордината Y'}
-                onChange={onChange} 
+                onChange={e => onChange(format(e))}
+                placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
                 {...(validated && isValid(coordinate, idx))} />
             <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
         </div>
