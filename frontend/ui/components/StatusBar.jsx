@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { control } from '../../core';
-import { CoordinatesControl, CRSControl, ScaleControl } from '..';
+import { CoordinatesControl, CRSControl, ScaleControl, Button } from '..';
 
 export function StatusBar (props) {
     return <React.Fragment >
@@ -14,6 +14,7 @@ export function StatusBar (props) {
         <CoordinatesControl />
         <ScaleControl />
         <CRSControl />
+        <Button disabled style={{width: '250px'}} />
     </React.Fragment>
 }
 
