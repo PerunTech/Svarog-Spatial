@@ -13,7 +13,7 @@ export function CoordinatesControl (props) {
 
     /* The map listener for latlng location on mouse cursor movement. Passive mode. */
     const tracker = React.useCallback(util.fn.throttle(e => 
-        dispatch({ coordinates: _transform(e.latlng, props.precision) }),
+        dispatch({ coordinates: Object.values(Map.transform(e.latlng, props.precision)) }),
         100), []);
     
     /* An effect which mounts / unmounts mouse-recording tracker from the map when active state changes. */
@@ -30,7 +30,6 @@ export function CoordinatesControl (props) {
             onFocus={() => !active && dispatch({active: true, coordinates: ['', '']})} 
             onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget) && dispatch({active: false})} 
             validated={active} />
-        <Pinpoint />
     </div>
 }
 
@@ -40,7 +39,4 @@ CoordinatesControl.defaultProps = {
 CoordinatesControl.propTypes = {
     precision: PropTypes.number
 }
-
-const _transform = (latlng, precision) => 
-    Object.values(Map.transform(latlng)).map(coord =>
-        Number(coord).toFixed(precision));
+//         <Pinpoint />
