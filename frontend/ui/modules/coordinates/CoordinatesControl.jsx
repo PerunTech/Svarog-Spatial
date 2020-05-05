@@ -25,10 +25,10 @@ export function CoordinatesControl (props) {
     /* Navigation helper, pans the map to the current coordinates when Enter is pressed. */
     const locate = React.useCallback(e => {
         if (e.keyCode === 13 && coordinates.reduce((acc, val, i) => 
-            acc && val.length > 3 && limits.isBounded(val, i, true), true)) {
+            acc && val.length > 4 && limits.isBounded(val, i, true), true)) {
                 Map.setView(Map.untransform({
-                    x: Number(coordinates[0].padEnd(7, '000')),
-                    y: Number(coordinates[1].padEnd(7, '000'))
+                    x: Number(coordinates[0].padEnd(7, '00')),
+                    y: Number(coordinates[1].padEnd(7, '00'))
                 }), Map.getZoom());
             }
     }, [coordinates])

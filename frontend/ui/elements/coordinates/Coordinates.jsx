@@ -22,7 +22,7 @@ export function Coordinates ({coordinates, onChange, ...props}) {
                 value={coordinate}
                 onChange={e => onChange(format(e))}
                 placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
-                {...((validated && coordinate.length > 3) && isValid(coordinate, idx))} />
+                {...((validated && coordinate.length > 4) && isValid(coordinate, idx))} />
             <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
         </div>
     })
