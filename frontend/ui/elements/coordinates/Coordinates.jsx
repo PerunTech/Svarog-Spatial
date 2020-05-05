@@ -6,9 +6,10 @@ export function Coordinates ({coordinates, onChange, ...props}) {
     const { projected, validated, onBlur, ...inputProps } = props;
 
     const format = React.useCallback(e => {
-        return e.target.value = Array.from(e.target.value).filter(c => 
-            '0123456789'.split('').includes(c)).join(''), 
-            e;
+        e.target.value = Array.from(e.target.value).filter(c => 
+            '0123456789'.split('').includes(c)).join('');
+        
+        return e;
     }, []);
 
     const isValid = (coordinate, idx) => 
