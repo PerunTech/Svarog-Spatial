@@ -21,6 +21,7 @@
 }
 .status-bar .form-control-sm {
     width: 120px;
+    text-align: center;
 }
 .status-bar .dropdown-menu {
     min-width: unset;
@@ -35,5 +36,8 @@
     left: 62px;
     cursor: pointer;
     text-decoration: underline;
+}
+.status-bar .invalid-feedback {
+    text-align: center;
 }
 

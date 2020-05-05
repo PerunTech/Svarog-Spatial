@@ -6,14 +6,14 @@ export function Coordinates ({coordinates, onChange, ...props}) {
     const { projected, validated, onBlur, ...inputProps } = props;
 
     const format = React.useCallback(e => {
-        return e.target.value = Array.from(e.target.value).filter(c => 
-            '0123456789'.split('').includes(c)).join(''), 
-            e;
+        e.target.value = Array.from(e.target.value).filter(c => 
+            '0123456789'.split('').includes(c)).join('');
+        
+        return e;
     }, []);
 
-    const isValid = (coordinate, idx) => !(coordinate.length > 3) 
-        ? {}
-        : limits.isBounded(coordinate, idx, projected)
+    const isValid = (coordinate, idx) => 
+        limits.isBounded(coordinate, idx, projected)
             ? { isValid: true }
             : { isInvalid: true };
 
@@ -24,7 +24,8 @@ export function Coordinates ({coordinates, onChange, ...props}) {
                 value={coordinate}
                 onChange={e => onChange(format(e))}
                 placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
-                {...(validated && isValid(coordinate, idx))} />
+                {...((coordinate.length > 3 && validated) 
+                    && isValid(coordinate, idx))} />
             <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
         </div>
     })
