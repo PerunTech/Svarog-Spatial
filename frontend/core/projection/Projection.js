@@ -46,7 +46,9 @@ const proto = {
     project (latlng, precision = 4) {
         let xyArr = this._proj.forward([latlng.lng, latlng.lat]);
     
-        return factory.point(xyArr[0].toFixed(precision), xyArr[1].toFixed(precision));
+        return factory.point(
+            Number(xyArr[0].toFixed(precision)),
+            Number(xyArr[1].toFixed(precision)));
     },
 
     /**
@@ -65,7 +67,10 @@ const proto = {
     unproject (p, precision = 6, unbounded) {
         let pi = this._proj.inverse([p.x, p.y]);
         
-        return factory.latLng(pi[1].toFixed(precision), pi[0].toFixed(precision), unbounded);
+        return factory.latLng(
+            Number(pi[1].toFixed(precision)),
+            Number(pi[0].toFixed(precision)),
+            unbounded);
     }
 };
 
