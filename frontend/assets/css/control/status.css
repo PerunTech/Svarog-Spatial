@@ -37,4 +37,7 @@
     cursor: pointer;
     text-decoration: underline;
 }
+.status-bar .invalid-feedback {
+    text-align: center;
+}
 
