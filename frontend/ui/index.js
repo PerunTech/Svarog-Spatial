@@ -27,7 +27,6 @@ export { Wizard } from './elements/wizard/Wizard';
 /* ------- */
 /* modules */
 /* ------- */
-export { Pinpoint } from './modules/coordinates/Pinpoint';
 export { CoordinatesControl } from './modules/coordinates/CoordinatesControl';
 
 export { CRSControl } from './modules/crs/CRSControl';

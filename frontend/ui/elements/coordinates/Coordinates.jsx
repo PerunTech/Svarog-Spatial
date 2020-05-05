@@ -24,7 +24,7 @@ export function Coordinates ({coordinates, onChange, ...props}) {
                 value={coordinate}
                 onChange={e => onChange(format(e))}
                 placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
-                {...((coordinate.length > 3 && validated) 
+                {...((coordinate.length > 3 && validated)
                     && isValid(coordinate, idx))} />
             <div className='invalid-feedback' >{limits.getRange(idx, projected)}</div>
         </div>
