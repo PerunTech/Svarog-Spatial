@@ -28,7 +28,8 @@ import './css/modules/ellipser.css';
 import './css/modules/scale.css';
 
 /* css.components */
-import './css/control/statusBar.css'
+import './css/components/statusBar.css'
+import './css/components/toolsBar.css'
 
 /* css.tools */
 import './css/tools/draw.css';
