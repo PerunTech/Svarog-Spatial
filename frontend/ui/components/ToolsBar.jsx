@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
 import { control } from '../../core';
-import { Tab, Tabs, Digitization, Measurement, Navigation, Button } from '..';
+import { Tab, Tabs, Digitization, Measurement, Navigation } from '..';
 
 export const ToolsBar = props => 
     <div style={{marginLeft: '250px', marginRight: '250px'}}>
