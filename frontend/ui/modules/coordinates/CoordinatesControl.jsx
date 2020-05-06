@@ -1,7 +1,8 @@
 import { React, PropTypes} from 'perun-core';
 import { SYS_CENTER } from '../../../config';
 import { util, Map } from '../../../core';
-import { Coordinates, Pinpoint } from '../..';
+import { limits } from '../../../tools';
+import { Coordinates } from '../..';
 
 export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function. 
@@ -21,7 +22,18 @@ export function CoordinatesControl (props) {
         ? Map.off('mousemove', tracker) 
         : Map.on('mousemove', tracker)}, [active, tracker]);
 
-    return <div id='coordinates-control' className='coordinates-control' >
+    /* Navigation helper, pans the map to the current coordinates when Enter is pressed. */
+    const locate = React.useCallback(e => {
+        if (e.keyCode === 13 && coordinates.reduce((acc, val, i) => 
+            acc && val.length > 4 && limits.isBounded(val, i, true), true)) {
+                Map.setView(Map.untransform({
+                    x: Number(coordinates[0].padEnd(7, '00')),
+                    y: Number(coordinates[1].padEnd(7, '00'))
+                }), Map.getZoom());
+            }
+    }, [coordinates])
+
+    return <div id='coordinates-control' className='coordinates-control' onKeyDown={locate} >
         <Coordinates {...props}
             coordinates={coordinates}
             onChange={e => {
@@ -30,7 +42,7 @@ export function CoordinatesControl (props) {
             onFocus={() => !active && dispatch({active: true, coordinates: ['', '']})} 
             onBlur={e => !e.currentTarget.parentNode.contains(e.relatedTarget) && dispatch({active: false})} 
             validated={active} />
-    </div>
+    </div>;
 }
 
 CoordinatesControl.defaultProps = {
@@ -39,4 +51,3 @@ CoordinatesControl.defaultProps = {
 CoordinatesControl.propTypes = {
     precision: PropTypes.number
 }
-//         <Pinpoint />

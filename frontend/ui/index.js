@@ -21,13 +21,14 @@ export { SVG } from './elements/icon/SVG';
 export { Bitmap } from './elements/icon/Bitmap';
 export { Icon } from './elements/icon/Icon';
 export { Input } from './elements/input/Input'
+export { Tab } from './elements/tab/Tab';
+export { Tabs } from './elements/tab/Tabs';
 export { Step } from './elements/wizard/Step';
 export { Wizard } from './elements/wizard/Wizard';
 
 /* ------- */
 /* modules */
 /* ------- */
-export { Pinpoint } from './modules/coordinates/Pinpoint';
 export { CoordinatesControl } from './modules/coordinates/CoordinatesControl';
 
 export { CRSControl } from './modules/crs/CRSControl';

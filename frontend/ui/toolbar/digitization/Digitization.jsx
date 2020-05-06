@@ -1,7 +1,6 @@
 import { React } from 'perun-core';
 import { ButtonGroup, ProcessButton, drawActions, drawParcel, editParcel } from '../..';
 import { PROCESS_ENUM } from '../../../config';
-import { control } from '../../../core';
 
 export function Digitization () {
     return <ButtonGroup id='digitization' >
@@ -17,4 +16,3 @@ export function Digitization () {
         <ProcessButton id={PROCESS_ENUM.landscape} onClick={() => console.log('add landscape features on map')} />
     </ButtonGroup>
 }
-// control(Digitization, {}, {position: 'top'}); 
