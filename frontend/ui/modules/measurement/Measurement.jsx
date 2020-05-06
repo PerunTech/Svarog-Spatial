@@ -12,13 +12,13 @@ const { length, area, angle, erase } = PROCESS_ENUM
 function _Measurement (props) {
     return <ButtonGroup id='measurement' >
         <Button id={length}
-            className={props.activeId === length && 'active'}
+            className={props.activeId === length ? 'active' : ''}
             onClick={e => {props.dispatch({activeId:length}), lengthTool.enable(e)}} >
                 <Icon name={length} size='32px' />
                 <span style={{display: 'block'}}>{getProcessTitle(length)}</span>
         </Button>
         <Button id={area}
-            className={props.activeId === area && 'active'}
+            className={props.activeId === area ? 'active' : ''}
             onClick={e => {props.dispatch({activeId:area}), areaTool.enable(e)}} >
                 <Icon name={area} size='28px' />
                 <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(area)}</span>
