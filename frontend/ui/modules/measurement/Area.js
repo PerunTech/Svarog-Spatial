@@ -1,5 +1,5 @@
-import { util, factory, store, Map } from "../../../core";
 import { MEASURE_LINE, PROCESS_ENUM } from '../../../config';
+import { util, factory, store, Map } from "../../../core";
 import { draw } from '../../../tools';
 
 export const area = {
