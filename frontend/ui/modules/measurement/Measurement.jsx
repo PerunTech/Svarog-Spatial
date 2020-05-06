@@ -11,13 +11,17 @@ const { length, area, angle, erase } = PROCESS_ENUM
 
 function _Measurement (props) {
     return <ButtonGroup id='measurement' >
-        <Button id={length} onClick={e => {props.dispatch({activeId:length}), lengthTool.enable(e)}} >
-            <Icon name={length} size='32px' />
-            <span style={{display: 'block'}}>{getProcessTitle(length)}</span>
+        <Button id={length}
+            className={props.activeId === length && 'active'}
+            onClick={e => {props.dispatch({activeId:length}), lengthTool.enable(e)}} >
+                <Icon name={length} size='32px' />
+                <span style={{display: 'block'}}>{getProcessTitle(length)}</span>
         </Button>
-        <Button id={area} onClick={e => {props.dispatch({activeId:area}), areaTool.enable(e)}} >
-            <Icon name={area} size='28px' />
-            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(area)}</span>
+        <Button id={area}
+            className={props.activeId === area && 'active'}
+            onClick={e => {props.dispatch({activeId:area}), areaTool.enable(e)}} >
+                <Icon name={area} size='28px' />
+                <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(area)}</span>
         </Button>
         <Button id={angle} onClick={() => angleTool.enable()} >
             <Icon name={angle} size='28px' />
@@ -31,6 +35,7 @@ function _Measurement (props) {
 }
 
 _Measurement.propTypes = {
+    activeId: PropTypes.string,
     dispatch: PropTypes.func
 }
 
