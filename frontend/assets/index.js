@@ -11,24 +11,26 @@ import './css/factory/icon.css';
 import './css/factory/cursor.css';
 import './css/factory/interaction.css';
 
-/* css.elements */
-import './css/elements/button.css';
-import './css/elements/input.css';
-import './css/elements/divider.css'
-
 /* css.control */
 import './css/control/control.css';
 import './css/control/zoom.css';
 import './css/control/attribution.css';
 import './css/control/layers.css';
 import './css/control/toolbar.css';
-import './css/control/status.css'
 
-/* css.tools */
-import './css/tools/draw.css';
+/* css.elements */
+import './css/elements/button.css';
+import './css/elements/input.css';
+import './css/elements/divider.css'
 
 /* css.modules */
 import './css/modules/ellipser.css';
 import './css/modules/scale.css';
+
+/* css.components */
+import './css/control/statusBar.css'
+
+/* css.tools */
+import './css/tools/draw.css';
 
 export { registry } from './svg/Registry';
