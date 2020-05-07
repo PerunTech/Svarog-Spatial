@@ -7,7 +7,7 @@
     height: 100%;
     }
 .control-container div:not(.control-center):not(.control-map) {
-     z-index: 1000;
+        z-index: 1000;
     }
 .control-container .control-top,
 .control-container .control-bottom,
