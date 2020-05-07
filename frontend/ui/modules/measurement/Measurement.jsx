@@ -13,13 +13,13 @@ function _Measurement (props) {
     return <ButtonGroup id='measurement' >
         <Button id={length}
             className={props.activeId === length ? 'active' : ''}
-            onClick={e => {props.dispatch({activeId:length}), lengthTool.enable(e)}} >
+            onClick={() => {props.dispatch({activeId:length}), lengthTool.enable()}} >
                 <Icon name={length} size='32px' />
                 <span style={{display: 'block'}}>{getProcessTitle(length)}</span>
         </Button>
         <Button id={area}
             className={props.activeId === area ? 'active' : ''}
-            onClick={e => {props.dispatch({activeId:area}), areaTool.enable(e)}} >
+            onClick={() => {props.dispatch({activeId:area}), areaTool.enable()}} >
                 <Icon name={area} size='28px' />
                 <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(area)}</span>
         </Button>
