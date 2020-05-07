@@ -6,7 +6,7 @@ export function useMouseLeave() {
     const elementRef = React.useRef(null);
 
   // Check whether the pointer is still within our element, every 50ms heartbeat
-    const handleMouseMove = React.useRef(util.fn.throttle((e) => {
+    const handleMouseMove = React.useRef(util.throttle((e) => {
         if (!elementRef || !elementRef.current) return;
 
         const rect = elementRef.current.getBoundingClientRect();

@@ -26,7 +26,7 @@ import { Anchor } from '../..';
  */
 export function Button ({className, prefix, variant, type, size, block, active, as, ...props }) {
     const {disabled, href} = props,
-        style = util.dom.buildClassname(
+        style = util.buildClassname(
             className,
             prefix,
             active && 'active',

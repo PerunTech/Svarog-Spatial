@@ -26,7 +26,7 @@ import style from './Wizard.module.css';
  * @returns JSX;
  */
 export function Wizard ({children, nav = null, opt = {initialStep: 0}}) {
-    const props = util.obj.assign({
+    const props = util.assign({
         activeStep: () => activeStep,
         totalSteps: () => children.length - 1,
         goToStep: step => !(step === activeStep || (step < 0 || step > children.length)) && setActive(step),

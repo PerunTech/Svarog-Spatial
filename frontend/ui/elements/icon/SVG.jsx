@@ -26,8 +26,8 @@ import { registry } from '../../../assets';
  */
 export function SVG ({name, size, style, ...props}) {
     const {path, ...opt} = registry.getSVG(name),
-        _props = util.obj.assign(props, opt),
-        _style = util.obj.assign({   
+        _props = util.assign(props, opt),
+        _style = util.assign({   
             // Use CSS instead of the width / height attr. in order to support non-pixel units.
             // style.width overrides svg.width attribute by design, height as well,
             // don't bother passing them as individual props, size will be used instead.    

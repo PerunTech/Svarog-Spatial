@@ -21,7 +21,7 @@ import { util } from '../../../core';
  */
 export function ButtonGroup ({className, prefix, size, vertical, toggle, ...props}) {
     const { as: Component = 'div' } = props,
-        style = util.dom.buildClassname(
+        style = util.buildClassname(
             className,
             prefix,
             vertical && `${prefix}-vertical`,

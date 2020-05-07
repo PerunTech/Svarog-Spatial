@@ -3,7 +3,7 @@ import { util } from '../../../core';
 import { Wizard, StepForm } from '../..';
 
 export function ParcelForm ({schema, uiSchema, formData = {}}) {
-    const onChange = input => setData(util.obj.assign(data, input)),
+    const onChange = input => setData(util.assign(data, input)),
         submit = () => console.log(data), // this should defer call to DrawParcel
         [data, setData] = React.useState(formData);
 
