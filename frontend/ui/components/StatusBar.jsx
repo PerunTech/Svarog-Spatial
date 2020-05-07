@@ -3,7 +3,7 @@ import { control } from '../../core';
 import { CoordinatesControl, CRSControl, ScaleControl, Button } from '..';
 
 export function StatusBar (props) {
-    return <React.Fragment >
+    return <>
         <a 
             href='http://www.perun.tech/' 
             target='_blank'
@@ -15,7 +15,7 @@ export function StatusBar (props) {
         <ScaleControl />
         <CRSControl />
         <Button disabled style={{width: '250px'}} />
-    </React.Fragment>
+    </>
 }
 
 control(StatusBar, {}, {position: 'bottom', className: 'status-bar'});
