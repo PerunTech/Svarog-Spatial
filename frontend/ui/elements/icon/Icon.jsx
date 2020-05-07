@@ -20,10 +20,11 @@ import { SVG, Bitmap } from '../..';
  * @returns JSX;
  */
 export function Icon ({name, vector, ...props}) {
-    return <React.Fragment>{vector
+    return <>
+        {vector
             ? <SVG name={name} {...props} /> 
             : <Bitmap name={name} {...props} />}
-    </React.Fragment>;
+    </>;
 }
 
 Icon.defaultProps = {

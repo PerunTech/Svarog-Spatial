@@ -27,7 +27,7 @@ export const length = {
     },
 
     drawLine (opt) {
-        return draw.line(util.obj.assign(MEASURE_LINE, opt)), this;
+        return draw.line(util.assign(MEASURE_LINE, opt)), this;
     },
 
     finishMeasurement (e) {

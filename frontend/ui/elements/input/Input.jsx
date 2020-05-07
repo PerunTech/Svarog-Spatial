@@ -36,7 +36,7 @@ export function Input ({type, id, prefix, className, size, plaintext, readOnly, 
                     ? { [`${prefix}-file`]: true }
                     : { [prefix]: true, [`${prefix}-${size}`]: size };
         },
-        style = util.dom.buildClassname(className, typeClass(), isValid && `is-valid`, isInvalid && `is-invalid`);
+        style = util.buildClassname(className, typeClass(), isValid && `is-valid`, isInvalid && `is-invalid`);
 
     return <Component {...props} 
         type={type} 
@@ -59,6 +59,7 @@ Input.propTypes = {
     type: PropTypes.string,
     id: PropTypes.string,
     prefix: PropTypes.string,
+    className: PropTypes.string,
     size: PropTypes.string,
     plaintext: PropTypes.bool,
     readOnly: PropTypes.bool,

@@ -27,7 +27,7 @@ export const area = {
     },
 
     drawPolygon (opt) {
-        return draw.polygon(util.obj.assign(MEASURE_LINE, opt)), this;
+        return draw.polygon(util.assign(MEASURE_LINE, opt)), this;
     },
 
     finishMeasurement (e) {

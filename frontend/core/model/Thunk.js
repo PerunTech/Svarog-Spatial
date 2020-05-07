@@ -22,7 +22,7 @@ export const thunk = (function () {
         if (typeof action === 'function') {
             return action(dispatch, getState);
         }
-        if (typeof action === 'object' && !util.obj.hasProp(action, 'type')) {
+        if (typeof action === 'object' && !util.hasProp(action, 'type')) {
             return Object.keys(action).map(key => {
                 return next({ type: key, value: action[key] });
             })

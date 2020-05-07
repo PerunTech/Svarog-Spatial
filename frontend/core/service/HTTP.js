@@ -49,7 +49,7 @@ export const http = {
      * 
      * @returns Promise<*>; 
      */
-    call (key, opt = {}) { return axios(_resolveParams(util.obj.assign(_getConfig(key), opt))); },
+    call (key, opt = {}) { return axios(_resolveParams(util.assign(_getConfig(key), opt))); },
     
     /**
      * `#revise_me`, this needs work and tests. Figure out mappings between keys and configuration iterables.
@@ -64,7 +64,7 @@ export const http = {
      */
     callConcurrently (iterable, opt = []) {
         return axios.all(iterable.map((key, i) => {
-            return axios(_resolveParams(util.obj.assign(_getConfig(key), opt[i]))); //  || {url: ''}
+            return axios(_resolveParams(util.assign(_getConfig(key), opt[i]))); //  || {url: ''}
         }));
     }
 };
@@ -73,7 +73,7 @@ export const http = {
  * Axios instance defaults.
  * Applies to all requests made via this module, unless explicitly overriden.
  */
-// util.obj.assign(axios.defaults, {
+// util.assign(axios.defaults, {
    //  baseURL: 'http://localhost:8091'
 //});
 
@@ -102,12 +102,12 @@ function _resolveParams ({url}) {
         arguments[0].url = url.split('/').map(str => { 
             // Distinguish parameters substrings from other subparts of the path. Signature is {path}.
             return str.charAt(0) === '{' && str.charAt(str.length - 1) === '}' 
-                ? util.obj.access(state, str.slice(1, -1))
+                ? util.access(state, str.slice(1, -1))
                 : str;
             }).join('/');
     }
     // return input configuration object, potentially transformed.
-    // util.obj.assign guarantees a shallow-merged single entity, thus the argument index here is always 0.
+    // util.assign guarantees a shallow-merged single entity, thus the argument index here is always 0.
     return arguments[0];
 }
 

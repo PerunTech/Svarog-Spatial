@@ -13,7 +13,7 @@ export function CoordinatesControl (props) {
         });
 
     /* The map listener for latlng location on mouse cursor movement. Passive mode. */
-    const tracker = React.useCallback(util.fn.throttle(e => 
+    const tracker = React.useCallback(util.throttle(e => 
         dispatch({ coordinates: Object.values(Map.transform(e.latlng, props.precision)) }),
         100), []);
     

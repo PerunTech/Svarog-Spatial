@@ -30,7 +30,7 @@ export function Anchor ({as: Component = 'a', ...props}) {
         if (isTrivialHref(href)) { props.role = props.role || 'button', props.href = props.href || '#'; }
         if (disabled) { props.tabIndex = -1, props['aria-disabled'] = true }
 
-    return <Component {...props} onClick={handleClick} onKeyDown={util.fn.chain(handleKeyDown, onKeyDown)} />
+    return <Component {...props} onClick={handleClick} onKeyDown={util.chain(handleKeyDown, onKeyDown)} />
 }
 
 Anchor.propTypes = {

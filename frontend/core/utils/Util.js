@@ -9,8 +9,8 @@ import { obj } from './Object';
  * @namespace util
  */
 export const util = {
-    arr,
-    dom,
-    fn,
-    obj
+    ...arr,
+    ...dom,
+    ...fn,
+    ...obj
 };
