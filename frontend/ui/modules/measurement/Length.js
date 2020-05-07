@@ -23,7 +23,7 @@ export const length = {
     },
 
     setAutoDisable () {
-        return Map.on('pm:create',e => this.disable(e)), this;
+        return Map.on('pm:create', e => this.disable(e)), this;
     },
 
     drawLine (opt) {
