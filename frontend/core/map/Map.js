@@ -47,7 +47,7 @@ factory.Map.prototype._initControlPos = function () {
  * 
  * @namespace Map
  */
-export const Map = factory.map(el, util.obj.assign(MAP_CONFIG, {
+export const Map = factory.map(el, util.assign(MAP_CONFIG, {
     crs: crs_mk,
     origin: [7453631.01165012, 4523013.16848829],
 }));
