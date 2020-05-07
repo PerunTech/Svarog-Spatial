@@ -1,0 +1,4 @@
+.control-map .modal {
+    background-color: transparent;
+    pointer-events: none;
+}

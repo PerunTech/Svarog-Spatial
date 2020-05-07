@@ -21,11 +21,13 @@ import './css/control/toolbar.css';
 /* css.elements */
 import './css/elements/button.css';
 import './css/elements/input.css';
-import './css/elements/divider.css'
+import './css/elements/divider.css';
+import './css/elements/modal.css';
 
 /* css.modules */
 import './css/modules/ellipser.css';
 import './css/modules/scale.css';
+import './css/modules/measurement.css'
 
 /* css.components */
 import './css/components/statusBar.css'
