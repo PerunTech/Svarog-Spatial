@@ -66,6 +66,7 @@
 .control-bottomleft {
     position: absolute;
     bottom: 0;
+    pointer-events: none;
     }
 .control-bottomright {
     position: absolute;
