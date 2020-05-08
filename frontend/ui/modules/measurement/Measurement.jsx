@@ -1,11 +1,12 @@
 import { React, PropTypes } from 'perun-core';
 import { connect } from '../../../core';
 import { PROCESS_ENUM, getProcessTitle } from '../../../config';
-import { ButtonGroup, Button, Icon, 
+import { ButtonGroup, Button, Icon,
     length as lengthTool, 
     area as areaTool, 
     angle as angleTool, 
     eraser as eraserTool } from '../..';
+import { Dialog } from './Dialog';
 
 const { length, area, angle, erase } = PROCESS_ENUM
 
@@ -13,13 +14,13 @@ function _Measurement (props) {
     return <ButtonGroup id='measurement' >
         <Button id={length}
             className={props.activeId === length ? 'active' : ''}
-            onClick={() => {props.dispatch({activeId:length}), lengthTool.enable()}} >
+            onClick={() => lengthTool.enable()} >
                 <Icon name={length} size='32px' />
                 <span style={{display: 'block'}}>{getProcessTitle(length)}</span>
         </Button>
         <Button id={area}
             className={props.activeId === area ? 'active' : ''}
-            onClick={() => {props.dispatch({activeId:area}), areaTool.enable()}} >
+            onClick={() => areaTool.enable()} >
                 <Icon name={area} size='28px' />
                 <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(area)}</span>
         </Button>
@@ -31,6 +32,7 @@ function _Measurement (props) {
             <Icon name={erase} size='28px' />
             <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(erase)}</span>
         </Button>
+        {[length, area, angle].includes(props.activeId) && <Dialog /> }
     </ButtonGroup>
 }
 

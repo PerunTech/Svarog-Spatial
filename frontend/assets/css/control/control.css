@@ -25,6 +25,7 @@
 .control-center {
     flex: 1 1 auto;
     display: inline-flex;
+    pointer-events: none;
     }
 .control-bottom {
     /*min-height: 40px;*/ /* removed, content will define size*/
@@ -35,6 +36,7 @@
 .control-left {
     width: 250px;
     border-right: 1px solid rgba(0, 0, 0, 0.25);
+    pointer-events: all;
     }
 .control-map {
     flex: 1 1 auto;
@@ -45,6 +47,7 @@
 .control-right {
     width: 250px;
     border-left: 1px solid rgba(0, 0, 0, 0.25);
+    pointer-events: all;
     }
 
 /*

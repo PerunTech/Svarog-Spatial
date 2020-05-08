@@ -25,21 +25,29 @@ factory.Map.prototype._initControlPos = function () {
     this._controlCorners = {};
     this._controlContainer = factory.DomUtil.create('div', 'control-container', this._container);
 
-    const setLocation = (container, side) => factory.DomUtil.create('div', 'control-' + side, container);
-    
+    const createElement = (container, side) => factory.DomUtil.create('div', 'control-' + side, container);
+    const stopEventBubble = (el) => {
+        factory.DomEvent
+            .disableClickPropagation(el)
+            .disableScrollPropagation(el)
+            .addListener(el, 'mousemove', factory.DomEvent.stopPropagation);
+
+        return el;
+    }
+
     /* Preserve order of top/center/bottom, layout is vertical (flexbox), elements are blocks. */
     ['top', 'center', 'bottom'].map(side => {
-        this._controlCorners[side] = setLocation(this._controlContainer, side); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlContainer, side)); });
     /* Sub-locations of the main (center) screen, inline layout.
     Data and layer panels on the side, earth-view (the Map) in the center. */ 
     ['left', 'map', 'right'].map(side => {
-        this._controlCorners[side] = setLocation(this._controlCorners.center, side); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.center, side)); });
     /**
      * Added corner locations embedded in control.map (the main content view), these are the default leaflet locations.
      * Use for helper controls with transparent background. Details in the leaflet documentation.
      */
     ['topleft', 'topright', 'bottomleft', 'bottomright'].map(side => {
-        this._controlCorners[side] = setLocation(this._controlCorners.map, side); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.map, side)); });
 };
 
 /**
