@@ -11,7 +11,6 @@ import { Dialog } from './Dialog';
 const { length, area, angle, erase } = PROCESS_ENUM
 
 function _Measurement (props) {
-    console.log(props.activeId)
     return <ButtonGroup id='measurement' >
         <Button id={length}
             className={props.activeId === length ? 'active' : ''}

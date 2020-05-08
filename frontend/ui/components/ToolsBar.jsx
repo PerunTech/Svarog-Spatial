@@ -7,7 +7,7 @@ export const ToolsBar = props =>
         <Tabs defaultActiveKey='digitization' >
             <Tab eventKey='navigation' title='Навигација' children={<Navigation />} />
             <Tab eventKey='digitization' title='Дигитизација' children={<Digitization />} />
-            <Tab eventKey='selection' title='Селекција' children={<Measurement />} />
+            <Tab eventKey='selection' title='Селекција' children={<Digitization />} />
             <Tab eventKey='measurement' title='Мерења' children={<Measurement />} />
         </Tabs>
     </div>;

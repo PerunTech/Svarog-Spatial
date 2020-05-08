@@ -1,5 +1,6 @@
 import { React } from 'perun-core';
 import { Modal } from '../..';
+import { Button } from '../../elements/button/Button';
 
 export const Dialog = () => 
     <Modal show
@@ -9,6 +10,6 @@ export const Dialog = () =>
         dialogClassName='measure-dialog' >
             <Modal.Title>Test Measure Utility</Modal.Title>
             <Modal.Body >
-                <span >Test Measure Utility Body</span>
+                <Button onClick ={() => console.log('clicked')} >Test Measure Utility Body</Button>
             </Modal.Body>
     </Modal>;

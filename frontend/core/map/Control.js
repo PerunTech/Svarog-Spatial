@@ -55,11 +55,6 @@ export function control (UI, props = {}, opt = _opt) {
             UI instanceof Element // `#revise_me`, need to test this.
                 ? this.container.appendChild(UI)
                 : ReactDOM.render(<Provider children={<UI {...props} />} />, this.container)
-
-            factory.DomEvent
-                .disableClickPropagation(this.container)
-                .disableScrollPropagation(this.container)
-                .addListener(this.container, 'mousemove', factory.DomEvent.stopPropagation);
             
             return this.container; // This hook must return HTMLElement.
         },
