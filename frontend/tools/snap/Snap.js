@@ -365,4 +365,32 @@ export const snap = {
         };
     },
 
+    _getClosestPointOnSegment(map, latlng, latlngA, latlngB) {
+        let maxzoom = map.getMaxZoom();
+        if (maxzoom === Infinity) {
+            maxzoom = map.getZoom();
+        }
+
+        const P = map.project(latlng, maxzoom);
+        const A = map.project(latlngA, maxzoom);
+        const B = map.project(latlngB, maxzoom);
+        const closest = factory.LineUtil.closestPointOnSegment(P, A, B);
+        
+        return map.unproject(closest, maxzoom);
+    },
+
+    _getDistanceToSegment(map, latlng, latlngA, latlngB) {
+        const P = map.latLngToLayerPoint(latlng);
+        const A = map.latLngToLayerPoint(latlngA);
+        const B = map.latLngToLayerPoint(latlngB);
+        
+        return factory.LineUtil.pointToSegmentDistance(P, A, B);
+    },
+
+    _getDistance(map, latlngA, latlngB) {
+        return map
+            .latLngToLayerPoint(latlngA)
+            .distanceTo(map.latLngToLayerPoint(latlngB));
+    },
+
 }
