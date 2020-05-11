@@ -263,4 +263,106 @@ export const snap = {
         this.debugIndicatorLines = debugIndicatorLines;
     },
 
+    _calcClosestLayer(latlng, layers) {
+        // the closest polygon to our dragged marker latlng
+        let closestLayer = {};
+    
+        // loop through the layers
+        layers.forEach((layer, index) => {
+            // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
+            const results = this._calcLayerDistances(latlng, layer);
+    
+            // show indicator lines, it's for debugging
+            this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+    
+            // save the info if it doesn't exist or if the distance is smaller than the previous one
+            if (
+                closestLayer.distance === undefined ||
+                results.distance < closestLayer.distance
+            ) {
+                closestLayer = results;
+                closestLayer.layer = layer;
+            }
+        });
+    
+        // return the closest layer and it's data
+        // if there is no closest layer, return undefined
+        return closestLayer;
+    },
+
+    _calcLayerDistances(latlng, layer) {
+        const map = this._map;
+    
+        // is this a marker?
+        const isMarker = layer instanceof factory.Marker || layer instanceof factory.CircleMarker;
+    
+        // is it a polygon?
+        const isPolygon = layer instanceof factory.Polygon;
+    
+        // the point P which we want to snap (probpably the marker that is dragged)
+        const P = latlng;
+    
+        // the coords of the layer
+        const latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
+    
+        if (isMarker) {
+            // return the info for the marker, no more calculations needed
+            return {
+                latlng: util.assign({}, latlngs),
+                distance: this._getDistance(map, latlngs, P),
+            };
+        }
+    
+        // the closest segment (line between two points) of the layer
+        let closestSegment;
+    
+        // the shortest distance from P to closestSegment
+        let shortestDistance;
+    
+        // loop through the coords of the layer
+        const loopThroughCoords = coords => {
+            coords.forEach((coord, index) => {
+                if (util.isArray(coord)) {
+                    loopThroughCoords(coord);
+                    return;
+                }
+            
+                // take this coord (A)...
+                // and the next coord (B) as points
+                const A = coord;
+                const B = coords[isPolygon
+                    ? index + 1 === coords.length ? 0 : index + 1
+                    : index + 1 === coords.length ? undefined : index + 1];
+            
+                if (B) {
+                    // calc the distance between P and AB-segment
+                    const distance = this._getDistanceToSegment(map, P, A, B);
+                    
+                    // is the distance shorter than the previous one? Save it and the segment
+                    if (shortestDistance === undefined || distance < shortestDistance) {
+                        shortestDistance = distance;
+                        closestSegment = [A, B];
+                    }
+                }
+            });
+        };
+    
+        loopThroughCoords(latlngs);
+    
+        // now, take the closest segment (closestSegment) and calc the closest point to P on it.
+        const C = this._getClosestPointOnSegment(
+            map,
+            latlng,
+            closestSegment[0],
+            closestSegment[1]
+        );
+    
+        // return the latlng of that sucker
+        return {
+            latlng: Object.assign({}, C),
+            segment: closestSegment,
+            distance: shortestDistance,
+        };
+    },
+
 }
