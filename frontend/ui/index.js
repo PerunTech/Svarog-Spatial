@@ -1,7 +1,8 @@
 // util
-export { useMount } from './utils/useMount';
-export { useMouseLeave } from './utils/useMouseLeave';
-export { useUpdate } from './utils/useUpdate';
+export { useMount } from './utils/UseMount';
+export { useMouseLeave } from './utils/UseMouseLeave';
+export { useUpdate } from './utils/UseUpdate';
+export { DrawActions } from './utils/drawActions';
 
 /* -------- */
 /* elements */
@@ -9,7 +10,7 @@ export { useUpdate } from './utils/useUpdate';
 export { Anchor } from './elements/anchor/Anchor';
 export { Button } from './elements/button/Button';
 export { ButtonGroup } from './elements/button/ButtonGroup';
-export { ProcessButton } from './elements/button/ProcessButton';
+export { ToolbarButton } from './elements/button/ToolbarButton';
 export { Coordinates } from './elements/coordinates/Coordinates';
 export { Divider } from './elements/divider/Divider';
 export { Dropdown } from './elements/dropdown/Dropdown';
@@ -47,7 +48,6 @@ export { scale } from './modules/scale/Scale';
 export { ScaleControl } from './modules/scale/ScaleControl';
 
 // toolbar
-export { drawActions } from './toolbar/util/drawActions';
 export { drawParcel } from './toolbar/digitization/DrawParcel';
 export { editParcel } from './toolbar/digitization/EditParcel';
 export { ParcelForm } from './toolbar/digitization/ParcelForm';
@@ -57,12 +57,12 @@ export { Digitization } from './toolbar/digitization/Digitization';
 
 
 /* ---------- */
-/* components */
+/* layouts */
 /* ---------- */
-export { DataPanel } from './components/DataPanel';
-export { LayerPanel } from './components/LayerPanel';
-export { StatusBar } from './components/StatusBar';
-export { ToolsBar } from './components/ToolsBar';
+export { DataPanel } from './layouts/DataPanel';
+export { LayerPanel } from './layouts/LayerPanel';
+export { StatusBar } from './layouts/StatusBar';
+export { ToolsBar } from './layouts/ToolsBar';
 
 // Service.initializer
 export { initializer } from './Initializer';
