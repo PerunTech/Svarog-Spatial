@@ -1,8 +1,7 @@
 import { React, PropTypes } from 'perun-core';
-import { Modal } from '../..';
-import { Button } from '../../elements/button/Button';
+import { Modal, Button, DrawActions } from '../..';
 
-export const Dialog = ({title}) => 
+export const Dialog = ({title, handler}) => 
     <Modal show
         backdrop={false}
         enforceFocus={false}
@@ -10,7 +9,7 @@ export const Dialog = ({title}) =>
         dialogClassName='measure-dialog' >
             <Modal.Title>
                 <Button disabled className='as-label' >{title}</Button>
-                {}
+                <DrawActions handler={handler} />
             </Modal.Title>
             <Modal.Body >
                 <Button onClick ={() => console.log('clicked')} >Test Measure Utility Body</Button>

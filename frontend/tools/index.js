@@ -9,9 +9,9 @@ export { draw } from './draw/Draw';
 export { edit } from './edit/Edit';
 
 // Measurement
-export { measureMarker } from './measurement/Marker';
-export { measureLine } from './measurement/Line';
-export { measureCircle } from './measurement/Circle';
+export { measureMarker } from './measure/Marker';
+export { measureLine } from './measure/Line';
+export { measureCircle } from './measure/Circle';
 
 // Navigation
-export { navigation } from './navigation/Navigation';
+export { navigation } from './navigate/Navigation';
