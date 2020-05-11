@@ -1,1 +1,1 @@
-export const Polygon = {};
+export const drawPolygon = {};
