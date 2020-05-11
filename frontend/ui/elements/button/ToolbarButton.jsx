@@ -16,25 +16,26 @@ import { getProcessTitle } from '../../../config';
  * @param {string} [props.id] - The ID of the application process, acccessible via this button.
  * @param {Function} [props.onClick] - The callback to be executed on click. 
  *                   Automatically registers the process in store before passing the event to the click call.
- * @param {Node} [props.children] - Dom elements to be rendered when the process of this button is active.
  * @param {string} [props.activeId] - The currently active process id, recorded in the application store.
  * @param {Function} [props.dispatch] - The publish function of the app store. Provided by connect.
  * 
  * @returns JSX;
  */
-function _ToolbarButton ({id, onClick, children, activeId, dispatch, ...props}) {
-    return <Button {...props} id={id} onClick={e => {dispatch({activeId:id}), onClick(e)}} >
-        <Icon name={id} />
-        <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(id)}</span>
-        {activeId === id && children}
+function _ToolbarButton ({id, onClick, ...props}) {
+    return <Button {...props} 
+        id={id} 
+        className={props.activeId === id ? 'active' : ''}
+        onClick={e => {props.dispatch({activeId:id}), onClick(e)}} >
+            <Icon name={id} size='28px' />
+            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(id)}</span>
     </Button>
 }
 
 _ToolbarButton.propTypes = {
     id: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
-    children: PropTypes.node,
-    activeId: PropTypes.string
+    activeId: PropTypes.string,
+    dispatch: PropTypes.func
 }
 
 export const ToolbarButton = connect(({process}) => { 
