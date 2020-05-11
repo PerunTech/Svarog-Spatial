@@ -1,7 +1,7 @@
 // util
-export { useMount } from './utils/useMount';
-export { useMouseLeave } from './utils/useMouseLeave';
-export { useUpdate } from './utils/useUpdate';
+export { useMount } from './utils/UseMount';
+export { useMouseLeave } from './utils/UseMouseLeave';
+export { useUpdate } from './utils/UseUpdate';
 export { DrawActions } from './utils/drawActions';
 
 /* -------- */
@@ -57,12 +57,12 @@ export { Digitization } from './toolbar/digitization/Digitization';
 
 
 /* ---------- */
-/* components */
+/* layouts */
 /* ---------- */
-export { DataPanel } from './components/DataPanel';
-export { LayerPanel } from './components/LayerPanel';
-export { StatusBar } from './components/StatusBar';
-export { ToolsBar } from './components/ToolsBar';
+export { DataPanel } from './layouts/DataPanel';
+export { LayerPanel } from './layouts/LayerPanel';
+export { StatusBar } from './layouts/StatusBar';
+export { ToolsBar } from './layouts/ToolsBar';
 
 // Service.initializer
 export { initializer } from './Initializer';
