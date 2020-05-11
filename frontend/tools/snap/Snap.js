@@ -214,4 +214,53 @@ export const snap = {
         return util.assign({}, snapLatlng);
     },
 
+    _createSnapList() {
+        let layers = [];
+        const debugIndicatorLines = [];
+        const map = this._map;
+    
+        map.off('pm:remove', this._handleSnapLayerRemoval, this);
+        map.on('pm:remove', this._handleSnapLayerRemoval, this);
+    
+        // find all layers that are or inherit from Polylines... and markers that are not
+        // temporary markers of polygon-edits
+        map.eachLayer(layer => {
+            if ((layer instanceof factory.Polyline 
+                || layer instanceof factory.Marker 
+                || layer instanceof factory.CircleMarker) 
+                && layer.options.snapIgnore !== true) {
+            
+                    layers.push(layer);
+
+                    // this is for debugging
+                    const debugLine = factory.polyline([], { color: 'red', pmIgnore: true });
+                    debugLine._pmTempLayer = true;
+                    debugIndicatorLines.push(debugLine);
+    
+                    // uncomment 👇 this line to show helper lines for debugging
+                    // debugLine.addTo(map);
+            }
+        });
+    
+        // ...except self
+        layers = layers.filter(layer => this._layer !== layer);
+    
+        // also remove everything that has no coordinates yet
+        layers = layers.filter(
+            layer => layer._latlng || (layer._latlngs && layer._latlngs.length > 0)
+        );
+    
+        // finally remove everything that's temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
+    
+        // save snaplist from layers and the other snap layers added from other classes/scripts
+        if (this._otherSnapLayers) {
+            this._snapList = layers.concat(this._otherSnapLayers);
+        } else {
+            this._snapList = layers;
+        }
+    
+        this.debugIndicatorLines = debugIndicatorLines;
+    },
+
 }
