@@ -14,4 +14,4 @@ export { measureLine } from './measure/Line';
 export { measureCircle } from './measure/Circle';
 
 // Navigation
-export { navigation } from './navigation/Navigation';
+export { navigation } from './navigate/Navigation';
