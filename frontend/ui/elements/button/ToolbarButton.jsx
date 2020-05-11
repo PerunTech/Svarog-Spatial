@@ -10,7 +10,7 @@ import { getProcessTitle } from '../../../config';
  * 
  * &nbsp;
  * 
- * @function ProcessButton(props: *): JSX
+ * @function ToolbarButton(props: *): JSX
  * 
  * @param {*} props - Properties.
  * @param {string} [props.id] - The ID of the application process, acccessible via this button.
@@ -22,7 +22,7 @@ import { getProcessTitle } from '../../../config';
  * 
  * @returns JSX;
  */
-function _ProcessButton ({id, onClick, children, activeId, dispatch, ...props}) {
+function _ToolbarButton ({id, onClick, children, activeId, dispatch, ...props}) {
     return <Button {...props} id={id} onClick={e => {dispatch({activeId:id}), onClick(e)}} >
         <Icon name={id} />
         <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(id)}</span>
@@ -30,13 +30,13 @@ function _ProcessButton ({id, onClick, children, activeId, dispatch, ...props}) 
     </Button>
 }
 
-_ProcessButton.propTypes = {
+_ToolbarButton.propTypes = {
     id: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     children: PropTypes.node,
     activeId: PropTypes.string
 }
 
-export const ProcessButton = connect(({process}) => { 
+export const ToolbarButton = connect(({process}) => { 
     return { activeId: process.activeId };
-})(_ProcessButton);
+})(_ToolbarButton);
