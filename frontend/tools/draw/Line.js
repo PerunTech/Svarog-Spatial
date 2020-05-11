@@ -1,1 +1,1 @@
-export const Line = {};
+export const drawLine = {};

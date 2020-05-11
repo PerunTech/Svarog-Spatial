@@ -1,1 +1,1 @@
-export const Cut = {};
+export const drawCut = {};
