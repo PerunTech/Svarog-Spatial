@@ -1,41 +1,89 @@
-import { Map } from '../../core';
+import { factory, Map } from '../../core';
+import { snap } from '..';
 
-/**
- * Shortcut to the drawing handler implementation.
- * @private 
- */
-const _tool = Map.pm.Draw;
+/* internal shapes */
+import { Marker } from './Marker';
+import { CircleMarker } from './CircleMarker'
+import { Line } from './Line';
+import { Polygon } from './Polygon';
+import { Rectangle } from './Rectangle';
+import { Circle } from './Circle';
+import { Cut } from './Cut';
 
-/**
- * Drawing tools.
- * 
- * &nbsp;
- * 
- * Implementation available on factory.PM.
- * Drawing is executed on the map and handlers will inject themselves 
- * on the map instance automatically, hence this utility will hook onto 
- * the map instance rather than factory.
- * 
- * Spread and hide utilities, so the caller need not know the reference shape
- * that is used internally. Call your function by type and configure the operation
- * via the `opt` argument.
- * 
- * @namespace draw
- */
-export const draw = {
-    marker (opt = {}) { return _tool.enable('Marker', opt); },
+const Draw = factory.Class.extend({
+    includes: [ snap ],
+    options: {
+        snappable: true,
+        snapDistance: 20,
+        tooltips: true,
+        cursorMarker: true,
+        finishOnDoubleClick: false,
+        finishOn: null,
+        allowSelfIntersection: true,
+        templineStyle: {},
+        hintlineStyle: {
+            color: '#3388ff',
+            dashArray: '5,5',
+        },
+        markerStyle: {
+            draggable: true,
+        },
+    },
 
-    line (opt = {}) { return _tool.enable('Line', opt); },
+    setOptions(options) {
+        factory.Util.setOptions(this, options);
+    },
 
-    polygon (opt = {}) { return _tool.enable('Polygon', opt); },
+    initialize() {
+        // save the map
+        this._map = Map;
+        
+        // define all possible shapes that can be drawn
+        this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
+        
+        // initiate drawing class for our shapes
+        /*
+        this['Marker'] = new Marker(this._map);
+        this['CircleMarker'] = new CircleMarker(this._map);
+        this['Line'] = new Line(this._map);
+        this['Polygon'] = new Polygon(this._map);
+        this['Rectangle'] = new Rectangle(this._map);
+        this['Circle'] = new Circle(this._map);
+        this['Cut'] = new Cut(this._map);
+        */
+    },
 
-    rectangle (opt = {}) { return _tool.enable('Rectangle', opt); },
+    setPathOptions(options) {
+        this.options.pathOptions = options;
+    },
 
-    circle (opt = {}) { return _tool.enable('Circle', opt); },
+    getShapes() {
+        // if somebody wants to know what shapes are available
+        return this.shapes;
+    },
 
-    circleMarker (opt = {}) { return _tool.enable('CircleMarker', opt); },
+    enable(shape, options) {
+        if (!shape) {
+            throw new Error(`Error: Please pass a shape as a parameter.
+                Possible shapes are: ${this.getShapes().join(',')}`);
+        }
 
-    cut (opt = {}) { return _tool.enable('Cut', opt); },
+        // disable drawing for all shapes
+        this.disable();
 
-    getHandler (type) { return type ? _tool[type] : _tool; }
-};
+        // enable draw for a shape
+        this[shape].enable(options);
+    },
+
+    disable() {
+      // there can only be one drawing mode active at a time on a map
+      // so it doesn't matter which one should be disabled.
+      // just disable all of them
+        this.shapes.forEach(shape => {
+            this[shape].disable();
+        });
+    },
+});
+
+export const draw = new Draw();
+console.log(new Draw)
