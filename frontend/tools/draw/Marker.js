@@ -1,1 +1,1 @@
-export const drawMarker = {}
+export const marker = {}
