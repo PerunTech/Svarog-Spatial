@@ -391,6 +391,5 @@ export const snap = {
         return map
             .latLngToLayerPoint(latlngA)
             .distanceTo(map.latLngToLayerPoint(latlngB));
-    },
-
-}
+    }
+};
