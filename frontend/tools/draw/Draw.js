@@ -1,8 +1,17 @@
 import { factory, Map } from '../../core';
 import { snap } from '..';
 
-export const Draw = factory.Class.extend({
-    includes: [snap],
+/* internal shapes */
+import { Marker } from './Marker';
+import { CircleMarker } from './CircleMarker'
+import { Line } from './Line';
+import { Polygon } from './Polygon';
+import { Rectangle } from './Rectangle';
+import { Circle } from './Circle';
+import { Cut } from './Cut';
+
+const Draw = factory.Class.extend({
+    includes: [ snap ],
     options: {
         snappable: true,
         snapDistance: 20,
@@ -26,14 +35,22 @@ export const Draw = factory.Class.extend({
     },
 
     initialize() {
-      // save the map
+        // save the map
         this._map = Map;
         
         // define all possible shapes that can be drawn
         this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
         
         // initiate drawing class for our shapes
-        // this['Marker'] = new DrawMarker(this._map);
+        /*
+        this['Marker'] = new Marker(this._map);
+        this['CircleMarker'] = new CircleMarker(this._map);
+        this['Line'] = new Line(this._map);
+        this['Polygon'] = new Polygon(this._map);
+        this['Rectangle'] = new Rectangle(this._map);
+        this['Circle'] = new Circle(this._map);
+        this['Cut'] = new Cut(this._map);
+        */
     },
 
     setPathOptions(options) {
@@ -67,3 +84,6 @@ export const Draw = factory.Class.extend({
         });
     },
 });
+
+export const draw = new Draw();
+console.log(new Draw)
