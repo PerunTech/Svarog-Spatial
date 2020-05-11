@@ -156,4 +156,62 @@ export const snap = {
         return true;
     },
 
+    _calcMiddleLatLng(map, latlng1, latlng2) {
+        // calculate the middle coordinates between two markers
+    
+        const p1 = map.project(latlng1);
+        const p2 = map.project(latlng2);
+    
+        return map.unproject(p1._add(p2)._divideBy(2));
+    },
+
+    // we got the point we want to snap to (C), but we need to check if a coord of the polygon
+    // receives priority over C as the snapping point. Let's check this here
+    _checkPrioritiySnapping(closestLayer) {
+        const map = this._map;
+
+        // A and B are the points of the closest segment to P (the marker position we want to snap)
+        const A = closestLayer.segment[0];
+        const B = closestLayer.segment[1];
+
+        // C is the point we would snap to on the segment.
+        // The closest point on the closest segment of the closest polygon to P. That's right.
+        const C = closestLayer.latlng;
+
+        // distances from A to C and B to C to check which one is closer to C
+        const distanceAC = this._getDistance(map, A, C);
+        const distanceBC = this._getDistance(map, B, C);
+
+        // closest latlng of A and B to C
+        let closestVertexLatLng = distanceAC < distanceBC ? A : B;
+
+        // distance between closestVertexLatLng and C
+        let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+
+        // snap to middle (M) of segment if option is enabled
+        if (this.options.snapMiddle) {
+            const M = this._calcMiddleLatLng(map, A, B);
+            const distanceMC = this._getDistance(map, M, C);
+
+            if (distanceMC < distanceAC && distanceMC < distanceBC) {
+                // M is the nearest vertex
+                closestVertexLatLng = M;
+                shortestDistance = distanceMC;
+            }
+        }
+
+        // the distance that needs to be undercut to trigger priority
+        const priorityDistance = this.options.snapDistance;
+
+        // the latlng we ultemately want to snap to.
+        // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
+        // the closestVertexLatLng has priority over C as the snapping point.
+        let snapLatlng = shortestDistance < priorityDistance
+            ? closestVertexLatLng
+            : C;
+
+        // return the copy of snapping point
+        return util.assign({}, snapLatlng);
+    },
+
 }
