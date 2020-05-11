@@ -2,6 +2,9 @@
 export { coordinate } from './coordinate/Coordinate';
 export { limits } from './coordinate/Limits';
 
+/* snap */
+export { snap } from './snap/Snap';
+
 // Draw
 export { draw } from './draw/Draw';
 
