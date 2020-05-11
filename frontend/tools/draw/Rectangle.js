@@ -1,1 +1,1 @@
-export const drawRectangle = {};
+export const rectangle = {};

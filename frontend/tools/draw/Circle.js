@@ -1,1 +1,1 @@
-export const drawCircle = {};
+export const circle = {};

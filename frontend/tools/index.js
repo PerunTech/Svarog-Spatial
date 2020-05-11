@@ -5,15 +5,8 @@ export { limits } from './coordinate/Limits';
 /* snap */
 export { snap } from './snap/Snap';
 
-// draw
-export { drawMarker } from './draw/Marker';
-export { drawCircleMarker } from './draw/CircleMarker';
-export { drawLine } from './draw/Line';
-export { drawPolygon } from './draw/Polygon';
-export { drawRectangle } from './draw/Rectangle';
-export { drawCircle } from './draw/Circle';
-export { drawCut } from './draw/Cut';
-export { Draw } from './draw/Draw';
+/* draw */
+export { draw } from './draw/Draw';
 
 // edit
 export { edit } from './edit/Edit';

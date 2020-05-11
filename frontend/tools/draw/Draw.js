@@ -1,4 +1,12 @@
-import { drawMarker, drawCircleMarker, drawLine, drawPolygon, drawRectangle, drawCircle, drawCut, snap } from '..';
+import { snap } from '..';
+/* shapes */
+import { marker } from './Marker';
+import { circleMarker } from './CircleMarker';
+import { line } from './Line';
+import { polygon } from './Polygon';
+import { rectangle } from './Rectangle';
+import { circle } from './Circle';
+import { cut } from './Cut';
 
 /**
  * Drawing tools.
@@ -8,24 +16,15 @@ import { drawMarker, drawCircleMarker, drawLine, drawPolygon, drawRectangle, dra
  * @namespace draw
  */
 export const draw = {
-    marker: (opt = {}) =>
-        drawMarker.enable(opt),
+    marker,
+    circleMarker,
+    line,
+    polygon,
+    rectangle,
+    circle,
+    cut
+}
 
-    line: (opt = {}) => 
-        drawLine.enable(opt),
-
-    polygon: (opt = {}) => 
-        drawPolygon.enable(opt),
-
-    rectangle: (opt = {}) => 
-        drawRectangle.enable(opt),
-
-    circle: (opt = {}) => 
-        drawCircle.enable(opt),
-
-    circleMarker: (opt = {}) => 
-        drawCircleMarker.enable(opt),
-
-    cut: (opt = {}) => 
-        drawCut.enable(opt),
+draw.prototype = {
+    ...snap
 }
