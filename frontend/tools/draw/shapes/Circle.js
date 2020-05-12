@@ -118,6 +118,18 @@ export const circle = {
         // set coords for hintline from marker to last vertex of drawin polyline
         this._hintline.setLatLngs([latlng, this._hintMarker.getLatLng()]);
     },
+    
+    _syncHintMarker(e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+    
+        // if snapping is enabled, do it
+        if (this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
+    },
 
 
 };
