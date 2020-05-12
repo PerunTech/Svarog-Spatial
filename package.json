@@ -7,7 +7,6 @@
     "url": "https://gitlab.prtech.mk/perunv3/perun-spatial.git"
   },
   "dependencies": {
-    "@geoman-io/leaflet-geoman-free": "^2.3.0",
     "leaflet": "~1.5.1",
     "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core",
     "proj4": "~2.5.0"
