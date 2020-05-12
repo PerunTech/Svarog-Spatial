@@ -3,7 +3,6 @@ import { util, factory, store, Map } from "../../../core";
 import { draw } from '../../../tools';
 
 export const area = {
-    type: 'Polygon',
     measurements: factory.layerGroup().addTo(Map),
 
     enable (opt = {}) {
@@ -15,7 +14,7 @@ export const area = {
     disable (e) {
         return this.finishMeasurement(e)
             .setActiveProcess(''),
-            draw.getHandler().disable();
+            draw.polygon.disable();
     },
 
     setActiveProcess (type) {
@@ -27,7 +26,7 @@ export const area = {
     },
 
     drawPolygon (opt) {
-        return draw.polygon(util.assign(MEASURE_LINE, opt)), this;
+        return draw.polygon.enable(util.assign(MEASURE_LINE, opt)), this;
     },
 
     finishMeasurement (e) {
