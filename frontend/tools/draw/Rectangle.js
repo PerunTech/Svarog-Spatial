@@ -7,7 +7,7 @@ export const rectangle = {
     options: {},
     enabled: false,
 
-    enable(options) {
+    enable (options) {
         util.assign(this.options, options);
     
         // enable draw mode
@@ -91,7 +91,7 @@ export const rectangle = {
         this._otherSnapLayers = [];
     },
 
-    disable() {
+    disable () {
         // cancel, if drawing mode isn't event enabled
         if (!this._enabled) {
             return;
@@ -123,7 +123,7 @@ export const rectangle = {
 
     toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
 
-    _placeStartingMarkers(e) {
+    _placeStartingMarkers (e) {
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
         if (!this._hintMarker._snapped) {
@@ -154,7 +154,7 @@ export const rectangle = {
         this._setRectangleOrigin();
     },
 
-    _setRectangleOrigin() {
+    _setRectangleOrigin () {
         const latlng = this._startMarker.getLatLng();
     
         if (latlng) {
@@ -162,6 +162,18 @@ export const rectangle = {
             this._layerGroup.addLayer(this._layer);
             this._layer.setLatLngs([latlng, latlng]);
             this._hintMarker.on('move', this._syncRectangleSize, this);
+        }
+    },
+
+    _syncHintMarker (e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+    
+        // if snapping is enabled, do it
+        if (this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
         }
     },
 };
