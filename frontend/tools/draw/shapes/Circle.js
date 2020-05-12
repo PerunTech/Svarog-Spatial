@@ -107,4 +107,9 @@ export const circle = {
             this._cleanupSnapping();
         }
     },
+
+    isEnabled () { return this.enabled; },
+
+    toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
+
 };
