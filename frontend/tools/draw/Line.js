@@ -269,4 +269,39 @@ export const line = {
             latlng,
         });
     },
+
+    _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(false);
+    
+            if (this._doesSelfIntersect) {
+                return;
+            }
+        }
+    
+        // get coordinates
+        const coords = this._layer.getLatLngs();
+    
+        // if there is only one coords, don't finish the shape!
+        if (coords.length <= 1) {
+            return;
+        }
+    
+        // create the leaflet shape and add it to the map
+        const polylineLayer = factory.polyline(coords, this.options.pathOptions).addTo(Map);
+    
+        // disable drawing
+        this.disable();
+    
+        // fire the pm:create event and pass shape and layer
+        this._map.fire('pm:create', {
+            shape: this.shape,
+            layer: polylineLayer,
+        });
+    
+        if (this.options.snappable) {
+            this._cleanupSnapping();
+        }
+    },
 };
