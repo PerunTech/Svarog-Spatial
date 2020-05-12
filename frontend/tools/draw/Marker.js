@@ -1,5 +1,5 @@
 import { util, Map, factory } from '../../core';
-import { snap } from '..'
+import { snap } from '..';
 
 export const marker = {
     ...snap,
