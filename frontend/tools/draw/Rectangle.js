@@ -205,4 +205,41 @@ export const rectangle = {
             });
         }
     },
+
+    _finishShape(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const B = this._hintMarker.getLatLng();
+    
+        // get already placed corner from the startmarker
+        const A = this._startMarker.getLatLng();
+    
+        // create the final rectangle layer, based on opposite corners A & B
+        const rectangleLayer = factory.rectangle([A, B], this.options.pathOptions).addTo(Map)
+    
+        // disable drawing
+        this.disable();
+    
+        // fire the pm:create event and pass shape and layer
+        this._map.fire('pm:create', {
+            shape: this.shape,
+            layer: rectangleLayer,
+        });
+    },
+
+    _findCorners() {
+        const corners = this._layer.getBounds();
+    
+        const northwest = corners.getNorthWest();
+        const northeast = corners.getNorthEast();
+        const southeast = corners.getSouthEast();
+        const southwest = corners.getSouthWest();
+    
+        return [northwest, northeast, southeast, southwest];
+    },
 };
