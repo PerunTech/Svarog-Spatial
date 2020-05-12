@@ -34,8 +34,8 @@ function _Length ({options, ...props}) {
         id={_id} 
         className={activeId === _id ? 'active' : ''}
         onClick={() => enable() } >
-            <Icon name={_id} size='28px' />
-            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(_id)}</span>
+            <Icon name={_id} size='32px' />
+            <span style={{ display: 'block' }}>{getProcessTitle(_id)}</span>
     </Button>
 }
 
