@@ -195,4 +195,32 @@ export const line = {
             this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
+
+    _removeLastVertex() {
+        // remove last coords
+        const coords = this._layer.getLatLngs();
+        const removedCoord = coords.pop();
+    
+        // if all coords are gone, cancel drawing
+        if (coords.length < 1) {
+            this.disable();
+            return;
+        }
+    
+        // find corresponding marker
+        const marker = this._layerGroup
+            .getLayers()
+            .filter(l => l instanceof factory.Marker)
+            .filter(l => !factory.DomUtil.hasClass(l._icon, 'cursor-marker'))
+            .find(l => l.getLatLng() === removedCoord);
+    
+        // remove that marker
+        this._layerGroup.removeLayer(marker);
+    
+        // update layer with new coords
+        this._layer.setLatLngs(coords);
+    
+        // sync the hintline again
+        this._syncHintLine();
+    },
 };
