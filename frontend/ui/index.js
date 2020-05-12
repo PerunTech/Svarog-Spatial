@@ -41,7 +41,7 @@ export { Loading } from './modules/loading/Loading';
 export { Length, lengthMeasurements } from './modules/measurement/Length';
 export { Area, areaMeasurements } from './modules/measurement/Area';
 export { angle } from './modules/measurement/Angle';
-export { eraser } from './modules/measurement/Eraser';
+export { Eraser, clearLength, clearArea, clearMeasurements } from './modules/measurement/Eraser';
 export { Measurement } from './modules/measurement/Measurement';
 
 export { scale } from './modules/scale/Scale';
