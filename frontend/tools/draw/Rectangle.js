@@ -90,4 +90,32 @@ export const rectangle = {
         // an array used in the snapping mixin.
         this._otherSnapLayers = [];
     },
+
+    disable() {
+        // cancel, if drawing mode isn't event enabled
+        if (!this._enabled) {
+            return;
+        }
+    
+        this.enabled = false;
+    
+        // reset cursor
+        Map._container.style.cursor = '';
+    
+        // unbind listeners
+        Map.off('click', this._finishShape, this);
+        Map.off('click', this._placeStartingMarkers, this);
+        Map.off('mousemove', this._syncHintMarker, this);
+    
+        // remove helping layers
+        Map.removeLayer(this._layerGroup);
+    
+        // fire drawend event
+        Map.fire('pm:drawend', { shape: this.shape });
+
+        // cleanup snapping
+        if (this.options.snappable) {
+            this._cleanupSnapping();
+        }
+    },
 };
