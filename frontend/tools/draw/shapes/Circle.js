@@ -8,7 +8,7 @@ export const circle = {
     options: {},
     enabled: false,
 
-    enable(options) {
+    enable (options) {
         util.assign(this.options, options);
         this.options.radius = 0;
     
@@ -101,7 +101,7 @@ export const circle = {
         Map.removeLayer(this._layerGroup);
     
         // fire drawend event
-        Map.fire('pm:drawend', { shape: this._shape });
+        Map.fire('pm:drawend', { shape: this.shape });
     
         // cleanup snapping
         if (this.options.snappable) {
