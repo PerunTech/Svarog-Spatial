@@ -93,7 +93,7 @@ export const rectangle = {
 
     disable () {
         // cancel, if drawing mode isn't event enabled
-        if (!this._enabled) {
+        if (!this.enabled) {
             return;
         }
     

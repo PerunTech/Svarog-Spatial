@@ -97,7 +97,7 @@ export const line = {
 
     disable() {
         // cancel, if drawing mode isn't even enabled
-        if (!this._enabled) {
+        if (!this.enabled) {
             return;
         }
     
