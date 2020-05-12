@@ -1,3 +1,4 @@
+import { getDrawTooltip } from '../../../config';
 import { util, Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -23,7 +24,7 @@ export const marker = {
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
-            .bindTooltip(getTranslation('tooltips.placeMarker'), {
+            .bindTooltip(getDrawTooltip('placeMarker'), {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',

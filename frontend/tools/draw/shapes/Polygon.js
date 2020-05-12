@@ -1,3 +1,4 @@
+import { getDrawTooltip } from '../../../config';
 import { factory } from '../../../core';
 import { line } from './Line';
 
@@ -74,9 +75,9 @@ export const polygon = {
         }
     
         // handle tooltip text
-        first && this._hintMarker.setTooltipContent(getTranslation('tooltips.continueLine'));
+        first && this._hintMarker.setTooltipContent(getDrawTooltip('continueLine'));
         this._layer.getLatLngs().length === 3
-            && this._hintMarker.setTooltipContent(getTranslation('tooltips.finishPoly'));
+            && this._hintMarker.setTooltipContent(getDrawTooltip('finishPoly'));
 
         return marker;
     },

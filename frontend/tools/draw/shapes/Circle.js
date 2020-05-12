@@ -1,3 +1,4 @@
+import { getDrawTooltip } from '../../../config';
 import { util, Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -47,7 +48,7 @@ export const circle = {
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
-            .bindTooltip(getTranslation('tooltips.startCircle'), {
+            .bindTooltip(getDrawTooltip('startCircle'), {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',

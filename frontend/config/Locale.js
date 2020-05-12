@@ -24,7 +24,7 @@ export const getProcessTitle = id => {
     return PROCESS_TITLE[id] || '';
 };
 
-export const getDrawTooltips = type => {
+export const getDrawTooltip = type => {
     const tooltips = {
         "placeMarker": "Click to place marker",
         "firstVertex": "Click to place first vertex",
