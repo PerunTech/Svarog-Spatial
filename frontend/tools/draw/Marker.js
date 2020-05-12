@@ -6,7 +6,7 @@ export const marker = {
     options: {},
     enabled: false,
 
-    enable(options) {
+    enable (options) {
         util.assign(this.options, options);
 
         // change enabled state
@@ -49,7 +49,7 @@ export const marker = {
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
     
-    disable() {
+    disable () {
         // cancel, if drawing mode isn't even enabled
         if (!this.enabled) {
             return;
@@ -79,4 +79,54 @@ export const marker = {
         this.enabled = false;
     },
 
-}
+    isRelevantMarker: layer => layer instanceof factory.Marker && layer.pm && !layer._pmTempLayer,
+
+    isEnabled () {  return this.enabled; },
+
+    toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
+
+    _createMarker (e) {
+        if (!e.latlng) {
+            return;
+        }
+    
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+    
+        // create marker
+        const marker = new factory.Marker(latlng, this.options.markerStyle);
+    
+        // add marker to the map
+        marker.addTo(Map);
+    
+        // enable editing for the marker
+        marker.pm.enable();
+    
+        // fire the pm:create event and pass shape and marker
+        Map.fire('pm:create', {
+            shape: this.shape,
+            marker, // DEPRECATED
+            layer: marker,
+        });
+    
+        this._cleanupSnapping();
+    },
+
+    _syncHintMarker (e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+    
+        // if snapping is enabled, do it
+        if (this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
+    }
+};
