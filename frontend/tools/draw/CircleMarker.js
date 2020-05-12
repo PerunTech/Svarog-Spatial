@@ -49,4 +49,43 @@ export const circleMarker = {
         Map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
+
+    isRelevantMarker: layer => 
+        layer instanceof factory.CircleMarker 
+        && !(layer instanceof factory.Circle) 
+        && layer.pm 
+        && !layer._pmTempLayer,
+    
+    _createMarker(e) {
+        if (!e.latlng) {
+            return;
+        }
+    
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+    
+        // create marker
+        const marker = factory.circleMarker(latlng, this.options.pathOptions);
+    
+        // add marker to the map
+        marker.addTo(Map);
+    
+        // enable editing for the marker
+        marker.pm.enable();
+    
+        // fire the pm:create event and pass shape and marker
+        Map.fire('pm:create', {
+            shape: this._shape,
+            marker, // DEPRECATED
+            layer: marker,
+        });
+    
+        this._cleanupSnapping();
+    }
 };
