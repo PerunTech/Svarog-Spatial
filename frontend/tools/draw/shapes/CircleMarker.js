@@ -1,3 +1,4 @@
+import { getDrawTooltip } from '../../../config';
 import { util, factory, Map } from '../../../core';
 import { marker } from './Marker';
 
@@ -23,7 +24,7 @@ export const circleMarker = {
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
-            .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
+            .bindTooltip(getDrawTooltip('placeCircleMarker'), {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',

@@ -1,3 +1,4 @@
+import { getDrawTooltip } from '../../../config';
 import { util, Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -42,7 +43,7 @@ export const rectangle = {
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
-            .bindTooltip(getTranslation('tooltips.firstVertex'), {
+            .bindTooltip(getDrawTooltip('firstVertex'), {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
@@ -149,7 +150,7 @@ export const rectangle = {
         Map.on('click', this._finishShape, this);
     
         // change tooltip text
-        this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
+        this._hintMarker.setTooltipContent(getDrawTooltip('finishRect'));
     
         this._setRectangleOrigin();
     },

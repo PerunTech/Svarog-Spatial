@@ -23,3 +23,19 @@ export const getProcessTitle = id => {
 
     return PROCESS_TITLE[id] || '';
 };
+
+export const getDrawTooltip = type => {
+    const tooltips = {
+        "placeMarker": "Click to place marker",
+        "firstVertex": "Click to place first vertex",
+        "continueLine": "Click to continue drawing",
+        "finishLine": "Click any existing marker to finish",
+        "finishPoly": "Click first marker to finish",
+        "finishRect": "Click to finish",
+        "startCircle": "Click to place circle center",
+        "finishCircle": "Click to finish circle",
+        "placeCircleMarker": "Click to place circle marker"
+    };
+
+    return tooltips[type] || '';
+}
