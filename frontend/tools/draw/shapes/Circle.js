@@ -148,4 +148,24 @@ export const circle = {
     
         this._placeCircleCenter();
     },
+
+    _placeCircleCenter() {
+        const latlng = this._centerMarker.getLatLng();
+    
+        if (latlng) {
+            this._layer.setLatLng(latlng);
+    
+            // sync the hintline with hint marker
+            this._hintMarker.on('move', this._syncHintLine, this);
+            this._hintMarker.on('move', this._syncCircleRadius, this);
+    
+            this._hintMarker.setTooltipContent(getTranslation('tooltips.finishCircle'));
+    
+            this._layer.fire('pm:centerplaced', {
+                shape: this.shape,
+                workingLayer: this._layer,
+                latlng,
+            });
+        }
+    },
 };
