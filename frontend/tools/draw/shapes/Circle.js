@@ -131,5 +131,21 @@ export const circle = {
         }
     },
 
-
+    _placeCenterMarker(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+    
+        this._centerMarker.setLatLng(latlng);
+    
+        Map.off('click', this._placeCenterMarker, this);
+        Map.on('click', this._finishShape, this);
+    
+        this._placeCircleCenter();
+    },
 };
