@@ -95,5 +95,36 @@ export const line = {
         this._otherSnapLayers = [];
     },
 
-
+    disable() {
+        // cancel, if drawing mode isn't even enabled
+        if (!this._enabled) {
+            return;
+        }
+    
+        this.enabled = false;
+    
+        // reset cursor
+        Map._container.style.cursor = '';
+    
+        // unbind listeners
+        Map.off('click', this._createVertex, this).off('mousemove', this._syncHintMarker, this);
+        if (this.options.finishOn) {
+            Map.off(this.options.finishOn, this._finishShape, this);
+        }
+    
+        if (this.tempMapDoubleClickZoomState) {
+            Map.doubleClickZoom.enable();
+        }
+    
+        // remove layer
+        Map.removeLayer(this._layerGroup);
+    
+        // fire drawend event
+        Map.fire('pm:drawend', { shape: this.shape });
+    
+        // cleanup snapping
+        if (this.options.snappable) {
+            this._cleanupSnapping();
+        }
+    },
 };
