@@ -2,6 +2,7 @@ import { util, Map, factory } from '../../core';
 import { snap } from '..'
 
 export const marker = {
+    ...snap,
     shape: 'marker',
     options: {},
     enabled: false,
