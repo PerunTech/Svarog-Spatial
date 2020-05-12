@@ -39,7 +39,7 @@ export const marker = {
     
         // fire drawstart event
         Map.fire('pm:drawstart', {
-            shape: this._shape,
+            shape: this.shape,
             workingLayer: this._layer,
         });
     
@@ -51,7 +51,7 @@ export const marker = {
     
     disable() {
         // cancel, if drawing mode isn't even enabled
-        if (!this._enabled) {
+        if (!this.enabled) {
             return;
         }
     
@@ -70,13 +70,13 @@ export const marker = {
             this.isRelevantMarker(layer) && layer.pm.disable());
     
         // fire drawend event
-        Map.fire('pm:drawend', { shape: this._shape });
+        Map.fire('pm:drawend', { shape: this.shape });
     
         // cleanup snapping
         this.options.snappable && this._cleanupSnapping();
     
         // change enabled state
-        this._enabled = false;
+        this.enabled = false;
     },
 
 }
