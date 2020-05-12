@@ -111,5 +111,13 @@ export const circle = {
     isEnabled () { return this.enabled; },
 
     toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
+    
+    _syncHintLine() {
+        const latlng = this._centerMarker.getLatLng();
+    
+        // set coords for hintline from marker to last vertex of drawin polyline
+        this._hintline.setLatLngs([latlng, this._hintMarker.getLatLng()]);
+    },
+
 
 };
