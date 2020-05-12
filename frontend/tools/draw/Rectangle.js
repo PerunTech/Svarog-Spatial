@@ -153,4 +153,15 @@ export const rectangle = {
     
         this._setRectangleOrigin();
     },
+
+    _setRectangleOrigin() {
+        const latlng = this._startMarker.getLatLng();
+    
+        if (latlng) {
+          // show it first
+            this._layerGroup.addLayer(this._layer);
+            this._layer.setLatLngs([latlng, latlng]);
+            this._hintMarker.on('move', this._syncRectangleSize, this);
+        }
+    },
 };
