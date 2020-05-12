@@ -168,4 +168,30 @@ export const circle = {
             });
         }
     },
+
+    _finishShape(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // calc the radius
+        const center = this._centerMarker.getLatLng();
+        const latlng = this._hintMarker.getLatLng();
+        const radius = center.distanceTo(latlng);
+        const options = util.assign({}, this.options.pathOptions, { radius });
+    
+        // create the final circle layer
+        const circleLayer = factory.circle(center, options).addTo(Map);
+    
+        // disable drawing
+        this.disable();
+    
+        // fire the pm:create event and pass shape and layer
+        Map.fire('pm:create', {
+            shape: this.shape,
+            layer: circleLayer,
+        });
+    },
 };
