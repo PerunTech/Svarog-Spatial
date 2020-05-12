@@ -194,4 +194,18 @@ export const circle = {
             layer: circleLayer,
         });
     },
+
+    _createMarker(latlng) {
+        // create the new marker
+        const marker = factory.marker(latlng, {
+            draggable: false,
+            icon: factory.divIcon({ className: 'marker-icon' }),
+        });
+        marker._pmTempLayer = true;
+    
+        // add it to the map
+        this._layerGroup.addLayer(marker);
+    
+        return marker;
+    }
 };
