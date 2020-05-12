@@ -6,4 +6,88 @@ export const rectangle = {
     shape: 'rectangle',
     options: {},
     enabled: false,
+
+    enable(options) {
+        util.assign(this.options, options);
+    
+        // enable draw mode
+        this.enabled = true;
+    
+        // create a new layergroup
+        this._layerGroup = new factory.LayerGroup();
+        this._layerGroup._pmTempLayer = true;
+        this._layerGroup.addTo(Map);
+    
+        // the rectangle we want to draw
+        this._layer = factory.rectangle([[0, 0], [0, 0]], this.options.pathOptions);
+        this._layer._pmTempLayer = true;
+    
+        // this is the marker at the origin of the rectangle
+        // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
+        this._startMarker = factory.marker([0, 0], {
+            icon: factory.divIcon({ className: 'marker-icon rect-start-marker' }),
+            draggable: false,
+            zIndexOffset: 100,
+            opacity: this.options.cursorMarker ? 1 : 0,
+        });
+        this._startMarker._pmTempLayer = true;
+        this._layerGroup.addLayer(this._startMarker);
+    
+        // this is the hintmarker on the mouse cursor
+        this._hintMarker = factory.marker([0, 0], {
+            icon: factory.divIcon({ className: 'marker-icon cursor-marker' }),
+        });
+        this._hintMarker._pmTempLayer = true;
+        this._layerGroup.addLayer(this._hintMarker);
+    
+        // add tooltip to hintmarker
+        this.options.tooltips && this._hintMarker
+            .bindTooltip(getTranslation('tooltips.firstVertex'), {
+                permanent: true,
+                offset: factory.point(0, 10),
+                direction: 'bottom',
+                
+                opacity: 0.8,
+            })
+            .openTooltip();
+    
+        // show the hintmarker if the option is set
+        if (this.options.cursorMarker) {
+            factory.DomUtil.addClass(this._hintMarker._icon, 'visible');
+    
+          // Add two more matching style markers, if cursor marker is rendered
+            this._styleMarkers = [];
+            for (let i = 0; i < 2; i += 1) {
+                const styleMarker = factory.marker([0, 0], {
+                    icon: factory.divIcon({
+                        className: 'marker-icon rect-style-marker',
+                    }),
+                    draggable: false,
+                    zIndexOffset: 100,
+                });
+                styleMarker._pmTempLayer = true;
+                this._layerGroup.addLayer(styleMarker);
+
+                this._styleMarkers.push(styleMarker);
+            }
+        }
+    
+        // change map cursor
+        Map._container.style.cursor = 'crosshair';
+    
+        // create a polygon-point on click
+        Map.on('click', this._placeStartingMarkers, this);
+    
+        // sync hint marker with mouse cursor
+        Map.on('mousemove', this._syncHintMarker, this);
+    
+        // fire drawstart event
+        Map.fire('pm:drawstart', {
+            shape: this.shape,
+            workingLayer: this._layer,
+        });
+
+        // an array used in the snapping mixin.
+        this._otherSnapLayers = [];
+    },
 };
