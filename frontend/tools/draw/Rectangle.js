@@ -122,4 +122,35 @@ export const rectangle = {
     isEnabled () { return this.enabled; },
 
     toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
+
+    _placeStartingMarkers(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+    
+        // show and place start marker
+        factory.DomUtil.addClass(this._startMarker._icon, 'visible');
+        this._startMarker.setLatLng(latlng);
+    
+        // if we have the other two visibilty markers, show and place them now
+        if (this.options.cursorMarker && this._styleMarkers) {
+            this._styleMarkers.forEach(styleMarker => {
+                factory.DomUtil.addClass(styleMarker._icon, 'visible');
+                styleMarker.setLatLng(latlng);
+            });
+        }
+    
+        Map.off('click', this._placeStartingMarkers, this);
+        Map.on('click', this._finishShape, this);
+    
+        // change tooltip text
+        this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
+    
+        this._setRectangleOrigin();
+    },
 };
