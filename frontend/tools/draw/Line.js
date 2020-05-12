@@ -304,4 +304,27 @@ export const line = {
             this._cleanupSnapping();
         }
     },
+
+    _createMarker(latlng, first) {
+        // create the new marker
+        const marker = factory.marker(latlng, {
+            draggable: false,
+            icon: factory.divIcon({ className: 'marker-icon' }),
+        });
+        marker._pmTempLayer = true;
+    
+        // add it to the map
+        this._layerGroup.addLayer(marker);
+    
+        // a click on any marker finishes this shape
+        marker.on('click', this._finishShape, this);
+    
+        // handle tooltip text
+        first && this._hintMarker.setTooltipContent(getTranslation('tooltips.continueLine'));
+        
+        this._layer.getLatLngs().length === 2 
+            && this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
+    
+        return marker;
+    },
 };
