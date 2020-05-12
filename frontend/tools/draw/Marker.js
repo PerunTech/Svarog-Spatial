@@ -1,4 +1,5 @@
 import { util, Map, factory } from '../../core';
+import { snap } from '..'
 
 export const marker = {
     shape: 'marker',
@@ -43,7 +44,39 @@ export const marker = {
         });
     
         // enable edit mode for existing markers
+        // This iteration is unacceptable, `#revise_me`
         Map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
+    
+    disable() {
+        // cancel, if drawing mode isn't even enabled
+        if (!this._enabled) {
+            return;
+        }
+    
+        // undbind click event, don't create a marker on click anymore
+        Map.off('click', this._createMarker, this);
+    
+        // remove hint marker
+        this._hintMarker.remove();
+    
+        // remove event listener to sync hint marker
+        Map.off('mousemove', this._syncHintMarker, this);
+    
+        // disable dragging and removing for all markers
+        // This iteration is unacceptable, `#revise_me`
+        Map.eachLayer(layer => 
+            this.isRelevantMarker(layer) && layer.pm.disable());
+    
+        // fire drawend event
+        Map.fire('pm:drawend', { shape: this._shape });
+    
+        // cleanup snapping
+        this.options.snappable && this._cleanupSnapping();
+    
+        // change enabled state
+        this._enabled = false;
+    },
+
 }
