@@ -176,4 +176,33 @@ export const rectangle = {
             this._handleSnapping(fakeDragEvent);
         }
     },
+
+    _syncRectangleSize() {
+        // Create a box using corners A & B (A = Starting Position, B = Current Mouse Position)
+        const A = this._startMarker.getLatLng();
+        const B = this._hintMarker.getLatLng();
+    
+        this._layer.setBounds([A, B]);
+    
+        // Add matching style markers, if cursor marker is shown
+        if (this.options.cursorMarker && this._styleMarkers) {
+            const corners = this._findCorners();
+            const unmarkedCorners = [];
+            
+            // Find two corners not currently occupied by starting marker and hint marker
+            corners.forEach(corner => {
+                if (
+                    !corner.equals(this._startMarker.getLatLng()) &&
+                    !corner.equals(this._hintMarker.getLatLng())
+                ) {
+                    unmarkedCorners.push(corner);
+                }
+            });
+    
+          // Reposition style markers
+            unmarkedCorners.forEach((unmarkedCorner, index) => {
+                this._styleMarkers[index].setLatLng(unmarkedCorner);
+            });
+        }
+    },
 };
