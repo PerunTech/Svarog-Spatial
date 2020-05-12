@@ -1,7 +1,7 @@
-import { length, area } from '../..';
+import { lengthMeasurements, area } from '../..';
 
 export const eraser = {
-    clearLength () { return length.measurements.clearLayers(); },
+    clearLength () { return lengthMeasurements.clearLayers(); },
 
     clearArea () { return area.measurements.clearLayers(); },
 

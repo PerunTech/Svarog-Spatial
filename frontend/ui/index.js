@@ -38,7 +38,7 @@ export { CRSControl } from './modules/crs/CRSControl';
 export { Ellipser } from './modules/loading/Ellipser';
 export { Loading } from './modules/loading/Loading';
 
-export { length } from './modules/measurement/Length';
+export { Length, lengthMeasurements } from './modules/measurement/Length';
 export { area } from './modules/measurement/Area';
 export { angle } from './modules/measurement/Angle';
 export { eraser } from './modules/measurement/Eraser';

@@ -1,40 +1,50 @@
-import { util, factory, store, Map } from "../../../core";
-import { MEASURE_LINE, PROCESS_ENUM } from '../../../config';
+import { React, PropTypes } from 'perun-core';
+import { util, factory, Map, connect } from "../../../core";
+import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
 import { draw } from '../../../tools';
+import { Button, Icon } from '../..';
 
-export const length = {
-    measurements: factory.layerGroup().addTo(Map),
+/* The internal id of the process */
+const _id = PROCESS_ENUM.length;
+/* Layer group of all length measurements, register is accessible from outside. */
+export const lengthMeasurements = factory.layerGroup().addTo(Map);
 
-    enable (opt = {}) {
-        return this.setActiveProcess(PROCESS_ENUM.length)
-            .setAutoDisable()
-            .drawLine(opt);
-    },
+function _Length ({options, ...props}) {
+    const { activeId, dispatch, ..._props } = props;
 
-    disable (e) {
-        return this.finishMeasurement(e)
-            .setActiveProcess(''),
-            draw.line.disable();
-    },
+    /* Disables measurement handler. Called automatically on map event,
+        fired when the drawn shape is finished. */
+    const disable = React.useCallback((e) => {
+        (e && e.layer) 
+            && (lengthMeasurements.addLayer(e.layer),
+                Map.fitBounds(e.layer.getBounds()).off('pm:create', disable));
 
-    setActiveProcess (type) {
-        return store.dispatch({activeId: type}), this;
-    },
+        dispatch({activeId: ''});
+        draw.line.disable();
+    }, [dispatch])
 
-    setAutoDisable () {
-        return Map.on('pm:create', e => this.disable(e)), this;
-    },
+    /* Enables measurement handler */
+    const enable = React.useCallback(() => {
+        dispatch({ activeId: _id });
+        Map.on('pm:create', disable);
+        draw.line.enable(util.assign(MEASURE_LINE, options));
+    }, [options, dispatch, disable])
 
-    drawLine (opt) {
-        return draw.line.enable(util.assign(MEASURE_LINE, opt)), this;
-    },
-
-    finishMeasurement (e) {
-        if (e && e.layer) {
-            this.measurements.addLayer(e.layer);
-            Map.fitBounds(e.layer.getBounds()).off('pm:create', this.disable);
-        }
-
-        return this;
-    }
+    return <Button {..._props}
+        id={_id} 
+        className={activeId === _id ? 'active' : ''}
+        onClick={() => enable() } >
+            <Icon name={_id} size='28px' />
+            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(_id)}</span>
+    </Button>
 }
+
+_Length.propTypes = {
+    options: PropTypes.object,
+    activeId: PropTypes.string,
+    dispatch: PropTypes.func
+}
+
+export const Length = connect(({process}) => { 
+    return { activeId: process.activeId };
+})(_Length);
