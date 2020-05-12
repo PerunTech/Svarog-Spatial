@@ -127,4 +127,21 @@ export const line = {
             this._cleanupSnapping();
         }
     },
+
+    isEnabled () { return this.enabled; },
+
+    toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
+
+    /* #revise_me */
+    hasSelfIntersection () { console.log('To be implemented.') },
+
+    _syncHintLine() {
+        const polyPoints = this._layer.getLatLngs();
+    
+        if (polyPoints.length > 0) {
+            const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+            // set coords for hintline from marker to last vertex of drawin polyline
+            this._hintline.setLatLngs([ lastPolygonPoint, this._hintMarker.getLatLng() ]);
+        }
+    },
 };

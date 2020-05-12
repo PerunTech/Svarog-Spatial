@@ -82,7 +82,7 @@ export const marker = {
 
     isRelevantMarker: layer => layer instanceof factory.Marker && layer.pm && !layer._pmTempLayer,
 
-    isEnabled () {  return this.enabled; },
+    isEnabled () { return this.enabled; },
 
     toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
 
