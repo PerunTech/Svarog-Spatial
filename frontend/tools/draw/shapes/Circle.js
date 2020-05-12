@@ -1,5 +1,5 @@
-import { util, Map, factory } from '../../core';
-import { snap } from '..';
+import { util, Map, factory } from '../../../core';
+import { snap } from '../..';
 
 export const circle = {
     ...snap,

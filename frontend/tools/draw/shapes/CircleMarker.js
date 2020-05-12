@@ -1,15 +1,15 @@
-import { util, Map, factory } from '../../core';
-import { snap } from '..';
+import { util, factory, Map } from '../../../core';
+import { marker } from './Marker';
 
-export const marker = {
-    ...snap,
-    shape: 'marker',
+export const circleMarker = {
+    ...marker,
+    shape: 'circleMarker',
     options: {},
     enabled: false,
 
-    enable (options) {
+    enable(options) {
         util.assign(this.options, options);
-
+    
         // change enabled state
         this.enabled = true;
     
@@ -17,13 +17,13 @@ export const marker = {
         Map.on('click', this._createMarker, this);
     
         // this is the hintmarker on the mouse cursor
-        this._hintMarker = factory.marker([0, 0], this.options.markerStyle);
+        this._hintMarker = factory.circleMarker([0, 0], this.options.templineStyle);
         this._hintMarker._pmTempLayer = true;
         this._hintMarker.addTo(Map);
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
-            .bindTooltip(getTranslation('tooltips.placeMarker'), {
+            .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
@@ -31,7 +31,7 @@ export const marker = {
                 opacity: 0.8,
             })
             .openTooltip();
-
+    
         // this is just to keep the snappable mixin happy
         this._layer = this._hintMarker;
     
@@ -49,44 +49,14 @@ export const marker = {
         Map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
-    
-    disable () {
-        // cancel, if drawing mode isn't even enabled
-        if (!this.enabled) {
-            return;
-        }
-    
-        // undbind click event, don't create a marker on click anymore
-        Map.off('click', this._createMarker, this);
-    
-        // remove hint marker
-        this._hintMarker.remove();
-    
-        // remove event listener to sync hint marker
-        Map.off('mousemove', this._syncHintMarker, this);
-    
-        // disable dragging and removing for all markers
-        // This iteration is unacceptable, `#revise_me`
-        Map.eachLayer(layer => 
-            this.isRelevantMarker(layer) && layer.pm.disable());
-    
-        // fire drawend event
-        Map.fire('pm:drawend', { shape: this.shape });
-    
-        // cleanup snapping
-        this.options.snappable && this._cleanupSnapping();
-    
-        // change enabled state
-        this.enabled = false;
-    },
 
-    isRelevantMarker: layer => layer instanceof factory.Marker && layer.pm && !layer._pmTempLayer,
-
-    isEnabled () { return this.enabled; },
-
-    toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
-
-    _createMarker (e) {
+    isRelevantMarker: layer => 
+        layer instanceof factory.CircleMarker 
+        && !(layer instanceof factory.Circle) 
+        && layer.pm 
+        && !layer._pmTempLayer,
+    
+    _createMarker(e) {
         if (!e.latlng) {
             return;
         }
@@ -101,7 +71,7 @@ export const marker = {
         const latlng = this._hintMarker.getLatLng();
     
         // create marker
-        const marker = new factory.Marker(latlng, this.options.markerStyle);
+        const marker = factory.circleMarker(latlng, this.options.pathOptions);
     
         // add marker to the map
         marker.addTo(Map);
@@ -111,23 +81,11 @@ export const marker = {
     
         // fire the pm:create event and pass shape and marker
         Map.fire('pm:create', {
-            shape: this.shape,
+            shape: this._shape,
             marker, // DEPRECATED
             layer: marker,
         });
     
         this._cleanupSnapping();
-    },
-
-    _syncHintMarker (e) {
-        // move the cursor marker
-        this._hintMarker.setLatLng(e.latlng);
-    
-        // if snapping is enabled, do it
-        if (this.options.snappable) {
-            const fakeDragEvent = e;
-            fakeDragEvent.target = this._hintMarker;
-            this._handleSnapping(fakeDragEvent);
-        }
     }
 };

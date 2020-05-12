@@ -1,4 +1,4 @@
-import { factory } from '../../core';
+import { factory } from '../../../core';
 import { line } from './Line';
 
 export const polygon = {

@@ -1,11 +1,11 @@
 /* shapes */
-import { marker } from './Marker';
-import { circleMarker } from './CircleMarker';
-import { line } from './Line';
-import { polygon } from './Polygon';
+import { marker } from './shapes/Marker';
+import { circleMarker } from './shapes/CircleMarker';
+import { line } from './shapes/Line';
+import { polygon } from './shapes/Polygon';
 import { rectangle } from './Rectangle';
 import { circle } from './Circle';
-import { cut } from './Cut';
+import { cut } from './shapes/Cut';
 
 /**
  * Drawing tools.
