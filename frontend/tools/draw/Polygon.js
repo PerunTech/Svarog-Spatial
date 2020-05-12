@@ -47,4 +47,37 @@ export const polygon = {
         this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
         delete this._tempSnapLayerIndex;
     },
+
+    _createMarker(latlng, first) {
+        // create the new marker
+        const marker = factory.marker(latlng, {
+            draggable: false,
+            icon: factory.divIcon({ className: 'marker-icon' }),
+        });
+    
+        // mark this marker as temporary
+        marker._pmTempLayer = true;
+    
+        // add it to the map
+        this._layerGroup.addLayer(marker);
+    
+        // if the first marker gets clicked again, finish this shape
+        if (first) {
+            marker.on('click', this._finishShape, this);
+    
+            // add the first vertex to "other snapping layers" so the polygon is easier to finish
+            this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
+    
+            if (this.options.snappable) {
+                this._cleanupSnapping();
+            }
+        }
+    
+        // handle tooltip text
+        first && this._hintMarker.setTooltipContent(getTranslation('tooltips.continueLine'));
+        this._layer.getLatLngs().length === 3
+            && this._hintMarker.setTooltipContent(getTranslation('tooltips.finishPoly'));
+
+        return marker;
+    },
 };
