@@ -3,7 +3,6 @@ import { MEASURE_LINE, PROCESS_ENUM } from '../../../config';
 import { draw } from '../../../tools';
 
 export const length = {
-    type: 'Line',
     measurements: factory.layerGroup().addTo(Map),
 
     enable (opt = {}) {
@@ -15,7 +14,7 @@ export const length = {
     disable (e) {
         return this.finishMeasurement(e)
             .setActiveProcess(''),
-            draw.getHandler().disable();
+            draw.line.disable();
     },
 
     setActiveProcess (type) {
@@ -27,7 +26,7 @@ export const length = {
     },
 
     drawLine (opt) {
-        return draw.line(util.assign(MEASURE_LINE, opt)), this;
+        return draw.line.enable(util.assign(MEASURE_LINE, opt)), this;
     },
 
     finishMeasurement (e) {

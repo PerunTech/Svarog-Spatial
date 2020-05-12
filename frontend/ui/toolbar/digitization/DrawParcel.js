@@ -34,7 +34,7 @@ export const drawParcel = {
             this;
     },
 
-    drawPolygon (opt) { return draw.polygon({...DRAW_PARCEL, ...opt}), this; },
+    drawPolygon (opt) { return draw.polygon.enable({...DRAW_PARCEL, ...opt}), this; },
 
     setActiveProcess () { return store.dispatch({activeId: PROCESS_ENUM.draw}), this; }
 }
