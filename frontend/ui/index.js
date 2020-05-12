@@ -39,7 +39,7 @@ export { Ellipser } from './modules/loading/Ellipser';
 export { Loading } from './modules/loading/Loading';
 
 export { Length, lengthMeasurements } from './modules/measurement/Length';
-export { area } from './modules/measurement/Area';
+export { Area, areaMeasurements } from './modules/measurement/Area';
 export { angle } from './modules/measurement/Angle';
 export { eraser } from './modules/measurement/Eraser';
 export { Measurement } from './modules/measurement/Measurement';

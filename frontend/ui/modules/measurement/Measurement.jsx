@@ -1,23 +1,17 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { PROCESS_ENUM } from '../../../config';
-import { ButtonGroup, ToolbarButton, Length,  
-    area as areaTool, 
+import { ButtonGroup, ToolbarButton, Length, Area,
     angle as angleTool, 
     eraser as eraserTool } from '../..';
 
-const { area, angle, erase } = PROCESS_ENUM
+const { angle, erase } = PROCESS_ENUM
 
-export const Measurement = props =>
+export const Measurement = () =>
     <ButtonGroup id='measurement' >
         <Length />
-        <ToolbarButton id={area} onClick={() => areaTool.enable()} />
+        <Area />
         <ToolbarButton id={angle} onClick={() => angleTool.enable()} />
         <ToolbarButton id={erase} onClick={() => eraserTool.clearMeasurements()} />
     </ButtonGroup>;
-
-Measurement.propTypes = {
-    activeId: PropTypes.string,
-    dispatch: PropTypes.func
-}
 
 /* {[length, area, angle].includes(props.activeId) && <Dialog title='Измерена Површина' handler={areaTool} /> } */
