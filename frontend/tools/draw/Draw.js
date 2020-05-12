@@ -1,4 +1,3 @@
-import { snap } from '..';
 /* shapes */
 import { marker } from './Marker';
 import { circleMarker } from './CircleMarker';
@@ -23,8 +22,4 @@ export const draw = {
     rectangle,
     circle,
     cut
-}
-
-draw.prototype = {
-    ...snap
-}
+};
