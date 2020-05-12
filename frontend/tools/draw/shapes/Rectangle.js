@@ -150,7 +150,7 @@ export const rectangle = {
         Map.on('click', this._finishShape, this);
     
         // change tooltip text
-        this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
+        this._hintMarker.setTooltipContent(getDrawTooltip('finishRect'));
     
         this._setRectangleOrigin();
     },

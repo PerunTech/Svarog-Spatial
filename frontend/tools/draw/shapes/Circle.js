@@ -160,7 +160,7 @@ export const circle = {
             this._hintMarker.on('move', this._syncHintLine, this);
             this._hintMarker.on('move', this._syncCircleRadius, this);
     
-            this._hintMarker.setTooltipContent(getTranslation('tooltips.finishCircle'));
+            this._hintMarker.setTooltipContent(getDrawTooltip('finishCircle'));
     
             this._layer.fire('pm:centerplaced', {
                 shape: this.shape,

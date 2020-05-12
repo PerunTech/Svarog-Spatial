@@ -321,10 +321,10 @@ export const line = {
         marker.on('click', this._finishShape, this);
     
         // handle tooltip text
-        first && this._hintMarker.setTooltipContent(getTranslation('tooltips.continueLine'));
+        first && this._hintMarker.setTooltipContent(getDrawTooltip('continueLine'));
         
         this._layer.getLatLngs().length === 2 
-            && this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
+            && this._hintMarker.setTooltipContent(getDrawTooltip('finishLine'));
     
         return marker;
     },
