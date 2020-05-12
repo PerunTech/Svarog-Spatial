@@ -4,6 +4,7 @@ import { polygon } from './Polygon';
 export const cut = {
     ...polygon,
     shape: 'cut',
+    
     // #revise_me, dreadful name. cut._cut() is unacceptable.
     _cut(layer) {
         const all = Map._layers;
@@ -73,4 +74,28 @@ export const cut = {
         });
     },
 
+    _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(false);
+            
+            if (this._doesSelfIntersect) {
+                return;
+            }
+        }
+    
+        const coords = this._layer.getLatLngs();
+        const polygonLayer = factory.polygon(coords, this.options.pathOptions);
+        this._cut(polygonLayer);
+    
+        // disable drawing
+        this.disable();
+    
+        // clean up snapping states
+        this._cleanupSnapping();
+    
+        // remove the first vertex from "other snapping layers"
+        this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
+        delete this._tempSnapLayerIndex;
+    },
 };
