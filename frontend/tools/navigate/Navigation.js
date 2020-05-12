@@ -19,7 +19,7 @@ export const navigation = {
             Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
         });
 
-        return draw.rectangle(NAVIGATE_VIEW);
+        return draw.rectangle.enable(NAVIGATE_VIEW);
     },
 
     search () {}

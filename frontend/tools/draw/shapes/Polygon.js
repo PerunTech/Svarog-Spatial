@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { factory } from '../../../core';
+import { factory, Map } from '../../../core';
 import { line } from './Line';
 
 export const polygon = {
