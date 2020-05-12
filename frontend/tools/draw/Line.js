@@ -133,7 +133,7 @@ export const line = {
     toggle (options) { this.isEnabled() ? this.disable() : this.enable(options); },
 
     /* #revise_me */
-    hasSelfIntersection () { console.log('To be implemented.') },
+    hasSelfIntersection () { (console.log('isSelfIntersecting to be implemented.'), {features: []}) },
 
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();
@@ -142,6 +142,57 @@ export const line = {
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
             // set coords for hintline from marker to last vertex of drawin polyline
             this._hintline.setLatLngs([ lastPolygonPoint, this._hintMarker.getLatLng() ]);
+        }
+    },
+
+    _syncHintMarker(e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+    
+        // if snapping is enabled, do it
+        if (this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
+    
+        // if self-intersection is forbidden, handle it
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(true, e.latlng);
+        }
+    },
+
+    _handleSelfIntersection(addVertex, latlng) {
+        // ok we need to check the self intersection here
+        // problem: during draw, the marker on the cursor is not yet part
+        // of the layer. So we need to clone the layer, add the
+        // potential new vertex (cursor markers latlngs) and check the self
+        // intersection on the clone.
+    
+        // clone layer (polyline is enough, even when it's a polygon)
+        const clone = factory.polyline(this._layer.getLatLngs());
+    
+        if (addVertex) {
+          // get vertex from param or from hintmarker
+            if (!latlng) {
+                latlng = this._hintMarker.getLatLng();
+            }
+    
+            // add the vertex
+            clone.addLatLng(latlng);
+        }
+    
+        // check the self intersection
+        const selfIntersection = (console.log('isSelfIntersecting to be implemented.'), {features: []});
+        this._doesSelfIntersect = selfIntersection.features.length > 0;
+    
+        // change the style based on self intersection
+        if (this._doesSelfIntersect) {
+            this._hintline.setStyle({
+                color: 'red',
+            });
+        } else if (!this._hintline.isEmpty()) {
+            this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
 };
