@@ -223,4 +223,50 @@ export const line = {
         // sync the hintline again
         this._syncHintLine();
     },
+
+    _createVertex(e) {
+        // don't create a vertex if we have a selfIntersection and it is not allowed
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(true, e.latlng);
+    
+            if (this._doesSelfIntersect) {
+                return;
+            }
+        }
+    
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if (!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+    
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+    
+        // check if the first and this vertex have the same latlng
+        if (latlng.equals(this._layer.getLatLngs()[0])) {
+            // yes? finish the polygon
+            this._finishShape(e);
+    
+            // "why?", you ask? Because this happens when we snap the last vertex to the first one
+            // and then click without hitting the last marker. Click happens on the map
+            // in 99% of cases it's because the user wants to finish the polygon. So...
+            return;
+        }
+    
+        // is this the first point?
+        const first = this._layer.getLatLngs().length === 0;
+    
+        this._layer.addLatLng(latlng);
+        const newMarker = this._createMarker(latlng, first);
+    
+        this._hintline.setLatLngs([latlng, latlng]);
+    
+        this._layer.fire('pm:vertexadded', {
+            shape: this.shape,
+            workingLayer: this._layer,
+            marker: newMarker,
+            latlng,
+        });
+    },
 };
