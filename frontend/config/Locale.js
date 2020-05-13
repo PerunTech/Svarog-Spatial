@@ -26,16 +26,18 @@ export const getProcessTitle = id => {
 
 export const getDrawTooltip = type => {
     const tooltips = {
-        "placeMarker": "Click to place marker",
-        "firstVertex": "Click to place first vertex",
-        "continueLine": "Click to continue drawing",
-        "finishLine": "Click any existing marker to finish",
-        "finishPoly": "Click first marker to finish",
-        "finishRect": "Click to finish",
+        "placeMarker": "Кликнете за да поставите маркер.",
+        "firstVertex": "Кликнете за да го поставите првото теме.",
+        "continueLine": "Click to continue drawing.",
+        "finishLine": 'Кликнете на последното поставено теме за да формирате линија.',
+        "finishPoly": "Кликнете на првото поставено теме за да формирате полигон.",
+        "finishRect": "Кликнете за да завршите со цртање.",
         "startCircle": "Click to place circle center",
         "finishCircle": "Click to finish circle",
-        "placeCircleMarker": "Click to place circle marker"
+        "placeCircleMarker": "Кликнете за да поставите маркер."
     };
 
     return tooltips[type] || '';
 }
+
+//  "Click any existing marker to finish"

@@ -53,10 +53,8 @@ export const line = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
     
         // change map cursor
         Map._container.style.cursor = 'crosshair';

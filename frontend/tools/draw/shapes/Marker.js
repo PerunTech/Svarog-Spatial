@@ -28,10 +28,8 @@ export const marker = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
 
         // this is just to keep the snappable mixin happy
         this._layer = this._hintMarker;

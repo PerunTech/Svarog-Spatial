@@ -47,10 +47,8 @@ export const rectangle = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
     
         // show the hintmarker if the option is set
         if (this.options.cursorMarker) {

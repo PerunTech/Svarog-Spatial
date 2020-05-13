@@ -52,10 +52,8 @@ export const circle = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
     
         // this is the hintline from the hint marker to the center marker
         this._hintline = factory.polyline([], this.options.hintlineStyle);
