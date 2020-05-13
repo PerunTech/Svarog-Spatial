@@ -87,6 +87,7 @@ export const line = {
         Map.fire('pm:drawstart', {
             shape: this.shape,
             workingLayer: this._layer,
+            hintLayer: this._hintline,
         });
     
         // an array used in the snapping mixin.
@@ -264,6 +265,7 @@ export const line = {
         this._layer.fire('pm:vertexadded', {
             shape: this.shape,
             workingLayer: this._layer,
+            hintLayer: this._hintline,
             marker: newMarker,
             latlng,
         });
