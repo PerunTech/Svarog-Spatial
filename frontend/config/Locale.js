@@ -38,6 +38,4 @@ export const getDrawTooltip = type => {
     };
 
     return tooltips[type] || '';
-}
-
-//  'Click any existing marker to finish'
+};
