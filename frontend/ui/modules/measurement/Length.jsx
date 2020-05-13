@@ -2,7 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { util, factory, Map, connect } from "../../../core";
 import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
 import { draw } from '../../../tools';
-import { Button, Icon } from '../..';
+import { Button, Icon, Modal, DrawActions } from '../..';
 
 /* The internal id of the process */
 const _id = PROCESS_ENUM.length;
@@ -36,6 +36,23 @@ function _Length ({options, ...props}) {
         onClick={() => enable() } >
             <Icon name={_id} size='32px' />
             <span style={{ display: 'block' }}>{getProcessTitle(_id)}</span>
+            {activeId === _id 
+                && <Modal show
+                    id='measure-dialog'
+                    backdrop={false} 
+                    enforceFocus={false}
+                    container={document.getElementsByClassName('control-map')[0]} >
+                    <Modal.Title>
+                        <Button disabled className='as-label' >Измерена површина</Button>
+                        <DrawActions
+                            finish={() => draw.line._finishShape()} 
+                            undo={() => draw.line._removeLastVertex()}
+                            cancel={disable} />
+                    </Modal.Title>
+                    <Modal.Body >
+                        <Button onClick ={() => console.log('clicked')} >Test Measure Utility Body</Button>
+                    </Modal.Body>
+                </Modal>}
     </Button>
 }
 
