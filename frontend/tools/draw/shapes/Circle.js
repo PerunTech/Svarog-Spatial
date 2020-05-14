@@ -72,7 +72,7 @@ export const circle = {
         // fire drawstart event
         Map.fire('pm:drawstart', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
         });
 
         // an array used in the snapping mixin.
@@ -162,7 +162,7 @@ export const circle = {
     
             this._layer.fire('pm:centerplaced', {
                 shape: this.shape,
-                workingLayer: this._layer,
+                workLayer: this._layer,
                 latlng,
             });
         }

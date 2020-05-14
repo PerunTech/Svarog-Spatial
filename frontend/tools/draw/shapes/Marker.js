@@ -40,7 +40,7 @@ export const marker = {
         // fire drawstart event
         Map.fire('pm:drawstart', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
         });
     
         // enable edit mode for existing markers

@@ -86,7 +86,7 @@ export const line = {
         // fire drawstart event
         Map.fire('pm:drawstart', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
             hintLayer: this._hintline,
         });
     
@@ -264,7 +264,7 @@ export const line = {
     
         this._layer.fire('pm:vertexadded', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
             hintLayer: this._hintline,
             marker: newMarker,
             latlng,
