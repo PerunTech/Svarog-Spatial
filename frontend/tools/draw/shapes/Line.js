@@ -292,7 +292,8 @@ export const line = {
         // create the leaflet shape and add it to the map
         const polylineLayer = factory.polyline(coords, this.options.pathOptions).addTo(Map);
     
-        // disable drawing
+        /* Disable drawing. Keep this line above the 'create' event fire,
+        callers that listen to the event may re-enable drawing. */
         this.disable();
     
         // fire the pm:create event and pass shape and layer
