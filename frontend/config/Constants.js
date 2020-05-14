@@ -97,6 +97,8 @@ export const PROCESS_ENUM = {
 
 /** @constant */
 export const MEASURE_LINE = {
+    // allow multiple drawn shapes
+    repeatable: true,
     // snapping
     snappable: true,
     snapDistance: 20,
