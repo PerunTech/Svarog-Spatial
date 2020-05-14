@@ -95,7 +95,7 @@ export const line = {
         this._otherSnapLayers = [];
     },
 
-    disable () {
+    disable (force) {
         // cancel, if drawing mode isn't even enabled
         if (!this.enabled) {
             return;
@@ -126,6 +126,8 @@ export const line = {
         if (this.options.snappable) {
             this._cleanupSnapping();
         }
+
+        (this.options.repeatable && !force) && this.enable(this.options);
     },
 
     isEnabled () { return this.enabled; },
