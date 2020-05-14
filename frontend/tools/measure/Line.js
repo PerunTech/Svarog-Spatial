@@ -113,7 +113,7 @@ export const measureLine = {
     }, true),
 
     setLatLngs: util.override(Polyline.prototype.setLatLngs, function (protoVal) {
-        this.updateMeasurements();
+        util.debounce(this.updateMeasurements.bind(this), 500)();
         return protoVal;
     }),
 
