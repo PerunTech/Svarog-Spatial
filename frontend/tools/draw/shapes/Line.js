@@ -257,7 +257,7 @@ export const line = {
         // is this the first point?
         const first = this._layer.getLatLngs().length === 0;
     
-        this._layer.addLatLng(latlng);
+        this._layer.setLatLngs([...this._layer.getLatLngs(), latlng]);
         const newMarker = this._createMarker(latlng, first);
     
         this._hintline.setLatLngs([latlng, latlng]);
