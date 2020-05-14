@@ -129,7 +129,7 @@ export const MEASURE_LINE = {
         showMeasurements: true
     },
     // show a marker at the cursor
-    cursorMarker: true,
+    cursorMarker: false,
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,

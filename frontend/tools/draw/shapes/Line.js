@@ -9,7 +9,7 @@ export const line = {
     enabled: false,
     _doesSelfIntersect: false,
 
-    enable(options) {
+    enable (options) {
         util.assign(this.options, options);
     
         /* #revise_me, rubbish logic */
@@ -95,7 +95,7 @@ export const line = {
         this._otherSnapLayers = [];
     },
 
-    disable() {
+    disable () {
         // cancel, if drawing mode isn't even enabled
         if (!this.enabled) {
             return;

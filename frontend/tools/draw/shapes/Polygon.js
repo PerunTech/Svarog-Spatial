@@ -7,7 +7,7 @@ export const polygon = {
     shape: 'polygon',
     enabled: false,
 
-    _finishShape(e) {
+    _finishShape (e) {
         // if self intersection is not allowed, do not finish the shape!
         if (!this.options.allowSelfIntersection) {
             this._handleSelfIntersection(false);
@@ -49,7 +49,7 @@ export const polygon = {
         delete this._tempSnapLayerIndex;
     },
 
-    _createMarker(latlng, first) {
+    _createMarker (latlng, first) {
         // create the new marker
         const marker = factory.marker(latlng, {
             draggable: false,
