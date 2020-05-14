@@ -1,39 +1,51 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../../core";
+import { factory, Map, connect, store } from "../../../core";
 import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
 import { draw } from '../../../tools';
 import { Button, Icon, Modal, DrawActions } from '../..';
 
 /* The internal id of the process */
 const _id = PROCESS_ENUM.length;
+
 /* Layer group of all length measurements, register is accessible from outside. */
 export const lengthMeasurements = factory.layerGroup().addTo(Map);
 
-function _Length ({options, ...props}) {
-    const { activeId, dispatch, ..._props } = props;
+/* Executes when measurement shape is finished and drawing is disabled, 
+    re-activates the drawing handler and registers the drawn shape. */ 
+const _finishMeasurement = e => {
+    (e && e.layer) 
+        && (lengthMeasurements.addLayer(e.layer), Map.fitBounds(e.layer.getBounds()));
 
-    /* Disables measurement handler. Called automatically on map event,
-        fired when the drawn shape is finished. */
-    const disable = React.useCallback((e) => {
-        (e && e.layer) 
-            && (lengthMeasurements.addLayer(e.layer),
-                Map.fitBounds(e.layer.getBounds()).off('pm:create', disable));
+    draw.line.enable(MEASURE_LINE);
+}
 
-        dispatch({activeId: ''});
-        draw.line.disable();
-    }, [dispatch])
+/* Disables measurement handler. Called automatically on map event,
+    fired when the drawn shape is finished. */
+const _disable = () => {
+    Map.off('pm:create', _finishMeasurement);
+    store.dispatch({activeId: ''});
+    draw.line.disable();
+}; 
 
-    /* Enables measurement handler */
-    const enable = React.useCallback(() => {
-        dispatch({ activeId: _id });
-        Map.on('pm:create', disable);
-        draw.line.enable(util.assign(MEASURE_LINE, options));
-    }, [options, dispatch, disable])
+/* Enables measurement handler */
+const _enable = () => {
+    Map.on('pm:create', _finishMeasurement).on('pm:drawstart', ({ workLayer }) => {
+        workLayer.on('pm:vertexadded', ({workLayer}) => {
+                // console.log(workLayer); //._measurementLayer.layers
+            });
+        });
+    console.log('enabled')
+    store.dispatch({ activeId: _id });
+    draw.line.enable(MEASURE_LINE);
+};
+
+function _Length ({activeId, ..._props}) {
+    const [totalLength, setLength] = React.useState(0);
 
     return <Button {..._props}
         id={_id} 
         className={activeId === _id ? 'active' : ''}
-        onClick={() => enable() } >
+        onClick={() => _enable() } >
             <Icon name={_id} size='32px' />
             <span style={{ display: 'block' }}>{getProcessTitle(_id)}</span>
             {activeId === _id 
@@ -43,15 +55,14 @@ function _Length ({options, ...props}) {
                     enforceFocus={false}
                     container={document.getElementsByClassName('control-map')[0]} >
                     <Modal.Title>
-                        <Button disabled className='as-label' >Измерена површина</Button>
+                        <Button disabled className='as-label' >Измерена должина</Button>
                         <DrawActions
                             finish={() => draw.line._finishShape()} 
                             undo={() => draw.line._removeLastVertex()}
-                            cancel={disable} />
+                            cancel={_disable} />
                     </Modal.Title>
-                    <Modal.Body >
-                        <Button onClick ={() => console.log('clicked')} >Test Measure Utility Body</Button>
-                    </Modal.Body>
+                    <Modal.Body children={<Button disabled className='as-label' >{totalLength}</Button>} />
+                    <Modal.Footer children={<Button onClick={_disable} >Заврши</Button>} />
                 </Modal>}
     </Button>
 }

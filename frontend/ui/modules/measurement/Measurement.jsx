@@ -5,7 +5,7 @@ export const Measurement = () =>
     <ButtonGroup id='measurement' >
         <Length />
         <Area />
-        <Angle />
+        <Angle disabled />
         <Eraser />
     </ButtonGroup>;
 
