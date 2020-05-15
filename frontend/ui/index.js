@@ -1,7 +1,7 @@
 // util
-export { useMount } from './utils/UseMount';
-export { useMouseLeave } from './utils/UseMouseLeave';
-export { useUpdate } from './utils/UseUpdate';
+export { useMount } from './utils/hooks/UseMount';
+export { useMouseLeave } from './utils/hooks/UseMouseLeave';
+export { useUpdate } from './utils/hooks/UseUpdate';
 export { DrawActions } from './utils/drawActions';
 
 /* -------- */
