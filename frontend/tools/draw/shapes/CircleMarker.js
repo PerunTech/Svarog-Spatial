@@ -37,8 +37,8 @@ export const circleMarker = {
         // sync hint marker with mouse cursor
         Map.on('mousemove', this._syncHintMarker, this);
     
-        // fire drawstart event
-        Map.fire('pm:drawstart', {
+        // fire draw_start event
+        Map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
         });
@@ -78,8 +78,8 @@ export const circleMarker = {
         // enable editing for the marker
         marker.pm.enable();
     
-        // fire the pm:create event and pass shape and marker
-        Map.fire('pm:create', {
+        // fire the new_shape event and pass shape and marker
+        Map.fire('new_shape', {
             shape: this._shape,
             marker, // DEPRECATED
             layer: marker,

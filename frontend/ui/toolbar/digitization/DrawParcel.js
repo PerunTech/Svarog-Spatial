@@ -30,7 +30,7 @@ export const drawParcel = {
 
     setZoomControl () {
         return Map.setMinZoom(MIN_DIGI_SCALE)
-            .once('pm:create', () => Map.setMinZoom(MAP_CONFIG.minZoom)),
+            .once('new_shape', () => Map.setMinZoom(MAP_CONFIG.minZoom)),
             this;
     },
 

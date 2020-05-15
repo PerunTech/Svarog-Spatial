@@ -83,8 +83,8 @@ export const line = {
         // sync the hintline with hint marker
         this._hintMarker.on('move', this._syncHintLine, this);
     
-        // fire drawstart event
-        Map.fire('pm:drawstart', {
+        // fire draw_start event
+        Map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
             hintLayer: this._hintline,
@@ -100,7 +100,7 @@ export const line = {
         if (!this.enabled) {
             return;
         }
-    
+
         this.enabled = false;
     
         // reset cursor
@@ -119,8 +119,8 @@ export const line = {
         // remove layer
         Map.removeLayer(this._layerGroup);
     
-        // fire drawend event
-        Map.fire('pm:drawend', { shape: this.shape });
+        // fire draw_end event
+        Map.fire('draw_end', { shape: this.shape });
     
         // cleanup snapping
         if (this.options.snappable) {
@@ -264,7 +264,7 @@ export const line = {
     
         this._hintline.setLatLngs([latlng, latlng]);
     
-        this._layer.fire('pm:vertexadded', {
+        this._layer.fire('new_vertex', {
             shape: this.shape,
             workLayer: this._layer,
             hintLayer: this._hintline,
@@ -298,8 +298,8 @@ export const line = {
         callers that listen to the event may re-enable drawing. */
         this.disable();
     
-        // fire the pm:create event and pass shape and layer
-        Map.fire('pm:create', {
+        // fire the new_shape event and pass shape and layer
+        Map.fire('new_shape', {
             shape: this.shape,
             layer: polylineLayer,
         });

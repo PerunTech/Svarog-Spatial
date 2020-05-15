@@ -15,8 +15,8 @@ export const navigation = {
     },
 
     boxZoom () {
-        Map.on('pm:create', function fn ({layer}) {
-            Map.fitBounds(layer.getBounds()).off('pm:create', fn).removeLayer(layer);
+        Map.on('new_shape', function fn ({layer}) {
+            Map.fitBounds(layer.getBounds()).off('new_shape', fn).removeLayer(layer);
         });
 
         return draw.rectangle.enable(NAVIGATE_VIEW);

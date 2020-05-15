@@ -10,31 +10,20 @@ const _id = PROCESS_ENUM.length;
 /* Layer group of all length measurements, register is accessible from outside. */
 export const lengthMeasurements = factory.layerGroup().addTo(Map);
 
-/* Executes when measurement shape is finished and drawing is disabled, 
-    re-activates the drawing handler and registers the drawn shape. */ 
-const _finishMeasurement = e => {
-    (e && e.layer) 
-        && (lengthMeasurements.addLayer(e.layer), Map.fitBounds(e.layer.getBounds()));
-
-    draw.line.enable(MEASURE_LINE);
-}
+/* Registers the drawn shape. Executes when measurement shape is finished. */
+const _finishMeasurement = e => (e && e.layer) && lengthMeasurements.addLayer(e.layer);
 
 /* Disables measurement handler. Called automatically on map event,
     fired when the drawn shape is finished. */
 const _disable = () => {
-    Map.off('pm:create', _finishMeasurement);
+    Map.off('new_shape', _finishMeasurement);
     store.dispatch({activeId: ''});
-    draw.line.disable();
+    draw.line._finishShape();
 }; 
 
 /* Enables measurement handler */
 const _enable = () => {
-    Map.on('pm:create', _finishMeasurement).on('pm:drawstart', ({ workLayer }) => {
-        workLayer.on('pm:vertexadded', ({workLayer}) => {
-                // console.log(workLayer); //._measurementLayer.layers
-            });
-        });
-    console.log('enabled')
+    Map.on('new_shape', _finishMeasurement).on('draw_end', (e) => console.log(e))
     store.dispatch({ activeId: _id });
     draw.line.enable(MEASURE_LINE);
 };
@@ -45,7 +34,7 @@ function _Length ({activeId, ..._props}) {
     return <Button {..._props}
         id={_id} 
         className={activeId === _id ? 'active' : ''}
-        onClick={() => _enable() } >
+        onClick={_enable} >
             <Icon name={_id} size='32px' />
             <span style={{ display: 'block' }}>{getProcessTitle(_id)}</span>
             {activeId === _id 

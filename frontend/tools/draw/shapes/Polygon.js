@@ -35,8 +35,8 @@ export const polygon = {
         // disable drawing
         this.disable();
     
-        // fire the pm:create event and pass shape and layer
-        Map.fire('pm:create', {
+        // fire the new_shape event and pass shape and layer
+        Map.fire('new_shape', {
             shape: this.shape,
             layer: polygonLayer,
         });
