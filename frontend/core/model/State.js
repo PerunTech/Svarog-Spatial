@@ -64,6 +64,10 @@ export const state = {
     appState: {
         appStatus: '',
         processId: ''
+    },
+    measurement: {
+        totalLength: '0 m',
+        totalArea: '0 m'
     }
 };
 Object.keys(state).map(key => store.addState(key, state[key]));
