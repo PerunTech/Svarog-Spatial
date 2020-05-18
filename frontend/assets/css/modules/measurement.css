@@ -25,6 +25,12 @@
 
 #measure-dialog #draw-actions {
     float: right;
+    /*margin-top: 5px;*/
+}
+#measure-dialog #draw-actions > button {
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: 0.5s;
 }
 
 #measure-dialog .end-measurement {
