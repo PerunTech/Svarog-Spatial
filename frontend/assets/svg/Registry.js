@@ -314,9 +314,9 @@ const _registry = {
                 + '2.765625-2.761719-.003906-1.527344-1.238281-2.761719-2.765625-2.765625zm0 0'} style={{fill: '#454545'}} />
         </g>
     },
-    /* <div>Icons made by <a href="https://www.flaticon.com/authors/creaticca-creative-agency"
-        title="Creaticca Creative Agency">Creaticca Creative Agency</a> from <a href="https://www.flaticon.com/"
-        title="Flaticon">www.flaticon.com</a></div> */
+    /* <div>Icons made by <a href='https://www.flaticon.com/authors/creaticca-creative-agency'
+        title='Creaticca Creative Agency'>Creaticca Creative Agency</a> from <a href='https://www.flaticon.com/'
+        title='Flaticon'>www.flaticon.com</a></div> */
     angle: {
         version: '1.1',
         x: '0px',
@@ -366,8 +366,8 @@ const _registry = {
             <polygon style={{fill: '#F9F9F9'}} points='148.224,38.571 148.224,90.965 122.027,64.512 ' />
         </g>
     },
-    /*<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
-        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*/
+    /*<div>Icons made by <a href='https://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a>
+        from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div>*/
     erase: {
         version: '1.1',
         x: '0px',
@@ -404,6 +404,52 @@ const _registry = {
                 10-10 0-5.519532-4.480469-10-10-10zm0 0' style={{fill: '#000000'}} />
             <path d='m448 491.996094c-5.523438 0-10 4.480468-10 10 0 5.523437 4.476562 10 10 10h19.996094c5.523437 0
                 10-4.476563 10-10 0-5.519532-4.476563-10-10-10zm0 0' style={{fill: '#000000'}}/>
+        </g>
+    },
+    /* <div>Icons made by <a href='https://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a>
+        from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div> */
+    confirm: {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 17.837 17.837',
+        path: <g>
+            <path style={{fill: '#000000'}} d='M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
+                c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
+                L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z'/>
+        </g>
+    },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */
+    undo: {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 32.076 32.076',
+        path: <g>
+            <path d='M32.076,16.038c0,7.577-6.166,13.742-13.742,13.742c-1.381,0-2.5-1.119-2.5-2.5s1.119-2.5,2.5-2.5
+                c4.819,0,8.742-3.922,8.742-8.742c0-4.82-3.923-8.742-8.742-8.742c-4.519,0-8.244,3.443-8.696,7.842h4.665l-7.15,9.341L0,15.138
+                h4.637C5.105,7.982,11.061,2.296,18.334,2.296C25.91,2.296,32.076,8.461,32.076,16.038z'/>
+        </g>
+    },
+
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */
+    cancel: {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 492 492',
+        path: <g>
+            <g transform='matrix(0.817662 0 0 0.817662 44.8552 44.8552)' >
+                <path d='M300.188,246L484.14,62.04c5.06-5.064,7.852-11.82,7.86-19.024c0-7.208-2.792-13.972-7.86-19.028L468.02,7.872
+                    c-5.068-5.076-11.824-7.856-19.036-7.856c-7.2,0-13.956,2.78-19.024,7.856L246.008,191.82L62.048,7.872
+                    c-5.06-5.076-11.82-7.856-19.028-7.856c-7.2,0-13.96,2.78-19.02,7.856L7.872,23.988c-10.496,10.496-10.496,27.568,0,38.052
+                    L191.828,246L7.872,429.952c-5.064,5.072-7.852,11.828-7.852,19.032c0,7.204,2.788,13.96,7.852,19.028l16.124,16.116
+                    c5.06,5.072,11.824,7.856,19.02,7.856c7.208,0,13.968-2.784,19.028-7.856l183.96-183.952l183.952,183.952
+                    c5.068,5.072,11.824,7.856,19.024,7.856h0.008c7.204,0,13.96-2.784,19.028-7.856l16.12-16.116
+                    c5.06-5.064,7.852-11.824,7.852-19.028c0-7.204-2.792-13.96-7.852-19.028L300.188,246z' />
+            </g>
         </g>
     }
 };
