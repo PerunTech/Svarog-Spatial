@@ -1,4 +1,4 @@
-import { factory } from '../../core';
+import { factory, store } from '../../core';
 
 const { Marker, marker, Layer, DomUtil } = factory;
 
@@ -10,6 +10,8 @@ export const measureMarker = {
     initialize: function (latlng, measurement, title, rotation, options) {
         factory.setOptions(this, options);
 
+        if (title === 'Total length') { store.dispatch({totalLength: measurement}) }
+        
         this._latlng = latlng;
         this._measurement = measurement;
         this._title = title;

@@ -19,7 +19,7 @@ export function Coordinates ({coordinates, onChange, ...props}) {
         return <div key={idx} className='coordinate' onBlur={onBlur} >
             <Input {...inputProps}
                 id={String(idx)}
-                value={coordinate}
+                value={String(coordinate)}
                 onChange={e => onChange(format(e))}
                 placeholder={idx === 0 ? 'Апсциса X' : 'Ордината Y'}
                 {...((validated && coordinate.length > 4) && isValid(coordinate, idx))} />

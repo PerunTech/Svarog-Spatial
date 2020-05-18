@@ -1,11 +1,11 @@
 import { React } from 'perun-core';
 import { PROCESS_ENUM, getProcessTitle } from '../../../config';
-import { Button, Icon, lengthMeasurements, areaMeasurements } from '../..';
+import { Button, Icon, length, areaMeasurements } from '../..';
 
 /* The internal id of the process */
 const _id = PROCESS_ENUM.erase;
 
-export const clearLength = () => lengthMeasurements.clearLayers();
+export const clearLength = () => length.measurements.clearLayers();
 export const clearArea = () => areaMeasurements.clearLayers();
 export const clearMeasurements = () => (clearLength(), clearArea());
 

@@ -47,10 +47,8 @@ export const rectangle = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
     
         // show the hintmarker if the option is set
         if (this.options.cursorMarker) {
@@ -82,10 +80,10 @@ export const rectangle = {
         // sync hint marker with mouse cursor
         Map.on('mousemove', this._syncHintMarker, this);
     
-        // fire drawstart event
-        Map.fire('pm:drawstart', {
+        // fire draw_start event
+        Map.fire('draw_start', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
         });
 
         // an array used in the snapping mixin.
@@ -111,8 +109,8 @@ export const rectangle = {
         // remove helping layers
         Map.removeLayer(this._layerGroup);
     
-        // fire drawend event
-        Map.fire('pm:drawend', { shape: this.shape });
+        // fire draw_end event
+        Map.fire('draw_end', { shape: this.shape });
 
         // cleanup snapping
         if (this.options.snappable) {
@@ -226,8 +224,8 @@ export const rectangle = {
         // disable drawing
         this.disable();
     
-        // fire the pm:create event and pass shape and layer
-        Map.fire('pm:create', {
+        // fire the new_shape event and pass shape and layer
+        Map.fire('new_shape', {
             shape: this.shape,
             layer: rectangleLayer,
         });

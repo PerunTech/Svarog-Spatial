@@ -1,50 +1,82 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../../core";
+import { factory, Map, connect, store } from "../../../core";
 import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
 import { draw } from '../../../tools';
-import { Button, Icon } from '../..';
+import { Button, Icon, Modal, DrawActions } from '../..';
 
-/* The internal id of the process */
-const _id = PROCESS_ENUM.length;
-/* Layer group of all length measurements, register is accessible from outside. */
-export const lengthMeasurements = factory.layerGroup().addTo(Map);
+export const length ={
+    /* The internal id && measurement sum of the process */
+    id: PROCESS_ENUM.length,
+    sum: 0,
 
-function _Length ({options, ...props}) {
-    const { activeId, dispatch, ..._props } = props;
+    /* Layer group of all length measurements */
+    measurements: factory.layerGroup().addTo(Map),
 
-    /* Disables measurement handler. Called automatically on map event,
-        fired when the drawn shape is finished. */
-    const disable = React.useCallback((e) => {
-        (e && e.layer) 
-            && (lengthMeasurements.addLayer(e.layer),
-                Map.fitBounds(e.layer.getBounds()).off('pm:create', disable));
+    enable: function () {
+        Map.on('new_shape', this._finishMeasurement.bind(this));
+        store.dispatch({ activeId: this.id });
+        draw.line.enable(MEASURE_LINE);
+    },
 
-        dispatch({activeId: ''});
-        draw.line.disable();
-    }, [dispatch])
+    disable: function () {
+        this.sum = 0
+        Map.off('new_shape', this._finishMeasurement.bind(this));
+        store.dispatch({activeId: '', totalLength: '0 m'});
+        draw.line.disable('force');
+    },
 
-    /* Enables measurement handler */
-    const enable = React.useCallback(() => {
-        dispatch({ activeId: _id });
-        Map.on('pm:create', disable);
-        draw.line.enable(util.assign(MEASURE_LINE, options));
-    }, [options, dispatch, disable])
+    _finishMeasurement: function (e) {
+        if (e && e.layer) {
+            this.measurements.addLayer(e.layer);
+            this.sum = this.sum + this._calcCurrentLength(store.getState().measurement.totalLength)
+        }
+    },
+
+    /* formats measurement to a number. Eg: converts string '45.2 km' to 45200 as number.
+        Takes care of the unit of measurement of the input (km or m), always outputs in meters. */
+    _calcCurrentLength: str => 
+        Number(Array.from(str).filter(s =>
+            '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000 : 1)
+};
+
+function _Length ({activeId, currentMeasure, ..._props}) {
+    const { id, sum, enable, disable } = length;
 
     return <Button {..._props}
-        id={_id} 
-        className={activeId === _id ? 'active' : ''}
-        onClick={() => enable() } >
-            <Icon name={_id} size='32px' />
-            <span style={{ display: 'block' }}>{getProcessTitle(_id)}</span>
+        id={id} 
+        className={activeId === id ? 'active' : ''}
+        onClick={enable.bind(length)} >
+            <Icon name={id} size='32px' />
+            <span style={{ display: 'block' }}>{getProcessTitle(id)}</span>
+            {activeId === id
+                && <Modal show
+                    id='measure-dialog'
+                    backdrop={false} 
+                    enforceFocus={false}
+                    container={document.getElementsByClassName('control-map')[0]} >
+                    <Modal.Title>
+                        <Button disabled className='as-label' >Измерена должина</Button>
+                        <DrawActions
+                            finish={() => draw.line._finishShape()} 
+                            undo={() => draw.line._removeLastVertex()}
+                            cancel={disable.bind(length) /* implement cancel rather than disable */} />
+                    </Modal.Title>
+                    <Modal.Body >
+                        <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
+                    </Modal.Body>
+                    <Modal.Footer ><Button onClick={disable.bind(length)} >Заврши</Button></Modal.Footer>
+                </Modal>}
     </Button>
 }
 
 _Length.propTypes = {
-    options: PropTypes.object,
+    currentMeasure: PropTypes.string,
     activeId: PropTypes.string,
-    dispatch: PropTypes.func
 }
 
-export const Length = connect(({process}) => { 
-    return { activeId: process.activeId };
+export const Length = connect(({ process, measurement }) => {
+    return { 
+        activeId: process.activeId,
+        currentMeasure: length._calcCurrentLength(measurement.totalLength)
+    };
 })(_Length);

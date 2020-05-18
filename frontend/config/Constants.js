@@ -97,6 +97,8 @@ export const PROCESS_ENUM = {
 
 /** @constant */
 export const MEASURE_LINE = {
+    // allow multiple drawn shapes
+    repeatable: true,
     // snapping
     snappable: true,
     snapDistance: 20,
@@ -126,10 +128,12 @@ export const MEASURE_LINE = {
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
-        showMeasurements: true
+        /* This will enable runtime calculation of measurements on each new pixel location of the mouse cursor. */
+        /* DO NOT ENABLE, impedes application performance, creates hundreds - thousands DOM elements each second. */
+        /* showMeasurements: true */ 
     },
     // show a marker at the cursor
-    cursorMarker: true,
+    cursorMarker: false,
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,

@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { util } from '../../core';
+import { util } from '../../../core';
 
 export function useMouseLeave() {
     const [mouseLeft, setMouseLeft] = React.useState(true);

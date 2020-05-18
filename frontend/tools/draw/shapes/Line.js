@@ -9,7 +9,7 @@ export const line = {
     enabled: false,
     _doesSelfIntersect: false,
 
-    enable(options) {
+    enable (options) {
         util.assign(this.options, options);
     
         /* #revise_me, rubbish logic */
@@ -53,10 +53,8 @@ export const line = {
                 permanent: true,
                 offset: factory.point(0, 10),
                 direction: 'bottom',
-                
                 opacity: 0.8,
-            })
-            .openTooltip();
+            }).openTooltip();
     
         // change map cursor
         Map._container.style.cursor = 'crosshair';
@@ -85,10 +83,11 @@ export const line = {
         // sync the hintline with hint marker
         this._hintMarker.on('move', this._syncHintLine, this);
     
-        // fire drawstart event
-        Map.fire('pm:drawstart', {
+        // fire draw_start event
+        Map.fire('draw_start', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
+            hintLayer: this._hintline,
         });
     
         // an array used in the snapping mixin.
@@ -96,12 +95,12 @@ export const line = {
         this._otherSnapLayers = [];
     },
 
-    disable() {
+    disable (force) {
         // cancel, if drawing mode isn't even enabled
         if (!this.enabled) {
             return;
         }
-    
+
         this.enabled = false;
     
         // reset cursor
@@ -120,13 +119,15 @@ export const line = {
         // remove layer
         Map.removeLayer(this._layerGroup);
     
-        // fire drawend event
-        Map.fire('pm:drawend', { shape: this.shape });
+        // fire draw_end event
+        Map.fire('draw_end', { shape: this.shape });
     
         // cleanup snapping
         if (this.options.snappable) {
             this._cleanupSnapping();
         }
+
+        (this.options.repeatable && !force) && this.enable(this.options);
     },
 
     isEnabled () { return this.enabled; },
@@ -258,14 +259,15 @@ export const line = {
         // is this the first point?
         const first = this._layer.getLatLngs().length === 0;
     
-        this._layer.addLatLng(latlng);
+        this._layer.setLatLngs([...this._layer.getLatLngs(), latlng]);
         const newMarker = this._createMarker(latlng, first);
     
         this._hintline.setLatLngs([latlng, latlng]);
     
-        this._layer.fire('pm:vertexadded', {
+        this._layer.fire('new_vertex', {
             shape: this.shape,
-            workingLayer: this._layer,
+            workLayer: this._layer,
+            hintLayer: this._hintline,
             marker: newMarker,
             latlng,
         });
@@ -292,11 +294,12 @@ export const line = {
         // create the leaflet shape and add it to the map
         const polylineLayer = factory.polyline(coords, this.options.pathOptions).addTo(Map);
     
-        // disable drawing
+        /* Disable drawing. Keep this line above the 'create' event fire,
+        callers that listen to the event may re-enable drawing. */
         this.disable();
     
-        // fire the pm:create event and pass shape and layer
-        Map.fire('pm:create', {
+        // fire the new_shape event and pass shape and layer
+        Map.fire('new_shape', {
             shape: this.shape,
             layer: polylineLayer,
         });

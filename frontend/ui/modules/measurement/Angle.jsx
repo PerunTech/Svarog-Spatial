@@ -17,7 +17,7 @@ function _Angle ({options, ...props}) {
     const disable = React.useCallback((e) => {
         (e && e.layer) 
             && (angleMeasurements.addLayer(e.layer),
-                Map.fitBounds(e.layer.getBounds()).off('pm:create', disable));
+                Map.fitBounds(e.layer.getBounds()).off('new_shape', disable));
 
         dispatch({activeId: ''});
         draw.circle.disable();
@@ -26,7 +26,7 @@ function _Angle ({options, ...props}) {
     /* Enables measurement handler */
     const enable = React.useCallback(() => {
         dispatch({ activeId: _id });
-        Map.on('pm:create', disable);
+        Map.on('new_shape', disable);
         draw.circle.enable(util.assign(MEASURE_LINE, options));
     }, [options, dispatch, disable])
 

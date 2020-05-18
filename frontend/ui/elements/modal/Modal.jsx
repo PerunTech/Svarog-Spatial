@@ -2,8 +2,14 @@ import { React, elements } from 'perun-core';
 
 const RBModal = elements.ReactBootstrap.Modal;
 
-export const Modal = props => 
-    <RBModal {...props} />;
+export const Modal = props =>
+    <div id='modal'
+        onKeyDown={e => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
+        onFocus={e => e.stopPropagation()}
+        onMouseOver={e => e.stopPropagation()} >
+            <RBModal {...props} />
+    </div>;
 
 Modal.displayName = 'Modal';
 

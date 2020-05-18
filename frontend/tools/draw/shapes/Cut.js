@@ -58,15 +58,15 @@ export const cut = {
                 Map.pm.removeLayer({ target: resultingLayer });
             }
     
-            // fire pm:cut on the cutted layer
-            l.fire('pm:cut', {
+            // fire cut_shape on the cutted layer
+            l.fire('cut_shape', {
                 shape: this.shape,
                 layer: resultingLayer,
                 originalLayer: l,
             });
     
-            // fire pm:cut on the map
-            Map.fire('pm:cut', {
+            // fire cut_shape on the map
+            Map.fire('cut_shape', {
                 shape: this.shape,
                 layer: resultingLayer,
                 originalLayer: l,
