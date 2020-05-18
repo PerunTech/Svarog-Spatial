@@ -13,21 +13,21 @@ export const length ={
     measurements: factory.layerGroup().addTo(Map),
 
     enable: function () {
-        Map.on('new_shape', this._finishMeasurement);
+        Map.on('new_shape', this._finishMeasurement.bind(this));
         store.dispatch({ activeId: this.id });
         draw.line.enable(MEASURE_LINE);
     },
 
     disable: function () {
         this.sum = 0
-        Map.off('new_shape', this._finishMeasurement);
+        Map.off('new_shape', this._finishMeasurement.bind(this));
         store.dispatch({activeId: '', totalLength: '0 m'});
         draw.line.disable('force');
     },
 
     _finishMeasurement: function (e) {
         if (e && e.layer) {
-            this.measmeasurements.addLayer(e.layer);
+            this.measurements.addLayer(e.layer);
             this.sum = this.sum + this._calcCurrentLength(store.getState().measurement.totalLength)
         }
     },
@@ -45,10 +45,10 @@ function _Length ({activeId, currentMeasure, ..._props}) {
     return <Button {..._props}
         id={id} 
         className={activeId === id ? 'active' : ''}
-        onClick={enable} >
+        onClick={enable.bind(length)} >
             <Icon name={id} size='32px' />
             <span style={{ display: 'block' }}>{getProcessTitle(id)}</span>
-            {activeId === id 
+            {activeId === id
                 && <Modal show
                     id='measure-dialog'
                     backdrop={false} 
@@ -59,17 +59,12 @@ function _Length ({activeId, currentMeasure, ..._props}) {
                         <DrawActions
                             finish={() => draw.line._finishShape()} 
                             undo={() => draw.line._removeLastVertex()}
-                            cancel={disable /* implement cancel rather than disable */} />
+                            cancel={disable.bind(length) /* implement cancel rather than disable */} />
                     </Modal.Title>
                     <Modal.Body >
-                        <Button 
-                            disabled 
-                            size='lg' 
-                            className='as-label' >
-                                {(sum + currentMeasure)  + ' m'}
-                        </Button>
+                        <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
                     </Modal.Body>
-                    <Modal.Footer children={<Button onClick={disable} >Заврши</Button>} />
+                    <Modal.Footer ><Button onClick={disable.bind(length)} >Заврши</Button></Modal.Footer>
                 </Modal>}
     </Button>
 }
@@ -79,9 +74,9 @@ _Length.propTypes = {
     activeId: PropTypes.string,
 }
 
-export const Length = connect(({ process, measurement: {totalLength} }) => {
+export const Length = connect(({ process, measurement }) => {
     return { 
         activeId: process.activeId,
-        currentMeasure: length._calcCurrentLength(totalLength)
+        currentMeasure: length._calcCurrentLength(measurement.totalLength)
     };
 })(_Length);
