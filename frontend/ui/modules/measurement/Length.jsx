@@ -64,7 +64,9 @@ function _Length ({activeId, currentMeasure, ..._props}) {
                     <Modal.Body >
                         <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
                     </Modal.Body>
-                    <Modal.Footer ><Button onClick={disable.bind(length)} >Заврши</Button></Modal.Footer>
+                    <Modal.Footer >
+                        <Button size='' className='end-measurement' onClick={disable.bind(length)} >Заврши</Button>
+                    </Modal.Footer>
                 </Modal>}
     </Button>
 }
