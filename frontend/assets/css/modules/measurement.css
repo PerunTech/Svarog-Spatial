@@ -13,6 +13,24 @@
     border-color: #dae0e5;
 }
 
+#measure-dialog .modal-body {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+#measure-dialog .modal-footer {
+    padding: 0.25rem;
+    border-top: unset;
+}
+
 #measure-dialog #draw-actions {
     float: right;
 }
+
+#measure-dialog .end-measurement {
+    color: #3399ff
+}
+#measure-dialog .end-measurement:hover:not(.disabled) {
+    background-color: #F9F9F9;
+}
+

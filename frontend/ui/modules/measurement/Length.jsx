@@ -20,7 +20,7 @@ export const length ={
 
     disable: function () {
         this.sum = 0
-        Map.off('new_shape', this._finishMeasurement.bind(this));
+        Map.off('new_shape');
         store.dispatch({activeId: '', totalLength: '0 m'});
         draw.line.disable('force');
     },
@@ -41,7 +41,6 @@ export const length ={
 
 function _Length ({activeId, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = length;
-
     return <Button {..._props}
         id={id} 
         className={activeId === id ? 'active' : ''}
@@ -59,12 +58,14 @@ function _Length ({activeId, currentMeasure, ..._props}) {
                         <DrawActions
                             finish={() => draw.line._finishShape()} 
                             undo={() => draw.line._removeLastVertex()}
-                            cancel={disable.bind(length) /* implement cancel rather than disable */} />
+                            cancel={() => (draw.line.disable('force'), draw.line.enable())} />
                     </Modal.Title>
                     <Modal.Body >
                         <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
                     </Modal.Body>
-                    <Modal.Footer ><Button onClick={disable.bind(length)} >Заврши</Button></Modal.Footer>
+                    <Modal.Footer >
+                        <Button size='' className='end-measurement' onClick={disable.bind(length)} >Заврши</Button>
+                    </Modal.Footer>
                 </Modal>}
     </Button>
 }
