@@ -4,6 +4,8 @@
 }
 
 #measure-dialog .modal-title button {
+    font-size: 0.8rem;
+    font-weight: bold;
     background-color: #F9F9F9;
     border-color: #F9F9F9;
 }
@@ -25,7 +27,7 @@
 
 #measure-dialog #draw-actions {
     float: right;
-    /*margin-top: 5px;*/
+    margin: 5px;
 }
 #measure-dialog #draw-actions > button {
     padding: 0.5rem;
