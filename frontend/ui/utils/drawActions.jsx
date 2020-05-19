@@ -3,13 +3,13 @@ import { ButtonGroup, Button, Icon } from '..';
 
 export const DrawActions = ({finish, undo, cancel})  =>
     <ButtonGroup id='draw-actions' >
-        <Button id='finish-shape' onClick={e => finish(e)} >
+        <Button id='finish-shape' title='Потврди форма' onClick={e => finish(e)} >
             <Icon name='confirm' size='16px' />
         </Button>
-        <Button id='delete-last-vertex' onClick={(e) => undo(e) } >
+        <Button id='delete-last-vertex' title='Поништи го последното теме' onClick={(e) => undo(e) } >
             <Icon name='undo' size='16px' />
         </Button>
-        <Button id='cancel-draw' onClick={(e) => cancel(e) } >
+        <Button id='cancel-draw' title='Откажи форма' onClick={(e) => cancel(e) } >
             <Icon name='cancel' size='16px' />
         </Button>
     </ButtonGroup>
