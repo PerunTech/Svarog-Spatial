@@ -8,5 +8,3 @@ export const Measurement = () =>
         <Angle disabled />
         <Eraser />
     </ButtonGroup>;
-
-/* {[length, area, angle].includes(props.activeId) && <Dialog title='Измерена Површина' handler={areaTool} /> } */

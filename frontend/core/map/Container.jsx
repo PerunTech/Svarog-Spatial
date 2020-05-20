@@ -33,9 +33,9 @@ _MapContainer.propTypes = {
     refreshing: PropTypes.bool,
 };
 
-export const MapContainer = connect(({map, app}) => {
+export const MapContainer = connect(({map}) => {
     return { 
         bbox: map.bbox,
         sid: map.sid,
-        refreshing: app.refreshing
+        refreshing: map.refreshing
 }})(_MapContainer);

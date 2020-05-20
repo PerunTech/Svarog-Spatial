@@ -16,5 +16,5 @@ _StatusIndicator.propTypes = {
     isActive: PropTypes.bool
 }
 
-export const StatusIndicator = connect(({process}) => 
-    ({isActive: process.activeId.length > 0}))(_StatusIndicator);
+export const StatusIndicator = connect(({app}) => 
+    ({isActive: app.processID.length > 0}))(_StatusIndicator);

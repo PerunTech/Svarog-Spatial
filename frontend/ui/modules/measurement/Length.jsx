@@ -5,7 +5,7 @@ import { draw } from '../../../tools';
 import { Button, Icon, Modal, DrawActions } from '../..';
 
 export const length ={
-    /* The internal id && measurement sum of the process */
+    /* The internal id && measurement sum of the processID */
     id: PROCESS_ENUM.length,
     sum: 0,
 
@@ -14,14 +14,14 @@ export const length ={
 
     enable: function () {
         Map.on('new_shape', this._finishMeasurement.bind(this));
-        store.dispatch({ activeId: this.id });
+        store.dispatch({ processID: this.id });
         draw.line.enable(MEASURE_LINE);
     },
 
     disable: function () {
         this.sum = 0
         Map.off('new_shape');
-        store.dispatch({activeId: '', totalLength: '0 m'});
+        store.dispatch({processID: '', totalLength: '0 m'});
         draw.line.disable('force');
     },
 
@@ -39,19 +39,21 @@ export const length ={
             '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000 : 1)
 };
 
-function _Length ({activeId, currentMeasure, ..._props}) {
+function _Length ({processID, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = length;
+    console.log(processID)
     return <Button {..._props}
         id={id} 
-        className={activeId === id ? 'active' : ''}
+        className={processID === id ? 'active' : ''}
         onClick={enable.bind(length)} >
             <Icon name={id} size='32px' />
             <span style={{ display: 'block' }}>{getProcessTitle(id)}</span>
-            {activeId === id
+            {processID === id
                 && <Modal show
                     id='measure-dialog'
                     backdrop={false} 
                     enforceFocus={false}
+                    className='leaflet-dragging'
                     container={document.getElementsByClassName('control-map')[0]} >
                     <Modal.Title>
                         <Button disabled className='as-label' >Измерена должина</Button>
@@ -71,13 +73,13 @@ function _Length ({activeId, currentMeasure, ..._props}) {
 }
 
 _Length.propTypes = {
-    currentMeasure: PropTypes.string,
-    activeId: PropTypes.string,
+    currentMeasure: PropTypes.number,
+    processID: PropTypes.string,
 }
 
-export const Length = connect(({ process, measurement }) => {
+export const Length = connect(({ app, measurement }) => {
     return { 
-        activeId: process.activeId,
+        processID: app.processID,
         currentMeasure: length._calcCurrentLength(measurement.totalLength)
     };
 })(_Length);
