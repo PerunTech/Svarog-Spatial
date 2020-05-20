@@ -2,6 +2,13 @@
     background-color: transparent;
 }
 
+.control-map .modal-dialog {
+    position: absolute;
+    top: 110px;
+    right: 270px;
+    margin: unset;
+}
+
 .control-map .modal-content {
     border-radius: 0.25rem;
     background: white;
@@ -12,4 +19,5 @@
     max-height: unset;
     max-width: unset;
     min-width: unset;
+    margin-left: unset;
 }
