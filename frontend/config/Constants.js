@@ -61,7 +61,7 @@ export const MAP_CONFIG = {
     center: SYS_CENTER,
     zoom: 3,
     minZoom: 0,
-    maxZoom: 19,
+    maxZoom: 18,
     dragging: true,
     zoomControl: false,
     doubleClickZoom: false,
