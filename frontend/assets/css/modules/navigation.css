@@ -45,3 +45,12 @@
     right: 15px;
     bottom: 141px;
 }
+.control-bottomright .country {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    background-color: transparent;
+    border: transparent;
+    z-index: 1010;
+    color: #00000090;
+}
