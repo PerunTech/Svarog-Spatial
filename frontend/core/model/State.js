@@ -59,7 +59,7 @@ export const state = {
         passive: false
     },
     process: {
-        activeId: 'test'
+        activeId: ''
     },
     appState: {
         appStatus: '',

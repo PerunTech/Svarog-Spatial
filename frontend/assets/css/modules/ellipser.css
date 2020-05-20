@@ -3,17 +3,20 @@
 /* ------------------------ */
 /* Classnames required  in the ui/modules/Ellpiser.jsx, DO NOT CHANGE NAMES! */
 .ellipser{
-    position: absolute;
+    /* position: absolute;
     top: 40%;
     left: 50%;
+    z-index: 999; */
     overflow: hidden;
-    z-index: 999 
+
     }
 .globe {
-    width: 75px;
-    height: 75px;
-    margin: 37px auto;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
     position: relative;
+    background-color: #3399ff50;
+    border-radius: 50%;
     perspective: 1500px;
         -o-perspective: 1500px;
         -ms-perspective: 1500px;
@@ -38,9 +41,9 @@
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
     opacity: 0;
-    width: 75px;
-    height: 75px;
-    border: 1px solid rgb(8,8,247);
+    width: 100px;
+    height: 100px;
+    border: 1px solid #000000 ;
     border-radius: 56px;
     position: absolute;
     top: 0;
@@ -52,75 +55,111 @@
         -moz-animation: spinner-spin 30s ease-in-out alternate infinite;
     }
 .ellipse:nth-of-type(1) {
+    animation-delay: 0ms;
+        -o-animation-delay: 0ms;
+        -ms-animation-delay: 0ms;
+        -webkit-animation-delay: 0ms;
+        -moz-animation-delay: 0ms;
+    }
+.ellipse:nth-of-type(2) {
     animation-delay: 500ms;
         -o-animation-delay: 500ms;
         -ms-animation-delay: 500ms;
         -webkit-animation-delay: 500ms;
         -moz-animation-delay: 500ms;
     }
-.ellipse:nth-of-type(2) {
+.ellipse:nth-of-type(3) {
     animation-delay: 1000ms;
         -o-animation-delay: 1000ms;
         -ms-animation-delay: 1000ms;
         -webkit-animation-delay: 1000ms;
         -moz-animation-delay: 1000ms;
     }
-.ellipse:nth-of-type(3) {
+.ellipse:nth-of-type(4) {
     animation-delay: 1500ms;
         -o-animation-delay: 1500ms;
         -ms-animation-delay: 1500ms;
         -webkit-animation-delay: 1500ms;
         -moz-animation-delay: 1500ms;
     }
-.ellipse:nth-of-type(4) {
+.ellipse:nth-of-type(5) {
     animation-delay: 2000ms;
         -o-animation-delay: 2000ms;
         -ms-animation-delay: 2000ms;
         -webkit-animation-delay: 2000ms;
         -moz-animation-delay: 2000ms;
     }
-.ellipse:nth-of-type(5) {
+.ellipse:nth-of-type(6) {
     animation-delay: 2500ms;
         -o-animation-delay: 2500ms;
         -ms-animation-delay: 2500ms;
         -webkit-animation-delay: 2500ms;
         -moz-animation-delay: 2500ms;
     }
-.ellipse:nth-of-type(6) {
+.ellipse:nth-of-type(7) {
     animation-delay: 3000ms;
         -o-animation-delay: 3000ms;
         -ms-animation-delay: 3000ms;
         -webkit-animation-delay: 3000ms;
         -moz-animation-delay: 3000ms;
     }
-.ellipse:nth-of-type(7) {
+.ellipse:nth-of-type(8) {
     animation-delay: 3500ms;
         -o-animation-delay: 3500ms;
         -ms-animation-delay: 3500ms;
         -webkit-animation-delay: 3500ms;
         -moz-animation-delay: 3500ms;
     }
-.ellipse:nth-of-type(8) {
+.ellipse:nth-of-type(9) {
     animation-delay: 4000ms;
         -o-animation-delay: 4000ms;
         -ms-animation-delay: 4000ms;
         -webkit-animation-delay: 4000ms;
         -moz-animation-delay: 4000ms;
     }
-.ellipse:nth-of-type(9) {
+.ellipse:nth-of-type(10) {
     animation-delay: 4500ms;
         -o-animation-delay: 4500ms;
         -ms-animation-delay: 4500ms;
         -webkit-animation-delay: 4500ms;
         -moz-animation-delay: 4500ms;
     }
-.ellipse:nth-of-type(10) {
+.ellipse:nth-of-type(11) {
     animation-delay: 5000ms;
         -o-animation-delay: 5000ms;
         -ms-animation-delay: 5000ms;
         -webkit-animation-delay: 5000ms;
         -moz-animation-delay: 5000ms;
     }
+.ellipse:nth-of-type(12) {
+    animation-delay: 5500ms;
+        -o-animation-delay: 5500ms;
+        -ms-animation-delay: 5500ms;
+        -webkit-animation-delay: 5500ms;
+        -moz-animation-delay: 5500ms;
+}
+.ellipse:nth-of-type(13) {
+    animation-delay: 6000ms;
+        -o-animation-delay: 6000ms;
+        -ms-animation-delay: 6000ms;
+        -webkit-animation-delay: 6000ms;
+        -moz-animation-delay: 6000ms;
+}
+.ellipse:nth-of-type(14) {
+    animation-delay: 6500ms;
+        -o-animation-delay: 6500ms;
+        -ms-animation-delay: 6500ms;
+        -webkit-animation-delay: 6500ms;
+        -moz-animation-delay: 6500ms;
+}
+.ellipse:nth-of-type(15) {
+    animation-delay: 7000ms;
+        -o-animation-delay: 7000ms;
+        -ms-animation-delay: 7000ms;
+        -webkit-animation-delay: 7000ms;
+        -moz-animation-delay: 7000ms;
+}
+
 
 @keyframes spinner-spin {
     0% {

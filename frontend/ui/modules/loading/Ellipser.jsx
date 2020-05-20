@@ -16,14 +16,15 @@ import { React, PropTypes} from 'perun-core';
  */
 export function Ellipser ({message='', ellipseCount=7}) {
     return <div id='ellipser' className='ellipser' >
-      <div id='globe' className='globe'>
-        {[...Array(ellipseCount)].map((v, i) => { return <div key={'e'+i} className='ellipse' /> })}
-      </div>
-      {message}
+        <div id='globe' className='globe'>
+            {[...Array(ellipseCount)].map((v, i) => { 
+                return <div key={'e'+i} className='ellipse' /> })}
+        </div>
+        {message}
     </div> 
 }
 
 Ellipser.propTypes = {
-  message: PropTypes.string,
-  ellipseCount: PropTypes.number
+    message: PropTypes.string,
+    ellipseCount: PropTypes.number
 }

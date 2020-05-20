@@ -13,6 +13,7 @@ export { ButtonGroup } from './elements/button/ButtonGroup';
 export { ToolbarButton } from './elements/button/ToolbarButton';
 export { Coordinates } from './elements/coordinates/Coordinates';
 export { Divider } from './elements/divider/Divider';
+export { Draggable } from './elements/draggable/Draggable';
 export { Dropdown } from './elements/dropdown/Dropdown';
 export { DropdownButton } from './elements/dropdown/DropdownButton';
 export { SplitDropdown } from './elements/dropdown/SplitDropdown';
@@ -23,6 +24,7 @@ export { Bitmap } from './elements/icon/Bitmap';
 export { Icon } from './elements/icon/Icon';
 export { Input } from './elements/input/Input';
 export { Modal } from './elements/modal/Modal';
+export { ModalDialog } from './elements/modal/ModalDialog';
 export { Tab } from './elements/tab/Tab';
 export { Tabs } from './elements/tab/Tabs';
 export { Step } from './elements/wizard/Step';
@@ -47,12 +49,13 @@ export { Measurement } from './modules/measurement/Measurement';
 export { scale } from './modules/scale/Scale';
 export { ScaleControl } from './modules/scale/ScaleControl';
 
+export { StatusIndicator } from './modules/status/StatusIndicator';
+export { NavigationControl } from './modules/navigation/NavigationControl'; 
+
 // toolbar
 export { drawParcel } from './toolbar/digitization/DrawParcel';
 export { editParcel } from './toolbar/digitization/EditParcel';
 export { ParcelForm } from './toolbar/digitization/ParcelForm';
-
-export { Navigation } from './toolbar/navigation/Navigation';
 export { Digitization } from './toolbar/digitization/Digitization';
 
 
