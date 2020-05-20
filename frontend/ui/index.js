@@ -56,8 +56,6 @@ export { NavigationControl } from './modules/navigation/NavigationControl';
 export { drawParcel } from './toolbar/digitization/DrawParcel';
 export { editParcel } from './toolbar/digitization/EditParcel';
 export { ParcelForm } from './toolbar/digitization/ParcelForm';
-
-export { Navigation } from './toolbar/navigation/Navigation';
 export { Digitization } from './toolbar/digitization/Digitization';
 
 

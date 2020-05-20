@@ -15,6 +15,3 @@ export { edit } from './edit/Edit';
 export { measureMarker } from './measure/Marker';
 export { measureLine } from './measure/Line';
 export { measureCircle } from './measure/Circle';
-
-// navigate
-export { navigation } from './navigate/Navigation';
