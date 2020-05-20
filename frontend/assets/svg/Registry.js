@@ -432,7 +432,6 @@ const _registry = {
                 h4.637C5.105,7.982,11.061,2.296,18.334,2.296C25.91,2.296,32.076,8.461,32.076,16.038z'/>
         </g>
     },
-
     /* <div>Icons made by <a href='https://www.flaticon.com/authors/pixel-perfect' title='Pixel perfect'>Pixel perfect</a>
          from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div> */
     cancel: {
@@ -451,7 +450,21 @@ const _registry = {
                     12.5-32.769531 0-45.25zm0 0' />
             </g>
         </g>
-    }
+    },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>  */
+    'zoom-in': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 448 448',
+        path: <g>
+            <path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40
+                40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969
+                0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8
+                8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/>
+        </g>
+    },
 };
 
 export const registry = {
