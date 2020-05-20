@@ -41,7 +41,6 @@ export const length ={
 
 function _Length ({processID, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = length;
-    console.log(processID)
     return <Button {..._props}
         id={id} 
         className={processID === id ? 'active' : ''}
