@@ -5,7 +5,10 @@ import { draw } from '../../../tools';
 import { Button, Icon, StatusIndicator } from '../..';
 
 const bboxZoom = () => {
+    store.dispatch({processID: 'bbox-zoom'});
+    
     Map.on('new_shape', function fn ({layer}) {
+        store.dispatch({processID: ''})
         Map.fitBounds(layer.getBounds()).off('new_shape', fn).removeLayer(layer);
     });
 
