@@ -27,10 +27,10 @@ export const NavigationControl = () =>
             <Icon name='zoom-out' size='16px' />
         </Button>
         <Button className='bbox-zoom' title='Оди до рамка' onClick={() => bboxZoom()} >
-            <Icon name='bbox-zoom' size='20px' />
+            <Icon name='bbox-zoom' size='18px' />
         </Button>
-        <Button className='dummy' >
-            <Icon name='dummy' />
+        <Button className='geolocation' title='Оди на мојата локација' onClick={() => Map.locate({setView: true})} >
+            <Icon name='geolocation' size='18px' />
         </Button>
         <StatusIndicator />
     </>;

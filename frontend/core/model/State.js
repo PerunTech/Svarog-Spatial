@@ -13,20 +13,9 @@ import { MAP_CONFIG, SYS_CENTER } from '../../config';
  * generated automatically and combined on store creation.
  */
 export const state = {
-    /* Initialization data */
-    init: {
-        token: ''
+    app:  {
+        processID: ''
     },
-    /* Map properties */
-    map: {
-        zoom: MAP_CONFIG.zoom,
-        minZoom: MAP_CONFIG.minZoom,
-        maxZoom: MAP_CONFIG.maxZoom,
-        center: SYS_CENTER,
-        origin: '',
-        bbox: '',
-        sid: 0,
-    }, 
     /* Web service requests configuration */
     http: {
         default: {},
@@ -51,20 +40,20 @@ export const state = {
             responseType: 'application/json'
         }
     },
-    app: {
-        loading: false,
-        refreshing: false,
-        busy: false,
-        active: false,
-        passive: false
+    /* Initialization data */
+    init: {
+        token: ''
     },
-    process: {
-        activeId: ''
-    },
-    appState: {
-        appStatus: '',
-        processId: ''
-    },
+    /* Map properties */
+    map: {
+        zoom: MAP_CONFIG.zoom,
+        minZoom: MAP_CONFIG.minZoom,
+        maxZoom: MAP_CONFIG.maxZoom,
+        center: SYS_CENTER,
+        origin: '',
+        bbox: '',
+        sid: 0,
+    }, 
     measurement: {
         totalLength: '0 m',
         totalArea: '0 m'

@@ -10,7 +10,7 @@ const _id = PROCESS_ENUM.angle;
 export const angleMeasurements = factory.layerGroup().addTo(Map);
 
 function _Angle ({options, ...props}) {
-    const { activeId, dispatch, ..._props } = props;
+    const { processID, dispatch, ..._props } = props;
 
     /* Disables measurement handler. Called automatically on map event,
         fired when the drawn shape is finished. */
@@ -19,20 +19,20 @@ function _Angle ({options, ...props}) {
             && (angleMeasurements.addLayer(e.layer),
                 Map.fitBounds(e.layer.getBounds()).off('new_shape', disable));
 
-        dispatch({activeId: ''});
+        dispatch({processID: ''});
         draw.circle.disable();
     }, [dispatch])
 
     /* Enables measurement handler */
     const enable = React.useCallback(() => {
-        dispatch({ activeId: _id });
+        dispatch({ processID: _id });
         Map.on('new_shape', disable);
         draw.circle.enable(util.assign(MEASURE_LINE, options));
     }, [options, dispatch, disable])
 
     return <Button {..._props}
         id={_id} 
-        className={activeId === _id ? 'active' : ''}
+        className={processID === _id ? 'active' : ''}
         onClick={() => enable() } >
             <Icon name={_id} size='28px' />
             <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(_id)}</span>
@@ -41,10 +41,10 @@ function _Angle ({options, ...props}) {
 
 _Angle.propTypes = {
     options: PropTypes.object,
-    activeId: PropTypes.string,
+    processID: PropTypes.string,
     dispatch: PropTypes.func
 }
 
-export const Angle = connect(({process}) => { 
-    return { activeId: process.activeId };
+export const Angle = connect(({app}) => { 
+    return { processID: app.processID };
 })(_Angle);

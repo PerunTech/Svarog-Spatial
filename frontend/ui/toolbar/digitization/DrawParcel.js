@@ -36,7 +36,7 @@ export const drawParcel = {
 
     drawPolygon (opt) { return draw.polygon.enable({...DRAW_PARCEL, ...opt}), this; },
 
-    setActiveProcess () { return store.dispatch({activeId: PROCESS_ENUM.draw}), this; }
+    setActiveProcess () { return store.dispatch({processID: PROCESS_ENUM.draw}), this; }
 }
 
 function _formatSchema (schema) {
