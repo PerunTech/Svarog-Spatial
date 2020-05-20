@@ -27,7 +27,8 @@ import './css/elements/modal.css';
 /* css.modules */
 import './css/modules/ellipser.css';
 import './css/modules/scale.css';
-import './css/modules/measurement.css'
+import './css/modules/measurement.css';
+import './css/modules/navigation.css'
 
 /* css.components */
 import './css/components/statusBar.css'
