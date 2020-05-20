@@ -10,9 +10,9 @@ import { DropdownButton, Dropdown } from '../..';
  * but rather with resolutions or scales directly. The crs class needs to be revised,
  * before any assumptions are made here. 
  */
-function _ScaleControl ({currZoom, minZoom, maxZoom}) {
+function _ScaleControl ({currZoom}) {
     const distances = React.useMemo(() => 
-        [...Map.getCRS().options.distances].splice(minZoom, maxZoom + 1), [minZoom, maxZoom]);
+        [...Map.getCRS().options.distances], []);
 
     return <DropdownButton title={`1 : ${distances[currZoom]}`} drop='up' alignRight >
         {distances.map((dist, i) => {
@@ -28,14 +28,6 @@ function _ScaleControl ({currZoom, minZoom, maxZoom}) {
 
 _ScaleControl.propTypes = {
     currZoom: PropTypes.number,
-    minZoom: PropTypes.number,
-    maxZoom: PropTypes.number
 }
 
-export const ScaleControl = connect(state => { 
-    return {
-        currZoom: state.map.zoom,
-        minZoom: state.map.minZoom,
-        maxZoom: state.map.maxZoom
-    }
-})(_ScaleControl);
+export const ScaleControl = connect(({map}) => ({currZoom: map.zoom}))(_ScaleControl);

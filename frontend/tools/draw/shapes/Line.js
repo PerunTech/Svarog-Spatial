@@ -1,5 +1,5 @@
-import { getDrawTooltip } from '../../../config';
-import { util, Map, factory } from '../../../core';
+import { getDrawTooltip, MAP_CONFIG, MIN_DIGI_SCALE } from '../../../config';
+import { util, Map, factory, store } from '../../../core';
 import { snap } from '../..';
 
 export const line = {
@@ -11,7 +11,8 @@ export const line = {
 
     enable (options) {
         util.assign(this.options, options);
-    
+        store.dispatch({minZoom: MIN_DIGI_SCALE});
+
         /* #revise_me, rubbish logic */
         if (this.options.finishOnDoubleClick && !this.options.finishOn) {
             this.options.finishOn = 'dblclick';
@@ -100,6 +101,7 @@ export const line = {
         if (!this.enabled) {
             return;
         }
+        store.dispatch({minZoom: MAP_CONFIG.minZoom});
 
         this.enabled = false;
     
