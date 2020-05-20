@@ -12,7 +12,7 @@ import { DropdownButton, Dropdown } from '../..';
  */
 function _ScaleControl ({currZoom, minZoom, maxZoom}) {
     const distances = React.useMemo(() => 
-        [...Map.getCRS().options.distances].splice(minZoom, maxZoom), [minZoom, maxZoom]);
+        [...Map.getCRS().options.distances].splice(minZoom, maxZoom + 1), [minZoom, maxZoom]);
 
     return <DropdownButton title={`1 : ${distances[currZoom]}`} drop='up' alignRight >
         {distances.map((dist, i) => {
