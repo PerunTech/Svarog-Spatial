@@ -52,7 +52,6 @@ function _Length ({processID, currentMeasure, ..._props}) {
                     id='measure-dialog'
                     backdrop={false} 
                     enforceFocus={false}
-                    className='leaflet-dragging'
                     container={document.getElementsByClassName('control-map')[0]} >
                     <Modal.Title>
                         <Button disabled className='as-label' >Измерена должина</Button>
