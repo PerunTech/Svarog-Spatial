@@ -14,7 +14,7 @@ export const eraser = {
 
     clearMeasurements: function () {
         this.clearLength();
-        // this.clearArea();
+        this.clearArea();
     }
 };
 
