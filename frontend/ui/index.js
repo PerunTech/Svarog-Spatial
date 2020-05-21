@@ -50,13 +50,6 @@ export { ScaleControl } from './modules/scale/ScaleControl';
 export { StatusIndicator } from './modules/status/StatusIndicator';
 export { NavigationControl } from './modules/navigation/NavigationControl'; 
 
-// toolbar
-export { drawParcel } from './toolbar/digitization/DrawParcel';
-export { editParcel } from './toolbar/digitization/EditParcel';
-export { ParcelForm } from './toolbar/digitization/ParcelForm';
-export { Digitization } from './toolbar/digitization/Digitization';
-
-
 /* ---------- */
 /* layouts */
 /* ---------- */
