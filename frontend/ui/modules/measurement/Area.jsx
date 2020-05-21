@@ -23,7 +23,7 @@ export const area = {
     disable: function () {
         this.sum = 0;
         Map.off('new_shape');
-        store.dispatch({processID: '', totalArea: '0 m'});
+        store.dispatch({processID: '', totalArea: '0 m²'});
         draw.polygon.disable('force');
     },
 
@@ -31,16 +31,20 @@ export const area = {
         if (e && e.layer) {
             this.measurements.addLayer(e.layer);
             this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea);
+            store.dispatch({totalArea: '0 m²'});
         }
     },
 
     _calcCurrentArea: str => 
         Number(Array.from(str).filter(s =>
-            '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000 : 1)
+            '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000000 : 1)
 }
 
 function _Area ({processID, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = area;
+    
+    console.log(sum)
+    console.log(currentMeasure)
 
     return <Button {..._props}
         id={id} 
