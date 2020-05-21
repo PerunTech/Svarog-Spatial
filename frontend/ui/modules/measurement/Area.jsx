@@ -28,11 +28,15 @@ export const area = {
     },
 
     _finishMeasurement: function (e) {
-        this.measurements.addLayer(e.layer)
-        this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea)
+        if (e && e.layer) {
+            this.measurements.addLayer(e.layer);
+            this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea);
+        }
     },
 
-    _calcCurrentArea: str => 0
+    _calcCurrentArea: str => 
+        Number(Array.from(str).filter(s =>
+            '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000 : 1)
 }
 
 function _Area ({processID, currentMeasure, ..._props}) {
@@ -58,7 +62,7 @@ function _Area ({processID, currentMeasure, ..._props}) {
                             cancel={() => (draw.polygon.disable('force'), draw.polygon.enable())} />
                     </Modal.Title>
                     <Modal.Body >
-                        <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
+                        <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m²'}</Button>
                     </Modal.Body>
                     <Modal.Footer >
                         <Button size='' className='end-measurement' onClick={disable.bind(area)} >Заврши</Button>
