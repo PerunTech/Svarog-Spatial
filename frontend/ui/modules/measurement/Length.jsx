@@ -5,8 +5,10 @@ import { draw } from '../../../tools';
 import { Button, Icon, Modal, DrawActions } from '../..';
 
 export const length ={
-    /* The internal id && measurement sum of the processID */
+    /* The internal id of the process */
     id: PROCESS_ENUM.length,
+
+    /* The measurement sum of the action */
     sum: 0,
 
     /* Layer group of all length measurements */
@@ -41,6 +43,7 @@ export const length ={
 
 function _Length ({processID, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = length;
+
     return <Button {..._props}
         id={id} 
         className={processID === id ? 'active' : ''}
