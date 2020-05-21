@@ -42,9 +42,6 @@ export const area = {
 
 function _Area ({processID, currentMeasure, ..._props}) {
     const { id, sum, enable, disable } = area;
-    
-    console.log(sum)
-    console.log(currentMeasure)
 
     return <Button {..._props}
         id={id} 
