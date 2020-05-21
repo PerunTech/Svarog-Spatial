@@ -1,50 +1,80 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../../core";
+import { factory, Map, connect, store } from "../../../core";
 import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
 import { draw } from '../../../tools';
-import { Button, Icon } from '../..';
+import { Button, Icon, Modal, DrawActions } from '../..';
 
-/* The internal id of the process */
-const _id = PROCESS_ENUM.area;
-/* Layer group of all Area measurements, register is accessible from outside. */
-export const areaMeasurements = factory.layerGroup().addTo(Map);
+export const area = {
+    /* The internal id of the process */
+    id: PROCESS_ENUM.area,
 
-function _Area ({options, ...props}) {
-    const { processID, dispatch, ..._props } = props;
+    /* The measurements sum of the action */
+    sum: 0,
 
-    /* Disables measurement handler. Called automatically on map event,
-        fired when the drawn shape is finished. */
-    const disable = React.useCallback((e) => {
-        (e && e.layer) 
-            && (areaMeasurements.addLayer(e.layer),
-                Map.fitBounds(e.layer.getBounds()).off('new_shape', disable));
+    /* Layer group of all area measurements */
+    measurements: factory.layerGroup().addTo(Map),
 
-        dispatch({processID: ''});
-        draw.polygon.disable();
-    }, [dispatch])
+    enable: function () {
+        Map.on('new_shape', this._finishMeasurement.bind(this));
+        store.dispatch({ processID: this.id });
+        draw.polygon.enable(MEASURE_LINE);
+    },
 
-    /* Enables measurement handler */
-    const enable = React.useCallback(() => {
-        dispatch({ processID: _id });
-        Map.on('new_shape', disable);
-        draw.polygon.enable(util.assign(MEASURE_LINE, options));
-    }, [options, dispatch, disable])
+    disable: function () {
+        this.sum = 0;
+        Map.off('new_shape');
+        store.dispatch({processID: '', totalArea: '0 m'});
+        draw.polygon.disable('force');
+    },
+
+    _finishMeasurement: function (e) {
+        this.measurements.addLayer(e.layer)
+        this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea)
+    },
+
+    _calcCurrentArea: str => 0
+}
+
+function _Area ({processID, currentMeasure, ..._props}) {
+    const { id, sum, enable, disable } = area;
 
     return <Button {..._props}
-        id={_id} 
-        className={processID === _id ? 'active' : ''}
-        onClick={() => enable() } >
-            <Icon name={_id} size='28px' />
-            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(_id)}</span>
+        id={id} 
+        className={processID === id ? 'active' : ''}
+        onClick={enable.bind(area)} >
+            <Icon name={id} size='28px' />
+            <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(id)}</span>
+            {processID === id
+                && <Modal show
+                    id='measure-dialog'
+                    backdrop={false} 
+                    enforceFocus={false}
+                    container={document.getElementsByClassName('control-map')[0]} >
+                    <Modal.Title>
+                        <Button disabled className='as-label' >Измерена површина</Button>
+                        <DrawActions
+                            finish={() => draw.polygon._finishShape()} 
+                            undo={() => draw.polygon._removeLastVertex()}
+                            cancel={() => (draw.polygon.disable('force'), draw.polygon.enable())} />
+                    </Modal.Title>
+                    <Modal.Body >
+                        <Button disabled size='lg' className='as-label' >{(sum + currentMeasure)  + ' m'}</Button>
+                    </Modal.Body>
+                    <Modal.Footer >
+                        <Button size='' className='end-measurement' onClick={disable.bind(area)} >Заврши</Button>
+                    </Modal.Footer>
+                </Modal>}
     </Button>
 }
 
 _Area.propTypes = {
-    options: PropTypes.object,
+    currentMeasure: PropTypes.number,
     processID: PropTypes.string,
-    dispatch: PropTypes.func
 }
 
-export const Area = connect(({app}) => { 
-    return { processID: app.processID };
+export const Area = connect(({ app, measurement }) => { 
+    return { 
+        processID: app.processID,
+        currentMeasure: area._calcCurrentArea(measurement.totalArea)
+    };
 })(_Area);
