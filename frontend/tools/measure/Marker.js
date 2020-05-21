@@ -11,6 +11,7 @@ export const measureMarker = {
         factory.setOptions(this, options);
 
         if (title === 'Total length') { store.dispatch({totalLength: measurement}) }
+        if (title === 'Total area') { store.dispatch({totalArea: measurement}) }
         
         this._latlng = latlng;
         this._measurement = measurement;
