@@ -547,6 +547,54 @@ const _registry = {
                 C0.458,10.22,0.566,10.673,0,10.952c0,0.395,0,0.785,0,1.179C0.538,12.412,0.271,12.914,0.28,13.309z"/>
         </g>
     },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/balraj-chana" title="Balraj Chana">Balraj Chana</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>  */
+    'chevron-right': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 612 612',
+        path: <g>
+            <path d="M325.402,0.296h-57.912L554.088,306L267.491,611.704h57.912L612,306L325.402,0.296z M57.912,0.296H0L286.597,306
+                L0,611.704h57.912L344.509,306L57.912,0.296z"/>
+        </g>
+    },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/balraj-chana" title="Balraj Chana">Balraj Chana</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>  */
+    'chevron-left': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 612 612',
+        path: <g transform='matrix(-1 1.22465e-16 -1.22465e-16 -1 612 612)' >
+            <path d="M325.402,0.296h-57.912L554.088,306L267.491,611.704h57.912L612,306L325.402,0.296z M57.912,0.296H0L286.597,306
+                L0,611.704h57.912L344.509,306L57.912,0.296z" />
+        </g>
+    },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/balraj-chana" title="Balraj Chana">Balraj Chana</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>  */
+    'chevron-up': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 612 612',
+        path: <g transform='matrix(-1.83697e-16 -1 1 -1.83697e-16 0 612)' >
+            <path d="M325.402,0.296h-57.912L554.088,306L267.491,611.704h57.912L612,306L325.402,0.296z M57.912,0.296H0L286.597,306
+                L0,611.704h57.912L344.509,306L57.912,0.296z" />
+        </g>
+    },
+    /* <div>Icons made by <a href="https://www.flaticon.com/authors/balraj-chana" title="Balraj Chana">Balraj Chana</a>
+        from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>  */
+    'chevron-down': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 612 612',
+        path: <g transform='matrix(3.06162e-16 1 -1 3.06162e-16 612 -5.68434e-14)' >
+            <path d="M325.402,0.296h-57.912L554.088,306L267.491,611.704h57.912L612,306L325.402,0.296z M57.912,0.296H0L286.597,306
+                L0,611.704h57.912L344.509,306L57.912,0.296z" />
+        </g>
+    },
 };
 
 export const registry = {
