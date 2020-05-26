@@ -32,7 +32,8 @@ import './css/modules/navigation.css'
 
 /* css.layouts */
 import './css/layouts/statusBar.css'
-import './css/layouts/toolsBar.css'
+import './css/layouts/toolsBar.css';
+import './css/layouts/layerPanel.css';
 
 /* css.tools */
 import './css/tools/draw.css';
