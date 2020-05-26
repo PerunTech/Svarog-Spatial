@@ -30,9 +30,9 @@ import './css/modules/scale.css';
 import './css/modules/measurement.css';
 import './css/modules/navigation.css'
 
-/* css.components */
-import './css/components/statusBar.css'
-import './css/components/toolsBar.css'
+/* css.layouts */
+import './css/layouts/statusBar.css'
+import './css/layouts/toolsBar.css'
 
 /* css.tools */
 import './css/tools/draw.css';
