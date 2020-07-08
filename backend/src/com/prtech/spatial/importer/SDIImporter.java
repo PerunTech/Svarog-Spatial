@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial.importer;
+package com.prtech.spatial.importer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

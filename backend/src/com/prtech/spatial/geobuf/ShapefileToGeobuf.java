@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial.geobuf;
+package com.prtech.spatial.geobuf;
 
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
