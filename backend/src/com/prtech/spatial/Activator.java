@@ -1,4 +1,5 @@
-package com.prtech.perun_spatial;
+package com.prtech.spatial;
+
 
 import java.util.ArrayList;
 
