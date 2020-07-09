@@ -2,6 +2,7 @@
   "name": "perun-spatial",
   "version": "0.0.1",
   "description": "Perun module for spatial data and map visualization.",
+  "main": "backend/www/perun-spatial.min.js",
   "repository": {
     "type": "git",
     "url": "https://gitlab.prtech.mk/perunv3/perun-spatial.git"

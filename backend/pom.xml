@@ -31,6 +31,10 @@
 		  <include>www/**/*.*</include>
 		</includes>
 	  </resource>
+	  <resource>
+		<directory>src/com/prtech/spatial/resources</directory>
+		<filtering>true</filtering>
+	  </resource>
 	</resources>
 	<plugins>
 	  <plugin>
@@ -67,13 +71,13 @@
 		    <Bundle-Version>${project.version}</Bundle-Version>
 		    <Bundle-Vendor>Perun.Technologies</Bundle-Vendor>
 		    <Bundle-Description>${project.description}</Bundle-Description>
-		    <Bundle-Activator>com.prtech.perun_spatial.Activator</Bundle-Activator>
+		    <Bundle-Activator>com.prtech.spatial.Activator</Bundle-Activator>
 		    <Export-Package>
-			  com.prtech.perun_spatial.*,
-			  com.prtech.perun_spatial.geobuf.*,
-			  com.prtech.perun_spatial.service.*
+			  com.prtech.spatial.*,
+			  com.prtech.spatial.geobuf.*,
+			  com.prtech.spatial.service.*
 		    </Export-Package>
-		    <Private-Package>!com.prtech.perun_spatial.importer.*</Private-Package>
+		    <Private-Package>!com.prtech.spatial.importer.*</Private-Package>
 		  </instructions>
 		</configuration>
 	  </plugin>

@@ -203,8 +203,8 @@ public class SDIImporter {
 		String perimeter = df.format(geom.getLength());
 		
 		try {
-			dbo.setVal("AREA", (Double) df.parse(area));
-			dbo.setVal("PERIMETER", (Double) df.parse(perimeter));
+			dbo.setVal("AREA", df.parse(area));
+			dbo.setVal("PERIMETER", df.parse(perimeter));
 		} catch (java.text.ParseException e) {
 			log.error("Failed parsing geometry derivatives. Area and perimeter are not set. "
 					+ "Save will fail.");
@@ -221,7 +221,7 @@ public class SDIImporter {
 		DbDataObject dboGeom = null;
 		try {
 			svg = new SvGeometry(token);
-			svg.setAllowNullGeometry(true);
+			svg.setIsLongRunning(true);
 			Connection conn = svg.dbGetConn();
 			ISvDatabaseIO dbHandler = SvCore.getDbHandler();
 
