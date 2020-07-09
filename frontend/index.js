@@ -16,8 +16,8 @@ export const spatial = core.util.assemble(
     description: description,
     init: ui.initializer.init,
     routes: [{
-        name: 'lpis',
-        path: '/main/lpis',
+        name: 'spatial',
+        path: '/main/spatial',
         render: ui.initializer.render,
         isExact: true
     }]
