@@ -222,6 +222,7 @@ public class SDIImporter {
 		try {
 			svg = new SvGeometry(token);
 			svg.setIsLongRunning(true);
+			svg.setAutoCommit(false);
 			Connection conn = svg.dbGetConn();
 			ISvDatabaseIO dbHandler = SvCore.getDbHandler();
 
@@ -239,7 +240,9 @@ public class SDIImporter {
 
 			WKBReader wkbReader = new WKBReader();
 			DbDataArray dbArray = new DbDataArray();
+			
 			int batchCnt = 0;
+			int batchSize = 1000;
 			int totalCnt = 0;
 			
 			while (rs.next()) {
@@ -257,16 +260,15 @@ public class SDIImporter {
 					try {
 						setGeometryDerivatives(dboGeom);
 						dbArray.addDataItem(dboGeom);
-						
 						if (log.isDebugEnabled()) {
 							log.debug("\n" + "Object to be saved: " + dboGeom.getValuesMap() + "\n");
 							log.debug("Object count is: " + totalCnt + "\n");	
 						}
-						
 						batchCnt++;
 						totalCnt++;
 						if (batchCnt == 1000) {
 							svg.saveGeometry(dbArray, true);
+							svg.dbCommit();
 							dbArray = new DbDataArray();
 							log.info("Object count is: " + totalCnt + "\n");
 							batchCnt = 0;
@@ -281,7 +283,22 @@ public class SDIImporter {
 				} else {
 					log.warn("Invalid object to import: " + dboGeom.toJson().toString());
 				}
-			}	
+			}
+			
+			try {
+				svg.saveGeometry(dbArray, true);
+				svg.dbCommit();
+				log.info("Remaining batch count is: " + batchCnt + "\n"
+						+ "Total count of imported objects is: " + totalCnt + "\n"
+						+ "SDI import finished succesfully.");
+			} catch (Exception e) {
+				if (e instanceof SvException) {
+					log.error(((SvException) e).getFormattedMessage(), e);
+				} else {
+					log.error(e);	
+				}
+			}
+			
 		} finally {
 			SvCore.closeResource((AutoCloseable) rs, null);
 			SvCore.closeResource((AutoCloseable) ps, null);

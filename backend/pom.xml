@@ -24,6 +24,8 @@
   </repositories>
   
   <build>
+	<sourceDirectory>src</sourceDirectory>
+	<testSourceDirectory>tests</testSourceDirectory>
     <resources>
 	  <resource>
 	    <directory>${project.basedir}</directory>
@@ -72,18 +74,11 @@
 		    <Bundle-Vendor>Perun.Technologies</Bundle-Vendor>
 		    <Bundle-Description>${project.description}</Bundle-Description>
 		    <Bundle-Activator>com.prtech.spatial.Activator</Bundle-Activator>
-		    <Export-Package>
-			  com.prtech.spatial.*,
-			  com.prtech.spatial.geobuf.*,
-			  com.prtech.spatial.service.*
-		    </Export-Package>
-		    <Private-Package>!com.prtech.spatial.importer.*</Private-Package>
 		  </instructions>
 		</configuration>
 	  </plugin>
 	</plugins>
   </build>
-
   <dependencies>
  	<dependency>
 	  <groupId>org.apache.felix</groupId>
