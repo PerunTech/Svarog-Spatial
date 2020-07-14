@@ -6,7 +6,7 @@ module.exports = (mode, {env}) => {
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve('./backend/www'),
-            filename: 'spatial.min.js',
+            filename: 'spatial.js',
             library: 'spatial',
             libraryTarget: 'umd',
             globalObject: 'this'
