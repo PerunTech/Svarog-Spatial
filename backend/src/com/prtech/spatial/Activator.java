@@ -12,6 +12,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.svarog.SvConf;
+import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
 
 /**
@@ -100,6 +101,10 @@ public class Activator implements BundleActivator {
 		log4j.info("Starting svarog-spatial OSGI bundle");
 
 		ServiceRegistration svc = null;
+		
+		IPerunPlugin publisher = new PerunPluginInfo();
+		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
+		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);
 
 		for (Class<?> ws : webServices) {
 			try {
