@@ -111,10 +111,6 @@ public class SDIImporter {
 				e.printStackTrace();
 			} else
 				e.printStackTrace();
-		} finally {
-			if (svSec != null) {
-				svSec.close();				
-			}
 		}
 		
 		System.exit(0);
