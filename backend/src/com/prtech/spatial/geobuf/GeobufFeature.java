@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial.geobuf;
+package com.prtech.spatial.geobuf;
 
 import com.vividsolutions.jts.geom.*;
 

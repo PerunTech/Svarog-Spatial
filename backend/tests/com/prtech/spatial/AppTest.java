@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial;
+package com.prtech.spatial;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

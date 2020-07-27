@@ -1,4 +1,5 @@
-package com.prtech.perun_spatial;
+package com.prtech.spatial;
+
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.svarog.SvConf;
+import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
 
 /**
@@ -32,7 +34,7 @@ public class Activator implements BundleActivator {
 	 * The context path on the http server under which the static content from
 	 * the /www folder inside the bundle will be served.
 	 */
-	static final String httpContextPath = "/perun_spatial";
+	static final String httpContextPath = "/spatial";
 
 	/**
 	 * Directory inside the bundle which will be served at the context path.
@@ -99,6 +101,10 @@ public class Activator implements BundleActivator {
 		log4j.info("Starting svarog-spatial OSGI bundle");
 
 		ServiceRegistration svc = null;
+		
+		IPerunPlugin publisher = new PerunPluginInfo();
+		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
+		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);
 
 		for (Class<?> ws : webServices) {
 			try {

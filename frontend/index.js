@@ -14,13 +14,6 @@ export const spatial = core.util.assemble(
     name: name,
     version: version,
     description: description,
-    init: ui.initializer.init,
-    routes: [{
-        name: 'lpis',
-        path: '/main/lpis',
-        render: ui.initializer.render,
-        isExact: true
-    }]
 }, 
 { // Set prototype properties.
     config,

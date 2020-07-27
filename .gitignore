@@ -4,3 +4,5 @@ node_modules
 .settings
 target
 geoman
+svarog.properties
+backend/conf

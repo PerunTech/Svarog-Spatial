@@ -6,8 +6,8 @@ module.exports = (mode, {env}) => {
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve('./backend/www'),
-            filename: 'perun-spatial.min.js',
-            library: 'perun-spatial',
+            filename: 'spatial.js',
+            library: 'spatial',
             libraryTarget: 'umd',
             globalObject: 'this'
         },

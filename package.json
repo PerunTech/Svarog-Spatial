@@ -1,14 +1,15 @@
 {
-  "name": "perun-spatial",
+  "name": "spatial",
   "version": "0.0.1",
   "description": "Perun module for spatial data and map visualization.",
+  "main": "backend/www/spatial.js",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.prtech.mk/perunv3/perun-spatial.git"
+    "url": "https://gitlab.prtech.mk/perunv3/spatial.git"
   },
   "dependencies": {
     "leaflet": "~1.5.1",
-    "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core",
+    "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#staging",
     "proj4": "~2.5.0"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial.service;
+package com.prtech.spatial.service;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

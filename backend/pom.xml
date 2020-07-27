@@ -2,8 +2,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>perun-spatial</groupId>
-  <artifactId>perun-spatial</artifactId>
+  <groupId>perun</groupId>
+  <artifactId>spatial</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Perun Spatial</name>
@@ -14,20 +14,28 @@
   </properties>
   
   <repositories>
-    <repository>
-	  <id>osgeo</id>
-	  <name>Open Source Geospatial Foundation Repository</name>
-	  <url>http://download.osgeo.org/webdav/geotools/</url>
-	</repository>
+  	<repository>
+      <id>osgeo</id>
+      <name>OSGeo Release Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+      <snapshots><enabled>false</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+  	</repository>
   </repositories>
   
   <build>
+	<sourceDirectory>src</sourceDirectory>
+	<testSourceDirectory>tests</testSourceDirectory>
     <resources>
 	  <resource>
 	    <directory>${project.basedir}</directory>
 		<includes>
 		  <include>www/**/*.*</include>
 		</includes>
+	  </resource>
+	  <resource>
+		<directory>src/com/prtech/spatial/resources</directory>
+		<filtering>true</filtering>
 	  </resource>
 	</resources>
 	<plugins>
@@ -60,24 +68,17 @@
 		<extensions>true</extensions>
 		<configuration>
 		  <instructions>
-		    <Bundle-SymbolicName>com.prtech.perun_spatial</Bundle-SymbolicName>
+		    <Bundle-SymbolicName>com.prtech.spatial</Bundle-SymbolicName>
 		    <Bundle-Name>${project.name}</Bundle-Name>
 		    <Bundle-Version>${project.version}</Bundle-Version>
 		    <Bundle-Vendor>Perun.Technologies</Bundle-Vendor>
 		    <Bundle-Description>${project.description}</Bundle-Description>
-		    <Bundle-Activator>com.prtech.perun_spatial.Activator</Bundle-Activator>
-		    <Export-Package>
-			  com.prtech.perun_spatial.*,
-			  com.prtech.perun_spatial.geobuf.*,
-			  com.prtech.perun_spatial.service.*
-		    </Export-Package>
-		    <Private-Package>!com.prtech.perun_spatial.importer.*</Private-Package>
+		    <Bundle-Activator>com.prtech.spatial.Activator</Bundle-Activator>
 		  </instructions>
 		</configuration>
 	  </plugin>
 	</plugins>
   </build>
-
   <dependencies>
  	<dependency>
 	  <groupId>org.apache.felix</groupId>
@@ -95,19 +96,19 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 	<dependency>
-	  <groupId>svarog-interfaces</groupId>
+	  <groupId>svarog</groupId>
 	  <artifactId>svarog-interfaces</artifactId>
-	  <version>[3.0.1,)</version>
+	  <version>[3.0.6.4]</version>
 	  <scope>provided</scope>
 	</dependency>
 	<dependency>
 	  <groupId>svarog</groupId>
 	  <artifactId>svarog</artifactId>
-	  <version>[3.0.1,)</version>
+	  <version>[3.0.6.1]</version>
 	  <scope>provided</scope>
 	</dependency>
 	<dependency>
@@ -116,9 +117,9 @@
 	  <version>12.2.0.1.0</version>
 	</dependency>
 	<dependency>
-	  <groupId>svarog-io</groupId>
+	  <groupId>svarog</groupId>
 	  <artifactId>svarog-io</artifactId>
-	  <version>[1.0.1,)</version>
+	  <version>[1.0.4,)</version>
 	  <scope>provided</scope>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->

@@ -1,4 +1,4 @@
-package com.prtech.perun_spatial.service;
+package com.prtech.spatial.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,7 +20,7 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvUtil;
-import com.prtech.perun_spatial.geobuf.GeobufEncoder;
+import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
