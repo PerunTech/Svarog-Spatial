@@ -31,6 +31,7 @@
   "scripts": {
     "build": "webpack --mode=production --env=production",
     "build-dev": "webpack --mode=development --env=development",
+    "build-lpis": "npm run build && (cp backend/www/spatial.js ../lpis/node_modules/spatial/backend/www/ || true)",
     "dev": "webpack-dev-server --mode=development",
     "test": "eslint --fix frontend/ || exit 0"
   },
