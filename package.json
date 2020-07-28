@@ -31,6 +31,8 @@
   "scripts": {
     "build": "webpack --mode=production --env=production",
     "build-dev": "webpack --mode=development --env=development",
+    "build-lpis": "npm run build && (cp backend/www/spatial.js ../lpis/node_modules/spatial/backend/www/ || true)",
+    "deploy": "npm run build && cd backend && mvn clean package && (cp target/spatial* ../../svarog/osgi-bundles/ || true)",
     "dev": "webpack-dev-server --mode=development",
     "test": "eslint --fix frontend/ || exit 0"
   },
