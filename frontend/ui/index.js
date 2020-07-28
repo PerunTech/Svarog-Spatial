@@ -50,13 +50,13 @@ export { ScaleControl } from './modules/scale/ScaleControl';
 export { StatusIndicator } from './modules/status/StatusIndicator';
 export { NavigationControl } from './modules/navigation/NavigationControl'; 
 
-/* ---------- */
-/* layouts */
-/* ---------- */
+/* --------- */
+/*  layouts  */
+/* --------- */
 export { DataPanel } from './layouts/DataPanel';
 export { LayerPanel } from './layouts/LayerPanel';
 export { StatusBar } from './layouts/StatusBar';
 export { ToolsBar } from './layouts/ToolsBar';
 
-// Service.initializer
-export { initializer } from './Initializer';
+// Starter program
+export { init } from './Init';
