@@ -1,8 +1,7 @@
-import { React, PropTypes } from 'perun-core';
-import { control } from '../../core';
+import { React } from 'perun-core';
 import { CoordinatesControl, CRSControl, ScaleControl, Button } from '..';
 
-export function StatusBar (props) {
+export function StatusBar () {
     return <>
         <a 
             href='http://www.perun.tech/' 
@@ -17,5 +16,3 @@ export function StatusBar (props) {
         <Button disabled style={{width: '250px'}} />
     </>
 }
-
-control(StatusBar, {}, {position: 'bottom', className: 'status-bar'});

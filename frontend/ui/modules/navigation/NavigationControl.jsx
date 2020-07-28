@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
 import { NAVIGATE_VIEW } from '../../../config';
-import { control, Map, factory, store } from '../../../core';
+import { Map, factory, store } from '../../../core';
 import { draw } from '../../../tools';
 import { Button, Icon, StatusIndicator } from '../..';
 
@@ -37,5 +37,3 @@ export const NavigationControl = () =>
         </Button>
         <StatusIndicator />
     </>;
-
-control(NavigationControl, {}, {position: 'bottomright'});
