@@ -4,13 +4,13 @@ import { store, Provider, MapContainer } from '../core';
 /**
  * 
  */
-const _builder = {
+const _appBuilder = {
     render: () => <Provider children={<MapContainer />} />
 }
-_builder.render.displayName = 'spatial-root';
+_appBuilder.render.displayName = 'spatial-root';
 
 /**
  * 
  */
 export const init = token =>
-    (store.dispatch({token: token}), _builder);
+    (store.dispatch({token: token}), _appBuilder);

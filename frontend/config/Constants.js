@@ -24,8 +24,8 @@ export const R = 6371000;
 export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569, lng: 24.017592 }];
 
 /**
- * System center - a point location for the map to fallback to. 
- * Represented as simple latitude / longitutde pair.
+ * System center - a fallback point location for the map to center to. 
+ * Represented as simple latitude / longitude pair.
  * 
  * @constant
  */
@@ -35,11 +35,8 @@ export const SYS_CENTER = { lat: 41.590072, lng: 21.780699 };
  * The minimum allowed scale for digitization.
  * 
  * The above means the furthest allowed distance from the surface of the Earth,
- * the constraint scale within the European Union is 1in5000, though 1in2000 is advised.
+ * the constraint scale within the European Union is 1 in 5000, though 1 in 2000 is advised.
  * Simpler said, the user should not draw parcels when he can see half the country on the map.
- * 
- * `#revise_me`, see what internal scale number rougly corresponds to 1in5000,
- * once we implement the native CRS of the map.
  * 
  * @constant
  */
@@ -47,11 +44,29 @@ export const MIN_DIGI_SCALE = 12;
 
 /**
  * The minimum allowed surface area of spatial entities that are stored.
- * The constraint area within the European Union is 100m2, i.e. 10x10 polygon. 
+ * The constraint area within the European Union is 100 m2, i.e. 10x10 polygon. 
  * 
  * @constant
  */
 export const MIN_DIGI_AREA = 100;
+
+/**
+ * Descriptor of the local coordinate reference system,
+ * to be used in re-projections of assets and spatial operations.
+ * 
+ * @constant
+ */
+export const COORDINATE_REFERENCE_SYSTEM = {
+    code: 'EPSG:6316',
+    def: '+proj=tmerc +lat_0=0 +lon_0=21 +k=0.9999 +x_0=7500000 +y_0=0'
+        + ' +ellps=bessel +towgs84=682,-203,480,0,0,0,0 +units=m +no_defs',
+    opt: {
+        distances: [ 5000000, 2500000, 1000000, 750000, 500000,
+            250000, 100000, 75000, 50000, 25000, 10000,
+            7500, 5000, 2500, 1000, 750, 500, 250, 100 ],
+        description: 'MGI 1901 / Balkans zone 7'
+    }
+}
 
 /** @constant */
 export const MAP_CONTAINER = 'mapContainer';
