@@ -1,16 +1,11 @@
 import { React, PropTypes } from 'perun-core';
 import { connect } from '../../../core';
-import { Ellipser, Button, Icon } from '../..';
+import { Ellipser } from '../..';
 
 export const _StatusIndicator = ({isActive}) =>
     isActive 
         ? <Ellipser ellipseCount={12} /> 
-        : <>
-            <Ellipser ellipseCount={0} />
-            <Button disabled className='country as-label' >
-                <Icon name='country' size='42px' />
-            </Button>
-        </>;
+        : <Ellipser ellipseCount={0} />;
 
 _StatusIndicator.propTypes = {
     isActive: PropTypes.bool

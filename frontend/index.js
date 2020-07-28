@@ -14,6 +14,7 @@ export const spatial = core.util.assemble(
     name: name,
     version: version,
     description: description,
+    init: ui.init
 }, 
 { // Set prototype properties.
     config,

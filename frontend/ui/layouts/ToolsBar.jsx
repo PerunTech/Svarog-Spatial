@@ -1,5 +1,4 @@
 import { React } from 'perun-core';
-import { control } from '../../core';
 import { Tab, Tabs, Measurement, Button } from '..';
 
 export const ToolsBar = () => 
@@ -19,5 +18,3 @@ export const ToolsBar = () =>
             </Tab>
         </Tabs>
     </div>;
-
-control(ToolsBar, {}, {position: 'top'});

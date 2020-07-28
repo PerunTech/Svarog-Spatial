@@ -1,5 +1,4 @@
 import { React } from 'perun-core';
-import { control } from '../../core';
 import { Button, Icon } from '..';
 
 export const LayerPanel = () => {
@@ -11,6 +10,3 @@ export const LayerPanel = () => {
         </Button>
     </div>
 };
-
-control(LayerPanel, {}, { position: 'right' });
-/* {isOpen && <Button disabled size='' className='as-label'>Листа на слоеви</Button>} */
