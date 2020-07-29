@@ -97,7 +97,7 @@ export const renderCycle = {
             ReactDOM.unmountComponentAtNode(el); 
             
             // Removes all plain HTML elements attached to our control container,
-            // which are not HTNL containers themselves.
+            // which are not HTML containers themselves.
             [ ...el.children ].map(child =>
                 !(controlNodes.includes(child)) && el.removeChild(child));
         });
@@ -110,6 +110,5 @@ export const renderCycle = {
          */
         document.getElementById('navbar').style.display = 'flex';
         document.getElementById('footer').style.display = 'flex';
-
     }
 };
