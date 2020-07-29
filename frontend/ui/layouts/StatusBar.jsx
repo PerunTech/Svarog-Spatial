@@ -13,6 +13,6 @@ export function StatusBar () {
         <CoordinatesControl />
         <ScaleControl />
         <CRSControl />
-        <Button disabled style={{width: '250px'}} />
+        <Button disabled style={{width: '220px'}} />
     </>
 }
