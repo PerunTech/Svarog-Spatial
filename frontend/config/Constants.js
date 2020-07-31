@@ -107,6 +107,7 @@ export const PROCESS_ENUM = {
     length: 'length',
     area: 'area',
     angle: 'angle',
+    radius: 'radius',
     erase: 'erase'
 }  
 

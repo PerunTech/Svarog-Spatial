@@ -14,6 +14,7 @@ export const getProcessTitle = id => {
         landscape: 'Додај пејсажни карактеристики',
         length: 'Измери должина',
         area: 'Измери површина',
+        radius: 'Измери радиус',
         angle: 'Измери агол',
         erase: 'Отстрани мерења',
         'finish-shape': 'Затвори форма',
