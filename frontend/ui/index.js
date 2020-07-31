@@ -41,6 +41,7 @@ export { Loading } from './modules/loading/Loading';
 export { Length, length } from './modules/measurement/Length';
 export { Area, area } from './modules/measurement/Area';
 export { Angle, angleMeasurements } from './modules/measurement/Angle';
+export { Radius, radiusMeasurements } from './modules/measurement/Radius';
 export { Eraser, eraser } from './modules/measurement/Eraser';
 export { Measurement } from './modules/measurement/Measurement';
 
