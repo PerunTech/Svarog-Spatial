@@ -1,12 +1,13 @@
 import { React, PropTypes } from 'perun-core';
-import { Tab, Tabs, Measurement, Button } from '..';
+import { Tab, Tabs, Measurement, Import, Export, Button } from '..';
 
 export const ToolsBar = ({ tabs = [], opt = {} }) => {
     const _opt = {
         defaultTab: 'selection',
         selection: true,
-        io: true,
         measurement: true,
+        import: true,
+        export: true,
         ...opt
     };
 
@@ -18,15 +19,17 @@ export const ToolsBar = ({ tabs = [], opt = {} }) => {
                 && <Tab eventKey='selection' title='Селекција' >
                     <Button size='' disabled className='as-label'>Во Изградба</Button>
                 </Tab>}
-            
-            {_opt.io 
-                && <Tab eventKey='io' title='Увезување / Извезување' >
-                    <Button size='' disabled className='as-label'>Во Изградба</Button>
-                </Tab>}
-
             {_opt.measurement 
                 && <Tab eventKey='measurement' title='Мерења' >
                     <Measurement />
+                </Tab>}
+            {_opt.import 
+                && <Tab eventKey='import' title='Увезување' >
+                    <Import />
+                </Tab>}
+            {_opt.export 
+                && <Tab eventKey='export' title='Извезување' >
+                    <Export />
                 </Tab>}
         </Tabs>
     </div>;

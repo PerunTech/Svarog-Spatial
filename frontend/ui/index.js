@@ -49,7 +49,10 @@ export { scale } from './modules/scale/Scale';
 export { ScaleControl } from './modules/scale/ScaleControl';
 
 export { StatusIndicator } from './modules/status/StatusIndicator';
-export { NavigationControl } from './modules/navigation/NavigationControl'; 
+export { NavigationControl } from './modules/navigation/NavigationControl';
+
+export { Import } from './modules/io/Import';
+export { Export } from './modules/io/Export';
 
 /* --------- */
 /*  layouts  */
