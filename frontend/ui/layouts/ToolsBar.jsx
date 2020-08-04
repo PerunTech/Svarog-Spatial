@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { Tab, Tabs, Measurement, Import, Export, Button } from '..';
+import { Tab, Tabs, Selection, Measurement, Import, Export } from '..';
 
 export const ToolsBar = ({ tabs = [], opt = {} }) => {
     const _opt = {
@@ -17,7 +17,7 @@ export const ToolsBar = ({ tabs = [], opt = {} }) => {
 
             {_opt.selection
                 && <Tab eventKey='selection' title='Селекција' >
-                    <Button size='' disabled className='as-label'>Во Изградба</Button>
+                    <Selection />
                 </Tab>}
             {_opt.measurement 
                 && <Tab eventKey='measurement' title='Мерења' >

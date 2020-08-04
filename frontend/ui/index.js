@@ -54,6 +54,8 @@ export { NavigationControl } from './modules/navigation/NavigationControl';
 export { Import } from './modules/io/Import';
 export { Export } from './modules/io/Export';
 
+export { Selection } from './modules/selection/Selection';
+
 /* --------- */
 /*  layouts  */
 /* --------- */

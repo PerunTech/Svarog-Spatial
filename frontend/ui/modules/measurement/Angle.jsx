@@ -34,7 +34,7 @@ function _Angle ({options, ...props}) {
         id={_id} 
         className={processID === _id ? 'active' : ''}
         onClick={() => enable() } >
-            <Icon name={_id} size='28px' />
+            <Icon name={_id} size='30px' />
             <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(_id)}</span>
     </Button>
 }
