@@ -9,3 +9,6 @@
 #toolsbar .nav-link.active {
     color: #3399FF;
 }
+#toolsbar .btn-sm {
+    padding: 0.25rem 0.5rem;
+}
