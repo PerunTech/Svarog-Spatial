@@ -25,10 +25,10 @@ export const Export = () =>
         </Button>
         <Button >
             <Icon name='map-report' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Картографски извештај</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Картографија</span>
         </Button>
         <Button >
-            <Icon name='print' size='30px' />
+            <Icon name='printer' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Испечати</span>
         </Button>
     </ButtonGroup>;
