@@ -1,8 +1,8 @@
 import { React } from 'perun-core';
-import { NAVIGATE_VIEW } from '../../../config';
-import { Map, factory, store } from '../../../core';
-import { draw } from '../../../tools';
-import { Button, Icon, StatusIndicator } from '../..';
+import { NAVIGATE_VIEW } from '../../config';
+import { Map, factory, store } from '../../core';
+import { draw } from '../../tools';
+import { Button, Icon, StatusIndicator } from '..';
 
 const bboxZoom = () => {
     store.dispatch({processID: 'bbox-zoom'});
