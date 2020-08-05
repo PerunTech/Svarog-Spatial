@@ -1,4 +1,4 @@
-import { React, PropTypes} from 'perun-core';
+import { React } from 'perun-core';
 import { limits } from '../../../tools';
 import { Input } from '../..';
 
