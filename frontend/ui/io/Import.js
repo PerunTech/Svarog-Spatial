@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { ButtonGroup, Button, Icon } from '../..';
+import { ButtonGroup, Button, Icon } from '..';
 
 export const Import = () => 
     <ButtonGroup id='io' >
