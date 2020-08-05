@@ -56,13 +56,5 @@ export { Export } from './modules/io/Export';
 
 export { Selection } from './modules/selection/Selection';
 
-/* --------- */
-/*  layouts  */
-/* --------- */
-export { DataPanel } from './layouts/DataPanel';
-export { LayerPanel } from './layouts/LayerPanel';
-export { StatusBar } from './layouts/StatusBar';
-export { ToolsBar } from './layouts/ToolsBar';
-
 // Starter program
 export { init } from './Init';
