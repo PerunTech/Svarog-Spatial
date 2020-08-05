@@ -31,30 +31,30 @@ export { Wizard } from './elements/wizard/Wizard';
 /* ------- */
 /* modules */
 /* ------- */
-export { CoordinatesControl } from './modules/coordinates/CoordinatesControl';
+export { CoordinatesControl } from './coordinates/CoordinatesControl';
 
-export { CRSControl } from './modules/crs/CRSControl';
+export { CRSControl } from './crs/CRSControl';
 
-export { Ellipser } from './modules/loading/Ellipser';
-export { Loading } from './modules/loading/Loading';
+export { Ellipser } from './loading/Ellipser';
+export { Loading } from './loading/Loading';
 
-export { Length, length } from './modules/measurement/Length';
-export { Area, area } from './modules/measurement/Area';
-export { Angle, angleMeasurements } from './modules/measurement/Angle';
-export { Radius, radiusMeasurements } from './modules/measurement/Radius';
-export { Eraser, eraser } from './modules/measurement/Eraser';
-export { Measurement } from './modules/measurement/Measurement';
+export { Length, length } from './measurement/Length';
+export { Area, area } from './measurement/Area';
+export { Angle, angleMeasurements } from './measurement/Angle';
+export { Radius, radiusMeasurements } from './measurement/Radius';
+export { Eraser, eraser } from './measurement/Eraser';
+export { Measurement } from './measurement/Measurement';
 
-export { scale } from './modules/scale/Scale';
-export { ScaleControl } from './modules/scale/ScaleControl';
+export { scale } from './scale/Scale';
+export { ScaleControl } from './scale/ScaleControl';
 
-export { StatusIndicator } from './modules/status/StatusIndicator';
-export { NavigationControl } from './modules/navigation/NavigationControl';
+export { StatusIndicator } from './status/StatusIndicator';
+export { NavigationControl } from './navigation/NavigationControl';
 
-export { Import } from './modules/io/Import';
-export { Export } from './modules/io/Export';
+export { Import } from './io/Import';
+export { Export } from './io/Export';
 
-export { Selection } from './modules/selection/Selection';
+export { Selection } from './selection/Selection';
 
 // Starter program
 export { init } from './Init';
