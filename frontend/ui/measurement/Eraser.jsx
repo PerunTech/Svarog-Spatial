@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
-import { PROCESS_ENUM, getProcessTitle } from '../../../config';
-import { Button, Icon, length, area } from '../..';
+import { PROCESS_ENUM, getProcessTitle } from '../../config';
+import { Button, Icon, length, area } from '..';
 
 /* The internal id of the process */
 const _id = PROCESS_ENUM.erase;
