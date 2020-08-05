@@ -1,8 +1,8 @@
 import { React, PropTypes} from 'perun-core';
-import { SYS_CENTER } from '../../../config';
-import { util, Map } from '../../../core';
-import { limits } from '../../../tools';
-import { Coordinates } from '../..';
+import { SYS_CENTER } from '../../config';
+import { util, Map } from '../../core';
+import { limits } from '../../tools';
+import { Coordinates } from '..';
 
 export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function. 

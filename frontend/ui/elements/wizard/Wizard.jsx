@@ -45,5 +45,6 @@ export function Wizard ({children, nav = null, opt = {initialStep: 0}}) {
 Wizard.propTypes = {
     children: PropTypes.node,
     nav: PropTypes.node,
-    opt: PropTypes.object
+    opt: PropTypes.object,
+    goToStep: PropTypes.func
 };

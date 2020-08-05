@@ -32,8 +32,8 @@
     font-size: 0.75rem;
 }
 .status-bar .author-link {
-    position: absolute;
-    left: 62px;
+    width: 250px;
+    text-align: center;
     cursor: pointer;
     text-decoration: underline;
 }

@@ -52,4 +52,5 @@ Form.propTypes = {
     additionalMetaSchemas: PropTypes.arrayOf(PropTypes.object),
     omitExtraData: PropTypes.bool,
     extraErrors: PropTypes.object,
+    children: PropTypes.node
 };

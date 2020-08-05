@@ -1,7 +1,12 @@
+import { ReactDOM } from 'perun-core';
 import { util, store, Map, factory, http } from '..';
 import { raster } from '../../data';
 
 export const renderCycle = {
+    /**
+     * Initialization protocol for the whole module.
+     * Activated when the root React container is mounted.
+     */
     start () {
         Map.render();
         raster({ 
@@ -74,7 +79,36 @@ export const renderCycle = {
                 1000))
             });
     },
+
     fetch () {},
     render () {},
-    refresh () {}
+    refresh () {},
+
+    /**
+     * Cleanup protocol for the whole module.
+     * Called when the root React container is unmounted.
+     */
+    cleanup () {
+        /* Containers embedded in the map, used as placeholders for UI elements (controls). */
+        const controlNodes = Object.values(Map._controlCorners);
+
+        controlNodes.map(el => {
+            // Fixes virtual DOM of React.
+            ReactDOM.unmountComponentAtNode(el); 
+            
+            // Removes all plain HTML elements attached to our control container,
+            // which are not HTML containers themselves.
+            [ ...el.children ].map(child =>
+                !(controlNodes.includes(child)) && el.removeChild(child));
+        });
+
+        /**
+         * Hack for lack of coordination between core and this plugin. 
+         * Header and footer are forced to always render by core.
+         * Hide them each time this plugin is initialized.
+         * Show them whenever the plugin is uninitialized.
+         */
+        document.getElementById('navbar').style.display = 'flex';
+        document.getElementById('footer').style.display = 'flex';
+    }
 };

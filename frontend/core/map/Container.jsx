@@ -1,7 +1,7 @@
 import {React, PropTypes} from 'perun-core';
 import { Map, connect, renderCycle as rc } from '..';
 import { MAP_CONTAINER } from '../../config';
-import { useMount, useUpdate } from '../../ui';
+import { useUpdate } from '../../ui';
 
 /**
  * The React container of the rendered map. 
@@ -21,7 +21,15 @@ import { useMount, useUpdate } from '../../ui';
  * @returns JSX.Element;
  */
 function _MapContainer ({ bbox, sid, minZoom, maxZoom, refreshing }) {
-    useMount(rc.start);
+    /* Mount / Unmount effect */
+    React.useEffect(() => {
+        rc.start(); // Init program.
+        
+        return () => 
+            rc.cleanup(); // Release program. 
+    }, []);
+
+    /* Runtime effects. */
     useUpdate(rc.fetch, [bbox]);
     useUpdate(rc.render, [sid]);
     useUpdate(rc.refresh, [refreshing]);

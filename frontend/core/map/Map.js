@@ -15,6 +15,8 @@ const opt = util.assign(MAP_CONFIG, {
     origin: [7453631.01165012, 4523013.16848829]
 });
 
+
+
 /**
  * Overrides segment. Keep this on top of file.
  * Prototype changes are done before we create our Map instance.
@@ -48,12 +50,16 @@ factory.Map.prototype._initControlPos = function () {
         this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.map, side)); });
 };
 
+
+
 /**
  * The map instance of the application.
  * 
  * @namespace Map
  */
 export const Map = factory.map(el, opt);
+
+
 
 /**
  * Augmentation segment. Extends Map.
