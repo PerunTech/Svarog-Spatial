@@ -66,5 +66,6 @@ Input.propTypes = {
     disabled: PropTypes.bool,
     isValid: PropTypes.bool,
     isInvalid: PropTypes.bool,
+    name: PropTypes.string,
     as: PropTypes.oneOfType([PropTypes.string, PropTypes.node])
 };
