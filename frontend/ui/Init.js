@@ -42,6 +42,12 @@ const _appBuilder = {
         return this;
     },
 
+    addControl (ui, props, opt) {
+        control(ui, props, opt);
+
+        return this;
+    },
+
     render () {
         return <Provider children={<MapContainer />} />;
     } 

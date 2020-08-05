@@ -4,10 +4,6 @@ import { ButtonGroup, Button, Icon } from '../..';
 export const Selection = () => 
     <ButtonGroup id='selection' >
         <Button >
-            <Icon name='informer' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Информатор</span>
-        </Button>
-        <Button >
             <Icon name='selection' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Избери геометрија</span>
         </Button>
@@ -22,5 +18,9 @@ export const Selection = () =>
         <Button >
             <Icon name='selection-radius' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Избери со радиус</span>
+        </Button>
+        <Button >
+            <Icon name='informer' size='28px' />
+            <span style={{display: 'block', marginTop: '5px' }}>Информатор</span>
         </Button>
     </ButtonGroup>;
