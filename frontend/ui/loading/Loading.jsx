@@ -1,5 +1,5 @@
 import { React, PropTypes} from 'perun-core';
-import { Ellipser } from '../..';
+import { Ellipser } from '..';
 
 /**
  * Loading widget.
