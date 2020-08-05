@@ -1,8 +1,11 @@
 import { React } from 'perun-core';
-import { CoordinatesControl, CRSControl, ScaleControl, Button } from '..';
+import { CoordinatesControl, CRSControl, ScaleControl } from '..';
 
 export function StatusBar () {
     return <>
+        <CoordinatesControl />
+        <ScaleControl />
+        <CRSControl />
         <a 
             href='http://www.perun.tech/' 
             target='_blank'
@@ -10,9 +13,5 @@ export function StatusBar () {
             className='author-link' >
                 Perun Technologies ©
         </a>
-        <CoordinatesControl />
-        <ScaleControl />
-        <CRSControl />
-        <Button disabled style={{width: '220px'}} />
     </>
 }

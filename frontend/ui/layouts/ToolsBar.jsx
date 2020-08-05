@@ -16,11 +16,11 @@ export const ToolsBar = ({ tabs = [], opt = {} }) => {
             { /* tabs.map(tab => tab) */}
 
             {_opt.selection
-                && <Tab eventKey='selection' title='Селекција' >
+                && <Tab eventKey='selection' title='Избирање' >
                     <Selection />
                 </Tab>}
             {_opt.measurement 
-                && <Tab eventKey='measurement' title='Мерења' >
+                && <Tab eventKey='measurement' title='Мерење' >
                     <Measurement />
                 </Tab>}
             {_opt.import 
