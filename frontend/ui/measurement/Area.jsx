@@ -1,8 +1,8 @@
 import { React, PropTypes } from 'perun-core';
-import { factory, Map, connect, store } from "../../../core";
-import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
-import { draw } from '../../../tools';
-import { Button, Icon, Modal, DrawActions } from '../..';
+import { factory, Map, connect, store } from "../../core";
+import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../config';
+import { draw } from '../../tools';
+import { Button, Icon, Modal, DrawActions } from '..';
 
 export const area = {
     /* The internal id of the process */
