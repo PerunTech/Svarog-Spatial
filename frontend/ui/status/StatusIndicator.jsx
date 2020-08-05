@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
-import { connect } from '../../../core';
-import { Ellipser } from '../..';
+import { connect } from '../../core';
+import { Ellipser } from '..';
 
 export const _StatusIndicator = ({isActive}) =>
     isActive 
