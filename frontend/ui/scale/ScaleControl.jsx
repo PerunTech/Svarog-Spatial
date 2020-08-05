@@ -1,6 +1,6 @@
 import { React, PropTypes} from 'perun-core';
-import { connect, Map } from '../../../core';
-import { DropdownButton, Dropdown } from '../..';
+import { connect, Map } from '../../core';
+import { DropdownButton, Dropdown } from '..';
 
 /**
  * Generate content body of ScaleControl. Static, use map init range of scales, these will not extend
