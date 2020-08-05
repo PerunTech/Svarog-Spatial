@@ -1,8 +1,8 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../../core";
-import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../../config';
-import { draw } from '../../../tools';
-import { Button, Icon } from '../..';
+import { util, factory, Map, connect } from "../../core";
+import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../config';
+import { draw } from '../../tools';
+import { Button, Icon } from '..';
 
 /* The internal id of the process */
 const _id = PROCESS_ENUM.radius;
