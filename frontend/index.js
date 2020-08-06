@@ -2,7 +2,7 @@ import { name, version, description } from '../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.
-import { registry as svgRegistry } from './assets'
+import { registry as assets } from './assets'
 import * as config from './config';
 import * as core from './core';
 import * as data from './data';
@@ -18,7 +18,7 @@ export const spatial = core.util.assemble(
     init: ui.init
 }, 
 { // Set prototype properties.
-    svgRegistry,
+    assets,
     config,
     core,
     data,
