@@ -1,6 +1,11 @@
 import { Map, factory } from '../../core'
 
-// self initialize, map is already rendered due to oreder of exports in entry root
+export const layerControl = factory.control.layers({}, {}, {collapsed: false, position: 'right'});
+
 export function raster (base, overlay) {
-    return factory.control.layers(base, overlay, {collapsed: false, position: 'right'}).addTo(Map);
+    Object.entries(base).forEach(map => layerControl.addBaseLayer(map[1], map[0]));
+    Object.entries(overlay).forEach(tileLayer => layerControl.addOverlay(tileLayer[1], tileLayer[0]));
+
+    layerControl.addTo(Map);
 }
+

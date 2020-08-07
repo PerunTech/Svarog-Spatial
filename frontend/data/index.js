@@ -1,1 +1,1 @@
-export { raster } from './raster/Raster';
+export { layerControl, raster } from './raster/Raster';

@@ -34,7 +34,6 @@
 
 /* The following three are rendered inline in control-center */
 .control-left {
-    width: 250px;
     border-right: 1px solid rgba(0, 0, 0, 0.25);
     pointer-events: all;
     }
@@ -45,7 +44,6 @@
     position: relative; 
     }
 .control-right {
-    width: 250px;
     border-left: 1px solid rgba(0, 0, 0, 0.25);
     pointer-events: all;
     }
