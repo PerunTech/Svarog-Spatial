@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { ButtonGroup, Button, Icon } from '..';
+import { ButtonGroup, Button, Icon, Divider } from '..';
 
 export const Export = () => 
     <ButtonGroup id='io' >
@@ -27,6 +27,7 @@ export const Export = () =>
             <Icon name='map-report' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Извези Картографија</span>
         </Button>
+        <Divider />
         <Button >
             <Icon name='printer' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Испечати</span>
