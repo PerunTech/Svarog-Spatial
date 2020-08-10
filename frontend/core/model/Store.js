@@ -65,6 +65,25 @@ store.addState = (key, initialState) =>
 store.removeState = key => store.removeReducer(key);
 
 /**
+ * 
+ * @param {*} key 
+ * @param {*} slice 
+ */
+store.extendState = (key, slice) => {
+    const replaceState = () => {
+        // clone the current state for the given argument key (before we delete it two lines below).
+        const currSlice = { ...store.getState()[key] }; 
+        
+        store.removeState(key); // remove the current slice
+        store.addState(key, util.assign(currSlice, slice)); // assemble the old and new slice and register.
+    }
+
+    util.hasProp(_reducers, key) 
+        ? replaceState()
+        : store.addState(key, slice);
+}
+    
+/**
  * Adds the reducer to application state.
  * 
  * &nbsp;

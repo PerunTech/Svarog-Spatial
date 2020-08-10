@@ -14,7 +14,7 @@
     background: white;
     border: 1px solid #00000025;
     /* margin-left: 130%; */
-    width: 250px;
+    width: unset;
     height: auto;
     max-height: unset;
     max-width: unset;
