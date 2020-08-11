@@ -40,16 +40,26 @@ export const store = createStore(_createRootReducer(), applyMiddleware(thunk));
  * @function addState (key: string, initialState: Object): void
  * 
  * @param {string} key - The string reference to be used for the added state slice.
- * @param {Object} initialState - The state slice to be managed by the reducer.
+ * @param {Object} state - The state slice to be managed by the reducer.
  * 
  * @returns void;
  */
-store.addState = (key, initialState) => 
-    store.addReducer(key, (state = initialState, action) => {
-        return util.hasProp(state, action.type)
-            ? util.assign({}, state, {[action.type]: action.value})
-            : state;
-});
+store.addState = (key, state) => {
+    const _addState = slice => 
+        store.addReducer(key, (_state = slice, action) => 
+            util.hasProp(_state, action.type)
+                ? util.assign({}, _state, {[action.type]: action.value})
+                : _state);
+
+    const _extendState = currSlice => {
+        store.removeState(key);
+        _addState({ ...currSlice, ...state });
+    }
+    
+    util.hasProp(_reducers, key) 
+        ? _extendState({ ...store.getState()[key] })
+        : _addState(state);
+}
 
 /**
  * Removes a state slice from store.
@@ -64,24 +74,6 @@ store.addState = (key, initialState) =>
  */
 store.removeState = key => store.removeReducer(key);
 
-/**
- * 
- * @param {*} key 
- * @param {*} slice 
- */
-store.extendState = (key, slice) => {
-    const replaceState = () => {
-        // clone the current state for the given argument key (before we delete it two lines below).
-        const currSlice = { ...store.getState()[key] }; 
-        
-        store.removeState(key); // remove the current slice
-        store.addState(key, util.assign(currSlice, slice)); // assemble the old and new slice and register.
-    }
-
-    util.hasProp(_reducers, key) 
-        ? replaceState()
-        : store.addState(key, slice);
-}
     
 /**
  * Adds the reducer to application state.
