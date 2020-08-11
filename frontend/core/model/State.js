@@ -20,22 +20,22 @@ export const state = {
     http: {
         default: {},
         origin: {
-            url: '/services/sws/origin/{init.token}',
+            url: '/sws/origin/{init.token}',
             method: 'get',
             responseType: 'text'
         },
-        drawParcel_data: {
-            url: '/services/ReactElements/getTableFormData/{init.token}/0/LPIS_PARCEL',
+        draw_ap_data: {
+            url: '/ReactElements/getTableFormData/{init.token}/0/LPIS_PARCEL',
             method: 'get',
             responseType: 'application/json'
         },
-        drawParcel_uiSchema: {
-            url: '/services/ReactElements/getTableUISchema/{init.token}/LPIS_PARCEL',
+        draw_ap_ui: {
+            url: '/ReactElements/getTableUISchema/{init.token}/LPIS_PARCEL',
             method: 'get',
             responseType: 'application/json'
         },
-        drawParcel_jsonSchema: {
-            url: '/services/ReactElements/getTableJSONSchema/{init.token}/LPIS_PARCEL',
+        draw_ap_json: {
+            url: '/ReactElements/getTableJSONSchema/{init.token}/LPIS_PARCEL',
             method: 'get',
             responseType: 'application/json'
         }

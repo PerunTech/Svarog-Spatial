@@ -99,13 +99,14 @@ function _resolveParams ({url}) {
         // Access state on top, only once, right before call. Guarantees synchronicity.
         const state = store.getState();
         //Modify path, disassemble => resolve foreign keys (paths to other state slices) and assemble again.
-        arguments[0].url = url.split('/').map(str => { 
+        arguments[0].url = window.server + url.split('/').map(str => {
             // Distinguish parameters substrings from other subparts of the path. Signature is {path}.
             return str.charAt(0) === '{' && str.charAt(str.length - 1) === '}' 
                 ? util.access(state, str.slice(1, -1))
                 : str;
-            }).join('/');
+        }).join('/');
     }
+
     // return input configuration object, potentially transformed.
     // util.assign guarantees a shallow-merged single entity, thus the argument index here is always 0.
     return arguments[0];
