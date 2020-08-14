@@ -55,3 +55,17 @@ export function geoJson (geometry, opt) {
         }
     };
 }
+
+GeoJSON.fromLayer = (layer, crs) => {
+    const geojson = layer.toGeoJSON();
+    const coords = geojson.geometry.coordinates[0];
+
+    coords.forEach((val, i, self) => {
+        let ll = factory.latLng(val[1], val[0]);
+        let p = crs.projection.project(ll);
+        
+        self[i] = [ p.x, p.y ];
+    });
+
+    return geojson;
+}
