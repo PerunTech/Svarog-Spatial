@@ -170,4 +170,57 @@ export const line = {
 
         return middleMarker;
     },
+
+    // adds a new marker from a middlemarker
+    _addMarker(newM, leftM, rightM) {
+        // first, make this middlemarker a regular marker
+        newM.off('movestart');
+        newM.off('click');
+
+        // now, create the polygon coordinate point for that marker
+        // and push into marker array
+        // and associate polygon coordinate with marker coordinate
+        const latlng = newM.getLatLng();
+        const coords = this.layer._latlngs;
+
+        // the index path to the marker inside the multidimensional marker array
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, leftM);
+
+        // define the coordsRing that is edited
+        const coordsRing = indexPath.length > 1 
+            ? util.access(coords, parentPath) 
+            : coords;
+
+        // define the markers array that is edited
+        const markerArr = indexPath.length > 1 
+            ? util.access(this._markers, parentPath) 
+            : this._markers;
+
+        // add coordinate to coordinate array
+        coordsRing.splice(index + 1, 0, latlng);
+
+        // add marker to marker array
+        markerArr.splice(index + 1, 0, newM);
+
+        // set new latlngs to update polygon
+        this.layer.setLatLngs(coords);
+
+        // create the new middlemarkers
+        this._createMiddleMarker(leftM, newM);
+        this._createMiddleMarker(newM, rightM);
+
+        // fire edit event
+        this._fireEdit();
+
+        this.layer.fire('pm:vertexadded', {
+            layer: this.layer,
+            marker: newM,
+            indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
+            latlng,
+        });
+
+        if (this.options.snappable) {
+            this._initSnappableMarkers();
+        }
+    },
 }
