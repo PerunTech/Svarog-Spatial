@@ -184,7 +184,7 @@ export const line = {
         const coords = this.layer._latlngs;
 
         // the index path to the marker inside the multidimensional marker array
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, leftM);
+        const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, leftM);
 
         // define the coordsRing that is edited
         const coordsRing = indexPath.length > 1 
@@ -215,7 +215,7 @@ export const line = {
         this.layer.fire('pm:vertexadded', {
             layer: this.layer,
             marker: newM,
-            indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
+            indexPath: this._findDeepMarkerIndex(this._markers, newM).indexPath,
             latlng,
         });
 
@@ -232,7 +232,7 @@ export const line = {
         const coords = this.layer.getLatLngs();
     
         // the index path to the marker inside the multidimensional marker array
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+        const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, marker);
     
         // only continue if this is NOT a middle marker (those can't be deleted)
         if (!indexPath) {
@@ -317,7 +317,7 @@ export const line = {
         });
     },
 
-    findDeepMarkerIndex (arr, marker) {
+    _findDeepMarkerIndex (arr, marker) {
         let result;
     
         const run = path => (v, i) => {
@@ -345,7 +345,7 @@ export const line = {
         return returnVal;
     },
 
-    updatePolyOnDrag (marker) {
+    _updatePolyOnDrag (marker) {
         // update polygon coords
         const coords = this.layer.getLatLngs();
     
@@ -353,7 +353,7 @@ export const line = {
         const latlng = marker.getLatLng();
     
         // get indexPath of Marker
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+        const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, marker);
     
         // update coord
         const parent = indexPath.length > 1 
@@ -368,14 +368,14 @@ export const line = {
     _onMarkerDrag (e) {
         // dragged marker
         const marker = e.target;
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+        const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, marker);
     
         // only continue if this is NOT a middle marker
         if (!indexPath) {
             return;
         }
     
-        this.updatePolyOnDrag(marker);
+        this._updatePolyOnDrag(marker);
     
         // the dragged markers neighbors
         const markerArr = indexPath.length > 1 
