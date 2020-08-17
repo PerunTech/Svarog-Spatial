@@ -59,4 +59,8 @@ export const marker = {
         target.fire('pm:remove');
     },
 
+    _onDragEnd({target}) {
+        target.fire('pm:edit');
+        this._layerEdited = true;
+    },
 }
