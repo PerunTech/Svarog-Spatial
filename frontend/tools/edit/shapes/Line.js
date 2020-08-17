@@ -39,7 +39,7 @@ export const line = {
         }
     },
 
-    disable() {
+    disable () {
         // if it's not enabled, it doesn't need to be disabled.
         if (!this.enabled || this.layer._dragging) {    //this.layer.pm._dragging
             return false;
@@ -70,7 +70,7 @@ export const line = {
         return true;
     },
 
-    _initMarkers() {
+    _initMarkers () {
         const coords = this.layer.getLatLngs();
     
         // cleanup old ones first
@@ -112,7 +112,7 @@ export const line = {
     },
 
     // creates initial markers for coordinates
-    _createMarker(latlng) {
+    _createMarker (latlng) {
         const marker = factory.marker(latlng, {
             draggable: true,
             icon: factory.divIcon({ className: 'marker-icon' }),
@@ -134,7 +134,7 @@ export const line = {
     },
 
     // creates the middle markes between coordinates
-    _createMiddleMarker(leftM, rightM) {
+    _createMiddleMarker (leftM, rightM) {
         // cancel if there are no two markers
         if (!leftM || !rightM) {
             return false;
@@ -172,7 +172,7 @@ export const line = {
     },
 
     // adds a new marker from a middlemarker
-    _addMarker(newM, leftM, rightM) {
+    _addMarker (newM, leftM, rightM) {
         // first, make this middlemarker a regular marker
         newM.off('movestart');
         newM.off('click');
@@ -224,7 +224,7 @@ export const line = {
         }
     },
 
-    _removeMarker(e) {
+    _removeMarker (e) {
         // the marker that should be removed
         const marker = e.target;
     
@@ -317,7 +317,7 @@ export const line = {
         });
     },
 
-    findDeepMarkerIndex(arr, marker) {
+    findDeepMarkerIndex (arr, marker) {
         let result;
     
         const run = path => (v, i) => {
@@ -345,7 +345,7 @@ export const line = {
         return returnVal;
     },
 
-    updatePolyOnDrag(marker) {
+    updatePolyOnDrag (marker) {
         // update polygon coords
         const coords = this.layer.getLatLngs();
     
@@ -363,5 +363,49 @@ export const line = {
     
         // set new coords on layer
         this.layer.setLatLngs(coords);
+    },
+
+    _onMarkerDrag (e) {
+        // dragged marker
+        const marker = e.target;
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+    
+        // only continue if this is NOT a middle marker
+        if (!indexPath) {
+            return;
+        }
+    
+        this.updatePolyOnDrag(marker);
+    
+        // the dragged markers neighbors
+        const markerArr = indexPath.length > 1 
+            ? util.access(this._markers, parentPath) 
+            : this._markers;
+    
+        // find the indizes of next and previous markers
+        const nextMarkerIndex = (index + 1) % markerArr.length;
+        const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+    
+        // update middle markers on the left and right
+        // be aware that "next" and "prev" might be interchanged, depending on the geojson array
+        const markerLatLng = marker.getLatLng();
+    
+        // get latlng of prev and next marker
+        const prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
+        const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
+    
+        marker._middleMarkerNext 
+            && marker._middleMarkerNext.setLatLng(this._calcMiddleLatLng(
+                Map,
+                markerLatLng,
+                nextMarkerLatLng
+            ));
+    
+        marker._middleMarkerPrev 
+            && marker._middleMarkerPrev.setLatLng(this._calcMiddleLatLng(
+                Map,
+                markerLatLng,
+                prevMarkerLatLng
+            ));
     },
 }
