@@ -1,5 +1,4 @@
-
-import { util, factory, Map } from '../../../core';
+import { util } from '../../../core';
 import { drag, snap } from '../..';
 
 export const marker = {
@@ -33,16 +32,14 @@ export const marker = {
 
         // enable removal for the marker
         !this.options.preventMarkerRemoval 
-            && this._layer.on('contextmenu', this._removeMarker, this);
+            && this.layer.on('contextmenu', this._removeMarker, this);
     },
 
     disable() {
         this.enabled = false;
     
         // disable dragging and removal for the marker
-        if (this._layer.dragging) {
-            this._layer.dragging.disable();
-        }
+        this.layer.dragging && this.layer.dragging.disable();
     
         this.layer.off('contextmenu', this._removeMarker, this);
         this.layer.off('dragstart', this._onPinnedMarkerDragStart, this);
