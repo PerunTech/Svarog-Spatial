@@ -1,4 +1,4 @@
-import { util, factory } from '../../../core';
+import { util, factory, Map } from '../../../core';
 import { drag, snap } from '../..';
 
 export const line = {
@@ -30,13 +30,6 @@ export const line = {
         // if polygon gets removed from map, disable edit mode
         this.layer.on('remove', this._onLayerRemove, this);
     
-        if (!this.options.allowSelfIntersection) {
-            this.layer.on(
-                'pm:vertexremoved',
-                this._handleSelfIntersectionOnVertexRemoval,
-                this
-            );
-        }
     
         if (!this.options.allowSelfIntersection) {
             this.cachedColor = this._layer.options.color;
@@ -62,9 +55,6 @@ export const line = {
         // remove onRemove listener
         this.layer.off('remove', this._onLayerRemove, this);
     
-        !this.options.allowSelfIntersection
-            && this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
-    
         // remove draggable class
         const el = this.layer._path || this._layer._renderer._container;
         factory.DomUtil.removeClass(el, 'leaflet-pm-draggable');
@@ -78,5 +68,46 @@ export const line = {
         this._layerEdited = false;
     
         return true;
+    },
+
+    _initMarkers() {
+        const coords = this.layer.getLatLngs();
+    
+        // cleanup old ones first
+        this._markerGroup && this._markerGroup.clearLayers();
+    
+        // add markerGroup to map, markerGroup includes regular and middle markers
+        this._markerGroup = new factory.LayerGroup();
+        this._markerGroup._pmTempLayer = true;
+    
+        // handle coord-rings (outer, inner, etc)
+        // if there is another coords ring, go a level deep and do this again
+        const _handleRing = coordsArr => {
+            util.isArray(coordsArr[0]) && coordsArr.map(_handleRing, this);
+    
+            // the marker array, it includes only the markers of vertexes (no middle markers)
+            const ringArr = coordsArr.map(this._createMarker, this);
+    
+            // create small markers in the middle of the regular markers
+            coordsArr.map((v, k) => {
+                // find the next index fist
+                const nextIndex = this.layer instanceof factory.Polygon
+                    ? (k + 1) % coordsArr.length 
+                    : k + 1;
+                // create the marker
+                return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+            });
+    
+            return ringArr;
+        };
+    
+        // create markers
+        this._markers = _handleRing(coords);
+    
+        // handle possible limitation: maximum number of markers
+        this.filterMarkerGroup();
+    
+        // add markerGroup to map
+        Map.addLayer(this._markerGroup);
     },
 }
