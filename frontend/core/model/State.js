@@ -23,21 +23,6 @@ export const state = {
             url: '/sws/origin/{init.token}',
             method: 'get',
             responseType: 'text'
-        },
-        draw_ap_data: {
-            url: '/ReactElements/getTableFormData/{init.token}/0/LPIS_PARCEL',
-            method: 'get',
-            responseType: 'application/json'
-        },
-        draw_ap_ui: {
-            url: '/ReactElements/getTableUISchema/{init.token}/LPIS_PARCEL',
-            method: 'get',
-            responseType: 'application/json'
-        },
-        draw_ap_json: {
-            url: '/ReactElements/getTableJSONSchema/{init.token}/LPIS_PARCEL',
-            method: 'get',
-            responseType: 'application/json'
         }
     },
     /* Initialization data */
