@@ -415,6 +415,17 @@ export const line = {
         this.layer.fire('pm:edit');
     },
 
+    _onMarkerDragStart(e) {
+        const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
+    
+        this.layer.fire('pm:markerdragstart', {
+            markerEvent: e,
+            indexPath,
+        });
+    
+        this.cachedColor = this._layer.options.color;
+    },
+
     _onMarkerDragEnd(e) {
         const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
     
