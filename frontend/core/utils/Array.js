@@ -37,8 +37,12 @@ export const arr = {
      */
     flattenDeep (arr) {
         return arr
-            .filter(x => ![null, '', undefined].includes(x))
-            .reduce((acc, val) => acc.concat(this.isArray(val) ? this.flattenDeep(val) : val), []);
+            .filter(x => 
+                ![null, '', undefined].includes(x))
+            .reduce((acc, val) => 
+                acc.concat(this.isArray(val) 
+                    ? this.flattenDeep(val) 
+                    : val), []);
     },
 
     /**

@@ -223,4 +223,97 @@ export const line = {
             this._initSnappableMarkers();
         }
     },
+
+    _removeMarker(e) {
+        // the marker that should be removed
+        const marker = e.target;
+    
+        // coords of the layer
+        const coords = this.layer.getLatLngs();
+    
+        // the index path to the marker inside the multidimensional marker array
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+    
+        // only continue if this is NOT a middle marker (those can't be deleted)
+        if (!indexPath) {
+            return;
+        }
+    
+        // define the coordsRing that is edited
+        const coordsRing = indexPath.length > 1 
+            ? util.access(coords, parentPath) 
+            : coords;
+    
+        // define the markers array that is edited
+        const markerArr = indexPath.length > 1 
+            ? util.access(this._markers, parentPath) 
+            : this._markers;
+    
+        // remove coordinate
+        coordsRing.splice(index, 1);
+    
+        // set new latlngs to the polygon
+        this.layer.setLatLngs(coords);
+    
+        // if the ring of the poly has no coordinates left, remove the last coord too
+        if (coordsRing.length <= 1) {
+            coordsRing.splice(0, coordsRing.length);
+    
+            // set new coords
+            this.layer.setLatLngs(coords);
+    
+            // re-enable editing so unnecessary markers are removed
+            // TODO: kind of an ugly workaround maybe do it better?
+            this.disable();
+            this.enable(this.options);
+        }
+
+        // if no coords are left, remove the layer
+        !util.flattenDeep(coords).length && this.layer.remove();
+    
+        // now handle the middle markers
+        // remove the marker and the middlemarkers next to it from the map
+        marker._middleMarkerPrev 
+            && this._markerGroup.removeLayer(marker._middleMarkerPrev);
+        marker._middleMarkerNext 
+            && this._markerGroup.removeLayer(marker._middleMarkerNext);
+    
+        // remove the marker from the map
+        this._markerGroup.removeLayer(marker);
+    
+        let rightMarkerIndex;
+        let leftMarkerIndex;
+    
+        // find neighbor marker-indexes
+        this.layer instanceof factory.Polygon
+            ? (rightMarkerIndex = (index + 1) % markerArr.length,
+                leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length)
+            : (leftMarkerIndex = index - 1 < 0 
+                    ? undefined 
+                    : index - 1,
+                rightMarkerIndex = index + 1 >= markerArr.length 
+                    ? undefined 
+                    : index + 1);
+    
+        // don't create middlemarkers if there is only one marker left
+        if (rightMarkerIndex !== leftMarkerIndex) {
+            const leftM = markerArr[leftMarkerIndex];
+            const rightM = markerArr[rightMarkerIndex];
+            this._createMiddleMarker(leftM, rightM);
+        }
+    
+        // remove the marker from the markers array
+        markerArr.splice(index, 1);
+    
+        // fire edit event
+        this._fireEdit();
+    
+        // fire vertex removal event
+        this.layer.fire('pm:vertexremoved', {
+            layer: this.layer,
+            marker,
+            indexPath,
+            // TODO: maybe add latlng as well?
+        });
+    },
 }
