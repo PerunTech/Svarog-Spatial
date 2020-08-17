@@ -36,6 +36,23 @@ export const marker = {
             && this._layer.on('contextmenu', this._removeMarker, this);
     },
 
+    disable() {
+        this.enabled = false;
+    
+        // disable dragging and removal for the marker
+        if (this._layer.dragging) {
+            this._layer.dragging.disable();
+        }
+    
+        this.layer.off('contextmenu', this._removeMarker, this);
+        this.layer.off('dragstart', this._onPinnedMarkerDragStart, this);
+        this.layer.fire('pm:disable');
+    
+        this._layerEdited && this.layer.fire('pm:update', {});
+        this._layerEdited = false;
+
+        this.layer = {};
+    },
 
 
 }
