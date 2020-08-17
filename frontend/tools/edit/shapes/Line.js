@@ -110,4 +110,26 @@ export const line = {
         // add markerGroup to map
         Map.addLayer(this._markerGroup);
     },
+
+    // creates initial markers for coordinates
+    _createMarker(latlng) {
+        const marker = factory.marker(latlng, {
+            draggable: true,
+            icon: factory.divIcon({ className: 'marker-icon' }),
+        });
+
+        marker._pmTempLayer = true;
+
+        marker.on('dragstart', this._onMarkerDragStart, this);
+        marker.on('move', this._onMarkerDrag, this);
+        marker.on('dragend', this._onMarkerDragEnd, this);
+
+        if (!this.options.preventMarkerRemoval) {
+            marker.on('contextmenu', this._removeMarker, this);
+        }
+
+        this._markerGroup.addLayer(marker);
+
+        return marker;
+    },
 }
