@@ -29,14 +29,6 @@ export const line = {
     
         // if polygon gets removed from map, disable edit mode
         this.layer.on('remove', this._onLayerRemove, this);
-    
-    
-        if (!this.options.allowSelfIntersection) {
-            this.cachedColor = this._layer.options.color;
-    
-            this.isRed = false;
-            this._handleLayerStyle();
-        }
     },
 
     disable () {
@@ -436,5 +428,9 @@ export const line = {
     
         // fire edit event
         this._fireEdit();
+    },
+
+    _onLayerRemove(e) {
+        this.disable(e.target);
     },
 }
