@@ -61,7 +61,7 @@ export const line = {
 
     _initMarkers () {
         const coords = this.layer.getLatLngs();
-    
+
         // cleanup old ones first
         this._markerGroup && this._markerGroup.clearLayers();
     
@@ -72,8 +72,10 @@ export const line = {
         // handle coord-rings (outer, inner, etc)
         // if there is another coords ring, go a level deep and do this again
         const _handleRing = coordsArr => {
-            util.isArray(coordsArr[0]) && coordsArr.map(_handleRing, this);
-    
+            if (util.isArray(coordsArr[0])) {
+                return coordsArr.map(_handleRing, this);
+            }
+
             // the marker array, it includes only the markers of vertexes (no middle markers)
             const ringArr = coordsArr.map(this._createMarker, this);
     
