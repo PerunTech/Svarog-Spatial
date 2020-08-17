@@ -408,4 +408,22 @@ export const line = {
                 prevMarkerLatLng
             ));
     },
+
+    // fire edit event
+    _fireEdit() {
+        this._layerEdited = true;
+        this.layer.fire('pm:edit');
+    },
+
+    _onMarkerDragEnd(e) {
+        const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
+    
+        this.layer.fire('pm:markerdragend', {
+            markerEvent: e,
+            indexPath,
+        });
+    
+        // fire edit event
+        this._fireEdit();
+    },
 }
