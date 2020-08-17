@@ -1,5 +1,6 @@
 /* shapes */
 import { marker } from './shapes/Marker';
+import { line } from './shapes/Line';
 
 /**
  * Editing tools.
@@ -9,5 +10,6 @@ import { marker } from './shapes/Marker';
  * @namespace edit
  */
 export const edit = {
-    marker
+    marker,
+    line
 }

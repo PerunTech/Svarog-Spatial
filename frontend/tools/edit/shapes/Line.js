@@ -51,9 +51,6 @@ export const line = {
         const el = this.layer._path || this._layer._renderer._container;
         factory.DomUtil.removeClass(el, 'leaflet-pm-draggable');
     
-        // remove invalid class if layer has self intersection
-        this.hasSelfIntersection() && factory.DomUtil.removeClass(el, 'leaflet-pm-invalid');
-    
         this.layer.fire('pm:disable');
     
         this._layerEdited && this.layer.fire('pm:update', {});
