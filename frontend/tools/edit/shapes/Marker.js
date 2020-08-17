@@ -63,4 +63,28 @@ export const marker = {
         target.fire('pm:edit');
         this._layerEdited = true;
     },
+
+    // overwrite initSnappableMarkers from Snap.js Mixin
+    _initSnappableMarkers() {
+        const marker = this.layer;
+        
+        this.options.snapDistance = this.options.snapDistance || 30;
+        
+        marker.off('drag', this._handleSnapping, this);
+        marker.on('drag', this._handleSnapping, this);
+        
+        marker.off('dragend', this._cleanupSnapping, this);
+        marker.on('dragend', this._cleanupSnapping, this);
+        
+        marker.off('pm:dragstart', this._unsnap, this);
+        marker.on('pm:dragstart', this._unsnap, this);
+    },
+
+    _disableSnapping() {
+        const marker = this.layer;
+
+        marker.off('drag', this._handleSnapping, this);
+        marker.off('dragend', this._cleanupSnapping, this);
+        marker.off('pm:dragstart', this._unsnap, this);
+    }
 }
