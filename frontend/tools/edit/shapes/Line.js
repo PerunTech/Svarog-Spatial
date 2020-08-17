@@ -316,4 +316,52 @@ export const line = {
             // TODO: maybe add latlng as well?
         });
     },
+
+    findDeepMarkerIndex(arr, marker) {
+        let result;
+    
+        const run = path => (v, i) => {
+            const iRes = path.concat(i);
+    
+            if (v._leaflet_id === marker._leaflet_id) {
+                result = iRes;
+                return true;
+            }
+    
+            return Array.isArray(v) && v.some(run(iRes));
+        };
+        arr.some(run([]));
+    
+        let returnVal = {};
+    
+        if (result) {
+            returnVal = {
+                indexPath: result,
+                index: result[result.length - 1],
+                parentPath: result.slice(0, result.length - 1), // this has to be stringified.
+            };
+        }
+    
+        return returnVal;
+    },
+
+    updatePolyOnDrag(marker) {
+        // update polygon coords
+        const coords = this.layer.getLatLngs();
+    
+        // get marker latlng
+        const latlng = marker.getLatLng();
+    
+        // get indexPath of Marker
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+    
+        // update coord
+        const parent = indexPath.length > 1 
+            ? util.access(coords, parentPath) 
+            : coords;
+        parent.splice(index, 1, latlng);
+    
+        // set new coords on layer
+        this.layer.setLatLngs(coords);
+    },
 }
