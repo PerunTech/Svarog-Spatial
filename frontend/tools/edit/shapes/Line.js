@@ -132,4 +132,42 @@ export const line = {
 
         return marker;
     },
+
+    // creates the middle markes between coordinates
+    _createMiddleMarker(leftM, rightM) {
+        // cancel if there are no two markers
+        if (!leftM || !rightM) {
+            return false;
+        }
+
+        const latlng = this._calcMiddleLatLng(
+            Map,
+            leftM.getLatLng(),
+            rightM.getLatLng()
+        );
+
+        const middleMarker = this._createMarker(latlng)
+            .setIcon(factory.divIcon({ className: 'marker-icon marker-icon-middle' }));
+
+        // save reference to this middle markers on the neighboor regular markers
+        leftM._middleMarkerNext = middleMarker;
+        rightM._middleMarkerPrev = middleMarker;
+
+        middleMarker.on('click', () => {
+            middleMarker.setIcon(factory.divIcon({ className: 'marker-icon' }));
+            this._addMarker(middleMarker, leftM, rightM);
+        });
+
+        middleMarker.on('movestart', () => {
+            middleMarker.on('moveend', () => {
+                middleMarker
+                    .setIcon(factory.divIcon({ className: 'marker-icon' }))
+                    .off('moveend');
+            });
+
+            this._addMarker(middleMarker, leftM, rightM);
+        });
+
+        return middleMarker;
+    },
 }
