@@ -54,6 +54,12 @@ export const marker = {
         this.layer = {};
     },
 
+    toggleEdit(options) {
+        !this.enabled
+            ? this.enable(options)
+            : this.disable();
+    },
+
     _removeMarker({ target }) {
         target.remove();
         target.fire('pm:remove');
