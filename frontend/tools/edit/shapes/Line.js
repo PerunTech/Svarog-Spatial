@@ -1,4 +1,4 @@
-import { util } from '../../../core';
+import { util, factory } from '../../../core';
 import { drag, snap } from '../..';
 
 export const line = {
@@ -44,5 +44,39 @@ export const line = {
             this.isRed = false;
             this._handleLayerStyle();
         }
-    }
+    },
+
+    disable() {
+        // if it's not enabled, it doesn't need to be disabled.
+        if (!this.enabled || this.layer._dragging) {    //this.layer.pm._dragging
+            return false;
+        }
+
+        this.layer.enabled = false;
+        this.layer._markerGroup.clearLayers();
+    
+        // clean up draggable
+        this.layer.off('mousedown');
+        this.layer.off('mouseup');
+    
+        // remove onRemove listener
+        this.layer.off('remove', this._onLayerRemove, this);
+    
+        !this.options.allowSelfIntersection
+            && this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
+    
+        // remove draggable class
+        const el = this.layer._path || this._layer._renderer._container;
+        factory.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    
+        // remove invalid class if layer has self intersection
+        this.hasSelfIntersection() && factory.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+    
+        this.layer.fire('pm:disable');
+    
+        this._layerEdited && this.layer.fire('pm:update', {});
+        this._layerEdited = false;
+    
+        return true;
+    },
 }
