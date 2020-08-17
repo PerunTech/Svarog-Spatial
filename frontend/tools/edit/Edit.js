@@ -1,6 +1,7 @@
 /* shapes */
 import { marker } from './shapes/Marker';
 import { line } from './shapes/Line';
+import { polygon } from './shapes/Polygon';
 
 /**
  * Editing tools.
@@ -11,5 +12,6 @@ import { line } from './shapes/Line';
  */
 export const edit = {
     marker,
-    line
+    line,
+    polygon
 }
