@@ -54,5 +54,9 @@ export const marker = {
         this.layer = {};
     },
 
+    _removeMarker({ target }) {
+        target.remove();
+        target.fire('pm:remove');
+    },
 
 }
