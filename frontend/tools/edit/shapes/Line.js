@@ -331,7 +331,7 @@ export const line = {
             returnVal = {
                 indexPath: result,
                 index: result[result.length - 1],
-                parentPath: result.slice(0, result.length - 1), // this has to be stringified.
+                parentPath: String(result.slice(0, result.length - 1)), // this has to be stringified.
             };
         }
     
