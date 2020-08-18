@@ -45,7 +45,7 @@ export const renderCycle = {
                     format: 'image/png',
                     transparent: true,
                     tiled: false, 
-                    minZoom: 0,
+                    minZoom: 3,
                     maxZoom: 18
                 }
             ),
@@ -55,7 +55,7 @@ export const renderCycle = {
                     format: 'image/png',
                     transparent: true,
                     tiled: true, 
-                    minZoom: 0,
+                    minZoom: 3,
                     maxZoom: 18
                 }
             ),
@@ -65,16 +65,17 @@ export const renderCycle = {
                     format: 'image/png',
                     transparent: true,
                     tiled: true, 
-                    minZoom: 0,
+                    minZoom: 5,
                     maxZoom: 18
                 }
             ),
         })
+        const setMapState = () =>
+            store.dispatch({  zoom: Map.getZoom(), center: Map.getCenter(), bbox: Map.getBBox() });
+        setMapState();
+
         Map.on('moveend', util.debounce(() => {
-            store.dispatch({ 
-                zoom: Map.getZoom(), 
-                center: Map.getCenter(), 
-                bbox: Map.getBBox() });
+            setMapState();
         }, 1000));
     },
 
