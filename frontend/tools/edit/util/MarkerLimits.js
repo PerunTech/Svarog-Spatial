@@ -9,7 +9,7 @@ export const markerLimits = {
         this.createCache();
         
         // refresh cache when layer was edited (e.g. when a vertex was added or removed)
-        this.layer.on('pm:edit', this.createCache, this)
+        this._layer.on('pm:edit', this.createCache, this)
         
         
         
@@ -17,14 +17,14 @@ export const markerLimits = {
         this.applyLimitFilters({});
         
         // remove events when edit mode is disabled
-        this.layer.on('pm:disable', this._removeMarkerLimitEvents, this);
+        this._layer.on('pm:disable', this._removeMarkerLimitEvents, this);
         
         
         // add markers closest to the mouse
         if (this.options.limitMarkersToCount > -1) {
           // re-init markers when a vertex is removed. 
           // The reason is that syncing this cache with a removed marker was impossible to do
-            this.layer.on('pm:vertexremoved', this._initMarkers, this)
+            this._layer.on('pm:vertexremoved', this._initMarkers, this)
         
             Map.on('mousemove', this.applyLimitFilters, this);
         }
@@ -32,9 +32,9 @@ export const markerLimits = {
 
     _removeMarkerLimitEvents() {
         Map.off('mousemove', this.applyLimitFilters, this);
-        this.layer.off('pm:edit', this.createCache, this)
-        this.layer.off('pm:disable', this._removeMarkerLimitEvents, this);
-        this.layer.off('pm:vertexremoved', this._initMarkers, this)
+        this._layer.off('pm:edit', this.createCache, this)
+        this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
+        this._layer.off('pm:vertexremoved', this._initMarkers, this)
     },
 
     createCache() {

@@ -5,7 +5,7 @@ export const marker = {
     ...snap,
     ...drag,
 
-    layer: {},
+    _layer: {},
     enabled: false,
     options: {},
 
@@ -16,8 +16,8 @@ export const marker = {
         }
 
         // init layer to be edited.
-        this.layer = layer
-        this.layer.on('dragend', this._onDragEnd, this);
+        this._layer = layer
+        this._layer.on('dragend', this._onDragEnd, this);
 
         // merge init edit options.
         util.assign(this.options, opt);
@@ -28,27 +28,27 @@ export const marker = {
             ? this._initSnappableMarkers()
             :  this._disableSnapping();
 
-        this.options.draggable && this.layer.dragging.enable();
+        this.options.draggable && this._layer.dragging.enable();
 
         // enable removal for the marker
         !this.options.preventMarkerRemoval 
-            && this.layer.on('contextmenu', this._removeMarker, this);
+            && this._layer.on('contextmenu', this._removeMarker, this);
     },
 
     disable() {
         this.enabled = false;
     
         // disable dragging and removal for the marker
-        this.layer.dragging && this.layer.dragging.disable();
+        this._layer.dragging && this._layer.dragging.disable();
     
-        this.layer.off('contextmenu', this._removeMarker, this);
-        this.layer.off('dragstart', this._onPinnedMarkerDragStart, this);
-        this.layer.fire('pm:disable');
+        this._layer.off('contextmenu', this._removeMarker, this);
+        this._layer.off('dragstart', this._onPinnedMarkerDragStart, this);
+        this._layer.fire('pm:disable');
     
-        this._layerEdited && this.layer.fire('pm:update', {});
+        this._layerEdited && this._layer.fire('pm:update', {});
         this._layerEdited = false;
 
-        this.layer = {};
+        this._layer = {};
     },
 
     toggleEdit(options) {
@@ -69,7 +69,7 @@ export const marker = {
 
     // overwrite initSnappableMarkers from Snap.js Mixin
     _initSnappableMarkers() {
-        const marker = this.layer;
+        const marker = this._layer;
         
         this.options.snapDistance = this.options.snapDistance || 30;
         
@@ -84,7 +84,7 @@ export const marker = {
     },
 
     _disableSnapping() {
-        const marker = this.layer;
+        const marker = this._layer;
 
         marker.off('drag', this._handleSnapping, this);
         marker.off('dragend', this._cleanupSnapping, this);

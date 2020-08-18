@@ -7,7 +7,7 @@ export const line = {
     ...drag,
     ...markerLimits,
 
-    layer: {},
+    _layer: {},
     enabled: false,
     options: {},
 
@@ -16,7 +16,7 @@ export const line = {
         // we don't block enabling again because new options might be passed
         this.enabled && this.disable();
 
-        this.layer = layer;
+        this._layer = layer;
         this.enabled= true;
 
         util.assign(this.options, opt);
@@ -30,39 +30,39 @@ export const line = {
             : this._disableSnapping();
     
         // if polygon gets removed from map, disable edit mode
-        this.layer.on('remove', this._onLayerRemove, this);
+        this._layer.on('remove', this._onLayerRemove, this);
     },
 
     disable () {
         // if it's not enabled, it doesn't need to be disabled.
-        if (!this.enabled || this.layer._dragging) {    //this.layer.pm._dragging
+        if (!this.enabled || this._layer._dragging) {    //this._layer.pm._dragging
             return false;
         }
 
-        this.layer.enabled = false;
-        this.layer._markerGroup.clearLayers();
+        this._layer.enabled = false;
+        this._layer._markerGroup.clearLayers();
     
         // clean up draggable
-        this.layer.off('mousedown');
-        this.layer.off('mouseup');
+        this._layer.off('mousedown');
+        this._layer.off('mouseup');
     
         // remove onRemove listener
-        this.layer.off('remove', this._onLayerRemove, this);
+        this._layer.off('remove', this._onLayerRemove, this);
     
         // remove draggable class
-        const el = this.layer._path || this._layer._renderer._container;
+        const el = this._layer._path || this._layer._renderer._container;
         factory.DomUtil.removeClass(el, 'leaflet-pm-draggable');
     
-        this.layer.fire('pm:disable');
+        this._layer.fire('pm:disable');
     
-        this._layerEdited && this.layer.fire('pm:update', {});
+        this._layerEdited && this._layer.fire('pm:update', {});
         this._layerEdited = false;
     
         return true;
     },
 
     _initMarkers () {
-        const coords = this.layer.getLatLngs();
+        const coords = this._layer.getLatLngs();
 
         // cleanup old ones first
         this._markerGroup && this._markerGroup.clearLayers();
@@ -84,7 +84,7 @@ export const line = {
             // create small markers in the middle of the regular markers
             coordsArr.map((v, k) => {
                 // find the next index fist
-                const nextIndex = this.layer instanceof factory.Polygon
+                const nextIndex = this._layer instanceof factory.Polygon
                     ? (k + 1) % coordsArr.length 
                     : k + 1;
                 // create the marker
@@ -174,7 +174,7 @@ export const line = {
         // and push into marker array
         // and associate polygon coordinate with marker coordinate
         const latlng = newM.getLatLng();
-        const coords = this.layer._latlngs;
+        const coords = this._layer._latlngs;
 
         // the index path to the marker inside the multidimensional marker array
         const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, leftM);
@@ -196,7 +196,7 @@ export const line = {
         markerArr.splice(index + 1, 0, newM);
 
         // set new latlngs to update polygon
-        this.layer.setLatLngs(coords);
+        this._layer.setLatLngs(coords);
 
         // create the new middlemarkers
         this._createMiddleMarker(leftM, newM);
@@ -205,8 +205,8 @@ export const line = {
         // fire edit event
         this._fireEdit();
 
-        this.layer.fire('pm:vertexadded', {
-            layer: this.layer,
+        this._layer.fire('pm:vertexadded', {
+            layer: this._layer,
             marker: newM,
             indexPath: this._findDeepMarkerIndex(this._markers, newM).indexPath,
             latlng,
@@ -222,7 +222,7 @@ export const line = {
         const marker = e.target;
     
         // coords of the layer
-        const coords = this.layer.getLatLngs();
+        const coords = this._layer.getLatLngs();
     
         // the index path to the marker inside the multidimensional marker array
         const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, marker);
@@ -246,14 +246,14 @@ export const line = {
         coordsRing.splice(index, 1);
     
         // set new latlngs to the polygon
-        this.layer.setLatLngs(coords);
+        this._layer.setLatLngs(coords);
     
         // if the ring of the poly has no coordinates left, remove the last coord too
         if (coordsRing.length <= 1) {
             coordsRing.splice(0, coordsRing.length);
     
             // set new coords
-            this.layer.setLatLngs(coords);
+            this._layer.setLatLngs(coords);
     
             // re-enable editing so unnecessary markers are removed
             // TODO: kind of an ugly workaround maybe do it better?
@@ -262,7 +262,7 @@ export const line = {
         }
 
         // if no coords are left, remove the layer
-        !util.flattenDeep(coords).length && this.layer.remove();
+        !util.flattenDeep(coords).length && this._layer.remove();
     
         // now handle the middle markers
         // remove the marker and the middlemarkers next to it from the map
@@ -278,7 +278,7 @@ export const line = {
         let leftMarkerIndex;
     
         // find neighbor marker-indexes
-        this.layer instanceof factory.Polygon
+        this._layer instanceof factory.Polygon
             ? (rightMarkerIndex = (index + 1) % markerArr.length,
                 leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length)
             : (leftMarkerIndex = index - 1 < 0 
@@ -302,8 +302,8 @@ export const line = {
         this._fireEdit();
     
         // fire vertex removal event
-        this.layer.fire('pm:vertexremoved', {
-            layer: this.layer,
+        this._layer.fire('pm:vertexremoved', {
+            layer: this._layer,
             marker,
             indexPath,
             // TODO: maybe add latlng as well?
@@ -340,7 +340,7 @@ export const line = {
 
     _updatePolyOnDrag (marker) {
         // update polygon coords
-        const coords = this.layer.getLatLngs();
+        const coords = this._layer.getLatLngs();
     
         // get marker latlng
         const latlng = marker.getLatLng();
@@ -355,7 +355,7 @@ export const line = {
         parent.splice(index, 1, latlng);
     
         // set new coords on layer
-        this.layer.setLatLngs(coords);
+        this._layer.setLatLngs(coords);
     },
 
     _onMarkerDrag (e) {
@@ -405,13 +405,13 @@ export const line = {
     // fire edit event
     _fireEdit() {
         this._layerEdited = true;
-        this.layer.fire('pm:edit');
+        this._layer.fire('pm:edit');
     },
 
     _onMarkerDragStart(e) {
         const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
     
-        this.layer.fire('pm:markerdragstart', {
+        this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
             indexPath,
         });
@@ -422,7 +422,7 @@ export const line = {
     _onMarkerDragEnd(e) {
         const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
     
-        this.layer.fire('pm:markerdragend', {
+        this._layer.fire('pm:markerdragend', {
             markerEvent: e,
             indexPath,
         });
