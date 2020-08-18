@@ -29,7 +29,7 @@ export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569,
  * 
  * @constant
  */
-export const SYS_CENTER = { lat: 41.590072, lng: 21.780699 };
+export const SYS_CENTER = { lat: 41.664956, lng: 21.674375 };
 
 /**
  * The minimum allowed scale for digitization.

@@ -101,5 +101,11 @@ Map.untransform = function (point, precision) {
         precision);
 }
 Map.getBBox = function () {
-    return '';
+    const crs = Map.getCRS();
+    const bounds = Map.getBounds();
+
+    const psw = crs.projection.project(bounds.getSouthWest())
+    const pne = crs.projection.project(bounds.getNorthEast())
+
+    return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y
 }
