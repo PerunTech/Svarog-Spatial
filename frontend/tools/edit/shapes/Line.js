@@ -409,7 +409,7 @@ export const line = {
     },
 
     _onMarkerDragStart(e) {
-        const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
+        const { indexPath } = this._findDeepMarkerIndex(this._markers, e.target);
     
         this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
@@ -420,7 +420,7 @@ export const line = {
     },
 
     _onMarkerDragEnd(e) {
-        const { indexPath } = this.findDeepMarkerIndex(this._markers, e.target);
+        const { indexPath } = this._findDeepMarkerIndex(this._markers, e.target);
     
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
