@@ -12,6 +12,11 @@ export const line = {
     options: {},
 
     enable (layer, opt) {
+        // Do nothing if valid arguments are not provided.
+        if (layer === null || layer === undefined) {
+            return;
+        }
+
         // if it was already enabled, disable first
         // we don't block enabling again because new options might be passed
         this.enabled && this.disable();
