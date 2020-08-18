@@ -35,12 +35,12 @@ export const line = {
 
     disable () {
         // if it's not enabled, it doesn't need to be disabled.
-        if (!this.enabled || this._layer._dragging) {    //this._layer.pm._dragging
+        if (!this.enabled || this._layer._dragging) {
             return false;
         }
-
-        this._layer.enabled = false;
-        this._layer._markerGroup.clearLayers();
+        
+        this.enabled = false;
+        this._markerGroup.clearLayers();
     
         // clean up draggable
         this._layer.off('mousedown');
