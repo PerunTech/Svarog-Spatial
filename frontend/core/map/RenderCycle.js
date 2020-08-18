@@ -24,15 +24,19 @@ export const renderCycle = {
                     layers: 'phy_block',
                     format: 'image/png',
                     transparent: true,
-                    tiled: true 
+                    tiled: true , 
+                    minZoom: 5,
+                    maxZoom: 18
                 }
             ),
-            "Земјишни парцели": factory.tileLayer.wms(
+            "Земјоделски парцели": factory.tileLayer.wms(
                 'http://192.168.100.155:8888/geoserver/mk/wms', { 
                     layers: 'lpis_parcel',
                     format: 'image/png',
                     transparent: true,
-                    tiled: true 
+                    tiled: true, 
+                    minZoom: 8,
+                    maxZoom: 18 
                 }
             ),
             "Административни единици": factory.tileLayer.wms(
@@ -40,7 +44,9 @@ export const renderCycle = {
                     layers: 'adm_units',
                     format: 'image/png',
                     transparent: true,
-                    tiled: false 
+                    tiled: false, 
+                    minZoom: 0,
+                    maxZoom: 18
                 }
             ),
             "Патишта и железници": factory.tileLayer.wms(
@@ -48,7 +54,9 @@ export const renderCycle = {
                     layers: 'transport',
                     format: 'image/png',
                     transparent: true,
-                    tiled: true 
+                    tiled: true, 
+                    minZoom: 0,
+                    maxZoom: 18
                 }
             ),
             "Реки": factory.tileLayer.wms(
@@ -56,7 +64,9 @@ export const renderCycle = {
                     layers: 'rivers',
                     format: 'image/png',
                     transparent: true,
-                    tiled: true 
+                    tiled: true, 
+                    minZoom: 0,
+                    maxZoom: 18
                 }
             ),
         })
