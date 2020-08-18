@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
-import { NAVIGATE_VIEW } from '../../config';
-import { Map, factory, store } from '../../core';
+import { NAVIGATE_VIEW, SYS_CENTER } from '../../config';
+import { Map, store } from '../../core';
 import { draw } from '../../tools';
 import { Button, Icon, StatusIndicator } from '..';
 
@@ -16,7 +16,7 @@ const bboxZoom = () => {
 };
 
 const origin = () => 
-    Map.fitBounds(factory.boundingBox(store.getState().map.origin));
+    Map.setView(SYS_CENTER, 3);
 
 export const NavigationControl = () =>
     <>
