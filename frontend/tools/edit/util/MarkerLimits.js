@@ -1,0 +1,82 @@
+import { Map } from '../../../core';
+
+export const markerLimits = {
+    filterMarkerGroup() {
+        // don't do it if the option is disabled
+
+        // define cache
+        this.markerCache = [];
+        this.createCache();
+        
+        // refresh cache when layer was edited (e.g. when a vertex was added or removed)
+        this.layer.on('pm:edit', this.createCache, this)
+        
+        
+        
+        // apply filter for the first time
+        this.applyLimitFilters({});
+        
+        // remove events when edit mode is disabled
+        this.layer.on('pm:disable', this._removeMarkerLimitEvents, this);
+        
+        
+        // add markers closest to the mouse
+        if (this.options.limitMarkersToCount > -1) {
+          // re-init markers when a vertex is removed. 
+          // The reason is that syncing this cache with a removed marker was impossible to do
+            this.layer.on('pm:vertexremoved', this._initMarkers, this)
+        
+            Map.on('mousemove', this.applyLimitFilters, this);
+        }
+    },
+
+    _removeMarkerLimitEvents() {
+        Map.off('mousemove', this.applyLimitFilters, this);
+        this.layer.off('pm:edit', this.createCache, this)
+        this.layer.off('pm:disable', this._removeMarkerLimitEvents, this);
+        this.layer.off('pm:vertexremoved', this._initMarkers, this)
+    },
+
+    createCache() {
+        const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
+        
+        this.markerCache = allMarkers.filter((v, i, s) => 
+            s.indexOf(v) === i);
+    },
+
+    renderLimits(markers) {
+        this.markerCache.forEach((l) => 
+            markers.includes(l)
+                ? this._markerGroup.addLayer(l)
+                : this._markerGroup.removeLayer(l));
+    },
+
+    applyLimitFilters({ latlng = { lat: 0, lng: 0 } }) {
+        // find markers near the cursor
+        const makersNearCursor = this._filterClosestMarkers(latlng)
+        
+        // all markers that we want to show
+        const markersToAdd = [...makersNearCursor];
+        
+        this.renderLimits(markersToAdd);
+    },
+
+    _filterClosestMarkers(latlng) {
+        const markers = [...this.markerCache];
+        const limit = this.options.limitMarkersToCount;
+        
+        // sort markers by distance to cursor
+        markers.sort((l, t) => {
+            const distanceA = l._latlng.distanceTo(latlng);
+            const distanceB = t._latlng.distanceTo(latlng);
+            
+            return distanceA - distanceB;
+        })
+
+        // reduce markers to number of limit
+        return markers.filter((l, i) => 
+            limit > -1 
+                ? i < limit 
+                : true);
+    }
+}

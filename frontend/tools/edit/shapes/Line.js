@@ -1,9 +1,11 @@
 import { util, factory, Map } from '../../../core';
 import { drag, snap } from '../..';
+import { markerLimits } from '../util/MarkerLimits';
 
 export const line = {
     ...snap,
     ...drag,
+    ...markerLimits,
 
     layer: {},
     enabled: false,
