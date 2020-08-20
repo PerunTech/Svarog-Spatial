@@ -1,4 +1,5 @@
 export { protobuf, Pbf } from './protobuf/Protobuf';
 export { geobuf } from './geobuf/Geobuf';
 
-export { layerControl, raster } from './raster/Raster';
+export { layerControl } from './raster/LayerControl';
+export { layerList, raster } from './raster/Raster';

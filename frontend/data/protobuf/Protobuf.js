@@ -642,5 +642,5 @@ function writeUtf8(buf, str, pos) {
 
 /* factory */
 export function protobuf (buf) {
-    return new Pbf(buf);
+    return new Pbf(new Uint8Array(buf.data));
 }

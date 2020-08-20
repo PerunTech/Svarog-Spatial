@@ -1,8 +1,9 @@
 import { Map, factory } from '../../core'
+import { layerControl } from '..';
 
-export let layerControl = {};
+export let layerList = {};
 
 export function raster (base, overlay) {
-    layerControl = factory.control.layers(base, overlay, {collapsed: false, position: 'right'}).addTo(Map);
+    layerList = layerControl(base, overlay, {collapsed: false, position: 'right'}).addTo(Map);
 }
 
