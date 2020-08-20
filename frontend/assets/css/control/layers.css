@@ -26,9 +26,10 @@
 	position: relative;
 	}
 .leaflet-control-layers-expanded {
-	padding: 6px 10px 6px 6px;
+	padding: 6px 0px 6px 6px;
 	color: #333;
 	background: #fff; /* This should be inherited */
+	max-width: 250px;
 	}
 .leaflet-control-layers-scrollbar {
 	/*overflow-y: scroll;*/
@@ -47,3 +48,19 @@
 	border-top: 1px solid #ddd;
 	margin: 5px -10px 5px -6px;
 	}
+
+.leaflet-control-layers-group-name {
+	font-weight: bold;
+	font-style: italic;
+	margin-left: 3px;
+}
+.leaflet-control-layers-group {
+    margin-top: 1rem;
+}
+.leaflet-control-layers-scrollbar {
+	overflow: auto;
+	padding-right: 10px;
+}
+.leaflet-control-layers-name {
+	margin-left: 5px;
+}

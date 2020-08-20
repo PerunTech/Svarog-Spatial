@@ -10,65 +10,357 @@ export const renderCycle = {
     start () {
         Map.render();
         raster({ 
-            "Ортофото, Македонија 2017": factory.tileLayer.wms(
-                'http://192.168.9.88:8080/geoserver/mk/wms', { 
-                    layers: 'Macedonia_30cm',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: true 
-                }
-            ).addTo(Map)
+            'Мапи': {
+                'Ортофотографија, РМ 2017': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true 
+                    }
+                ).addTo(Map),
+                'Инфрацрвено ортофото, РМ 2017': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm_cir',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Ортофотографија, РМ 2009': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm_2009',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Инфрацрвено ортофото, РМ 2009': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm_cir_2009',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Топографска карта': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_topo',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Ортофотографија, РМ 2004': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm_2004',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Модел на теренот, РМ 2017': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_dtm_2017',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Модел на теренот, РМ 2009': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_dtm_2009',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+            },
+            'Сателитски снимки': {
+                'ИПАРД, 10км x 10км, 2012-2015': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_dtm_2009',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+            }
         }, {
-            "Физички блокови": factory.tileLayer.wms(
-                'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                    layers: 'phy_block',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: true , 
-                    minZoom: 5,
-                    maxZoom: 18
-                }
-            ),
-            "Земјоделски парцели": factory.tileLayer.wms(
-                'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                    layers: 'lpis_parcel',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: true, 
-                    minZoom: 8,
-                    maxZoom: 18 
-                }
-            ),
-            "Административни единици": factory.tileLayer.wms(
-                'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                    layers: 'adm_units',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: false, 
-                    minZoom: 3,
-                    maxZoom: 18
-                }
-            ),
-            "Патишта и железници": factory.tileLayer.wms(
-                'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                    layers: 'transport',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: true, 
-                    minZoom: 3,
-                    maxZoom: 18
-                }
-            ),
-            "Реки": factory.tileLayer.wms(
-                'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                    layers: 'rivers',
-                    format: 'image/png',
-                    transparent: true,
-                    tiled: true, 
-                    minZoom: 5,
-                    maxZoom: 18
-                }
-            ),
+            'СИЗП парцели': {
+                'Физички блокови': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'physical_block',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true , 
+                        minZoom: 5,
+                        maxZoom: 18
+                    }
+                ),
+                'Земјоделски парцели': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'lpis_parcel',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 8,
+                        maxZoom: 18 
+                    }
+                ),
+            },
+            'Катастар': {
+                'Катастарски општини': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'cad_muni',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true , 
+                        minZoom: 22,
+                        maxZoom: 22
+                    }
+                ),
+                'Катастарски парцели': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'cad_parcels',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Пресек на КП и ЗП': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'lpis_cad_intersection',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+            },
+            'Административни единици': {
+                'Граница на Р. Македонија': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'mk_border',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+                'Општини': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'mk_muni',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+                'Топографска мрежа 25км': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'topo_grid_25',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Обелжја на пејсажот': {
+                'Точки': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'lf_points',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 8,
+                        maxZoom: 18
+                    }
+                ),
+                'Линии': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'lf_lines',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 8,
+                        maxZoom: 18
+                    }
+                ),
+                'Полигони': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'lf_polygons',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: false, 
+                        minZoom: 8,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Пасишта': {
+                'Високопланински пасишта': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'highland_pastures',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Патна мрежа': {
+                'Патишта': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'roads',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+                'Железници': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'railroads',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Почвена карта': {
+                'Почвени типови': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'soil_types',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Заштитено подрачје': {
+                'Природни споменици и национални паркови': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'npa',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+            },
+            'Води': {
+                'Реки': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'rivers',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 3,
+                        maxZoom: 18
+                    }
+                ),
+                'Водени површини 3m ': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'water_surface_3m',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Водени површини 10m': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'water_surface_10m',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Водени линии': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'water_lines',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Главни канали': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'main_canals',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Споредни канали': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'aux_canals',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Главни цевководи': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'main_pipelines',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+                'Споредни цевководи': factory.tileLayer.wms(
+                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                        layers: 'aux_pipelines',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true, 
+                        minZoom: 12,
+                        maxZoom: 18
+                    }
+                ),
+            }
         })
         const setMapState = () =>
             store.dispatch({  zoom: Map.getZoom(), center: Map.getCenter(), bbox: Map.getBBox() });
@@ -79,9 +371,7 @@ export const renderCycle = {
         }, 1000));
     },
 
-    fetch () {
-        console.log(store.getState().map.bbox)
-    },
+    fetch () {},
     render () {},
     refresh () {},
 
