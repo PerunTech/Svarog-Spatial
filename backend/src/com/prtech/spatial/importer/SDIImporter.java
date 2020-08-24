@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.opengis.filter.And;
 
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -23,7 +24,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
-import oracle.net.aso.i;
 
 /** Utility class for spatial data import */
 public class SDIImporter {
@@ -125,24 +125,27 @@ public class SDIImporter {
 		}
 	}
 	
-	static void setField (DbDataObject dbo, String key, ResultSet rs) {
+	static void setField (DbDataObject dbo, String key, ResultSet rs) throws SQLException {
 		
 		
 		switch (target) {
 			case "PHYSICAL_BLOCK": 
 				if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
 					try {
-						Object landUseAlt = rs.getObject("LAND_USE_ID_2");
-						if (landUseAlt != null) {
-							dbo.setVal("LAND_COVER_CODE", landUseAlt.toString());
+						int landUseAlt = (int) Math.round((Double) rs.getObject("LAND_USE_1"));
+						int landUse = (int) Math.round((Double) rs.getObject("LAND_USE_I"));
+						if (landUseAlt > 0) {
+							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUseAlt).toString());
 						} else {
-							dbo.setVal("LAND_COVER_CODE", rs.getObject("LAND_USE_ID").toString());
+							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUse).toString());
 						}
 					} catch (SQLException e) {
 						log.info("physical_block.land_cover_code processing failed.");
 					}
 				} else if (key.equals("NOTE")) {
 					dbo.setVal("NOTE", "MAFWE IMPORT");
+				} else if (key.equals("OLD_ID")) {
+					dbo.setVal("OLD_ID", (int) Math.round((Double) rs.getObject("ID_ILPIS")));
 				} else {
 					defaultSetField(dbo, key, rs);
 				}

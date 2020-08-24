@@ -21,12 +21,12 @@ export const renderCycle = {
                 ).addTo(Map),
                 'Инфрацрвено ортофото, РМ 2017': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
-                        layers: 'Macedonia_30cm_cir',
+                        layers: 'Macedonia_30cm_cir',   // Macedonia_30cm_cir
                         format: 'image/png',
                         transparent: true,
                         tiled: true,
-                        minZoom: 22,
-                        maxZoom: 22 
+                        minZoom: 0,
+                        maxZoom: 18 
                     }
                 ),
                 'Ортофотографија, РМ 2009': factory.tileLayer.wms(
