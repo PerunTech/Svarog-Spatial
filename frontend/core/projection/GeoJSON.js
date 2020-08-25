@@ -1,60 +1,8 @@
-import { factory } from '..';
-const { point, GeoJSON } = factory;
+import { factory, Map } from '..';
 
-/**
- * GeoJSON factory.
- * 
- * Supports any valid coordinate reference system, spherical or cartesian.
- * Automatically reprojects data.
- * 
- * &nbsp;
- * 
- * @extends {factory.GeoJSON}
- * @factory geoJson (geometry: any, opt: Object): GeoJSON
- * 
- * @param {*} geometry - The geometry data.
- * @param {*} opt - Configuration object.
- * 
- * @returns GeoJSON;
- */
-export function geoJson (geometry, opt) {
-    let _callLevel = 0,
-        impl = GeoJSON.prototype.initialize.call(this, geometry, opt);
-
-    return {
-        ...impl,
-
-        /**
-         * @override GeoJSON.prototype.addData
-         * @param {any} geometry 
-         */
-        addData: function (geometry) {
-            const { crs } = geometry;
-
-            // Do not instantiate new crs on add data calls!
-            // Defer responsibility to caller. 
-            // maybe extend factory arguments to allow to pass crs, rather than append on data
-            // or simply pass convert function in opt { reproject: fn }
-            if (crs && crs.projection) {
-                this.options.coordsToLatLng = function (coords) {
-                    return crs.projection.unproject(point(coords[0], coords[1]));
-                };
-            }
-            // Base class' addData might call us recursively, but crs shouldn't be cleared in that case,
-            // since crs applies to the whole GeoJSON, inluding sub-features.
-            _callLevel++;
-
-            try {
-                GeoJSON.prototype.addData.call(this, geometry);
-            } finally {
-                _callLevel--;
-                _callLevel === 0 && delete this.options.coordsToLatLng;
-            }
-
-            return this;
-        }
-    };
-}
+const { GeoJSON } = factory;
+//#revise_me, this does not belong here, is should be an argument to GeoJson constructor.
+const crs = Map.getCRS();
 
 GeoJSON.fromLayer = (layer, crs) => {
     const geojson = layer.toGeoJSON();
@@ -69,3 +17,55 @@ GeoJSON.fromLayer = (layer, crs) => {
 
     return geojson;
 }
+
+
+export const GeoJson = factory.GeoJSON.extend({
+    initialize: function(geojson, options) {
+        this._callLevel = 0;
+        GeoJSON.prototype.initialize.call(this, geojson, options);
+    },
+
+    addData: function(geojson) {
+        if (geojson) {
+            if (crs !== undefined) {
+                this.options.coordsToLatLng = function(coords) {
+                    var point = factory.point(coords[0], coords[1]);
+                    return crs.projection.unproject(point);
+                };
+            }
+        }
+
+        // Base class' addData might call us recursively, but
+        // CRS shouldn't be cleared in that case, since CRS applies
+        // to the whole GeoJSON, inluding sub-features.
+        this._callLevel++;
+        try {
+            GeoJSON.prototype.addData.call(this, geojson);
+        } finally {
+            this._callLevel--;
+            if (this._callLevel === 0) {
+                delete this.options.coordsToLatLng;
+            }
+        }
+    }
+});
+
+/**
+ * GeoJSON factory.
+ * 
+ * Supports any valid coordinate reference system, spherical or cartesian.
+ * Automatically reprojects data.
+ * 
+ * &nbsp;
+ * 
+ * @extends {factory.GeoJSON}
+ * @factory geoJson (geojson: any, opt: Object): GeoJson
+ * 
+ * @param {*} geojson - The geojson object.
+ * @param {*} opt - Configuration object.
+ * 
+ * @returns GeoJSON;
+ */
+export const geoJson = function(geojson, opt) {
+    return new GeoJson(geojson, opt);
+};
