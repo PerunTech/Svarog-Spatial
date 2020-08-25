@@ -19,10 +19,12 @@ export { state } from './model/State';
 // Proj
 export { crs } from './projection/CRS';
 export { projection } from './projection/Projection';
-export { geoJson } from './projection/GeoJSON';
 
 // Map
 export { Map } from './map/Map';
 export { control } from './map/Control';
 export { renderCycle } from './map/RenderCycle';
 export { MapContainer } from './map/Container';
+
+// Proj extend Map, factory
+export { geoJson } from './projection/GeoJSON';

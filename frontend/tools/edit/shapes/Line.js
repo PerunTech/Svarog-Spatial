@@ -352,7 +352,7 @@ export const line = {
     
         // get indexPath of Marker
         const { indexPath, index, parentPath } = this._findDeepMarkerIndex(this._markers, marker);
-    
+
         // update coord
         const parent = indexPath.length > 1 
             ? util.access(coords, parentPath) 

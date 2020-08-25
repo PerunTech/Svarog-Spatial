@@ -48,6 +48,7 @@ import { R } from '../../config';
 export function crs (code, def, opt) {
     const options = {..._opt, ...opt};
     const { CRS } = factory;
+    
     return {
         ...CRS,
         code: code,

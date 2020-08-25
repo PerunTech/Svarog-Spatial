@@ -107,5 +107,5 @@ Map.getBBox = function () {
     const psw = crs.projection.project(bounds.getSouthWest())
     const pne = crs.projection.project(bounds.getNorthEast())
 
-    return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y
+    return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y;
 }

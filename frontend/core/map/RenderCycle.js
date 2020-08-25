@@ -10,8 +10,8 @@ export const renderCycle = {
     start () {
         Map.render();
         raster({ 
-            'Мапи': {
-                'Ортофотографија, РМ 2017': factory.tileLayer.wms(
+            'Мапи и авионски снимки': {
+                'Ортофото 2017 [380-740 nm]': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm',
                         format: 'image/png',
@@ -19,7 +19,7 @@ export const renderCycle = {
                         tiled: true 
                     }
                 ).addTo(Map),
-                'Инфрацрвено ортофото, РМ 2017': factory.tileLayer.wms(
+                'Ортофото 2017 [IR 700-1100 nm]': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_cir',   // Macedonia_30cm_cir
                         format: 'image/png',
@@ -29,7 +29,7 @@ export const renderCycle = {
                         maxZoom: 18 
                     }
                 ),
-                'Ортофотографија, РМ 2009': factory.tileLayer.wms(
+                'Ортофото 2009 [380-740 nm]': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_2009',
                         format: 'image/png',
@@ -39,9 +39,19 @@ export const renderCycle = {
                         maxZoom: 22 
                     }
                 ),
-                'Инфрацрвено ортофото, РМ 2009': factory.tileLayer.wms(
+                'Ортофото 2009 [IR 700-1100 nm]': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_cir_2009',
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        minZoom: 22,
+                        maxZoom: 22 
+                    }
+                ),
+                'Ортофото 2004 [380-740 nm]': factory.tileLayer.wms(
+                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                        layers: 'Macedonia_30cm_2004',
                         format: 'image/png',
                         transparent: true,
                         tiled: true,
@@ -52,16 +62,6 @@ export const renderCycle = {
                 'Топографска карта': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_topo',
-                        format: 'image/png',
-                        transparent: true,
-                        tiled: true,
-                        minZoom: 22,
-                        maxZoom: 22 
-                    }
-                ),
-                'Ортофотографија, РМ 2004': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
-                        layers: 'Macedonia_30cm_2004',
                         format: 'image/png',
                         transparent: true,
                         tiled: true,
@@ -91,7 +91,7 @@ export const renderCycle = {
                 ),
             },
             'Сателитски снимки': {
-                'ИПАРД, 10км x 10км, 2012-2015': factory.tileLayer.wms(
+                'ИПАРД, 10km x 10km, 2012-2015': factory.tileLayer.wms(
                     'http://192.168.9.88:8080/geoserver/mk/wms', { 
                         layers: 'Macedonia_dtm_2009',
                         format: 'image/png',
@@ -115,19 +115,19 @@ export const renderCycle = {
                     }
                 ),
                 'Земјоделски парцели': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
-                        layers: 'lpis_parcel',
+                    'http://localhost:3366/geoserver/mk/wms', { 
+                        layers: 'lpis_parcels',
                         format: 'image/png',
                         transparent: true,
                         tiled: true, 
-                        minZoom: 8,
+                        minZoom: 0,
                         maxZoom: 18 
                     }
                 ),
             },
             'Катастар': {
                 'Катастарски општини': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'cad_muni',
                         format: 'image/png',
                         transparent: true,
@@ -137,7 +137,7 @@ export const renderCycle = {
                     }
                 ),
                 'Катастарски парцели': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'cad_parcels',
                         format: 'image/png',
                         transparent: true,
@@ -191,7 +191,7 @@ export const renderCycle = {
             },
             'Обелжја на пејсажот': {
                 'Точки': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'lf_points',
                         format: 'image/png',
                         transparent: true,
@@ -201,7 +201,7 @@ export const renderCycle = {
                     }
                 ),
                 'Линии': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'lf_lines',
                         format: 'image/png',
                         transparent: true,
@@ -211,7 +211,7 @@ export const renderCycle = {
                     }
                 ),
                 'Полигони': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'lf_polygons',
                         format: 'image/png',
                         transparent: true,
@@ -257,7 +257,7 @@ export const renderCycle = {
             },
             'Почвена карта': {
                 'Почвени типови': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'soil_types',
                         format: 'image/png',
                         transparent: true,
@@ -291,7 +291,7 @@ export const renderCycle = {
                     }
                 ),
                 'Водени површини 3m ': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'water_surface_3m',
                         format: 'image/png',
                         transparent: true,
@@ -301,7 +301,7 @@ export const renderCycle = {
                     }
                 ),
                 'Водени површини 10m': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'water_surface_10m',
                         format: 'image/png',
                         transparent: true,
@@ -311,7 +311,7 @@ export const renderCycle = {
                     }
                 ),
                 'Водени линии': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'water_lines',
                         format: 'image/png',
                         transparent: true,
@@ -321,7 +321,7 @@ export const renderCycle = {
                     }
                 ),
                 'Главни канали': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'main_canals',
                         format: 'image/png',
                         transparent: true,
@@ -331,7 +331,7 @@ export const renderCycle = {
                     }
                 ),
                 'Споредни канали': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'aux_canals',
                         format: 'image/png',
                         transparent: true,
@@ -341,7 +341,7 @@ export const renderCycle = {
                     }
                 ),
                 'Главни цевководи': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'main_pipelines',
                         format: 'image/png',
                         transparent: true,
@@ -351,7 +351,7 @@ export const renderCycle = {
                     }
                 ),
                 'Споредни цевководи': factory.tileLayer.wms(
-                    'http://192.168.100.155:8888/geoserver/mk/wms', { 
+                    'http://localhost:3366/geoserver/mk/wms', { 
                         layers: 'aux_pipelines',
                         format: 'image/png',
                         transparent: true,
