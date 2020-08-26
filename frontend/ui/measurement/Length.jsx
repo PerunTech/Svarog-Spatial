@@ -31,6 +31,11 @@ export const length ={
         if (e && e.layer) {
             this.measurements.addLayer(e.layer);
             this.sum = this.sum + this._calcCurrentLength(store.getState().measurement.totalLength)
+
+            store.dispatch({'Мерења': {
+                ...store.getState().data['Мерења'],
+                ['Измерена должина ' + this.sum + 'm']: e.layer
+            }})
         }
     },
 

@@ -31,7 +31,14 @@ export const area = {
         if (e && e.layer) {
             this.measurements.addLayer(e.layer);
             this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea);
-            store.dispatch({totalArea: '0 m²'});
+
+            store.dispatch({
+                'Мерења': {
+                    ...store.getState().data['Мерења'],
+                    ['Измерена површина ' + this.sum + 'm²']: e.layer
+                },
+                totalArea: '0 m²'
+            });
         }
     },
 

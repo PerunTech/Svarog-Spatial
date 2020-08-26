@@ -1,5 +1,6 @@
 import { React } from 'perun-core';
 import { PROCESS_ENUM, getProcessTitle } from '../../config';
+import { store } from '../../core';
 import { Button, Icon, length, area } from '..';
 
 /* The internal id of the process */
@@ -15,6 +16,7 @@ export const eraser = {
     clearMeasurements: function () {
         this.clearLength();
         this.clearArea();
+        store.dispatch({'Мерења': {}})
     }
 };
 
