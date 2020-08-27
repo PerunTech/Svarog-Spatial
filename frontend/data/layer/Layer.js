@@ -1,8 +1,8 @@
 import { factory } from '../../core';
 
 /**
- * @section
- * Classes extending `factory.Layer` will inherit the following methods:
+ * @section overrides
+ * Classes extending `factory.Layer` will inherit the following method overrides:
  */
 
 /**
@@ -16,8 +16,8 @@ import { factory } from '../../core';
  * @returns layer;
  */
 factory.Layer.prototype.addTo = function (map) {
-    console.log(this.options)
     map.addLayer(this);
+
     return this;
 }
 
@@ -44,8 +44,32 @@ factory.Layer.prototype.remove = function () {
  * @returns layer;
  */
 factory.Layer.prototype.removeFrom = function (obj) {
-    console.log(this.options)
     obj && obj.removeLayer(this);
 
     return this;
 }
+
+/**
+ * @section extends
+ * Classes extending `factory.Layer` will inherit these additional methods:
+ */
+factory.Layer.include({
+    /**
+     * getter for our configuration namespace in layer.instance.options
+     * 
+     * @returns this.options.metadata || {};
+     */
+    getMetadata: function () {
+        return this.options.metadata || {};
+    },
+
+
+    /**
+     * Check if our layer is configured with metadata.
+     * 
+     * @returns boolean;
+     */
+    hasMetadata: function () {
+        return Object.keys(this.getMetadata()).length > 0;
+    }
+});
