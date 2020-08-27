@@ -16,14 +16,10 @@ export const state = {
     app:  {
         processID: ''
     },
+    data: {},
     /* Web service requests configuration */
     http: {
         default: {},
-        origin: {
-            url: '/sws/origin/{init.token}',
-            method: 'get',
-            responseType: 'text'
-        }
     },
     /* Initialization data */
     init: {

@@ -18,7 +18,7 @@ const opt = util.assign(MAP_CONFIG, {
 
 
 /**
- * Overrides segment. Keep this on top of file.
+ * @override segment. Keep this on top of file.
  * Prototype changes are done before we create our Map instance.
  */
 factory.Map.prototype._initControlPos = function () {
@@ -62,7 +62,8 @@ export const Map = factory.map(el, opt);
 
 
 /**
- * Augmentation segment. Extends Map.
+ * @extends segment. 
+ * Extends Map.
  */
 Map.render = function render () {
     let container = document.getElementById(MAP_CONTAINER);
