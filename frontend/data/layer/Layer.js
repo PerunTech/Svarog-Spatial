@@ -1,5 +1,5 @@
 import { factory, store } from '../../core';
-
+store.dispatch({meta: { test: 'test' }})
 /**
  * @section overrides
  * Classes extending `factory.Layer` will inherit the following method overrides:
@@ -17,7 +17,7 @@ import { factory, store } from '../../core';
  */
 factory.Layer.prototype.addTo = function (map) {
     map.addLayer(this);
-    return this.publishMetadata();
+    return this.publish();
 }
 
 /**
@@ -32,7 +32,7 @@ factory.Layer.prototype.addTo = function (map) {
  */
 factory.Layer.prototype.removeFrom = function (obj) {
     obj && obj.removeLayer(this);
-    return this.stashMetadata();
+    return this.stash();
 }
 
 /**
@@ -74,7 +74,7 @@ factory.Layer.include({
     },
 
     /**
-     * Registers data in app state.
+     * Registers layer in app state.
      * 
      * &nbsp;
      * 
@@ -82,16 +82,18 @@ factory.Layer.include({
      * 
      * @returns Layer;
      */
-    publishMetadata: function () {
+    publish: function () {
+        const currState = store.getState().data.layers;
+
         this.hasMetadata()
-            && store.dispatch({ ...store.getState().data, [ this.getId() ]: this });
+            && store.dispatch({ layers: { ...currState, [ this.getId() ]: this} });
 
         return this;
     },
 
     /**
-     * Removes data published in app state.
-     * The opposite of `publishMetadata`.
+     * Removes layer from app state.
+     * The opposite of `Layer.publish`.
      * 
      * &nbsp;
      * 
@@ -99,13 +101,13 @@ factory.Layer.include({
      * 
      * @returns Layer;
      */
-    stashMetadata: function () {
-        // Do not mutate store.state.data, create new object and merge.
+    stash: function () {
+        // Do not mutate store.state entries, create new object and merge.
         const id = this.getId(),
-            data = { ...store.getState().data }; 
+            currState = { ...store.getState().data.layers }; 
 
         // remove property and publish current state - minus this
-        data[id] && ( delete data[id], store.dispatch({ ...data })); 
+        currState[id] && ( delete currState[id], store.dispatch({ ...currState })); 
 
         return this;
     }

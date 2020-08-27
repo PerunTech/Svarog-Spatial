@@ -16,7 +16,9 @@ export const state = {
     app:  {
         processID: ''
     },
-    data: {},
+    data: {
+        layers: {}
+    },
     /* Web service requests configuration */
     http: {
         default: {},
