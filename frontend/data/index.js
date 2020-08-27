@@ -1,3 +1,5 @@
+import './layer/Layer';
+
 export { protobuf, Pbf } from './protobuf/Protobuf';
 export { geobuf } from './geobuf/Geobuf';
 
