@@ -25,6 +25,3 @@ export { Map } from './map/Map';
 export { control } from './map/Control';
 export { renderCycle } from './map/RenderCycle';
 export { MapContainer } from './map/Container';
-
-// Proj extend Map, factory
-export { geoJson } from './projection/GeoJSON';
