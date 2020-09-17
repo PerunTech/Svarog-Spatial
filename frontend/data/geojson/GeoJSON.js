@@ -1,5 +1,6 @@
 import { factory, Map } from '../../core';
 
+/* private refs to source methods, to be overriden below. */
 const _initialize = factory.GeoJSON.prototype.initialize,
       _addData = factory.GeoJSON.prototype.addData,
       _crs = Map.getCRS();

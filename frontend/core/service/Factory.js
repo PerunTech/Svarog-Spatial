@@ -60,7 +60,7 @@ export const factory = {
      * @extends {factory.GeoJSON}
      * @factory geoJson (geojson: any, opt: Object): GeoJson
      * 
-     * @param {*} geojson - The geojson object.
+     * @param {*} geojson - Geojson object.
      * @param {*} opt - Configuration object.
      * 
      * @returns GeoJSON;

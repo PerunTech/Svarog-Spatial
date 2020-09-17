@@ -1,7 +1,7 @@
 import { factory, store } from '../../core';
-store.dispatch({meta: { test: 'test' }})
+
 /**
- * @section overrides
+ * @override section 
  * Classes extending `factory.Layer` will inherit the following method overrides:
  */
 
@@ -17,7 +17,9 @@ store.dispatch({meta: { test: 'test' }})
  */
 factory.Layer.prototype.addTo = function (map) {
     map.addLayer(this);
-    return this.publish();
+    this.publish();
+
+    return this;
 }
 
 /**
@@ -32,11 +34,43 @@ factory.Layer.prototype.addTo = function (map) {
  */
 factory.Layer.prototype.removeFrom = function (obj) {
     obj && obj.removeLayer(this);
-    return this.stash();
+    this.stash();
+    
+    return this;
 }
 
 /**
- * @section extends
+ * @override
+ * 
+ * The most basic configuration object.
+ */
+factory.Layer.prototype.options = {
+    /**
+     * By default the layer will be added to the map's [overlay pane](#map-overlaypane).
+     *  Overriding this option will cause the layer to be placed on another pane by default.
+     */
+    pane: 'overlayPane',
+
+    /**
+     * String to be shown in the attribution control, e.g. "© OpenStreetMap contributors".
+     * It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
+     */
+    attribution: null,
+
+    /**
+     * When true, a mouse event on this layer will trigger the same event on the map,
+     * unless L.DomEvent.stopPropagation is used.
+     */
+    bubblingMouseEvents: true,
+
+    /**
+     * wip
+     */
+    metadata: {}
+}
+
+/**
+ * @extends section 
  * Classes extending `factory.Layer` will inherit these additional methods:
  */
 factory.Layer.include({
@@ -56,10 +90,10 @@ factory.Layer.include({
      * 
      * @extends Layer.prototype
      * 
-     * @returns this.options.metadata || {};
+     * @returns this.options.metadata;
      */
     getMetadata: function () {
-        return this.options.metadata || {};
+        return this.options.metadata;
     },
 
     /**
@@ -107,7 +141,7 @@ factory.Layer.include({
             currState = { ...store.getState().data.layers }; 
 
         // remove property and publish current state - minus this
-        currState[id] && ( delete currState[id], store.dispatch({ ...currState })); 
+        currState[id] && ( delete currState[id], store.dispatch({ ...currState }));
 
         return this;
     }
