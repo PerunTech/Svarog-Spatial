@@ -12,11 +12,11 @@
     margin-left: 16px;
 }
 
-.tree-view_children-collapsed {
+.tree-node-children-collapsed {
     height: 0px;
 }
 
-.tree-view-arrow {
+.tree-node-arrow {
     cursor: pointer;
     margin-right: 6px;
     display: inline-block;
@@ -26,12 +26,12 @@
     user-select: none;
 }
 
-.tree-view-arrow:after {
+.tree-node-arrow:after {
     content: '▾';
 }
 
 /* rotate the triangle to close it */
-.tree-view_arrow-collapsed {
+.tree-node-arrow-collapsed {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
     -ms-transform: rotate(-90deg);

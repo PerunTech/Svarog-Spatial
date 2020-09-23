@@ -40,36 +40,6 @@ factory.Layer.prototype.removeFrom = function (obj) {
 }
 
 /**
- * @override
- * 
- * The most basic configuration object.
- */
-factory.Layer.prototype.options = {
-    /**
-     * By default the layer will be added to the map's [overlay pane](#map-overlaypane).
-     *  Overriding this option will cause the layer to be placed on another pane by default.
-     */
-    pane: 'overlayPane',
-
-    /**
-     * String to be shown in the attribution control, e.g. "© OpenStreetMap contributors".
-     * It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
-     */
-    attribution: null,
-
-    /**
-     * When true, a mouse event on this layer will trigger the same event on the map,
-     * unless L.DomEvent.stopPropagation is used.
-     */
-    bubblingMouseEvents: true,
-
-    /**
-     * wip
-     */
-    metadata: {}
-}
-
-/**
  * @extends section 
  * Classes extending `factory.Layer` will inherit these additional methods:
  */
@@ -93,7 +63,7 @@ factory.Layer.include({
      * @returns this.options.metadata;
      */
     getMetadata: function () {
-        return this.options.metadata;
+        return this.options.metadata || {};
     },
 
     /**

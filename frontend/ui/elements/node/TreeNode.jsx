@@ -9,20 +9,20 @@ import { React, PropTypes } from 'perun-core';
  * @param {*} props
  */
 export function TreeNode ({ label, collapsed = true, onClick, children, ..._props  }) {
-    const [ isCollapsed, setCollapsed ] = React.useState(collapsed);
+    const [ isOpen, open ] = React.useState(!collapsed);
 
-    return <div className='tree-node ' >
+    return <div className='tree-node' >
         <div className='tree-node-item' >
             <div {..._props}
-                className={isCollapsed ? 'tree-node-arrow' : 'tree-view-arrow-collapsed'}
+                className={isOpen ? 'tree-node-arrow' : 'tree-node-arrow collapsed'}
                 onClick={(...args) => {
-                    setCollapsed(c => !c);
+                    open(c => !c);
                     onClick && onClick(...args); 
                 }} />
             {label}
         </div>
-        <div className={isCollapsed ? 'tree-node-children' : 'tree-node-children-collapsed'}>
-            {isCollapsed ? null : children}
+        <div className={isOpen ? 'tree-node-children' : 'tree-node-children-collapsed'}>
+            {isOpen ? null : children}
         </div>
     </div>;
 }
