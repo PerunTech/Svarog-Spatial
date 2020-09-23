@@ -23,6 +23,7 @@ export { Bitmap } from './elements/icon/Bitmap';
 export { Icon } from './elements/icon/Icon';
 export { Input } from './elements/input/Input';
 export { Modal } from './elements/modal/Modal';
+export { TreeNode } from './elements/node/TreeNode';
 export { Tab } from './elements/tab/Tab';
 export { Tabs } from './elements/tab/Tabs';
 export { Step } from './elements/wizard/Step';
