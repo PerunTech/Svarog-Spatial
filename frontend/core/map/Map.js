@@ -8,7 +8,7 @@ import { MAP_CONTAINER, MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../co
 const el = document.createElement('div');
 el.id = 'map';
 el.style.height = '100vh';
-el.style.border = '4px inset';
+/*el.style.border = '4px inset';*/
 
 const opt = util.assign(MAP_CONFIG, {
     crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),

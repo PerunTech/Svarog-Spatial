@@ -21,7 +21,7 @@ const origin = () =>
 export const NavigationControl = () =>
     <>
         <Button className='home' title='Оди на почеток' onClick={() => origin()} >
-            <Icon name='home' size='16px' />
+            <Icon name='map-home' size='20px' />
         </Button>
         <Button className='zoom-in' title='Намали размер' onClick={() => Map.zoomIn()} >
             <Icon name='zoom-in' size='16px' />
