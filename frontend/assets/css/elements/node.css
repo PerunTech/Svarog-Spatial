@@ -5,11 +5,13 @@
 
 .tree-node-item {
   /* immediate child of .tree-node, for styling convenience */
+    display: flex;
+    align-items: center;
 }
 
   /* style for the children nodes container */
 .tree-node-children {
-    margin-left: 16px;
+    margin-left: 32px;
 }
 
 .tree-node-children-collapsed {
@@ -17,8 +19,9 @@
 }
 
 .tree-node-arrow {
+    font-size: 20px;
     cursor: pointer;
-    margin-right: 6px;
+    margin-right: 5px;
     display: inline-block;
     -webkit-user-select: none;
     -moz-user-select: none;

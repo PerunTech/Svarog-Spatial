@@ -4,7 +4,7 @@ import { React, PropTypes } from 'perun-core';
  * Represents a single node in a hierarchical data view (tree).
  * 
  * Intentionally devoid of any structure, data transformation
- * and tree assembly deferred to the caller.  
+ * and tree assembly deferred to the caller.
  * 
  * @param {*} props
  */
@@ -14,7 +14,7 @@ export function TreeNode ({ label, collapsed = true, onClick, children, ..._prop
     return <div className='tree-node' >
         <div className='tree-node-item' >
             <div {..._props}
-                className={isOpen ? 'tree-node-arrow' : 'tree-node-arrow collapsed'}
+                className={'tree-node-arrow ' + (!isOpen ? 'tree-node-arrow-collapsed' : '')}
                 onClick={(...args) => {
                     open(c => !c);
                     onClick && onClick(...args); 
@@ -22,7 +22,7 @@ export function TreeNode ({ label, collapsed = true, onClick, children, ..._prop
             {label}
         </div>
         <div className={isOpen ? 'tree-node-children' : 'tree-node-children-collapsed'}>
-            {isOpen ? null : children}
+            {isOpen ? children : null}
         </div>
     </div>;
 }
