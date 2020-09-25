@@ -162,7 +162,10 @@ export const MEASURE_LINE = {
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
-        showMeasurements: true
+        showMeasurements: true,
+        metadata: {
+            test: ''
+        }
     }
 };
 
