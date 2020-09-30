@@ -91,7 +91,7 @@ factory.Layer.include({
         return this instanceof factory.Polyline
             ? this.calculateDistance(this.getLatLngs())
             : this instanceof factory.Polygon
-                ? this.calculateArea(this.getLatLngs)
+                ? this.calculateArea(this.getLatLngs())
                 : this.feature
                     ? this.feature.properties.AREA
                     : 'n/a';
