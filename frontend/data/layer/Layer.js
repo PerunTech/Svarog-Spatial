@@ -75,18 +75,26 @@ factory.Layer.include({
     },
 
     /**
-     * Retrieves the measurement of the geometry of the layer.
+     * Retrieves a measurement of the current geometry of the layer.
      * 
-     * This is the area (in meters squared) for polygons and length (in meters) for lines.
+     * This is the area [m²] for polygons and length [m] for lines.
+     * 
+     * Will attempt to calculate the measurement based on layer type.
+     * If the type is invalid it will try to retrieve the GeoJSON.feature.properties.AREA field
+     * and otherwise exit to a generic string template.
      * 
      * @extends Layer.prototype
      * 
      * returns String;
      */
     getMeasurement: function ()  {
-        return this.feature 
-            ? this.feature.properties['AREA']
-            : factory.Util.stamp(this);
+        return this instanceof factory.Polyline
+            ? this.calculateDistance(this.getLatLngs())
+            : this instanceof factory.Polygon
+                ? this.calculateArea(this.getLatLngs)
+                : this.feature
+                    ? this.feature.properties.AREA
+                    : 'n/a';
     },
     
     /**
