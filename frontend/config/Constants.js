@@ -164,7 +164,7 @@ export const MEASURE_LINE = {
         dashArray: [10, 10],
         showMeasurements: true,
         metadata: {
-            test: ''
+            type: 'measurements'
         }
     }
 };
