@@ -1,4 +1,4 @@
-import { factory, store } from '../../core';
+import { factory, store, util } from '../../core';
 
 /**
  * @override section 
@@ -45,15 +45,47 @@ factory.Layer.prototype.removeFrom = function (obj) {
  */
 factory.Layer.include({
     /**
-     * Get Layer ID.
+     * Retrieves the system identifier of the layer.
+     * 
+     * Attempts to retrieve the GeoJSON feature id in case the data exists in persistent storage
+     * and fallbacks to factory.layer._id otherwise, which is the runtime id.
      * 
      * @extends Layer.prototype
      * 
-     * returns Layer.ID;
+     * returns Number;
      */
     getId: function ()  {
         return this.feature 
             ? this.feature.id
+            : factory.Util.stamp(this);
+    },
+
+    /**
+     * Retrieves the human-readable identifier of the layer.
+     * 
+     * @extends Layer.prototype
+     * 
+     * returns String;
+     */
+    getName: function () {
+        return this.getMetadata().namePath
+            ? util.access(this, this.getMetadata().namePath)
+            // Consider a property that exists on every object instance of type Layer which can serve as fallback.
+            : '';
+    },
+
+    /**
+     * Retrieves the measurement of the geometry of the layer.
+     * 
+     * This is the area (in meters squared) for polygons and length (in meters) for lines.
+     * 
+     * @extends Layer.prototype
+     * 
+     * returns String;
+     */
+    getMeasurement: function ()  {
+        return this.feature 
+            ? this.feature.properties['AREA']
             : factory.Util.stamp(this);
     },
     
