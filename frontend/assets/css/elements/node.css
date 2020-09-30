@@ -1,6 +1,7 @@
 /* the tree node's style */
 .tree-node {
     overflow-y: hidden;
+    margin-left: 5px;
 }
 
 .tree-node-item {
@@ -9,9 +10,14 @@
     align-items: center;
 }
 
+.tree-node-label {
+    background-color: #fff;
+    border-color: #fff;
+}
+
   /* style for the children nodes container */
 .tree-node-children {
-    margin-left: 32px;
+    margin-left: 0px;
 }
 
 .tree-node-children-collapsed {

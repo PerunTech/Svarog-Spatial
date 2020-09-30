@@ -1,4 +1,5 @@
 import { React, PropTypes } from 'perun-core';
+import { Button } from '../..';
 
 /**
  * Represents a single node in a hierarchical data view (tree).
@@ -8,18 +9,13 @@ import { React, PropTypes } from 'perun-core';
  * 
  * @param {*} props
  */
-export function TreeNode ({ label, collapsed = true, onClick, children, ..._props  }) {
-    const [ isOpen, open ] = React.useState(!collapsed);
-
-    return <div className='tree-node' >
+export function TreeNode ({ id, label, isOpen = true, onClick, children, ..._props  }) {
+    return <div id={id} className='tree-node' >
         <div className='tree-node-item' >
             <div {..._props}
                 className={'tree-node-arrow ' + (!isOpen ? 'tree-node-arrow-collapsed' : '')}
-                onClick={(...args) => {
-                    open(c => !c);
-                    onClick && onClick(...args); 
-                }} />
-            {label}
+                onClick={() => onClick(id)} />
+            <Button className='tree-node-label' onClick={() => onClick(id)} >{label}</Button>
         </div>
         <div className={isOpen ? 'tree-node-children' : 'tree-node-children-collapsed'}>
             {isOpen ? children : null}
@@ -28,11 +24,14 @@ export function TreeNode ({ label, collapsed = true, onClick, children, ..._prop
 }
 
 TreeNode.propTypes = {
+    id: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number]),
     label: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
         PropTypes.node]),
-    collapsed: PropTypes.bool,
+    isOpen: PropTypes.bool,
     onClick: PropTypes.func,
     children: PropTypes.node,
 }
