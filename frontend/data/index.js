@@ -1,4 +1,6 @@
+/* layer */ 
 import './layer/Layer';
+import './layer/LayerGroup';
 
 /* json */
 import './geojson/GeoJSON';

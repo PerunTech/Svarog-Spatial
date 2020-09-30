@@ -52,7 +52,9 @@ factory.Layer.include({
      * returns Layer.ID;
      */
     getId: function ()  {
-        return factory.Util.stamp(this);
+        return this.feature 
+            ? this.feature.id
+            : factory.Util.stamp(this);
     },
     
     /**
@@ -111,7 +113,8 @@ factory.Layer.include({
             currState = { ...store.getState().data.layers }; 
 
         // remove property and publish current state - minus this
-        currState[id] && ( delete currState[id], store.dispatch({ ...currState }));
+        currState[id] 
+            && ( delete currState[id], store.dispatch({ layers: currState }) );
 
         return this;
     }
