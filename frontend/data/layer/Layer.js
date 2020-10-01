@@ -85,7 +85,7 @@ factory.Layer.include({
      * 
      * @extends Layer.prototype
      * 
-     * returns String;
+     * returns number;
      */
     getMeasurement: function ()  {
         return this instanceof factory.Polygon
@@ -93,8 +93,8 @@ factory.Layer.include({
             : this instanceof factory.Polyline
                 ? this.calculateDistance(this.getLatLngs())
                 : this.feature
-                    ? this.feature.properties.AREA
-                    : 'n/a';
+                    ? Number(this.feature.properties.AREA)
+                    : 0;
     },
     
     /**
