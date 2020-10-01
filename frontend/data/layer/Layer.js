@@ -89,7 +89,7 @@ factory.Layer.include({
      */
     getMeasurement: function ()  {
         return this instanceof factory.Polygon
-            ? this.calculateArea(this.getLatLngs())
+            ? this.calculateArea(this.getLatLngs()[0]) // Outer ring is the first element of _latLngs. holes?
             : this instanceof factory.Polyline
                 ? this.calculateDistance(this.getLatLngs())
                 : this.feature
