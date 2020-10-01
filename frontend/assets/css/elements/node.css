@@ -17,7 +17,7 @@
 
   /* style for the children nodes container */
 .tree-node-children {
-    margin-left: 0px;
+    margin-left: -5px;
 }
 
 .tree-node-children-collapsed {
