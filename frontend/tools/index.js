@@ -5,6 +5,9 @@ export { limits } from './coordinate/Limits';
 /* snap */
 export { snap } from './snap/Snap';
 
+/* drag */
+export { drag } from './drag/Drag';
+
 /* draw */
 export { draw } from './draw/Draw';
 

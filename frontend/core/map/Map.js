@@ -8,7 +8,7 @@ import { MAP_CONTAINER, MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../co
 const el = document.createElement('div');
 el.id = 'map';
 el.style.height = '100vh';
-el.style.border = '4px inset';
+/*el.style.border = '4px inset';*/
 
 const opt = util.assign(MAP_CONFIG, {
     crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
@@ -18,7 +18,7 @@ const opt = util.assign(MAP_CONFIG, {
 
 
 /**
- * Overrides segment. Keep this on top of file.
+ * @override segment. Keep this on top of file.
  * Prototype changes are done before we create our Map instance.
  */
 factory.Map.prototype._initControlPos = function () {
@@ -62,7 +62,8 @@ export const Map = factory.map(el, opt);
 
 
 /**
- * Augmentation segment. Extends Map.
+ * @extends segment. 
+ * Extends Map.
  */
 Map.render = function render () {
     let container = document.getElementById(MAP_CONTAINER);
@@ -101,5 +102,11 @@ Map.untransform = function (point, precision) {
         precision);
 }
 Map.getBBox = function () {
-    return '';
+    const crs = Map.getCRS();
+    const bounds = Map.getBounds();
+
+    const psw = crs.projection.project(bounds.getSouthWest())
+    const pne = crs.projection.project(bounds.getNorthEast())
+
+    return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y;
 }

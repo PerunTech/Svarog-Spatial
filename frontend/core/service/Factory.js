@@ -47,6 +47,29 @@ export const factory = {
     },
 
     /**
+     * GeoJSON factory.
+     * 
+     * Creates a GeoJSON layer. Optionally accepts an object in GeoJSON format to display on the map 
+     * (you can alternatively add it later with addData method) and an options object.
+     * 
+     * Supports any valid coordinate reference system, spherical or cartesian.
+     * Automatically reprojects data.
+     * 
+     * &nbsp;
+     * 
+     * @extends {factory.GeoJSON}
+     * @factory geoJson (geojson: any, opt: Object): GeoJson
+     * 
+     * @param {*} geojson - Geojson object.
+     * @param {*} opt - Configuration object.
+     * 
+     * @returns GeoJSON;
+     */
+    geoJSON (geojson, opt) {
+        return L.geoJSON(geojson, opt);
+    },
+
+    /**
      * Creates an object representing a geographical point with the given
      * latitude `lat` and longitude `lng` (and optionally altitude `alt`).
      * 
@@ -83,14 +106,6 @@ export const factory = {
         return L.latLng(lat, lng, alt);
     },
 
-    layerGroup (layers = [], opt = {}) {
-        return L.layerGroup(layers, opt);
-    },
-
-    marker (p, opt) {
-        return L.marker(p, opt);
-    },
-
     /**
      * Creates a Point object with the given `x` and `y` coordinates.
      * If optional `r` is set to true, rounds the `x` and `y` values.
@@ -120,10 +135,6 @@ export const factory = {
         if (util.isArray(x)) { return L.point(x[0], x[1]); }
 
         return L.point(x, y, r);
-    },
-
-    polyline (latLngs, opt) {
-        return L.polyline(latLngs, opt);
     },
 
     /**

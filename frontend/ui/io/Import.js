@@ -5,10 +5,10 @@ export const Import = () =>
     <ButtonGroup id='io' >
         <Button >
             <Icon name='shapefile' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>SHP датотека</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Увези SHP</span>
         </Button>
         <Button >
             <Icon name='geojson' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>GeoJSON датотека</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Увези GeoJSON</span>
         </Button>
     </ButtonGroup>;

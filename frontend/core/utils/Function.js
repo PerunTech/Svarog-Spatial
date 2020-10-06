@@ -56,7 +56,7 @@ export const fn = {
         if (!hookAfter) {
             return function () {
                 let protoVal = fn.apply(this, arguments);
-                let args = Array.prototype.slice.call(arguments)
+                let args = Array.prototype.slice.call(arguments);
                 args.push(protoVal);
                 return hook.apply(this, args);
             }

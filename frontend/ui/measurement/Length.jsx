@@ -1,12 +1,12 @@
 import { React, PropTypes } from 'perun-core';
 import { factory, Map, connect, store } from "../../core";
-import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../config';
+import { MEAUSURE_LENGTH, getProcessTitle } from '../../config';
 import { draw } from '../../tools';
 import { Button, Icon, Modal, DrawActions } from '..';
 
 export const length ={
     /* The internal id of the process */
-    id: PROCESS_ENUM.length,
+    id: 'length',
 
     /* The measurement sum of the action */
     sum: 0,
@@ -17,7 +17,7 @@ export const length ={
     enable: function () {
         Map.on('new_shape', this._finishMeasurement.bind(this));
         store.dispatch({ processID: this.id });
-        draw.line.enable(MEASURE_LINE);
+        draw.line.enable(MEAUSURE_LENGTH);
     },
 
     disable: function () {

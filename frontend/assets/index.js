@@ -23,6 +23,7 @@ import './css/elements/button.css';
 import './css/elements/input.css';
 import './css/elements/divider.css';
 import './css/elements/modal.css';
+import './css/elements/node.css';
 
 /* css.modules */
 import './css/modules/ellipser.css';

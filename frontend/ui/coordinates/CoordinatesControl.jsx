@@ -4,26 +4,28 @@ import { util, Map } from '../../core';
 import { limits } from '../../tools';
 import { Coordinates } from '..';
 
+const { useReducer, useCallback, useEffect } = React;
+
 export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function. 
-    const [{coordinates, active}, dispatch] = React.useReducer((currState, update) => 
+    const [{coordinates, active}, dispatch] = useReducer((currState, update) => 
         ({...currState, ...update}), {
             coordinates: Object.values(SYS_CENTER).map(c => String(c)),
-            active: false 
+            active: false
         });
 
     /* The map listener for latlng location on mouse cursor movement. Passive mode. */
-    const tracker = React.useCallback(util.throttle(e => 
+    const tracker = useCallback(util.throttle(e => 
         dispatch({ coordinates: Object.values(Map.transform(e.latlng, props.precision)) }),
         100), []);
     
     /* An effect which mounts / unmounts mouse-recording tracker from the map when active state changes. */
-    React.useEffect(() => { active
+    useEffect(() => { active
         ? Map.off('mousemove', tracker) 
         : Map.on('mousemove', tracker)}, [active, tracker]);
 
     /* Navigation helper, pans the map to the current coordinates when Enter is pressed. */
-    const locate = React.useCallback(e => {
+    const locate = useCallback(e => {
         if (e.keyCode === 13 && coordinates.reduce((acc, val, i) => 
             acc && val.length > 4 && limits.isBounded(val, i, true), true)) {
                 Map.setView(Map.untransform({

@@ -1,12 +1,12 @@
 import { React, PropTypes } from 'perun-core';
 import { factory, Map, connect, store } from "../../core";
-import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../config';
+import { MEASURE_AREA, getProcessTitle } from '../../config';
 import { draw } from '../../tools';
 import { Button, Icon, Modal, DrawActions } from '..';
 
 export const area = {
     /* The internal id of the process */
-    id: PROCESS_ENUM.area,
+    id: 'area',
 
     /* The measurements sum of the action */
     sum: 0,
@@ -17,7 +17,7 @@ export const area = {
     enable: function () {
         Map.on('new_shape', this._finishMeasurement.bind(this));
         store.dispatch({ processID: this.id });
-        draw.polygon.enable(MEASURE_LINE);
+        draw.polygon.enable(MEASURE_AREA);
     },
 
     disable: function () {
@@ -31,7 +31,6 @@ export const area = {
         if (e && e.layer) {
             this.measurements.addLayer(e.layer);
             this.sum = this.sum + this._calcCurrentArea(store.getState().measurement.totalArea);
-            store.dispatch({totalArea: '0 m²'});
         }
     },
 

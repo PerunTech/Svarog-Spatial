@@ -1,17 +1,17 @@
-import { factory } from '../../core';
+/* shapes */
+import { marker } from './shapes/Marker';
+import { line } from './shapes/Line';
+import { polygon } from './shapes/Polygon';
 
+/**
+ * Editing tools.
+ * 
+ * &nbsp;
+ * 
+ * @namespace edit
+ */
 export const edit = {
-    marker () { console.log(factory) },
-
-    line () { console.log(factory.PM) },
-
-    polygon () { },
-
-    rectangle () { },
-
-    circle () { },
-
-    circleMarker () { },
-
-    layer () { }
+    marker,
+    line,
+    polygon
 }

@@ -1,6 +1,78 @@
 import { R } from '../../config';
 
 /**
+ * Calculates the length of a given latitude / longitude set.
+ * Returns number in meters.
+ * 
+ * Available on the prototype on both lines and polygons, despite being used only for the former.
+ * Validation of the latlng argument deferred to caller. 
+ * 
+ * This is low level utility, be mindful when calling and use sparingly. 
+ * Encapsulated by Layer.prototype.getMeasurement and thus available on all geometry entities in the app.
+ * If needed, call getMeasurement on the layer directly, which provides type checking and fallbacks.
+ * 
+ * @param {*} coords 
+ */
+export function calculateDistance (coords) {
+    let ll1, ll2, dist, totalDist = 0;
+
+    for (let i = 1, len = coords.length; i < len; i++) {
+        ll1 = coords[i - 1];
+        ll2 = coords[i % len];
+        dist = ll1.distanceTo(ll2);
+        totalDist += dist;
+    }
+
+    return totalDist;
+}
+
+/**
+ * Calculates the area of a given latitude / longitude set.
+ * Returns number in meters.
+ * 
+ * Available on the prototype on both lines and polygons, despite being used only for the latter.
+ * Validation of the latlng argument deferred to caller. 
+ * 
+ * This is low level utility, be mindful when calling and use sparingly. 
+ * Encapsulated by Layer.prototype.getMeasurement and thus available on all geometry entities in the app.
+ * If needed, call getMeasurement on the layer directly, which provides type checking and fallbacks.
+ * 
+ * @param {*} coords 
+ */
+export function calculateArea (coords) {
+    let p1, p2, p3, lowerIndex, middleIndex, upperIndex, 
+        area = 0,
+        coordsLength = coords.length,
+        rad = (deg) => deg * Math.PI / 180;
+
+    if (coordsLength > 2) {
+        for (let i = 0; i < coordsLength; i++) {
+            if (i === coordsLength - 2) {// i = N-2
+                lowerIndex = coordsLength - 2;
+                middleIndex = coordsLength -1;
+                upperIndex = 0;
+            } else if (i === coordsLength - 1) {// i = N-1
+                lowerIndex = coordsLength - 1;
+                middleIndex = 0;
+                upperIndex = 1;
+            } else { // i = 0 to N-3
+                lowerIndex = i;
+                middleIndex = i+1;
+                upperIndex = i+2;
+            }
+            p1 = coords[lowerIndex];
+            p2 = coords[middleIndex];
+            p3 = coords[upperIndex];
+            area += ( rad(p3.lng) - rad(p1.lng) ) * Math.sin( rad(p2.lat));
+        }
+
+        area = area * R * R / 2;
+    }
+
+    return Math.abs(area);
+}
+
+/**
  * Handles the init hook for polylines and circles.
  * Implements the showOnHover functionality if called for.
  */
@@ -69,39 +141,6 @@ export function formatArea (a) {
     return a < 100
         ? a.toFixed(1) + ' ' + unit
         : Math.round(a) + ' ' + unit;
-}
-
-export function ringArea (coords) {
-    let p1, p2, p3, lowerIndex, middleIndex, upperIndex, 
-        area = 0,
-        coordsLength = coords.length,
-        rad = (deg) => deg * Math.PI / 180;
-
-    if (coordsLength > 2) {
-        for (let i = 0; i < coordsLength; i++) {
-            if (i === coordsLength - 2) {// i = N-2
-                lowerIndex = coordsLength - 2;
-                middleIndex = coordsLength -1;
-                upperIndex = 0;
-            } else if (i === coordsLength - 1) {// i = N-1
-                lowerIndex = coordsLength - 1;
-                middleIndex = 0;
-                upperIndex = 1;
-            } else { // i = 0 to N-3
-                lowerIndex = i;
-                middleIndex = i+1;
-                upperIndex = i+2;
-            }
-            p1 = coords[lowerIndex];
-            p2 = coords[middleIndex];
-            p3 = coords[upperIndex];
-            area += ( rad(p3.lng) - rad(p1.lng) ) * Math.sin( rad(p2.lat));
-        }
-
-        area = area * R * R / 2;
-    }
-
-    return Math.abs(area);
 }
 
 export function circleArea (d) {

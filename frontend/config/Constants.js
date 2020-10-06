@@ -29,7 +29,7 @@ export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569,
  * 
  * @constant
  */
-export const SYS_CENTER = { lat: 41.590072, lng: 21.780699 };
+export const SYS_CENTER = { lat: 41.664956, lng: 21.674375 };
 
 /**
  * The minimum allowed scale for digitization.
@@ -91,28 +91,7 @@ export const MAP_CONFIG = {
 };
 
 /** @constant */
-export const PROCESS_ENUM = {
-    'zoom-in': 'zoom-in', 
-    'zoom-out': 'zoom-out',
-    search: 'search',
-    origin: 'origin',
-    location: 'location',
-    view: 'view',
-    draw: 'draw',
-    edit: 'edit',
-    cut: 'cut',
-    split: 'split',
-    merge: 'merge',
-    landscape: 'landscape',
-    length: 'length',
-    area: 'area',
-    angle: 'angle',
-    radius: 'radius',
-    erase: 'erase'
-}  
-
-/** @constant */
-export const MEASURE_LINE = {
+export const MEASURE_CONFIG = {
     // allow multiple drawn shapes
     repeatable: true,
     // snapping
@@ -152,7 +131,11 @@ export const MEASURE_LINE = {
     cursorMarker: false,
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
-    finishOn: null,
+    finishOn: null
+};
+
+export const MEAUSURE_LENGTH = {
+    ...MEASURE_CONFIG,
     // configuration of the resulting vector, after measurement finished. 
     pathOptions: {
         weight: 2.0,
@@ -162,9 +145,35 @@ export const MEASURE_LINE = {
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
-        showMeasurements: true
+        showMeasurements: true,
+        metadata: {
+            type: 'measurements',
+            name: 'Должина',
+            namePath: 'options.metadata.name'
+        }
     }
-};
+}
+
+export const MEASURE_AREA = {
+    ...MEASURE_CONFIG,
+    // configuration of the resulting vector, after measurement finished. 
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#FFC400',
+        fillColor: '#FFC400',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true,
+        metadata: {
+            type: 'measurements',
+            name: 'Површина',
+            namePath: 'options.metadata.name'
+        }
+    }
+}
+
 
 /** @constant */
 export const NAVIGATE_VIEW = {

@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { ButtonGroup, Button, Icon } from '..';
+import { ButtonGroup, Button, Icon, Divider } from '..';
 
 export const Selection = () => 
     <ButtonGroup id='selection' >
@@ -7,6 +7,7 @@ export const Selection = () =>
             <Icon name='selection' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Избери геометрија</span>
         </Button>
+        <Divider />
         <Button >
             <Icon name='selection-polygon' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Избери со полигон</span>
@@ -19,6 +20,7 @@ export const Selection = () =>
             <Icon name='selection-radius' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Избери со радиус</span>
         </Button>
+        <Divider />
         <Button >
             <Icon name='informer' size='28px' />
             <span style={{display: 'block', marginTop: '5px' }}>Информатор</span>

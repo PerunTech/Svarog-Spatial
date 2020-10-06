@@ -19,7 +19,6 @@ export { state } from './model/State';
 // Proj
 export { crs } from './projection/CRS';
 export { projection } from './projection/Projection';
-export { geoJson } from './projection/GeoJSON';
 
 // Map
 export { Map } from './map/Map';

@@ -1,5 +1,5 @@
 import { util, factory } from '../../core';
-import { addInitHook, formatArea, formatDistance, ringArea } from './Util';
+import { addInitHook, formatArea, formatDistance, calculateArea, calculateDistance } from './Util';
 
 const { marker, layerGroup, Polyline, Polygon } = factory;
 
@@ -89,7 +89,7 @@ export const measureLine = {
 
         if (isPolygon && options.showArea && latLngs.length > 2) {
             formatter = options.formatArea || util.bind(this.formatArea, this);
-            let area = ringArea(latLngs);
+            let area = calculateArea(latLngs);
             
             marker.measurement(this.getBounds().getCenter(), formatter(area), options.lang.totalArea, 0, options)
                 .addTo(this._measurementLayer);
@@ -124,6 +124,9 @@ export const measureLine = {
 
     formatDistance: formatDistance,
     formatArea: formatArea,
+
+    calculateDistance: calculateDistance,
+    calculateArea: calculateArea,
 
     _getRotation: function (ll1, ll2) {
         let p1 = this._map.project(ll1),

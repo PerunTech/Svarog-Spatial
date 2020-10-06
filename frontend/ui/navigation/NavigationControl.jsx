@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
-import { NAVIGATE_VIEW } from '../../config';
-import { Map, factory, store } from '../../core';
+import { NAVIGATE_VIEW, SYS_CENTER } from '../../config';
+import { Map, store } from '../../core';
 import { draw } from '../../tools';
 import { Button, Icon, StatusIndicator } from '..';
 
@@ -16,12 +16,12 @@ const bboxZoom = () => {
 };
 
 const origin = () => 
-    Map.fitBounds(factory.boundingBox(store.getState().map.origin));
+    Map.setView(SYS_CENTER, 3);
 
 export const NavigationControl = () =>
     <>
         <Button className='home' title='Оди на почеток' onClick={() => origin()} >
-            <Icon name='home' size='16px' />
+            <Icon name='map-home' size='20px' />
         </Button>
         <Button className='zoom-in' title='Намали размер' onClick={() => Map.zoomIn()} >
             <Icon name='zoom-in' size='16px' />

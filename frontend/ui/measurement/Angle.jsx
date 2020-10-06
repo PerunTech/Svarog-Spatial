@@ -1,11 +1,11 @@
 import { React, PropTypes } from 'perun-core';
 import { util, factory, Map, connect } from "../../core";
-import { MEASURE_LINE, PROCESS_ENUM, getProcessTitle } from '../../config';
+import { MEASURE_CONFIG, getProcessTitle } from '../../config';
 import { draw } from '../../tools';
 import { Button, Icon } from '..';
 
 /* The internal id of the process */
-const _id = PROCESS_ENUM.angle;
+const _id = 'angle';
 /* Layer group of all Angle measurements, register is accessible from outside. */
 export const angleMeasurements = factory.layerGroup().addTo(Map);
 
@@ -27,7 +27,7 @@ function _Angle ({options, ...props}) {
     const enable = React.useCallback(() => {
         dispatch({ processID: _id });
         Map.on('new_shape', disable);
-        draw.circle.enable(util.assign(MEASURE_LINE, options));
+        draw.circle.enable(util.assign(MEASURE_CONFIG, options));
     }, [options, dispatch, disable])
 
     return <Button {..._props}
