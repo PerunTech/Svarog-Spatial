@@ -25,7 +25,7 @@ function _ToolbarButton ({id, onClick, ...props}) {
     return <Button {...props} 
         id={id} 
         className={props.processID === id ? 'active' : ''}
-        onClick={e => {props.dispatch({processID:id}), onClick(e)}} >
+        onClick={e => { props.dispatch({processID:id}), onClick(e)} } >
             <Icon name={id} size='28px' />
             <span style={{display: 'block', marginTop: '5px'}}>{getProcessTitle(id)}</span>
     </Button>
