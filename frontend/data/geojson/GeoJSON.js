@@ -47,35 +47,34 @@ factory.GeoJSON.include({
             }
         }
     },
-
-
-    /**
-     * Creates geojson from vectors.
-     * 
-     * Compatible with all factory entities.
-     * Re-projects coordinates.
-     * 
-     * &nbsp;
-     * 
-     * @function fromLayer(layer: Layer, crs?: CRS): GeoJSON
-     * 
-     * @param {Layer} layer - The layer to be serialized.
-     * @param {CRS} crs - The coordinate reference system for coords transformation.
-     * 
-     * @returns GeoJSON;
-     */
-    fromLayer: function (layer, crs) {
-        const geojson = layer.toGeoJSON(),
-              coords = geojson.geometry.coordinates[0],
-              _crs = crs || layer._map.getCRS();
-    
-        coords.forEach((val, i, self) => {
-            let ll = factory.latLng(val[1], val[0]);
-            let p = _crs.projection.project(ll);
-            
-            self[i] = [ p.x, p.y ];
-        });
-    
-        return geojson;
-    }
 });
+
+/**
+* Creates geojson from vectors.
+* 
+* Compatible with all factory entities.
+* Re-projects coordinates.
+* 
+* &nbsp;
+* 
+* @function fromLayer(layer: Layer, crs?: CRS): GeoJSON
+* 
+* @param {Layer} layer - The layer to be serialized.
+* @param {CRS} crs - The coordinate reference system for coords transformation.
+* 
+* @returns GeoJSON;
+*/
+factory.GeoJSON.fromLayer = function (layer, crs) {
+   const geojson = layer.toGeoJSON(),
+         coords = geojson.geometry.coordinates[0],
+         _crs = crs || layer._map.getCRS();
+
+   coords.forEach((val, i, self) => {
+       let ll = factory.latLng(val[1], val[0]);
+       let p = _crs.projection.project(ll);
+       
+       self[i] = [ p.x, p.y ];
+   });
+
+   return geojson;
+}
