@@ -1,6 +1,6 @@
 {
   "name": "spatial",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Perun module for spatial data and map visualization.",
   "main": "backend/www/spatial.js",
   "repository": {
