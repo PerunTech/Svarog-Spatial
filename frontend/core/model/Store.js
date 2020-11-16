@@ -48,7 +48,7 @@ store.addState = (key, state) => {
     const _addState = slice => 
         store.addReducer(key, (_state = slice, action) => 
             util.hasProp(_state, action.type)
-                ? util.assign({}, _state, {[action.type]: action.value})
+                ? { ..._state, [action.type]: action.value }
                 : _state);
 
     const _extendState = currSlice => {

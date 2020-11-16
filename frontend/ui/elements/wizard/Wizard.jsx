@@ -1,5 +1,4 @@
 import { React, PropTypes} from 'perun-core';
-import { util } from '../../../core';
 import { Step } from '../..';
 import style from './Wizard.module.css';
 
@@ -25,15 +24,16 @@ import style from './Wizard.module.css';
  * 
  * @returns JSX;
  */
-export function Wizard ({children, nav = null, opt = {initialStep: 0}}) {
-    const props = util.assign({
+export function Wizard ({children, nav = null, opt = { initialStep: 0 }}) {
+    const props = {
         activeStep: () => activeStep,
         totalSteps: () => children.length - 1,
         goToStep: step => !(step === activeStep || (step < 0 || step > children.length)) && setActive(step),
         next: () => props.goToStep(activeStep + 1),
-        prev: () => props.goToStep(activeStep - 1)
-    }, opt),
-    [activeStep, setActive] = React.useState([...children][opt.initialStep] ? opt.initialStep : 0);
+        prev: () => props.goToStep(activeStep - 1),
+        ...opt
+    },
+    [activeStep, setActive] = React.useState(opt.initialStep);
 
     return <div className={opt.className || style['wizard']}>
         {nav && React.cloneElement(nav, props)}

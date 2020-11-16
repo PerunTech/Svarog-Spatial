@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../core";
+import { factory, Map, connect } from "../../core";
 import { MEASURE_CONFIG, getProcessTitle } from '../../config';
 import { draw } from '../../tools';
 import { Button, Icon } from '..';
@@ -27,7 +27,7 @@ function _Radius ({options, ...props}) {
     const enable = React.useCallback(() => {
         dispatch({ processID: _id });
         Map.on('new_shape', disable);
-        draw.circle.enable(util.assign(MEASURE_CONFIG, options));
+        draw.circle.enable({ ...MEASURE_CONFIG, ...options });
     }, [options, dispatch, disable])
 
     return <Button {..._props}

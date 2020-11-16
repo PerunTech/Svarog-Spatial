@@ -1,4 +1,4 @@
-import { factory, util, crs } from '..';
+import { factory, crs } from '..';
 import { MAP_CONTAINER, MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../config';
 
 /**
@@ -10,10 +10,11 @@ el.id = 'map';
 el.style.height = '100vh';
 /*el.style.border = '4px inset';*/
 
-const opt = util.assign(MAP_CONFIG, {
+const opt = {
+    ...MAP_CONFIG,
     crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
     origin: [7453631.01165012, 4523013.16848829]
-});
+};
 
 
 

@@ -211,7 +211,7 @@ export const snap = {
             : C;
 
         // return the copy of snapping point
-        return util.assign({}, snapLatlng);
+        return { ...snapLatlng };
     },
 
     _createSnapList() {
@@ -308,7 +308,7 @@ export const snap = {
         if (isMarker) {
             // return the info for the marker, no more calculations needed
             return {
-                latlng: util.assign({}, latlngs),
+                latlng: { ...latlngs},
                 distance: this._getDistance(map, latlngs, P),
             };
         }

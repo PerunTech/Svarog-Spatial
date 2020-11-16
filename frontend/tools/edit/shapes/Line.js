@@ -23,8 +23,7 @@ export const line = {
 
         this._layer = layer;
         this.enabled= true;
-
-        util.assign(this.options, opt);
+        this.options = opt;
 
         // init markers
         this._initMarkers();

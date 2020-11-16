@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { util, Map, factory } from '../../../core';
+import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
 export const marker = {
@@ -8,10 +8,9 @@ export const marker = {
     options: {},
     enabled: false,
 
-    enable (options) {
-        util.assign(this.options, options);
-
-        // change enabled state
+    enable (opt) {
+        // change enabled state, assign config.
+        this.options = opt;
         this.enabled = true;
     
         // create a marker on click on the map
@@ -75,8 +74,9 @@ export const marker = {
         // cleanup snapping
         this.options.snappable && this._cleanupSnapping();
     
-        // change enabled state
+        // change enabled state, disable config.
         this.enabled = false;
+        this.options = {}
     },
 
     isRelevantMarker: layer => layer instanceof factory.Marker && layer.pm && !layer._pmTempLayer,

@@ -1,5 +1,5 @@
 import { getDrawTooltip, MAP_CONFIG, MIN_DIGI_SCALE } from '../../../config';
-import { util, Map, factory, store } from '../../../core';
+import { Map, factory, store } from '../../../core';
 import { snap } from '../..';
 
 export const line = {
@@ -9,8 +9,8 @@ export const line = {
     enabled: false,
     _doesSelfIntersect: false,
 
-    enable (options) {
-        util.assign(this.options, options);
+    enable (opt) {
+        this.options = opt;
         store.dispatch({minZoom: MIN_DIGI_SCALE});
 
         /* #revise_me, rubbish logic */

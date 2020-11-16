@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { util, Map, factory } from '../../../core';
+import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
 export const circle = {
@@ -8,8 +8,8 @@ export const circle = {
     options: {},
     enabled: false,
 
-    enable (options) {
-        util.assign(this.options, options);
+    enable (opt) {
+        this.options = opt;
         this.options.radius = 0;
     
         // enable draw mode
@@ -85,8 +85,6 @@ export const circle = {
             return;
         }
     
-        this.enabled = false;
-    
         // reset cursor
         Map._container.style.cursor = '';
     
@@ -105,6 +103,9 @@ export const circle = {
         if (this.options.snappable) {
             this._cleanupSnapping();
         }
+
+        this.options = {};
+        this.enabled = false;
     },
 
     isEnabled () { return this.enabled; },
@@ -179,7 +180,7 @@ export const circle = {
         const center = this._centerMarker.getLatLng();
         const latlng = this._hintMarker.getLatLng();
         const radius = center.distanceTo(latlng);
-        const options = util.assign({}, this.options.pathOptions, { radius });
+        const options = { ...this.options.pathOptions, radius };
     
         // create the final circle layer
         const circleLayer = factory.circle(center, options).addTo(Map);

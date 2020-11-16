@@ -27,7 +27,7 @@ function _Angle ({options, ...props}) {
     const enable = React.useCallback(() => {
         dispatch({ processID: _id });
         Map.on('new_shape', disable);
-        draw.circle.enable(util.assign(MEASURE_CONFIG, options));
+        draw.circle.enable({ ...MEASURE_CONFIG, ...options });
     }, [options, dispatch, disable])
 
     return <Button {..._props}

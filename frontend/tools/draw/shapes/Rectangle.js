@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { util, Map, factory } from '../../../core';
+import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
 export const rectangle = {
@@ -9,7 +9,7 @@ export const rectangle = {
     enabled: false,
 
     enable (options) {
-        util.assign(this.options, options);
+        this.options = options;
     
         // enable draw mode
         this.enabled = true;
@@ -95,9 +95,7 @@ export const rectangle = {
         if (!this.enabled) {
             return;
         }
-    
-        this.enabled = false;
-    
+
         // reset cursor
         Map._container.style.cursor = '';
     
@@ -116,6 +114,9 @@ export const rectangle = {
         if (this.options.snappable) {
             this._cleanupSnapping();
         }
+
+        this.options = {};
+        this.enabled = false;
     },
 
     isEnabled () { return this.enabled; },
