@@ -1,5 +1,6 @@
 package com.prtech.spatial.importer;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -129,11 +130,14 @@ public class SDIImporter {
 		
 		
 		switch (target) {
-			case "PHYSICAL_BLOCK": 
+			case "PHYSICAL_BLOCK":
 				if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
 					try {
-						int landUseAlt = (int) Math.round((Double) rs.getObject("LAND_USE_1"));
-						int landUse = (int) Math.round((Double) rs.getObject("LAND_USE_I"));
+						int landUseAlt = 0;
+						if(rs.getObject("LAND_USE_ID_2") != null) {
+							landUseAlt = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
+						}
+						int landUse = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
 						if (landUseAlt > 0) {
 							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUseAlt).toString());
 						} else {
@@ -145,7 +149,7 @@ public class SDIImporter {
 				} else if (key.equals("NOTE")) {
 					dbo.setVal("NOTE", "MAFWE IMPORT");
 				} else if (key.equals("OLD_ID")) {
-					dbo.setVal("OLD_ID", (int) Math.round((Double) rs.getObject("ID_ILPIS")));
+					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID_ILPIS")).intValue());
 				} else {
 					defaultSetField(dbo, key, rs);
 				}
