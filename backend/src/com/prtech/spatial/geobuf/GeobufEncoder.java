@@ -380,7 +380,6 @@ public class GeobufEncoder {
     public void writeSvGeometry (Collection<Geometry> geomArr) throws IOException {	
         Collection<GeobufFeature> gbfc = new ArrayList<GeobufFeature>();
         geomArr.forEach( g -> gbfc.add(createGeobufFeature(g, g.getUserData())) );
-        
         this.writeFeatureCollection(gbfc);
     }
     
