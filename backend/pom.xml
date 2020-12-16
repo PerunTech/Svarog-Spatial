@@ -4,7 +4,7 @@
 
   <groupId>perun</groupId>
   <artifactId>spatial</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
   <packaging>bundle</packaging>
   <name>Perun Spatial</name>
   <description>Spatial data management, geometry tools and GIS services.</description>
@@ -102,13 +102,13 @@
 	<dependency>
 	  <groupId>svarog</groupId>
 	  <artifactId>svarog-interfaces</artifactId>
-	  <version>[3.1.0,)</version>
+	  <version>[3.2.0,)</version>
 	  <scope>provided</scope>
 	</dependency>
 	<dependency>
 	  <groupId>svarog</groupId>
 	  <artifactId>svarog</artifactId>
-	  <version>[3.1.0,)</version>
+	  <version>[3.2.1,)</version>
 	  <scope>provided</scope>
 	</dependency>
 	<dependency>
