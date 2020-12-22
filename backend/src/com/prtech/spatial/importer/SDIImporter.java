@@ -154,6 +154,53 @@ public class SDIImporter {
 					defaultSetField(dbo, key, rs);
 				}
 				break;
+			case "AGRI_PARCEL":
+				if (key.equals("LAND_COVER_CODE") && rs.getObject("LAND_USE_ID") != null) {
+					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
+					if (lc > 0)
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+				}
+				if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
+					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
+					if (lc > 0)
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+				}
+				if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
+					dbo.setVal("INVISIBLE_BORDER", bool);
+				}
+				if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("CHANGED_BORDER")).intValue() > 0;
+					dbo.setVal("CHANGED_BORDER", bool);
+				}
+				if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("IRRIGATION")).intValue() > 0;
+					dbo.setVal("IRRIGATION", bool);
+				}
+				if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
+					dbo.setVal("IRRIGATION", bool);
+				}
+				if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
+					dbo.setVal("LANDSCAPE_FEATURES", bool);
+				}
+				if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("COMMON_USE")).intValue() > 0;
+					dbo.setVal("COMMON_USE", bool);
+				}
+				if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("CERTIFICATE_OF_USE")).intValue() > 0;
+					dbo.setVal("CERTIFICATE_OF_USE", bool);
+				}
+				if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("ORGANIC")).intValue() > 0;
+					dbo.setVal("ORGANIC", bool);
+				}
+				if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
+					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).intValue());
+				}
+				break;
 			default: defaultSetField(dbo, key, rs);
 				break;
 		}
