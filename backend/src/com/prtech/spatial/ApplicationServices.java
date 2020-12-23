@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +31,19 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
+import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.operation.polygonize.Polygonizer;
+import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 
 @Path("/spatial")
 public class ApplicationServices {
@@ -103,18 +114,36 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	Geometry getInputGeometry(MultivaluedMap<String, String> formVals, final String geometryWkt) {
+		Geometry geom = null;
+		if (geometryWkt != null && !geometryWkt.isEmpty()) {
+			try {
+				WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
+				geom = wkr.read(geometryWkt);
+			} catch (Exception e) {
+				log.warn("Invalid WKT string", e);
+			}
+		}
+		if (geom == null) {
+			JsonObject json = null;
+			json = Util.dataToJson(formVals);
+			geom = Util.jsonToGeometry(json.get("GEOM"));
+		}
+		return geom;
+	}
+
+	@POST
 	@Path("/geometry/get/wkt/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput getGeometryByPolyWKT(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("geometryWkt") final String geometryWkt) {
+			@PathParam("objectName") final String objectName, @PathParam("geometryWkt") final String geometryWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Geometry geom = wkr.read(geometryWkt);
+					Geometry geom = getInputGeometry(formVals, geometryWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = svg.getRelatedGeometries(geom, layerTypeId, SDIRelation.INTERSECTS, null,
 							null, false);
@@ -165,20 +194,36 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
-	@Path("/geometry/split/{token}/{objectName}/{lineStringWKT}")
+	@POST
+	@Path("/geometry/split/preview/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
-	public StreamingOutput splitGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT) {
+	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
+		return splitGeometry(token, objectName, lineStringWKT, formVals, true);
+	}
+
+	@POST
+	@Path("/geometry/split/confirm/{token}/{objectName}/{lineStringWKT}")
+	@Produces("application/pbf")
+	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		return splitGeometry(token, objectName, lineStringWKT, formVals, false);
+	}
+
+	private StreamingOutput splitGeometry(final String token, final String objectName, final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, boolean preview) {
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					LineString lineString = (LineString) wkr.read(lineStringWKT);
+					Geometry geom = getInputGeometry(formVals, lineStringWKT);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
-					Set<Geometry> geomArr = svg.splitGeometry(lineString, layerTypeId, false);
+					Set<Geometry> geomArr = splitGeometryImpl((LineString) geom, layerTypeId, false, svg, preview,
+							true);
 					enc.writeSvGeometry(geomArr);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
@@ -191,36 +236,102 @@ public class ApplicationServices {
 					}
 					log.error(errMsg, e);
 				}
-			};
+			}
 		};
 	}
 
-	@GET
+	private void splitGeometryDbUpdate(Set<Geometry> newGeometries, Set<Geometry> deletedGeometries, boolean autoCommit,
+			SvGeometry svg) throws SvException {
+		// get the previous state of autocommit
+		boolean oldAutoCommit = svg.getAutoCommit();
+		try (SvWriter svw = new SvWriter(svg)) {
+			// set autocommit to false to ensure all deletes and saves are in single
+			// transaction
+			svg.setAutoCommit(false);
+			DbDataObject dbo = null;
+			// delete the others
+			for (Geometry g : deletedGeometries) {
+				dbo = (DbDataObject) g.getUserData();
+				svw.deleteObject(dbo);
+			}
+			for (Geometry g : newGeometries) {
+				dbo = (DbDataObject) g.getUserData();
+				SvGeometry.setGeometry(dbo, g);
+				svg.saveGeometry(dbo);
+			}
+
+			if (autoCommit)
+				svg.dbCommit();
+		} finally {
+			svg.dbSetAutoCommit(oldAutoCommit);
+		}
+
+	}
+
+	public Set<Geometry> splitGeometryImpl(LineString line, Long layerTypeId, boolean allowMultiGeometries,
+			SvGeometry svg, boolean preview, boolean autoCommit) throws SvException {
+		if (!line.isSimple())
+			throw (new SvException("system.error.sdi.line_intersects_self", svCONST.systemUser, null, line));
+
+		Set<Geometry> intersected = svg.getRelatedGeometries(line, layerTypeId, SDIRelation.INTERSECTS, null, null,
+				false);
+		Iterator<Geometry> iterator = intersected.iterator();
+		while (iterator.hasNext()) {
+			Geometry findGeom = iterator.next();
+			if (!findGeom.disjoint(line.getStartPoint()) || !findGeom.disjoint(line.getEndPoint()))
+				iterator.remove();
+		}
+
+		if (intersected.size() > 1 && !allowMultiGeometries)
+			throw (new SvException(Sv.Exceptions.SDI_MULTIPLE_GEOMS_FOUND, svCONST.systemUser, null, line));
+
+		Set<Geometry> result = new HashSet<>();
+		for (Geometry originalGeom : intersected) {
+			Geometry[] geometries = new Geometry[] { originalGeom.getBoundary(), line };
+			GeometryCollection col = SvUtil.sdiFactory.createGeometryCollection(geometries);
+			Geometry union = UnaryUnionOp.union(col);
+			Polygonizer polygonizer = new Polygonizer();
+			polygonizer.add(union);
+			for (Polygon poly : (Collection<Polygon>) polygonizer.getPolygons()) {
+				poly.setUserData(originalGeom.getUserData());
+				result.add(poly);
+			}
+
+			// if the difference resulted in multipolygon, we are interested only in the
+			// polygon which covers the point
+
+		}
+		if (!preview) {
+			splitGeometryDbUpdate(result, intersected, autoCommit, svg);
+		}
+		return result;
+	}
+
+	@POST
 	@Path("/geometry/merge/preview/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
-	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("saveToDB") final String saveToDB,
-			@PathParam("lineStringWKT") final String lineStringWKT) {
-		return splitGeometryImpl(token, objectName, true, lineStringWKT);
+	public StreamingOutput mergeGeometryPreview(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return mergeGeometryImpl(token, objectName, true, lineStringWKT, formVals);
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/merge/confirm/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
-	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("saveToDB") final String saveToDB,
-			@PathParam("lineStringWKT") final String lineStringWKT) {
-		return splitGeometryImpl(token, objectName, false, lineStringWKT);
+	public StreamingOutput mergeGeometryConfirm(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 	}
 
-	public StreamingOutput splitGeometryImpl(final String token, final String objectName, final boolean isPreview,
-			final String lineStringWKT) {
+	public StreamingOutput mergeGeometryImpl(final String token, final String objectName, final boolean isPreview,
+			final String lineStringWKT, MultivaluedMap<String, String> formVals) {
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					LineString lineString = (LineString) wkr.read(lineStringWKT);
+					LineString lineString = (LineString) getInputGeometry(formVals, lineStringWKT);
 					ArrayList<Point> p = new ArrayList<>();
 					for (Coordinate c : lineString.getCoordinates())
 						p.add(SvUtil.sdiFactory.createPoint(c));
@@ -243,31 +354,32 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/hole/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput createHoleGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-		return holeInGeometry(token, objectName, polygonWkt, false);
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, polygonWkt, false, formVals);
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/fill/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput fillHoleGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-		return holeInGeometry(token, objectName, polygonWkt, true);
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, polygonWkt, true, formVals);
 	}
 
 	public StreamingOutput holeInGeometry(final String token, final String objectName, final String polygonWkt,
-			boolean remove) {
+			boolean remove, MultivaluedMap<String, String> formVals) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Polygon hole = (Polygon) wkr.read(polygonWkt);
+					Polygon hole = (Polygon) getInputGeometry(formVals, polygonWkt);
 
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = new HashSet<>();
@@ -288,15 +400,15 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/validate/{token}/{objectName}/{polygonWkt}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validateGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		JsonObject validationResult = new JsonObject();
-		WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Polygon geom = (Polygon) wkr.read(polygonWkt);
+			Polygon geom = (Polygon) getInputGeometry(formVals, polygonWkt);
 			try {
 				svg.verifyBounds(geom);
 				validationResult.addProperty("topo.check.pass", true);
@@ -335,7 +447,7 @@ public class ApplicationServices {
 				validationResult.addProperty("topo.geometry_distance.tolerance", distanceTolerance);
 			}
 			validationResult.addProperty("topo.validation.finished", true);
-		} catch (ParseException | SvException e) {
+		} catch (SvException e) {
 			log.error("Failed polygon validation", e);
 			validationResult.addProperty("topo.validation.finished", false);
 			validationResult.addProperty("topo.validation.exception", e.getMessage());
@@ -343,21 +455,20 @@ public class ApplicationServices {
 		return Response.status(200).entity(validationResult.toString()).build();
 	}
 
-	@GET
-	@Path("/geometry/auto_correct/{token}/{objectName}/{lineStringWKT}")
+	@POST
+	@Path("/geometry/auto_correct/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput correctGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-			
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Geometry geom = (Polygon) wkr.read(polygonWkt);
+					Geometry geom = (Polygon) getInputGeometry(formVals, polygonWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
-					
+
 					Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
 					geom = svg.fixPolygonSpikes(geom, maxAngle);
 
@@ -365,9 +476,10 @@ public class ApplicationServices {
 							Sv.DEFAULT_MIN_POINT_DISTANCE);
 					geom = svg.fixMinVertexDistance(geom, minPointDistance);
 
-					Integer distanceTolerance = SvParameter.getSysParam(Sv.SDI_MIN_GEOM_DISTANCE, Sv.DEFAULT_MIN_GEOM_DISTANCE);
+					Integer distanceTolerance = SvParameter.getSysParam(Sv.SDI_MIN_GEOM_DISTANCE,
+							Sv.DEFAULT_MIN_GEOM_DISTANCE);
 					geom = svg.fixGeomDistance(geom, layerTypeId, distanceTolerance);
-					
+
 					Set<Geometry> geoms = new HashSet<>();
 					enc.writeSvGeometry(geoms);
 				} catch (Exception e) {
