@@ -30,7 +30,7 @@ function _Radius ({options, ...props}) {
         draw.circle.enable({ ...MEASURE_CONFIG, ...options });
     }, [options, dispatch, disable])
 
-    return <Button {..._props}
+    return <Button disabled {..._props}
         id={_id} 
         className={processID === _id ? 'active' : ''}
         onClick={() => enable() } >
