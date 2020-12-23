@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +35,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
 @Path("/spatial")
@@ -103,18 +106,36 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	Geometry getInputGeometry(MultivaluedMap<String, String> formVals, final String geometryWkt) {
+		Geometry geom = null;
+		if (geometryWkt != null && !geometryWkt.isEmpty()) {
+			try {
+				WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
+				geom = wkr.read(geometryWkt);
+			} catch (Exception e) {
+				log.warn("Invalid WKT string", e);
+			}
+		}
+		if (geom == null) {
+			JsonObject json = null;
+			json = Util.dataToJson(formVals);
+			geom = Util.jsonToGeometry(json.get("GEOM"));
+		}
+		return geom;
+	}
+
+	@POST
 	@Path("/geometry/get/wkt/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput getGeometryByPolyWKT(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("geometryWkt") final String geometryWkt) {
+			@PathParam("objectName") final String objectName, @PathParam("geometryWkt") final String geometryWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Geometry geom = wkr.read(geometryWkt);
+					Geometry geom = getInputGeometry(formVals, geometryWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = svg.getRelatedGeometries(geom, layerTypeId, SDIRelation.INTERSECTS, null,
 							null, false);
@@ -165,20 +186,20 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/split/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT) {
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					LineString lineString = (LineString) wkr.read(lineStringWKT);
+					Geometry geom = getInputGeometry(formVals, lineStringWKT);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
-					Set<Geometry> geomArr = svg.splitGeometry(lineString, layerTypeId, false);
+					Set<Geometry> geomArr = svg.splitGeometry((LineString) geom, layerTypeId, false);
 					enc.writeSvGeometry(geomArr);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
@@ -195,32 +216,31 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/merge/preview/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("saveToDB") final String saveToDB,
-			@PathParam("lineStringWKT") final String lineStringWKT) {
-		return splitGeometryImpl(token, objectName, true, lineStringWKT);
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return splitGeometryImpl(token, objectName, true, lineStringWKT, formVals);
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/merge/confirm/{token}/{objectName}/{lineStringWKT}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("saveToDB") final String saveToDB,
-			@PathParam("lineStringWKT") final String lineStringWKT) {
-		return splitGeometryImpl(token, objectName, false, lineStringWKT);
+			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return splitGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 	}
 
 	public StreamingOutput splitGeometryImpl(final String token, final String objectName, final boolean isPreview,
-			final String lineStringWKT) {
+			final String lineStringWKT, MultivaluedMap<String, String> formVals) {
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					LineString lineString = (LineString) wkr.read(lineStringWKT);
+					LineString lineString = (LineString) getInputGeometry(formVals, lineStringWKT);
 					ArrayList<Point> p = new ArrayList<>();
 					for (Coordinate c : lineString.getCoordinates())
 						p.add(SvUtil.sdiFactory.createPoint(c));
@@ -243,31 +263,32 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/hole/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput createHoleGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-		return holeInGeometry(token, objectName, polygonWkt, false);
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, polygonWkt, false, formVals);
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/fill/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput fillHoleGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-		return holeInGeometry(token, objectName, polygonWkt, true);
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, polygonWkt, true, formVals);
 	}
 
 	public StreamingOutput holeInGeometry(final String token, final String objectName, final String polygonWkt,
-			boolean remove) {
+			boolean remove, MultivaluedMap<String, String> formVals) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Polygon hole = (Polygon) wkr.read(polygonWkt);
+					Polygon hole = (Polygon) getInputGeometry(formVals, polygonWkt);
 
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = new HashSet<>();
@@ -288,15 +309,15 @@ public class ApplicationServices {
 		};
 	}
 
-	@GET
+	@POST
 	@Path("/geometry/validate/{token}/{objectName}/{polygonWkt}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validateGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		JsonObject validationResult = new JsonObject();
-		WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Polygon geom = (Polygon) wkr.read(polygonWkt);
+			Polygon geom = (Polygon) getInputGeometry(formVals, polygonWkt);
 			try {
 				svg.verifyBounds(geom);
 				validationResult.addProperty("topo.check.pass", true);
@@ -335,7 +356,7 @@ public class ApplicationServices {
 				validationResult.addProperty("topo.geometry_distance.tolerance", distanceTolerance);
 			}
 			validationResult.addProperty("topo.validation.finished", true);
-		} catch (ParseException | SvException e) {
+		} catch (SvException e) {
 			log.error("Failed polygon validation", e);
 			validationResult.addProperty("topo.validation.finished", false);
 			validationResult.addProperty("topo.validation.exception", e.getMessage());
@@ -343,21 +364,20 @@ public class ApplicationServices {
 		return Response.status(200).entity(validationResult.toString()).build();
 	}
 
-	@GET
-	@Path("/geometry/auto_correct/{token}/{objectName}/{lineStringWKT}")
+	@POST
+	@Path("/geometry/auto_correct/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput correctGeometry(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt) {
-			
+			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					
-					WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-					Geometry geom = (Polygon) wkr.read(polygonWkt);
+					Geometry geom = (Polygon) getInputGeometry(formVals, polygonWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
-					
+
 					Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
 					geom = svg.fixPolygonSpikes(geom, maxAngle);
 
@@ -365,9 +385,10 @@ public class ApplicationServices {
 							Sv.DEFAULT_MIN_POINT_DISTANCE);
 					geom = svg.fixMinVertexDistance(geom, minPointDistance);
 
-					Integer distanceTolerance = SvParameter.getSysParam(Sv.SDI_MIN_GEOM_DISTANCE, Sv.DEFAULT_MIN_GEOM_DISTANCE);
+					Integer distanceTolerance = SvParameter.getSysParam(Sv.SDI_MIN_GEOM_DISTANCE,
+							Sv.DEFAULT_MIN_GEOM_DISTANCE);
 					geom = svg.fixGeomDistance(geom, layerTypeId, distanceTolerance);
-					
+
 					Set<Geometry> geoms = new HashSet<>();
 					enc.writeSvGeometry(geoms);
 				} catch (Exception e) {
