@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
@@ -127,7 +128,12 @@ public class ApplicationServices {
 		if (geom == null) {
 			JsonObject json = null;
 			json = Util.dataToJson(formVals);
-			geom = Util.jsonToGeometry(json.get("GEOM"));
+			
+			JsonElement je = json.get("GEOM");
+			if (je == null)
+				je = json.get("geometry");
+			
+			geom = Util.jsonToGeometry(je);
 		}
 		return geom;
 	}
@@ -195,23 +201,23 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/split/preview/{token}/{objectName}/{lineStringWKT}")
+	@Path("/geometry/split/preview/{token}/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			@PathParam("objectName") final String objectName,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		return splitGeometry(token, objectName, lineStringWKT, formVals, true);
+		return splitGeometry(token, objectName, "", formVals, true);
 	}
 
 	@POST
-	@Path("/geometry/split/confirm/{token}/{objectName}/{lineStringWKT}")
+	@Path("/geometry/split/confirm/{token}/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			@PathParam("objectName") final String objectName,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		return splitGeometry(token, objectName, lineStringWKT, formVals, false);
+		return splitGeometry(token, objectName, "", formVals, false);
 	}
 
 	private StreamingOutput splitGeometry(final String token, final String objectName, final String lineStringWKT,
@@ -308,12 +314,12 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/merge/preview/{token}/{objectName}/{lineStringWKT}")
+	@Path("/geometry/merge/preview/{token}/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput mergeGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("lineStringWKT") final String lineStringWKT,
+			@PathParam("objectName") final String objectName,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		return mergeGeometryImpl(token, objectName, true, lineStringWKT, formVals);
+		return mergeGeometryImpl(token, objectName, true, "", formVals);
 	}
 
 	@POST

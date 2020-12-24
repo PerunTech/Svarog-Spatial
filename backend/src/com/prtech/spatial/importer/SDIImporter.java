@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -21,7 +22,11 @@ import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvDatabaseIO;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
@@ -127,8 +132,6 @@ public class SDIImporter {
 	}
 	
 	static void setField (DbDataObject dbo, String key, ResultSet rs) throws SQLException {
-		
-		
 		switch (target) {
 			case "PHYSICAL_BLOCK":
 				if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
@@ -300,7 +303,22 @@ public class SDIImporter {
 				dboGeom.setObjectType(targetTypeId);
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
-						dboGeom.setVal(key, wkbReader.read(rs.getBytes(fields.get(key))));
+						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
+						if (geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
+							dboGeom.setVal(key, geometry);
+						} else {
+							ArrayList<Coordinate> points = new ArrayList<Coordinate>();
+						    points.add(new Coordinate(7606326.4898, 4689204.6929));
+						    points.add(new Coordinate(7606329.9135, 4689038.0987));
+						    points.add(new Coordinate(7606533.0659, 4689044.9483));
+						    points.add(new Coordinate(7606523.0754, 4689203.9997));
+						    points.add(new Coordinate(7606326.4898, 4689204.6929));
+							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(
+									new LinearRing(
+											new CoordinateArraySequence(points.toArray(
+													new Coordinate[points.size()])), SvUtil.sdiFactory), null);
+							dboGeom.setVal(key, tempGeom);
+						}
 					} else {
 						setField(dboGeom, key.toUpperCase(), rs);
 					}
