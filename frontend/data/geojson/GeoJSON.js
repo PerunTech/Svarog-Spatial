@@ -66,7 +66,9 @@ factory.GeoJSON.include({
 */
 factory.GeoJSON.fromLayer = function (layer, crs) {
    const geojson = layer.toGeoJSON(),
-         coords = geojson.geometry.coordinates[0],
+         coords = geojson.geometry.coordinates.length > 1 
+            ? geojson.geometry.coordinates 
+            : geojson.geometry.coordinates[0],
          _crs = crs || layer._map.getCRS();
 
    coords.forEach((val, i, self) => {

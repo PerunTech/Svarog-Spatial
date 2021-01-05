@@ -1,10 +1,12 @@
 package com.prtech.spatial.importer;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -20,7 +22,11 @@ import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvDatabaseIO;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
@@ -126,14 +132,15 @@ public class SDIImporter {
 	}
 	
 	static void setField (DbDataObject dbo, String key, ResultSet rs) throws SQLException {
-		
-		
 		switch (target) {
-			case "PHYSICAL_BLOCK": 
+			case "PHYSICAL_BLOCK":
 				if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
 					try {
-						int landUseAlt = (int) Math.round((Double) rs.getObject("LAND_USE_1"));
-						int landUse = (int) Math.round((Double) rs.getObject("LAND_USE_I"));
+						int landUseAlt = 0;
+						if(rs.getObject("LAND_USE_ID_2") != null) {
+							landUseAlt = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
+						}
+						int landUse = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
 						if (landUseAlt > 0) {
 							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUseAlt).toString());
 						} else {
@@ -145,9 +152,56 @@ public class SDIImporter {
 				} else if (key.equals("NOTE")) {
 					dbo.setVal("NOTE", "MAFWE IMPORT");
 				} else if (key.equals("OLD_ID")) {
-					dbo.setVal("OLD_ID", (int) Math.round((Double) rs.getObject("ID_ILPIS")));
+					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID_ILPIS")).intValue());
 				} else {
 					defaultSetField(dbo, key, rs);
+				}
+				break;
+			case "AGRI_PARCEL":
+				if (key.equals("LAND_COVER_CODE") && rs.getObject("LAND_USE_ID") != null) {
+					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
+					if (lc > 0)
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+				}
+				if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
+					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
+					if (lc > 0)
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+				}
+				if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
+					dbo.setVal("INVISIBLE_BORDER", bool);
+				}
+				if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("CHANGED_BORDER")).intValue() > 0;
+					dbo.setVal("CHANGED_BORDER", bool);
+				}
+				if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("IRRIGATION")).intValue() > 0;
+					dbo.setVal("IRRIGATION", bool);
+				}
+				if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
+					dbo.setVal("IRRIGATION", bool);
+				}
+				if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
+					dbo.setVal("LANDSCAPE_FEATURES", bool);
+				}
+				if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("COMMON_USE")).intValue() > 0;
+					dbo.setVal("COMMON_USE", bool);
+				}
+				if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("CERTIFICATE_OF_USE")).intValue() > 0;
+					dbo.setVal("CERTIFICATE_OF_USE", bool);
+				}
+				if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
+					Boolean bool = ((BigDecimal) rs.getObject("ORGANIC")).intValue() > 0;
+					dbo.setVal("ORGANIC", bool);
+				}
+				if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
+					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).intValue());
 				}
 				break;
 			default: defaultSetField(dbo, key, rs);
@@ -249,7 +303,22 @@ public class SDIImporter {
 				dboGeom.setObjectType(targetTypeId);
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
-						dboGeom.setVal(key, wkbReader.read(rs.getBytes(fields.get(key))));
+						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
+						if (geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
+							dboGeom.setVal(key, geometry);
+						} else {
+							ArrayList<Coordinate> points = new ArrayList<Coordinate>();
+						    points.add(new Coordinate(7606326.4898, 4689204.6929));
+						    points.add(new Coordinate(7606329.9135, 4689038.0987));
+						    points.add(new Coordinate(7606533.0659, 4689044.9483));
+						    points.add(new Coordinate(7606523.0754, 4689203.9997));
+						    points.add(new Coordinate(7606326.4898, 4689204.6929));
+							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(
+									new LinearRing(
+											new CoordinateArraySequence(points.toArray(
+													new Coordinate[points.size()])), SvUtil.sdiFactory), null);
+							dboGeom.setVal(key, tempGeom);
+						}
 					} else {
 						setField(dboGeom, key.toUpperCase(), rs);
 					}

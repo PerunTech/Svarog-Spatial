@@ -1,4 +1,3 @@
-import { util } from '../../../core';
 import { drag, snap } from '../..';
 
 export const marker = {
@@ -20,8 +19,7 @@ export const marker = {
         this._layer.on('dragend', this._onDragEnd, this);
 
         // merge init edit options.
-        util.assign(this.options, opt);
-
+        this.options = opt;
         this.enabled = true;
     
         this.options.snappable 
@@ -49,6 +47,7 @@ export const marker = {
         this._layerEdited = false;
 
         this._layer = {};
+        this.options = {};
     },
 
     toggleEdit(options) {

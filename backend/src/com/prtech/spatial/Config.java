@@ -7,9 +7,11 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.prtech.svarog.SvConf;
+
 public class Config {
 	/*  */
-	private static final Logger log = LogManager.getLogger(Config.class.getName());
+	private static final Logger log = SvConf.getLogger(Config.class);
 	
 	static private final Properties properties = loadProperties();
 

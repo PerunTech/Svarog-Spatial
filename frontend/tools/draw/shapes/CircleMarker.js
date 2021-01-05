@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { util, factory, Map } from '../../../core';
+import { factory, Map } from '../../../core';
 import { marker } from './Marker';
 
 export const circleMarker = {
@@ -8,10 +8,9 @@ export const circleMarker = {
     options: {},
     enabled: false,
 
-    enable(options) {
-        util.assign(this.options, options);
-    
-        // change enabled state
+    enable(opt) {
+        // change enabled state, assign config.
+        this.options = opt;
         this.enabled = true;
     
         // create a marker on click on the map

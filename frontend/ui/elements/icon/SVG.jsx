@@ -1,5 +1,4 @@
 import { React, PropTypes} from 'perun-core';
-import { util } from '../../../core';
 import { registry } from '../../../assets';
 
 /**
@@ -26,17 +25,18 @@ import { registry } from '../../../assets';
  */
 export function SVG ({name, size, style, ...props}) {
     const {path, ...opt} = registry.getSVG(name),
-        _props = util.assign(props, opt),
-        _style = util.assign({   
+        _props = { ...props, ...opt },
+        _style = {   
             // Use CSS instead of the width / height attr. in order to support non-pixel units.
             // style.width overrides svg.width attribute by design, height as well,
             // don't bother passing them as individual props, size will be used instead.    
             width: size, 
             height: size,
             // inherit fill color from parent.
-            fill: "currentcolor",
-            verticalAlign: "middle"
-        }, style);
+            fill: 'currentcolor',
+            verticalAlign: 'middle',
+            ...style
+        };
 
     return <svg id={name} {..._props} style={_style} >{path}</svg>;
 }

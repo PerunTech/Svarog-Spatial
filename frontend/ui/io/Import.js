@@ -3,11 +3,11 @@ import { ButtonGroup, Button, Icon } from '..';
 
 export const Import = () => 
     <ButtonGroup id='io' >
-        <Button >
+        <Button disabled >
             <Icon name='shapefile' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Увези SHP</span>
         </Button>
-        <Button >
+        <Button disabled >
             <Icon name='geojson' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Увези GeoJSON</span>
         </Button>
