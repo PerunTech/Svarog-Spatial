@@ -36,16 +36,19 @@
 .control-left {
     border-right: 1px solid rgba(0, 0, 0, 0.25);
     pointer-events: all;
+    transition: all 2s ease-in-out;
     }
 .control-map {
-    flex: 1 1 auto;
+    flex: 1 1 730px;
     /* Creates new block context to paint in,
     absolutely position children in corners here, see below */
-    position: relative; 
+    position: relative;
+    transition: all 2s ease-in-out;
     }
 .control-right {
     border-left: 1px solid rgba(0, 0, 0, 0.25);
     pointer-events: all;
+    transition: all 2s ease-in-out;
     }
 
 /*

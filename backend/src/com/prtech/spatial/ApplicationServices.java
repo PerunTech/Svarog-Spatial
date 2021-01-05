@@ -40,6 +40,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
@@ -201,13 +202,14 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/split/preview/{token}/{objectName}")
+	@Path("/geometry/split/preview/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName,
+			@PathParam("geometryWkt") final String geometryWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		return splitGeometry(token, objectName, "", formVals, true);
+		return splitGeometry(token, objectName, geometryWkt, formVals, true);
 	}
 
 	@POST
@@ -385,7 +387,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Polygon hole = (Polygon) getInputGeometry(formVals, polygonWkt);
+					MultiPolygon hole = (MultiPolygon) getInputGeometry(formVals, polygonWkt);
 
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = new HashSet<>();
