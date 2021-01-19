@@ -193,7 +193,7 @@ public class SDIImporter {
 				dbo.setVal("ORGANIC", bool);
 			}
 			if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
-				dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).intValue());
+				dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).longValue());
 			}
 			break;
 		default:
@@ -259,7 +259,7 @@ public class SDIImporter {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
-		SvMTWriter mtw;
+		SvMTWriter mtw = null;
 		DbDataObject dboGeom = null;
 		try (SvGeometry svg = new SvGeometry(token);
 				SvGeometry svg2 = new SvGeometry(token);
@@ -315,6 +315,7 @@ public class SDIImporter {
 			while (rs.next()) {
 				dboGeom = new DbDataObject();
 				dboGeom.setObjectType(targetTypeId);
+				dboGeom.setParentId(rs.getLong("FARM_ID"));
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
@@ -331,6 +332,7 @@ public class SDIImporter {
 									new CoordinateArraySequence(points.toArray(new Coordinate[points.size()])),
 									SvUtil.sdiFactory), null);
 							dboGeom.setVal(key, tempGeom);
+							dboGeom.setStatus("INVALID");
 						}
 					} else {
 						setField(dboGeom, key.toUpperCase(), rs);
@@ -384,6 +386,13 @@ public class SDIImporter {
 			}
 
 		} finally {
+			try {
+				if (mtw != null)
+					mtw.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SvCore.closeResource((AutoCloseable) rs, null);
 			SvCore.closeResource((AutoCloseable) ps, null);
 
