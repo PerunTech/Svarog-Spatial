@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.filter.And;
 
+import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -261,36 +262,28 @@ public class SDIImporter {
 
 		SvMTWriter mtw = null;
 		DbDataObject dboGeom = null;
-		try (SvGeometry svg = new SvGeometry(token);
-				SvGeometry svg2 = new SvGeometry(token);
-				SvGeometry svg3 = new SvGeometry(token);
-				SvGeometry svg4 = new SvGeometry(token);
-				SvGeometry svg5 = new SvGeometry(token);
-				SvGeometry svg6 = new SvGeometry(token);) {
-
-			svg.setIsLongRunning(true);
-			svg.setAutoCommit(false);
-			svg2.setIsLongRunning(true);
-			svg2.setAutoCommit(false);
-			svg3.setIsLongRunning(true);
-			svg3.setAutoCommit(false);
-			svg4.setIsLongRunning(true);
-			svg4.setAutoCommit(false);
-			svg5.setIsLongRunning(true);
-			svg5.setAutoCommit(false);
-			svg6.setIsLongRunning(true);
-			svg6.setAutoCommit(false);
-
-			ArrayList<SvWriter> svs = new ArrayList<>();
-			svs.add(svg);
-			svs.add(svg2);
-			svs.add(svg3);
-			svs.add(svg4);
+		ArrayList<SvWriter> svs = new ArrayList<>();
+		try (SvGeometry svgMain = new SvGeometry(token)) {
+			Integer threadCount = 0;
+			String threadCountParam = SvConf.getParam("sdi.import.thread_count");
+			try {
+				threadCount = Integer.parseInt(threadCountParam.trim());
+			} catch (Exception e) {
+				threadCount = 1;
+			}
+			log.info("Running import with thread count:" + threadCount.toString());
+			for (int i = 0; i < threadCount; i++) {
+				SvGeometry svgt = new SvGeometry(token);
+				svgt.setIsLongRunning(true);
+				svgt.setAutoCommit(false);
+				svs.add(svgt);
+			}
 
 			mtw = new SvMTWriter(svs);
 			mtw.start();
 
-			Connection conn = svg.dbGetConn();
+			svgMain.setIsLongRunning(true);
+			Connection conn = svgMain.dbGetConn();
 			ISvDatabaseIO dbHandler = SvCore.getDbHandler();
 
 			String sqlList = "";
@@ -339,7 +332,7 @@ public class SDIImporter {
 					}
 				}
 
-				if (canImport(dboGeom, svg)) {
+				if (canImport(dboGeom, svgMain)) {
 					try {
 						setGeometryDerivatives(dboGeom);
 						dbArray.addDataItem(dboGeom);
@@ -392,6 +385,10 @@ public class SDIImporter {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			for (SvWriter svg : svs) {
+				if (svg != null)
+					svg.release();
 			}
 			SvCore.closeResource((AutoCloseable) rs, null);
 			SvCore.closeResource((AutoCloseable) ps, null);
