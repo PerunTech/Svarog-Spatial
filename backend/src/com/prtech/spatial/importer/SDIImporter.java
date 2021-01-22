@@ -14,11 +14,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.filter.And;
 
+import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
+import com.prtech.svarog.SvMTWriter;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.SvWriter;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvDatabaseIO;
@@ -30,30 +33,27 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
-
 /** Utility class for spatial data import */
 public class SDIImporter {
 	static final Logger log = LogManager.getLogger(SDIImporter.class.getName());
-	
+
 	private static String token = null;
 	private static String target = null;
 	private static String source = null;
 	private static HashMap<String, String> fields = null;
 
-	private static void printUsage () {
+	private static void printUsage() {
 		System.out.println("SDIImporter is missing mandatory command line parameters. \n"
 				+ "Mandatory Params: TARGET USER_NAME PASSWORD SOURCE FIELDMAP \n "
 				+ "1. TARGET: The svarog table to be populated by this import. \n "
-				+ "2. SV_USER_NAME: Your Svarog username. \n "
-				+ "3. SV_PASSWORD: Your Svarog password. \n "
+				+ "2. SV_USER_NAME: Your Svarog username. \n " + "3. SV_PASSWORD: Your Svarog password. \n "
 				+ "4. SOURCE_TABLE: The table name in the current svarog database containing the source data. \n"
-				+ "5. FIELDMAP: Map of fields in the source table against the fields of the target table \n "
-				+ " \n "
+				+ "5. FIELDMAP: Map of fields in the source table against the fields of the target table \n " + " \n "
 				+ "Example: SDI_UNITS $USER $PASSWORD IMP_DATA.ADMINISTRATIVE_DIVISIONS "
 				+ "UNIT_NAME=name;UNIT_ID=adm_code;GEOM=geometry");
 	}
-	
-	private static HashMap<String, String> parseFieldMap (String map) {
+
+	private static HashMap<String, String> parseFieldMap(String map) {
 		HashMap<String, String> fields = new HashMap<String, String>();
 		String[] sFields = map.split(";");
 
@@ -63,38 +63,31 @@ public class SDIImporter {
 		}
 		return fields;
 	}
-	
+
 	/**
 	 * Import initializer for svarog spatial data.
 	 * 
 	 * @method main (args: String[]): void
 	 * 
-	 * @param args
-	 *            <String[]> - The set of import arguments.
-	 * @param args[0]
-	 *            - Name of the target table to import into.
-	 * @param args[1]
-	 *            - User name.
-	 * @param args[2]
-	 *            - Password.
-	 * @param args[3]
-	 *            - Name of the source table to import from, prefixed by schema.
-	 * @param args[4]
-	 *            - Field argument set, matches source field name to target
-	 *            field name.
+	 * @param args    <String[]> - The set of import arguments.
+	 * @param args[0] - Name of the target table to import into.
+	 * @param args[1] - User name.
+	 * @param args[2] - Password.
+	 * @param args[3] - Name of the source table to import from, prefixed by schema.
+	 * @param args[4] - Field argument set, matches source field name to target
+	 *                field name.
 	 * 
 	 * @return void;
 	 * 
-	 * @example main(["LPIS_2019", "ADMIN", "welcome",
-	 *          "LPIS_IACS_IMPORT.LPIS_2019",
+	 * @example main(["LPIS_2019", "ADMIN", "welcome", "LPIS_IACS_IMPORT.LPIS_2019",
 	 *          "gid=fic;geometry=geom;geom_cnt=centroid;nvm=elevation"
 	 */
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		if (args.length != 5) {
 			printUsage();
 			System.exit(-2);
 		}
-		
+
 		SvSecurity svSec = null;
 		try {
 			svSec = new SvSecurity();
@@ -118,11 +111,11 @@ public class SDIImporter {
 			} else
 				e.printStackTrace();
 		}
-		
+
 		System.exit(0);
 	};
-	
-	static void defaultSetField (DbDataObject dbo, String key, ResultSet rs) {
+
+	static void defaultSetField(DbDataObject dbo, String key, ResultSet rs) {
 		try {
 			dbo.setVal(key, rs.getObject(fields.get(key)));
 		} catch (SQLException e) {
@@ -130,99 +123,98 @@ public class SDIImporter {
 			e.printStackTrace();
 		}
 	}
-	
-	static void setField (DbDataObject dbo, String key, ResultSet rs) throws SQLException {
+
+	static void setField(DbDataObject dbo, String key, ResultSet rs) throws SQLException {
 		switch (target) {
-			case "PHYSICAL_BLOCK":
-				if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
-					try {
-						int landUseAlt = 0;
-						if(rs.getObject("LAND_USE_ID_2") != null) {
-							landUseAlt = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
-						}
-						int landUse = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
-						if (landUseAlt > 0) {
-							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUseAlt).toString());
-						} else {
-							dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUse).toString());
-						}
-					} catch (SQLException e) {
-						log.info("physical_block.land_cover_code processing failed.");
+		case "PHYSICAL_BLOCK":
+			if (key.equals("LAND_COVER_CODE") || key.equals("LAND_COVER_CODE_2")) {
+				try {
+					int landUseAlt = 0;
+					if (rs.getObject("LAND_USE_ID_2") != null) {
+						landUseAlt = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
 					}
-				} else if (key.equals("NOTE")) {
-					dbo.setVal("NOTE", "MAFWE IMPORT");
-				} else if (key.equals("OLD_ID")) {
-					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID_ILPIS")).intValue());
-				} else {
-					defaultSetField(dbo, key, rs);
+					int landUse = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
+					if (landUseAlt > 0) {
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUseAlt).toString());
+					} else {
+						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(landUse).toString());
+					}
+				} catch (SQLException e) {
+					log.info("physical_block.land_cover_code processing failed.");
 				}
-				break;
-			case "AGRI_PARCEL":
-				if (key.equals("LAND_COVER_CODE") && rs.getObject("LAND_USE_ID") != null) {
-					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
-					if (lc > 0)
-						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
-				}
-				if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
-					int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
-					if (lc > 0)
-						dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
-				}
-				if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
-					dbo.setVal("INVISIBLE_BORDER", bool);
-				}
-				if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("CHANGED_BORDER")).intValue() > 0;
-					dbo.setVal("CHANGED_BORDER", bool);
-				}
-				if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("IRRIGATION")).intValue() > 0;
-					dbo.setVal("IRRIGATION", bool);
-				}
-				if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
-					dbo.setVal("IRRIGATION", bool);
-				}
-				if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
-					dbo.setVal("LANDSCAPE_FEATURES", bool);
-				}
-				if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("COMMON_USE")).intValue() > 0;
-					dbo.setVal("COMMON_USE", bool);
-				}
-				if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("CERTIFICATE_OF_USE")).intValue() > 0;
-					dbo.setVal("CERTIFICATE_OF_USE", bool);
-				}
-				if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
-					Boolean bool = ((BigDecimal) rs.getObject("ORGANIC")).intValue() > 0;
-					dbo.setVal("ORGANIC", bool);
-				}
-				if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
-					dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).intValue());
-				}
-				break;
-			default: defaultSetField(dbo, key, rs);
-				break;
+			} else if (key.equals("NOTE")) {
+				dbo.setVal("NOTE", "MAFWE IMPORT");
+			} else if (key.equals("OLD_ID")) {
+				dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID_ILPIS")).intValue());
+			} else {
+				defaultSetField(dbo, key, rs);
+			}
+			break;
+		case "AGRI_PARCEL":
+			if (key.equals("LAND_COVER_CODE") && rs.getObject("LAND_USE_ID") != null) {
+				int lc = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
+				if (lc > 0)
+					dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+			}
+			if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
+				int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
+				if (lc > 0)
+					dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+			}
+			if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
+				dbo.setVal("INVISIBLE_BORDER", bool);
+			}
+			if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("CHANGED_BORDER")).intValue() > 0;
+				dbo.setVal("CHANGED_BORDER", bool);
+			}
+			if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("IRRIGATION")).intValue() > 0;
+				dbo.setVal("IRRIGATION", bool);
+			}
+			if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
+				dbo.setVal("IRRIGATION", bool);
+			}
+			if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
+				dbo.setVal("LANDSCAPE_FEATURES", bool);
+			}
+			if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("COMMON_USE")).intValue() > 0;
+				dbo.setVal("COMMON_USE", bool);
+			}
+			if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("CERTIFICATE_OF_USE")).intValue() > 0;
+				dbo.setVal("CERTIFICATE_OF_USE", bool);
+			}
+			if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
+				Boolean bool = ((BigDecimal) rs.getObject("ORGANIC")).intValue() > 0;
+				dbo.setVal("ORGANIC", bool);
+			}
+			if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
+				dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).longValue());
+			}
+			break;
+		default:
+			defaultSetField(dbo, key, rs);
+			break;
 		}
 	}
-	
-	static Boolean skipField (String fieldName) {
+
+	static Boolean skipField(String fieldName) {
 		boolean retval = false;
-		
-		if (fieldName.toUpperCase().equals("PKID")
-			|| fieldName.toUpperCase().equals("CENTROID")
-			|| fieldName.toUpperCase().equals("PERIMETER")
-			|| fieldName.toUpperCase().equals("AREA")) {
+
+		if (fieldName.toUpperCase().equals("PKID") || fieldName.toUpperCase().equals("CENTROID")
+				|| fieldName.toUpperCase().equals("PERIMETER") || fieldName.toUpperCase().equals("AREA")) {
 			retval = true;
 		}
-		
+
 		return retval;
 	}
-	
-	static boolean canImport (DbDataObject dbo, SvGeometry svg) throws java.text.ParseException {
+
+	static boolean canImport(DbDataObject dbo, SvGeometry svg) throws java.text.ParseException {
 		boolean retval = true;
 		// Geometry validation
 		try {
@@ -235,48 +227,63 @@ public class SDIImporter {
 		DbDataArray fields = SvCore.getFields(dbo.getObjectType());
 		for (DbDataObject field : fields.getItems()) {
 			String fieldName = (String) field.getVal("FIELD_NAME");
-			
-			if (!skipField(fieldName) 
-				&& !(Boolean) field.getVal("is_null") 
-				&& dbo.getVal(fieldName) == null) {
-					log.warn("Field must have a value" + field.toJson().toString());
-					retval = false;
-					break;
+
+			if (!skipField(fieldName) && !(Boolean) field.getVal("is_null") && dbo.getVal(fieldName) == null) {
+				log.warn("Field must have a value" + field.toJson().toString());
+				retval = false;
+				break;
 			}
 		}
 
 		return retval;
 	}
 
-	static void setGeometryDerivatives (DbDataObject dbo) {
+	static void setGeometryDerivatives(DbDataObject dbo) {
 		DecimalFormat df = new DecimalFormat("0.0000");
 		Geometry geom = SvGeometry.getGeometry(dbo);
-		
+
 		String area = df.format(geom.getArea());
 		String perimeter = df.format(geom.getLength());
-		
+
 		try {
 			dbo.setVal("AREA", df.parse(area));
 			dbo.setVal("PERIMETER", df.parse(perimeter));
 		} catch (java.text.ParseException e) {
-			log.error("Failed parsing geometry derivatives. Area and perimeter are not set. "
-					+ "Save will fail.");
+			log.error("Failed parsing geometry derivatives. Area and perimeter are not set. " + "Save will fail.");
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	static void importSDI (Long targetTypeId)
+
+	static void importSDI(Long targetTypeId)
 			throws SvException, SQLException, ParseException, java.text.ParseException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		SvGeometry svg = null;
+
+		SvMTWriter mtw = null;
 		DbDataObject dboGeom = null;
-		try {
-			svg = new SvGeometry(token);
-			svg.setIsLongRunning(true);
-			svg.setAutoCommit(false);
-			Connection conn = svg.dbGetConn();
+		ArrayList<SvWriter> svs = new ArrayList<>();
+		try (SvGeometry svgMain = new SvGeometry(token)) {
+			Integer threadCount = 0;
+			String threadCountParam = SvConf.getParam("sdi.import.thread_count");
+			try {
+				threadCount = Integer.parseInt(threadCountParam.trim());
+			} catch (Exception e) {
+				threadCount = 1;
+			}
+			log.info("Running import with thread count:" + threadCount.toString());
+			for (int i = 0; i < threadCount; i++) {
+				SvGeometry svgt = new SvGeometry(token);
+				svgt.setIsLongRunning(true);
+				svgt.setAutoCommit(false);
+				svs.add(svgt);
+			}
+
+			mtw = new SvMTWriter(svs);
+			mtw.start();
+
+			svgMain.setIsLongRunning(true);
+			Connection conn = svgMain.dbGetConn();
 			ISvDatabaseIO dbHandler = SvCore.getDbHandler();
 
 			String sqlList = "";
@@ -293,14 +300,15 @@ public class SDIImporter {
 
 			WKBReader wkbReader = new WKBReader();
 			DbDataArray dbArray = new DbDataArray();
-			
+
 			int batchCnt = 0;
 			int batchSize = 1000;
 			int totalCnt = 0;
-			
+
 			while (rs.next()) {
 				dboGeom = new DbDataObject();
 				dboGeom.setObjectType(targetTypeId);
+				dboGeom.setParentId(rs.getLong("FARM_ID"));
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
@@ -308,70 +316,83 @@ public class SDIImporter {
 							dboGeom.setVal(key, geometry);
 						} else {
 							ArrayList<Coordinate> points = new ArrayList<Coordinate>();
-						    points.add(new Coordinate(7606326.4898, 4689204.6929));
-						    points.add(new Coordinate(7606329.9135, 4689038.0987));
-						    points.add(new Coordinate(7606533.0659, 4689044.9483));
-						    points.add(new Coordinate(7606523.0754, 4689203.9997));
-						    points.add(new Coordinate(7606326.4898, 4689204.6929));
-							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(
-									new LinearRing(
-											new CoordinateArraySequence(points.toArray(
-													new Coordinate[points.size()])), SvUtil.sdiFactory), null);
+							points.add(new Coordinate(7606326.4898, 4689204.6929));
+							points.add(new Coordinate(7606329.9135, 4689038.0987));
+							points.add(new Coordinate(7606533.0659, 4689044.9483));
+							points.add(new Coordinate(7606523.0754, 4689203.9997));
+							points.add(new Coordinate(7606326.4898, 4689204.6929));
+							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(new LinearRing(
+									new CoordinateArraySequence(points.toArray(new Coordinate[points.size()])),
+									SvUtil.sdiFactory), null);
 							dboGeom.setVal(key, tempGeom);
+							dboGeom.setStatus("INVALID");
 						}
 					} else {
 						setField(dboGeom, key.toUpperCase(), rs);
 					}
 				}
 
-				if (canImport(dboGeom, svg)) {
+				if (canImport(dboGeom, svgMain)) {
 					try {
 						setGeometryDerivatives(dboGeom);
 						dbArray.addDataItem(dboGeom);
 						if (log.isDebugEnabled()) {
-							log.debug("\n" + "Object to be saved: " + dboGeom.getValuesMap() + "\n");
-							log.debug("Object count is: " + totalCnt + "\n");	
+							log.trace("Object #" + totalCnt + "to be saved: " + dboGeom.getValuesMap());
 						}
 						batchCnt++;
 						totalCnt++;
-						if (batchCnt == 1000) {
-							svg.saveGeometry(dbArray, true);
-							svg.dbCommit();
+						if (batchCnt >= batchSize) {
+							if (log.isDebugEnabled())
+								log.debug("Start batch save of " + batchCnt + " records");
+							mtw.saveObject(dbArray, true);
+
+							if (log.isDebugEnabled())
+								log.debug("Successfull batch save of " + batchCnt + " records");
+							mtw.commit();
 							dbArray = new DbDataArray();
-							log.info("Object count is: " + totalCnt + "\n");
+							log.info("Object count is: " + totalCnt);
 							batchCnt = 0;
 						}
 					} catch (Exception e) {
 						if (e instanceof SvException) {
 							log.error(((SvException) e).getFormattedMessage(), e);
 						} else {
-							log.error(e);	
+							log.error("Invalid object to import: " + dboGeom.toJson().toString(), e);
 						}
 					}
 				} else {
 					log.warn("Invalid object to import: " + dboGeom.toJson().toString());
 				}
 			}
-			
+
 			try {
-				svg.saveGeometry(dbArray, true);
-				svg.dbCommit();
-				log.info("Remaining batch count is: " + batchCnt + "\n"
-						+ "Total count of imported objects is: " + totalCnt + "\n"
-						+ "SDI import finished succesfully.");
+				mtw.saveObject(dbArray, true);
+				mtw.commit();
+				log.info("Remaining batch count is: " + batchCnt + "\n" + "Total count of imported objects is: "
+						+ totalCnt + "\n" + "SDI import finished succesfully.");
 			} catch (Exception e) {
 				if (e instanceof SvException) {
 					log.error(((SvException) e).getFormattedMessage(), e);
 				} else {
-					log.error(e);	
+					log.error(e);
 				}
 			}
-			
+
 		} finally {
+			try {
+				if (mtw != null)
+					mtw.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (SvWriter svg : svs) {
+				if (svg != null)
+					svg.release();
+			}
 			SvCore.closeResource((AutoCloseable) rs, null);
 			SvCore.closeResource((AutoCloseable) ps, null);
-			if (svg != null)
-				svg.release();
+
 		}
 	}
 };

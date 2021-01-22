@@ -30,11 +30,13 @@ import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
+import com.prtech.svarog.SvGrid;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
+import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -50,6 +52,86 @@ import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 @Path("/spatial")
 public class ApplicationServices {
 	private static final Logger log = SvConf.getLogger(ApplicationServices.class);
+
+	/**
+	 * 
+	 * @param token
+	 * @param objectName
+	 * @param bbox
+	 * @return
+	 */
+	@GET
+	@Path("/grid/get/{objectName}/")
+	@Produces("application/pbf")
+	public StreamingOutput getGrid(@PathParam("objectName") final String objectName) {
+
+		return new StreamingOutput() {
+			public void write(OutputStream stream) {
+				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				try {
+					SvGrid svg = new SvGrid(objectName);
+					Set<Geometry> geomArr = svg.getInternalGeometries();
+					enc.writeSvGeometry(geomArr);
+				} catch (Exception e) {
+					String errMsg = "Failed fetching geometry set. Please see server logs";
+					if (e instanceof SvException)
+						errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				}
+			};
+		};
+	}
+
+	@POST
+	@Path("/grid/put/{token}/{objectName}/{objectId}/")
+	@Produces("application/pbf")
+	public StreamingOutput saveGrid(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("objectName") final Long objectId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		return new StreamingOutput() {
+			public void write(OutputStream stream) {
+				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				try (SvGeometry svg = new SvGeometry(token)) {
+					Geometry geom = getInputGeometry(formVals, null);
+					SvGrid svgrid = new SvGrid(objectName);
+					Set<Geometry> updates = svgrid.getRelations(geom, SDIRelation.OVERLAPS, true);
+					DbDataArray modifiedGeoms = new DbDataArray();
+					Iterator<Geometry> it = updates.iterator();
+					while (it.hasNext()) {
+						Geometry g = it.next();
+						DbDataObject t = svgrid.getTileDbo((String) g.getUserData());
+						if (!t.getObjectId().equals(objectId)) {
+							g = g.difference(geom);
+						}
+						SvGeometry.setGeometry(t, g);
+						modifiedGeoms.addDataItem(t);
+
+					}
+					svg.saveGeometry(modifiedGeoms);
+					svgrid.setIsTileDirty(true);
+					Set<Geometry> geomArr = svgrid.getInternalGeometries();
+					enc.writeSvGeometry(geomArr);
+
+				} catch (Exception e) {
+					String errMsg = "Failed fetching geometry set. Please see server logs";
+					if (e instanceof SvException)
+						errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				}
+			};
+		};
+	}
 
 	/**
 	 * 
@@ -129,11 +211,11 @@ public class ApplicationServices {
 		if (geom == null) {
 			JsonObject json = null;
 			json = Util.dataToJson(formVals);
-			
+
 			JsonElement je = json.get("GEOM");
 			if (je == null)
 				je = json.get("geometry");
-			
+
 			geom = Util.jsonToGeometry(je);
 		}
 		return geom;
@@ -205,8 +287,7 @@ public class ApplicationServices {
 	@Path("/geometry/split/preview/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName,
-			@PathParam("geometryWkt") final String geometryWkt,
+			@PathParam("objectName") final String objectName, @PathParam("geometryWkt") final String geometryWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return splitGeometry(token, objectName, geometryWkt, formVals, true);
@@ -216,8 +297,8 @@ public class ApplicationServices {
 	@Path("/geometry/split/confirm/{token}/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
 
 		return splitGeometry(token, objectName, "", formVals, false);
 	}
@@ -319,8 +400,8 @@ public class ApplicationServices {
 	@Path("/geometry/merge/preview/{token}/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput mergeGeometryPreview(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
 		return mergeGeometryImpl(token, objectName, true, "", formVals);
 	}
 
