@@ -31,14 +31,12 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 public class AppTest {
 	static String token = null;
 
-	@BeforeClass
 	public static void initToken() throws SvException {
 		try (SvSecurity svs = new SvSecurity()) {
 			token = svs.logon("ADMIN", SvUtil.getMD5("welcome"));
 		}
 	}
 
-	@Test
 	public void testRank() throws SvException {
 		if (SvCore.getDbtByName("AGRI_PARCEL") == null)
 			return;
