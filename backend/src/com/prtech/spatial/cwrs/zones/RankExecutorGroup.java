@@ -81,7 +81,7 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 		Object result = null;
 		String gridName = (String) params.get("GRID_NAME");
 		Double agriPercentage = (Double) params.get("AGRI_PERCENT");
-		Integer tolerance = (Integer) params.get("AGRI_PERCENT");
+		Integer tolerance = (Integer) params.get("COUNT_TOLERANCE");
 		String layerName = (String) params.get("LAYER_NAME");
 		String tileName = (String) params.get("TILE_FILTER");
 		DbDataObject tileObject = (DbDataObject) params.get("RECORD");
