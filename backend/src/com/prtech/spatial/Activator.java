@@ -1,6 +1,5 @@
 package com.prtech.spatial;
 
-
 import java.util.ArrayList;
 
 import org.apache.logging.log4j.Logger;
@@ -11,9 +10,11 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.prtech.spatial.cwrs.zones.RankExecutorGroup;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
+import com.prtech.svarog_interfaces.ISvExecutorGroup;
 
 /**
  * This class implements a simple bundle that uses the bundle context to
@@ -31,8 +32,8 @@ public class Activator implements BundleActivator {
 	static final Logger log4j = SvConf.getLogger(Activator.class);
 
 	/**
-	 * The context path on the http server under which the static content from
-	 * the /www folder inside the bundle will be served.
+	 * The context path on the http server under which the static content from the
+	 * /www folder inside the bundle will be served.
 	 */
 	static final String httpContextPath = "/spatial";
 
@@ -59,8 +60,7 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * List of web-services (JAXRS Service classes). Client-server
-	 * communication.
+	 * List of web-services (JAXRS Service classes). Client-server communication.
 	 */
 	private ArrayList<Class<?>> webServices = initWebServices();
 
@@ -75,6 +75,12 @@ public class Activator implements BundleActivator {
 		return list;
 	}
 
+	private ArrayList<ISvExecutorGroup> initExecGroups() {
+		ArrayList<ISvExecutorGroup> list = new ArrayList<ISvExecutorGroup>();
+		list.add(new RankExecutorGroup());
+		return list;
+	}
+
 	/**
 	 * List of executors (classes implementing ISvExecutor). Cross-plugin
 	 * communication.
@@ -82,19 +88,23 @@ public class Activator implements BundleActivator {
 	private ArrayList<ISvExecutor> executors = initExecutors();
 
 	/**
-	 * Member used to track the http services in order to register path for
-	 * serving static JS/Other content
+	 * List of executors (classes implementing ISvExecutor). Cross-plugin
+	 * communication.
+	 */
+	private ArrayList<ISvExecutorGroup> execGroup = initExecGroups();
+	/**
+	 * Member used to track the http services in order to register path for serving
+	 * static JS/Other content
 	 */
 	@SuppressWarnings("rawtypes")
 	private ServiceTracker httpTracker;
 
 	/**
 	 * Implements BundleActivator.start(). Registers all instances of the JAXRS
-	 * services as well as all objects implementing ISvExecutor interfaces using
-	 * the bundle context;
+	 * services as well as all objects implementing ISvExecutor interfaces using the
+	 * bundle context;
 	 * 
-	 * @param context
-	 *            the framework context for the bundle.
+	 * @param context the framework context for the bundle.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void start(BundleContext context) {
@@ -102,9 +112,9 @@ public class Activator implements BundleActivator {
 		log4j.info("Starting svarog-spatial OSGI bundle");
 
 		ServiceRegistration svc = null;
-		
+
 		IPerunPlugin publisher = new PerunPluginInfo();
-		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
+		log4j.info("Registering " + Config.getDescription() + " plugin with Svarog");
 		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);
 
 		for (Class<?> ws : webServices) {
@@ -122,6 +132,17 @@ public class Activator implements BundleActivator {
 			try {
 				log4j.info("Registering executor class: " + exec.getClass().getName());
 				svc = context.registerService(ISvExecutor.class.getName(), exec, null);
+			} catch (Exception ex) {
+				log4j.error("Can't register executor class:" + exec.getClass().getName(), ex);
+			}
+			if (svc != null)
+				this.services.add(svc);
+		}
+
+		for (ISvExecutorGroup exec : execGroup) {
+			try {
+				log4j.info("Registering executor class: " + exec.getClass().getName());
+				svc = context.registerService(exec.getClass().getName(), exec, null);
 			} catch (Exception ex) {
 				log4j.error("Can't register executor class:" + exec.getClass().getName(), ex);
 			}
@@ -157,11 +178,10 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * Implements BundleActivator.stop(). Unregistering all services which have
-	 * been registered
+	 * Implements BundleActivator.stop(). Unregistering all services which have been
+	 * registered
 	 * 
-	 * @param context
-	 *            the framework context for the bundle.
+	 * @param context the framework context for the bundle.
 	 */
 	public void stop(BundleContext context) throws Exception {
 		for (ServiceRegistration svc : services) {
