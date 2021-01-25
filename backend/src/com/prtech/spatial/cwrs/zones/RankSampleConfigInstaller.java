@@ -79,7 +79,7 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 				SvNote svn = new SvNote(svr);) {
 
 			createJobType("batch_job_type.score.cwrs_zone", "SCORE", svr, svw);
-			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Назив на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Назив на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
+			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Назив на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Назив на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"COUNT_TOLERANCE\",\"name\":\"Толеранција\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.score.cwrs_zone", "template.selection.rank.cwrs_zone", 8L, 1L, "EXECUTOR",
 					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, null, params, null, null, svr, svw,
 					svn);
