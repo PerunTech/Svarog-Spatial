@@ -81,13 +81,13 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 			createJobType("batch_job_type.score.cwrs_zone", "SCORE", svr, svw);
 			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Назив на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Назив на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"COUNT_TOLERANCE\",\"name\":\"Толеранција\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.score.cwrs_zone", "template.selection.rank.cwrs_zone", 8L, 1L, "EXECUTOR",
-					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, null, params, null, null, svr, svw,
+					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, "", params, null, null, svr, svw,
 					svn);
 
 			createJobType("batch_job_type.sample.cwrs_zone", "SAMPLE", svr, svw);
 			params = "[{\"id\":\"random_percent\",\"name\":\"Процент случаен избор\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"risk_percent\",\"name\":\"Процент анализа на ризик\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.sample.cwrs_zone", "template.selection.sample.cwrs_zone", 8L, 1L,
-					"EXECUTOR", "CWRS_ZONES.SELECTOR_SAMPLE", null, null, "CWRS_ZONES.SAMPLE", null, null, params, null,
+					"EXECUTOR", "CWRS_ZONES.SELECTOR_SAMPLE", null, null, "CWRS_ZONES.SAMPLE", null, "", params, null,
 					null, svr, svw, svn);
 
 			createScoreType(svw, svr, "score_type.rank.cwrs_zone",
