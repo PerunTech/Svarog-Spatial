@@ -71,7 +71,13 @@ public class ApplicationServices {
 				try {
 					SvGrid svg = new SvGrid(objectName);
 					Set<Geometry> geomArr = svg.getInternalGeometries();
-					enc.writeSvGeometry(geomArr);
+					Set<Geometry> gridResult = new HashSet<Geometry>();
+					for (Geometry g : geomArr) {
+						Geometry newG = SvUtil.sdiFactory.createGeometry(g);
+						newG.setUserData(svg.getTileDbo((String) g.getUserData()));
+						gridResult.add(newG);
+					}
+					enc.writeSvGeometry(gridResult);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
 					if (e instanceof SvException)
