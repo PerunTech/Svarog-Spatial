@@ -142,7 +142,7 @@ public class Activator implements BundleActivator {
 		for (ISvExecutorGroup exec : execGroup) {
 			try {
 				log4j.info("Registering executor class: " + exec.getClass().getName());
-				svc = context.registerService(exec.getClass().getName(), exec, null);
+				svc = context.registerService(ISvExecutorGroup.class.getName(), exec, null);
 			} catch (Exception ex) {
 				log4j.error("Can't register executor class:" + exec.getClass().getName(), ex);
 			}
