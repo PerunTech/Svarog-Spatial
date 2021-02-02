@@ -79,7 +79,7 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 				SvNote svn = new SvNote(svr);) {
 
 			createJobType("batch_job_type.score.cwrs_zone", "SCORE", svr, svw);
-			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Назив на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Назив на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"COUNT_TOLERANCE\",\"name\":\"Толеранција\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
+			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Име на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Име на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"COUNT_TOLERANCE\",\"name\":\"Толеранција\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.score.cwrs_zone", "template.selection.rank.cwrs_zone", 8L, 1L, "EXECUTOR",
 					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, "", params, null, null, svr, svw,
 					svn);
@@ -93,7 +93,7 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 			createScoreType(svw, svr, "score_type.rank.cwrs_zone",
 					"[{\"id\":\"rank_cwrs_zone\",\"text\":\"Рангирани CWRS зони\"}]");
 
-			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k1", "JAVA", "CWRS_ZONES.RANK");
+			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k1", "JAVA", "CWRS_ZONES.RANK_VALUE");
 
 			createCritScale(svw, svr, -1L, -1L, 0L, "crit_def.cwrs.rank_k1");
 

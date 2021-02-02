@@ -1,5 +1,6 @@
 package com.prtech.spatial.cwrs.zones;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -155,10 +156,11 @@ public class Ranking {
 	 *         "FARM_COUNT"
 	 * @throws SvException Any underlying exception is re-thrown
 	 */
-	public DbDataObject rankTile(ISvCore svc, DbDataObject tile, String parcelLayerName, Integer tolerance)
+	public BigDecimal rankTile(ISvCore svc, DbDataObject tile, String parcelLayerName, Integer tolerance)
 			throws SvException {
 		DbDataObject layerType = SvCore.getDbtByName(parcelLayerName);
-		DbDataObject rank = new DbDataObject();
+		BigDecimal rank = null;
+		long farmCount = 0;
 		int intTolerance = tolerance != null ? tolerance.intValue() : 0;
 		try (SvGeometry svg = new SvGeometry((SvCore) svc); SvReader svr = new SvReader(svg)) {
 			Geometry cell = SvGeometry.getGeometry(tile);
@@ -176,19 +178,17 @@ public class Ranking {
 				}
 
 			}
-			rank.setVal(SvGrid.GRIDTILE_ID, tile.getVal(SvGrid.GRIDTILE_ID));
-			rank.setVal("FARM_COUNT", 0L);
 
 			Iterator<Long> farmIterator = allFarmIds.iterator();
 			while (farmIterator.hasNext()) {
 				Long farmId = farmIterator.next();
 				DbDataArray allFarmParcels = svr.getObjectsByParentId(farmId, layerType.getObjectId(), null);
 				if (verifyParcelCount(allParcelIds, allFarmParcels, intTolerance)) {
-					rank.setVal("FARM_COUNT", (long) rank.getVal("FARM_COUNT") + 1);
+					farmCount++;
 				}
 
 			}
-
+			rank = new BigDecimal(farmCount);
 		}
 		return rank;
 	}
