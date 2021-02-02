@@ -164,6 +164,11 @@ public class Ranking {
 		int intTolerance = tolerance != null ? tolerance.intValue() : 0;
 		try (SvGeometry svg = new SvGeometry((SvCore) svc); SvReader svr = new SvReader(svg)) {
 			Geometry cell = SvGeometry.getGeometry(tile);
+			if (cell == null) {
+				SvGrid g = getGrid((String) tile.getVal(SvGrid.GRID_NAME), svc);
+				DbDataObject gdbo = g.getTileDbo((String) tile.getVal(SvGrid.GRIDTILE_ID));
+				cell = SvGeometry.getGeometry(gdbo);
+			}
 			Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
 					layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
 			Set<Long> allFarmIds = new HashSet<Long>();
