@@ -34,7 +34,7 @@ public class Ranking {
 		// this.areaPercentage = agriculturalAreaPercent;
 	}
 
-	private SvGrid getGrid(String gridName) throws SvException {
+	private SvGrid getGrid(String gridName, ISvCore svc) throws SvException {
 		boolean exists = true;
 		SvGrid grid = null;
 		try {
@@ -46,8 +46,8 @@ public class Ranking {
 		if (!exists) {
 			Set<Geometry> b = SvGeometry.getSysBoundary().getInternalGeometries();
 			Geometry boundary = b.iterator().next();
-			GeometryCollection gcl = SvGrid.generateGrid(boundary, 10);
-			SvGrid.saveGridToDatabase(gcl, gridName);
+			GeometryCollection gcl = SvGrid.generateGrid(boundary, 10, svc);
+			SvGrid.saveGridToDatabase(gcl, gridName, svc);
 			grid = new SvGrid(gridName);
 		}
 		return grid;
@@ -96,7 +96,7 @@ public class Ranking {
 			throws SvException {
 		DbDataArray selectedTiles = new DbDataArray();
 		try (SvGeometry svg = new SvGeometry((SvCore) svc)) {
-			SvGrid grid = getGrid(gridName);
+			SvGrid grid = getGrid(gridName, svc);
 			Set<Geometry> gridset = grid.getInternalGeometries();
 			DbDataObject layerType = SvCore.getDbtByName(parcelLayerName);
 			for (Geometry cell : gridset) {
