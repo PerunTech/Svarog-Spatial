@@ -2,6 +2,7 @@ package com.prtech.spatial;
 
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,11 +46,11 @@ public class AppTest {
 			DbDataArray selectedTiles = rnk.getAgriTiles(svs, "AGRI_PARCEL", "11:12", 15.0);
 			System.out.println("Selected " + selectedTiles.size() + " is selected!");
 			for (DbDataObject tile : selectedTiles.getItems()) {
-				DbDataObject rank = rnk.rankTile(svs, tile, "AGRI_PARCEL", 1);
-				if (rank.getVal("FARM_COUNT") == null)
+				BigDecimal rank = rnk.rankTile(svs, tile, "AGRI_PARCEL", 1);
+				if (rank == null)
 					fail("No farms were counted");
 
-				System.out.println(rank.toSimpleJson().toString());
+				System.out.println(rank.toString());
 			}
 
 		}
