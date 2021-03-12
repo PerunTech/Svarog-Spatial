@@ -11,6 +11,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.spatial.cwrs.zones.RankExecutorGroup;
+import com.prtech.spatial.importer.ImporterSDIByFarmExe;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
@@ -71,7 +72,7 @@ public class Activator implements BundleActivator {
 	 */
 	private ArrayList<ISvExecutor> initExecutors() {
 		ArrayList<ISvExecutor> list = new ArrayList<ISvExecutor>();
-		// add executors here.
+		list.add(new ImporterSDIByFarmExe());
 		return list;
 	}
 
