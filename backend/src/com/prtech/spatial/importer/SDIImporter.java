@@ -433,7 +433,7 @@ public class SDIImporter {
 			while (rs.next()) {
 				dboGeom = new DbDataObject();
 				dboGeom.setObjectType(targetTypeId);
-				dboGeom.setParentId(rs.getLong("FARM_ID"));
+				dboGeom.setParentId(farmObjId);
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
