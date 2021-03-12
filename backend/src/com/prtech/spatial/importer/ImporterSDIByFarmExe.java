@@ -22,7 +22,7 @@ public class ImporterSDIByFarmExe implements ISvExecutor {
 	private final String name = "SDI";
 	private final String description = "Inserting and updating agri_parcel by farm";
 	private final DateTime start = new DateTime();
-	private final DateTime end = new DateTime("9999-12-31T00:00:00+00");
+	private final DateTime end = SvConf.MAX_DATE;
 	private final Class<?> type = Boolean.class;
 
 	@Override
