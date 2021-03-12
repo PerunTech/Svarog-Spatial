@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,7 @@ import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvMTWriter;
+import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
@@ -175,7 +177,7 @@ public class SDIImporter {
 			}
 			if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
-				dbo.setVal("IRRIGATION", bool);
+				dbo.setVal("TERRACE", bool);
 			}
 			if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
@@ -377,6 +379,153 @@ public class SDIImporter {
 					log.error(e);
 				}
 			}
+
+		} finally {
+			try {
+				if (mtw != null)
+					mtw.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (SvWriter svg : svs) {
+				if (svg != null)
+					svg.release();
+			}
+			SvCore.closeResource((AutoCloseable) rs, null);
+			SvCore.closeResource((AutoCloseable) ps, null);
+
+		}
+	}
+
+	public static void importSDIByFarm(Long targetTypeId, Long farmId, Long farmObjId, String source, SvReader svr)
+			throws SvException, SQLException, ParseException, java.text.ParseException {
+		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id";
+		fields = parseFieldMap(fieldMap);
+		target = "AGRI_PARCEL";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		SvMTWriter mtw = null;
+		DbDataObject dboGeom = null;
+		ArrayList<SvWriter> svs = new ArrayList<>();
+		try (SvGeometry svgMain = new SvGeometry(svr);) {
+
+			svgMain.setIsLongRunning(true);
+			Connection conn = svgMain.dbGetConn();
+			ISvDatabaseIO dbHandler = SvCore.getDbHandler();
+
+			String sqlList = "";
+			for (Entry<String, String> e : fields.entrySet()) {
+				String fld = e.getValue();
+				if (e.getKey().toUpperCase().equals("GEOM"))
+					fld = dbHandler.getGeomReadSQL(fld) + " as " + fld;
+				sqlList = sqlList + (sqlList == "" ? "" : ",") + fld;
+			}
+			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE FARM_ID = ?";
+			log.info("Executing:" + sqlStmt);
+			ps = conn.prepareStatement(sqlStmt);
+			ps.setLong(1, farmId);
+			rs = ps.executeQuery();
+
+			WKBReader wkbReader = new WKBReader();
+			DbDataArray dbArray = new DbDataArray();
+
+			while (rs.next()) {
+				dboGeom = new DbDataObject();
+				dboGeom.setObjectType(targetTypeId);
+				dboGeom.setParentId(farmObjId);
+				for (String key : fields.keySet()) {
+					if (key.toUpperCase().equals("GEOM")) {
+						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
+						if (geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
+							dboGeom.setVal(key, geometry);
+						} else {
+							ArrayList<Coordinate> points = new ArrayList<Coordinate>();
+							points.add(new Coordinate(7606326.4898, 4689204.6929));
+							points.add(new Coordinate(7606329.9135, 4689038.0987));
+							points.add(new Coordinate(7606533.0659, 4689044.9483));
+							points.add(new Coordinate(7606523.0754, 4689203.9997));
+							points.add(new Coordinate(7606326.4898, 4689204.6929));
+							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(new LinearRing(
+									new CoordinateArraySequence(points.toArray(new Coordinate[points.size()])),
+									SvUtil.sdiFactory), null);
+							dboGeom.setVal(key, tempGeom);
+							dboGeom.setStatus("INVALID");
+						}
+					} else {
+						setField(dboGeom, key.toUpperCase(), rs);
+					}
+				}
+
+				if (canImport(dboGeom, svgMain)) {
+					try {
+						setGeometryDerivatives(dboGeom);
+						dbArray.addDataItem(dboGeom);
+					} catch (Exception e) {
+						if (e instanceof SvException) {
+							log.error(((SvException) e).getFormattedMessage(), e);
+						} else {
+							log.error("Invalid object to import: " + dboGeom.toJson().toString(), e);
+						}
+					}
+				} else {
+					log.warn("Invalid object to import: " + dboGeom.toJson().toString());
+				}
+			}
+
+			DbDataArray agriParcels = svr.getObjectsByParentId(farmObjId, SvCore.getTypeIdByName("AGRI_PARCEL"), null);
+
+			DbDataArray deleteObjects = new DbDataArray();
+			DbDataArray saveObjects = new DbDataArray();
+			DbDataArray updateObjects = new DbDataArray();
+			if (!agriParcels.isEmpty()) {
+
+				dbArray.rebuildIndex("OLD_ID", true);
+
+				Iterator<DbDataObject> it = agriParcels.getItems().iterator();
+				DbDataObject dbo = null;
+				BigDecimal oldArea = null;
+				BigDecimal newArea = null;
+				while (it.hasNext()) {
+					DbDataObject agriParcel = it.next();
+					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
+					if (dbo == null) {
+						deleteObjects.addDataItem(dbo);
+					} else {
+						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
+						newArea = new BigDecimal(dbo.getVal("AREA").toString());
+						if (oldArea.compareTo(newArea) != 0) {
+							agriParcel.setVal("AREA", newArea);
+							agriParcel.setVal("GEOM", dbo.getVal("GEOM"));
+							updateObjects.addDataItem(agriParcel);
+						}
+					}
+				}
+
+				it = dbArray.getItems().iterator();
+				agriParcels.rebuildIndex("OLD_ID", true);
+				while (it.hasNext()) {
+					DbDataObject newAgriParcel = it.next();
+					dbo = agriParcels.getItemByIdx(newAgriParcel.getVal("OLD_ID").toString());
+					if (dbo == null) {
+						saveObjects.addDataItem(dbo);
+					}
+				}
+			} else {
+				saveObjects = dbArray;
+			}
+
+			SvGeometry svgt = new SvGeometry(svgMain.getSessionId());
+			svgt.setIsLongRunning(true);
+			svgt.setAutoCommit(false);
+			svs.add(svgt);
+			mtw = new SvMTWriter(svs);
+			mtw.start();
+
+			mtw.saveObject(deleteObjects, true);
+			mtw.saveObject(updateObjects, true);
+			mtw.saveObject(saveObjects, true);
+			mtw.commit();
 
 		} finally {
 			try {
