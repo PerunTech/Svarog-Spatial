@@ -123,7 +123,7 @@ export const renderCycle = {
                         minZoom: 0,
                         maxZoom: 18 
                     }
-                ),
+                ).addTo(Map),
             },
             'Катастар': {
                 'Катастарски општини': factory.tileLayer.wms(
@@ -167,7 +167,7 @@ export const renderCycle = {
                         minZoom: 3,
                         maxZoom: 18
                     }
-                ),
+                ).addTo(Map),
                 'Општини': factory.tileLayer.wms(
                     'http://192.168.100.155:8888/geoserver/mk/wms', { 
                         layers: 'muni',
@@ -177,7 +177,7 @@ export const renderCycle = {
                         minZoom: 3,
                         maxZoom: 18
                     }
-                ),
+                ).addTo(Map),
                 'Топографска мрежа 25км': factory.tileLayer.wms(
                     'http://192.168.100.155:8888/geoserver/mk/wms', { 
                         layers: 'tk25',
