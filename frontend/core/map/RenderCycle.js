@@ -110,7 +110,7 @@ export const renderCycle = {
                         format: 'image/png',
                         transparent: true,
                         tiled: true , 
-                        minZoom: 3,
+                        minZoom: 6,
                         maxZoom: 18
                     }
                 ),
@@ -120,7 +120,7 @@ export const renderCycle = {
                         format: 'image/png',
                         transparent: true,
                         tiled: true, 
-                        minZoom: 0,
+                        minZoom: 2,
                         maxZoom: 18 
                     }
                 ).addTo(Map),
@@ -164,7 +164,7 @@ export const renderCycle = {
                         format: 'image/png',
                         transparent: true,
                         tiled: false, 
-                        minZoom: 3,
+                        minZoom: 2,
                         maxZoom: 18
                     }
                 ).addTo(Map),
@@ -174,7 +174,7 @@ export const renderCycle = {
                         format: 'image/png',
                         transparent: true,
                         tiled: false, 
-                        minZoom: 3,
+                        minZoom: 2,
                         maxZoom: 18
                     }
                 ).addTo(Map),
