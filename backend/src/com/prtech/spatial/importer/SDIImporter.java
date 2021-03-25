@@ -71,13 +71,14 @@ public class SDIImporter {
 	 * 
 	 * @method main (args: String[]): void
 	 * 
-	 * @param args    <String[]> - The set of import arguments.
-	 * @param args[0] - Name of the target table to import into.
-	 * @param args[1] - User name.
-	 * @param args[2] - Password.
-	 * @param args[3] - Name of the source table to import from, prefixed by schema.
-	 * @param args[4] - Field argument set, matches source field name to target
-	 *                field name.
+	 * @param args <String[]> - The set of import arguments.
+	 * @param      args[0] - Name of the target table to import into.
+	 * @param      args[1] - User name.
+	 * @param      args[2] - Password.
+	 * @param      args[3] - Name of the source table to import from, prefixed by
+	 *             schema.
+	 * @param      args[4] - Field argument set, matches source field name to target
+	 *             field name.
 	 * 
 	 * @return void;
 	 * 
@@ -477,6 +478,8 @@ public class SDIImporter {
 				DbDataObject dbo = null;
 				BigDecimal oldArea = null;
 				BigDecimal newArea = null;
+				BigDecimal oldZavg = null;
+				BigDecimal newZavg = null;
 				while (it.hasNext()) {
 					DbDataObject agriParcel = it.next();
 					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
@@ -485,10 +488,15 @@ public class SDIImporter {
 					} else {
 						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
 						newArea = new BigDecimal(dbo.getVal("AREA").toString());
-						if (oldArea.compareTo(newArea) != 0) {
-							agriParcel.setVal("AREA", newArea);
-							agriParcel.setVal("GEOM", dbo.getVal("GEOM"));
-							updateObjects.addDataItem(agriParcel);
+						oldZavg = agriParcel.getVal("Z_AVG") != null
+								? new BigDecimal(agriParcel.getVal("Z_AVG").toString())
+								: new BigDecimal("0");
+						newZavg = new BigDecimal(dbo.getVal("Z_AVG").toString());
+						if (oldArea.compareTo(newArea) != 0 || oldZavg.compareTo(newZavg) != 0) {
+							dbo.setPkid(agriParcel.getPkid());
+							dbo.setObjectId(agriParcel.getObjectId());
+							dbo.setParentId(agriParcel.getParentId());
+							updateObjects.addDataItem(dbo);
 						}
 					}
 				}
