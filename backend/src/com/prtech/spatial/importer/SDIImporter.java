@@ -414,7 +414,7 @@ public class SDIImporter {
 				sqlList = sqlList + (sqlList == "" ? "" : ",") + fld;
 			}
 			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE FARM_ID = ?";
-			log.info("Executing:" + sqlStmt);
+			log.debug("Executing:" + sqlStmt);
 			ps = conn.prepareStatement(sqlStmt);
 			ps.setLong(1, farmId);
 			rs = ps.executeQuery();
