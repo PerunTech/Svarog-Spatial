@@ -398,7 +398,7 @@ public class SDIImporter {
 				+ "CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;"
 				+ "TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;"
 				+ "ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;"
-				+ "ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id;PARCEL_INTERSECT=parcel_intersections";
+				+ "ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id;PARCEL_INTERSECT=parcel_intersect";
 		fields = parseFieldMap(fieldMap);
 		target = "AGRI_PARCEL";
 		PreparedStatement ps = null;
