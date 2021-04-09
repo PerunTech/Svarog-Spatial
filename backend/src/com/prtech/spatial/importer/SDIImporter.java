@@ -392,7 +392,13 @@ public class SDIImporter {
 
 	public static void importSDIByFarm(Long targetTypeId, Long farmId, Long farmObjId, String source, SvReader svr)
 			throws SvException, SQLException, ParseException, java.text.ParseException {
-		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id";
+		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;"
+				+ "NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;"
+				+ "LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;"
+				+ "CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;"
+				+ "TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;"
+				+ "ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;"
+				+ "ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id;PARCEL_INTERSECT=parcel_intersections";
 		fields = parseFieldMap(fieldMap);
 		target = "AGRI_PARCEL";
 		PreparedStatement ps = null;
