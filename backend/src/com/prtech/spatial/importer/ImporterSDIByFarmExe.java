@@ -65,7 +65,7 @@ public class ImporterSDIByFarmExe implements ISvExecutor {
 				SDIImporter.importSDIByFarm(SvCore.getTypeIdByName("AGRI_PARCEL"), (Long) farm.getVal("OLD_PKID"),
 						farm.getObjectId(), "VLPIS_FULL", svr);
 			} catch (SQLException | ParseException | java.text.ParseException e) {
-				throw new SvException("error.update_agri_parcel", svr.getInstanceUser(), farm, "VLPIS_FULL");
+				throw new SvException("error.update_agri_parcel", svr.getInstanceUser(), farm, "VLPIS_FULL", e);
 			}
 		}
 		return true;
