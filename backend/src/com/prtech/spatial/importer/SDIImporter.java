@@ -490,7 +490,7 @@ public class SDIImporter {
 					DbDataObject agriParcel = it.next();
 					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
-						deleteObjects.addDataItem(dbo);
+						deleteObjects.addDataItem(agriParcel);
 					} else {
 						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
 						newArea = new BigDecimal(dbo.getVal("AREA").toString());
