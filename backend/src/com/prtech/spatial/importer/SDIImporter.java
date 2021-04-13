@@ -419,7 +419,7 @@ public class SDIImporter {
 					fld = dbHandler.getGeomReadSQL(fld) + " as " + fld;
 				sqlList = sqlList + (sqlList == "" ? "" : ",") + fld;
 			}
-			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE FARM_ID = ?";
+			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE certificate_of_use = '1' AND FARM_ID = ?";
 			log.debug("Executing:" + sqlStmt);
 			ps = conn.prepareStatement(sqlStmt);
 			ps.setLong(1, farmId);
@@ -490,7 +490,7 @@ public class SDIImporter {
 					DbDataObject agriParcel = it.next();
 					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
-						deleteObjects.addDataItem(dbo);
+						deleteObjects.addDataItem(agriParcel);
 					} else {
 						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
 						newArea = new BigDecimal(dbo.getVal("AREA").toString());
@@ -513,7 +513,7 @@ public class SDIImporter {
 					DbDataObject newAgriParcel = it.next();
 					dbo = agriParcels.getItemByIdx(newAgriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
-						saveObjects.addDataItem(dbo);
+						saveObjects.addDataItem(newAgriParcel);
 					}
 				}
 			} else {
