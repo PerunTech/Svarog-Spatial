@@ -521,8 +521,7 @@ public class SDIImporter {
 				saveObjects = dbArray;
 			}
 
-			try (SvGeometry svgt = new SvGeometry(svgMain); SvWriter svw = new SvWriter(svgt)) {
-
+			try (SvGeometry svgt = new SvGeometry(svgMain.getSessionId()); SvWriter svw = new SvWriter(svgt)) {
 				svgt.setAutoCommit(false);
 				svw.setAutoCommit(false);
 				if (deleteObjects != null && deleteObjects.size() > 0)
