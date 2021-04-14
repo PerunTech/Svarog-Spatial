@@ -71,14 +71,13 @@ public class SDIImporter {
 	 * 
 	 * @method main (args: String[]): void
 	 * 
-	 * @param args <String[]> - The set of import arguments.
-	 * @param      args[0] - Name of the target table to import into.
-	 * @param      args[1] - User name.
-	 * @param      args[2] - Password.
-	 * @param      args[3] - Name of the source table to import from, prefixed by
-	 *             schema.
-	 * @param      args[4] - Field argument set, matches source field name to target
-	 *             field name.
+	 * @param args    <String[]> - The set of import arguments.
+	 * @param args[0] - Name of the target table to import into.
+	 * @param args[1] - User name.
+	 * @param args[2] - Password.
+	 * @param args[3] - Name of the source table to import from, prefixed by schema.
+	 * @param args[4] - Field argument set, matches source field name to target
+	 *                field name.
 	 * 
 	 * @return void;
 	 * 
@@ -419,7 +418,8 @@ public class SDIImporter {
 					fld = dbHandler.getGeomReadSQL(fld) + " as " + fld;
 				sqlList = sqlList + (sqlList == "" ? "" : ",") + fld;
 			}
-			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE certificate_of_use = '1' AND FARM_ID = ?";
+			String sqlStmt = "SELECT " + sqlList + " FROM " + source
+					+ " WHERE certificate_of_use = '1' AND FARM_ID = ?";
 			log.debug("Executing:" + sqlStmt);
 			ps = conn.prepareStatement(sqlStmt);
 			ps.setLong(1, farmId);
@@ -520,18 +520,19 @@ public class SDIImporter {
 				saveObjects = dbArray;
 			}
 
-			SvGeometry svgt = new SvGeometry(svgMain.getSessionId());
-			svgt.setIsLongRunning(true);
-			svgt.setAutoCommit(false);
-			svs.add(svgt);
-			mtw = new SvMTWriter(svs);
-			mtw.start();
+			try (SvGeometry svgt = new SvGeometry(svgMain); SvWriter svw = new SvWriter(svgt)) {
 
-			mtw.saveObject(deleteObjects, true);
-			mtw.saveObject(updateObjects, true);
-			mtw.saveObject(saveObjects, true);
-			mtw.commit();
-
+				svgt.setAutoCommit(false);
+				svw.setAutoCommit(false);
+				svw.deleteObjects(deleteObjects);
+				svgt.setIsLongRunning(true);
+				svs.add(svgt);
+				mtw = new SvMTWriter(svs);
+				mtw.start();
+				mtw.saveObject(updateObjects, true);
+				mtw.saveObject(saveObjects, true);
+				mtw.commit();
+			}
 		} finally {
 			try {
 				if (mtw != null)
