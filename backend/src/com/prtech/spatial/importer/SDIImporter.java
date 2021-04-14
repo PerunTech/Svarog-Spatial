@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.filter.And;
 
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -524,7 +525,8 @@ public class SDIImporter {
 
 				svgt.setAutoCommit(false);
 				svw.setAutoCommit(false);
-				svw.deleteObjects(deleteObjects);
+				if (deleteObjects != null && deleteObjects.size() > 0)
+					svw.deleteObjects(deleteObjects);
 				svgt.setIsLongRunning(true);
 				svs.add(svgt);
 				mtw = new SvMTWriter(svs);
