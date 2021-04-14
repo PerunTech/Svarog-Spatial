@@ -12,6 +12,7 @@ import { useUpdate } from '../../ui';
  * @function _MapContainer (bbox: string, sid: number, refreshing: boolean): JSX.Element
  * 
  * @param {Object} props - Properties.
+ * @param {string} props.id - The id of the map. Defaults to 'mapContainer'. Useful for isolating DOM instances of the map via id.
  * @param {string} props.bbox - The current map bounding box.
  * @param {number} props.sid - The current map spatial id of the render cycle.
  * @param {number} props.minZoom - The minimum zoom level of the map.
@@ -20,7 +21,7 @@ import { useUpdate } from '../../ui';
  * 
  * @returns JSX.Element;
  */
-function _MapContainer ({ bbox, sid, minZoom, maxZoom, refreshing }) {
+function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refreshing }) {
     /* Mount / Unmount effect */
     React.useEffect(() => {
         rc.start(); // Init program.
@@ -38,10 +39,11 @@ function _MapContainer ({ bbox, sid, minZoom, maxZoom, refreshing }) {
         Map.setMinZoom(minZoom).setMaxZoom(maxZoom)
     }, [maxZoom, minZoom]);
 
-    return <div id={MAP_CONTAINER} style={{height: '100vh'}} />
+    return <div id={id} style={{height: '100vh'}} />
 }
 
 _MapContainer.propTypes = {
+    id: PropTypes.string,
     bbox: PropTypes.string,
     sid: PropTypes.number,
     minZoom: PropTypes.number,
@@ -51,6 +53,7 @@ _MapContainer.propTypes = {
 
 export const MapContainer = connect(({ map }) => {
     return { 
+        id: map.id,
         bbox: map.bbox,
         sid: map.sid,
         minZoom: map.minZoom,

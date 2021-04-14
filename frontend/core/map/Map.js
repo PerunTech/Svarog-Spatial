@@ -1,5 +1,5 @@
-import { factory, crs } from '..';
-import { MAP_CONTAINER, MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../config';
+import { factory, crs, store } from '..';
+import { MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../config';
 
 /**
  * Pre-init segment. Map factory arguments.
@@ -67,7 +67,7 @@ export const Map = factory.map(el, opt);
  * Extends Map.
  */
 Map.render = function render () {
-    let container = document.getElementById(MAP_CONTAINER);
+    let container = document.getElementById(store.getState().map.id);
     container.appendChild(el);
 
     /**
