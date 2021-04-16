@@ -25,6 +25,7 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.SvarogInstall;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvDatabaseIO;
@@ -483,23 +484,31 @@ public class SDIImporter {
 
 				Iterator<DbDataObject> it = agriParcels.getItems().iterator();
 				DbDataObject dbo = null;
-				BigDecimal oldArea = null;
-				BigDecimal newArea = null;
-				BigDecimal oldZavg = null;
-				BigDecimal newZavg = null;
+//				BigDecimal oldArea = null;
+//				BigDecimal newArea = null;
+//				BigDecimal oldZavg = null;
+//				BigDecimal newZavg = null;
 				while (it.hasNext()) {
 					DbDataObject agriParcel = it.next();
 					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
 						deleteObjects.addDataItem(agriParcel);
 					} else {
-						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
-						newArea = new BigDecimal(dbo.getVal("AREA").toString());
-						oldZavg = agriParcel.getVal("Z_AVG") != null
-								? new BigDecimal(agriParcel.getVal("Z_AVG").toString())
-								: new BigDecimal("0");
-						newZavg = new BigDecimal(dbo.getVal("Z_AVG").toString());
-						if (oldArea.compareTo(newArea) != 0 || oldZavg.compareTo(newZavg) != 0) {
+//						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
+//						newArea = new BigDecimal(dbo.getVal("AREA").toString());
+//						oldZavg = agriParcel.getVal("Z_AVG") != null
+//								? new BigDecimal(agriParcel.getVal("Z_AVG").toString())
+//								: new BigDecimal("0");
+//						newZavg = new BigDecimal(dbo.getVal("Z_AVG").toString());
+//						if (oldArea.compareTo(newArea) != 0 || oldZavg.compareTo(newZavg) != 0) {
+//							dbo.setPkid(agriParcel.getPkid());
+//							dbo.setObjectId(agriParcel.getObjectId());
+//							dbo.setParentId(agriParcel.getParentId());
+//							updateObjects.addDataItem(dbo);
+//						}
+						
+						if(SvarogInstall.shouldUpgradeConfig(agriParcel, dbo,
+								SvCore.getFields(SvCore.getTypeIdByName("AGRI_PARCEL")), true)) {
 							dbo.setPkid(agriParcel.getPkid());
 							dbo.setObjectId(agriParcel.getObjectId());
 							dbo.setParentId(agriParcel.getParentId());
