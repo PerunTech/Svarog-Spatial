@@ -24,7 +24,8 @@ const _appBuilder = {
         return this;
     },
 
-    render () {
+    render (id) {
+        store.dispatch({id: id})
         return <Provider children={<MapContainer />} />;
     } 
 }

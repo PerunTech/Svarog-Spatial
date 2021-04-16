@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.filter.And;
 
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -24,6 +25,7 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.SvarogInstall;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvDatabaseIO;
@@ -157,47 +159,38 @@ public class SDIImporter {
 				int lc = ((BigDecimal) rs.getObject("LAND_USE_ID")).intValue();
 				if (lc > 0)
 					dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
-			}
-			if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
+			} else if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
 				int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
 				if (lc > 0)
 					dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
-			}
-			if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
+			} else if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
 				dbo.setVal("INVISIBLE_BORDER", bool);
-			}
-			if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
+			} else if (key.equals("CHANGED_BORDER") && rs.getObject("CHANGED_BORDER") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("CHANGED_BORDER")).intValue() > 0;
 				dbo.setVal("CHANGED_BORDER", bool);
-			}
-			if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
+			} else if (key.equals("IRRIGATION") && rs.getObject("IRRIGATION") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("IRRIGATION")).intValue() > 0;
 				dbo.setVal("IRRIGATION", bool);
-			}
-			if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
+			} else if (key.equals("TERRACE") && rs.getObject("TERASE") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("TERASE")).intValue() > 0;
 				dbo.setVal("TERRACE", bool);
-			}
-			if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
+			} else if (key.equals("LANDSCAPE_FEATURES") && rs.getObject("LANDSCAPE_FEATURES") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("LANDSCAPE_FEATURES")).intValue() > 0;
 				dbo.setVal("LANDSCAPE_FEATURES", bool);
-			}
-			if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
+			} else if (key.equals("COMMON_USE") && rs.getObject("COMMON_USE") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("COMMON_USE")).intValue() > 0;
 				dbo.setVal("COMMON_USE", bool);
-			}
-			if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
+			} else if (key.equals("CERTIFICATE_OF_USE") && rs.getObject("CERTIFICATE_OF_USE") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("CERTIFICATE_OF_USE")).intValue() > 0;
 				dbo.setVal("CERTIFICATE_OF_USE", bool);
-			}
-			if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
+			} else if (key.equals("ORGANIC") && rs.getObject("ORGANIC") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("ORGANIC")).intValue() > 0;
 				dbo.setVal("ORGANIC", bool);
-			}
-			if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
+			} else if (key.equals("OLD_ID") && rs.getObject("ID") != null) {
 				dbo.setVal("OLD_ID", ((BigDecimal) rs.getObject("ID")).longValue());
-			}
+			} else
+				defaultSetField(dbo, key, rs);
 			break;
 		default:
 			defaultSetField(dbo, key, rs);
@@ -400,7 +393,13 @@ public class SDIImporter {
 
 	public static void importSDIByFarm(Long targetTypeId, Long farmId, Long farmObjId, String source, SvReader svr)
 			throws SvException, SQLException, ParseException, java.text.ParseException {
-		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id";
+		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;"
+				+ "NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;"
+				+ "LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;"
+				+ "CHANGED_BORDER=changed_border;IRRIGATION=irrigation;SLOPE_AVG=slope_avg;"
+				+ "TERRACE=terase;Z_AVG=z_avg;EXPOSITION_AVG=exp_avg;LANDSCAPE_FEATURES=landscape_features;"
+				+ "ELIGIBILITY_COEF=eligibility_coef;COMMON_USE=common_use;CERTIFICATE_OF_USE=certificate_of_use;"
+				+ "ORGANIC=organic;SOIL_TYPE=soil_type;OLD_ID=id;PARCEL_INTERSECT=parcel_intersect";
 		fields = parseFieldMap(fieldMap);
 		target = "AGRI_PARCEL";
 		PreparedStatement ps = null;
@@ -421,8 +420,9 @@ public class SDIImporter {
 					fld = dbHandler.getGeomReadSQL(fld) + " as " + fld;
 				sqlList = sqlList + (sqlList == "" ? "" : ",") + fld;
 			}
-			String sqlStmt = "SELECT " + sqlList + " FROM " + source + " WHERE FARM_ID = ?";
-			log.info("Executing:" + sqlStmt);
+			String sqlStmt = "SELECT " + sqlList + " FROM " + source
+					+ " WHERE certificate_of_use = '1' AND FARM_ID = ?";
+			log.debug("Executing:" + sqlStmt);
 			ps = conn.prepareStatement(sqlStmt);
 			ps.setLong(1, farmId);
 			rs = ps.executeQuery();
@@ -484,20 +484,35 @@ public class SDIImporter {
 
 				Iterator<DbDataObject> it = agriParcels.getItems().iterator();
 				DbDataObject dbo = null;
-				BigDecimal oldArea = null;
-				BigDecimal newArea = null;
+//				BigDecimal oldArea = null;
+//				BigDecimal newArea = null;
+//				BigDecimal oldZavg = null;
+//				BigDecimal newZavg = null;
 				while (it.hasNext()) {
 					DbDataObject agriParcel = it.next();
 					dbo = dbArray.getItemByIdx(agriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
-						deleteObjects.addDataItem(dbo);
+						deleteObjects.addDataItem(agriParcel);
 					} else {
-						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
-						newArea = new BigDecimal(dbo.getVal("AREA").toString());
-						if (oldArea.compareTo(newArea) != 0) {
-							agriParcel.setVal("AREA", newArea);
-							agriParcel.setVal("GEOM", dbo.getVal("GEOM"));
-							updateObjects.addDataItem(agriParcel);
+//						oldArea = new BigDecimal(agriParcel.getVal("AREA").toString());
+//						newArea = new BigDecimal(dbo.getVal("AREA").toString());
+//						oldZavg = agriParcel.getVal("Z_AVG") != null
+//								? new BigDecimal(agriParcel.getVal("Z_AVG").toString())
+//								: new BigDecimal("0");
+//						newZavg = new BigDecimal(dbo.getVal("Z_AVG").toString());
+//						if (oldArea.compareTo(newArea) != 0 || oldZavg.compareTo(newZavg) != 0) {
+//							dbo.setPkid(agriParcel.getPkid());
+//							dbo.setObjectId(agriParcel.getObjectId());
+//							dbo.setParentId(agriParcel.getParentId());
+//							updateObjects.addDataItem(dbo);
+//						}
+						
+						if(SvarogInstall.shouldUpgradeConfig(agriParcel, dbo,
+								SvCore.getFields(SvCore.getTypeIdByName("AGRI_PARCEL")), true)) {
+							dbo.setPkid(agriParcel.getPkid());
+							dbo.setObjectId(agriParcel.getObjectId());
+							dbo.setParentId(agriParcel.getParentId());
+							updateObjects.addDataItem(dbo);
 						}
 					}
 				}
@@ -508,25 +523,26 @@ public class SDIImporter {
 					DbDataObject newAgriParcel = it.next();
 					dbo = agriParcels.getItemByIdx(newAgriParcel.getVal("OLD_ID").toString());
 					if (dbo == null) {
-						saveObjects.addDataItem(dbo);
+						saveObjects.addDataItem(newAgriParcel);
 					}
 				}
 			} else {
 				saveObjects = dbArray;
 			}
 
-			SvGeometry svgt = new SvGeometry(svgMain.getSessionId());
-			svgt.setIsLongRunning(true);
-			svgt.setAutoCommit(false);
-			svs.add(svgt);
-			mtw = new SvMTWriter(svs);
-			mtw.start();
-
-			mtw.saveObject(deleteObjects, true);
-			mtw.saveObject(updateObjects, true);
-			mtw.saveObject(saveObjects, true);
-			mtw.commit();
-
+			try (SvGeometry svgt = new SvGeometry(svgMain.getSessionId()); SvWriter svw = new SvWriter(svgt)) {
+				svgt.setAutoCommit(false);
+				svw.setAutoCommit(false);
+				if (deleteObjects != null && deleteObjects.size() > 0)
+					svw.deleteObjects(deleteObjects);
+				svgt.setIsLongRunning(true);
+				svs.add(svgt);
+				mtw = new SvMTWriter(svs);
+				mtw.start();
+				mtw.saveObject(updateObjects, true);
+				mtw.saveObject(saveObjects, true);
+				mtw.commit();
+			}
 		} finally {
 			try {
 				if (mtw != null)

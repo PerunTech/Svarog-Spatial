@@ -88,12 +88,12 @@ factory.Layer.include({
      * returns number;
      */
     getMeasurement: function ()  {
-        return this instanceof factory.Polygon
-            ? this.calculateArea(this.getLatLngs()[0]) // Outer ring is the first element of _latLngs. holes?
-            : this instanceof factory.Polyline
-                ? this.calculateDistance(this.getLatLngs())
-                : this.feature
-                    ? Number(this.feature.properties.AREA)
+        return this.feature
+            ? Number(this.feature.properties.AREA)
+            : this instanceof factory.Polygon
+                ? this.calculateArea(this.getLatLngs()[0]) // Outer ring is the first element of _latLngs. holes?
+                : this instanceof factory.Polyline
+                    ? this.calculateDistance(this.getLatLngs())
                     : 0;
     },
     
