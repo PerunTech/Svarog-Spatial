@@ -9,9 +9,9 @@ import { React, PropTypes, Form as RJSForm} from 'perun-core';
  * 
  * @returns JSX.Element;
  */
-export function Form ({children, ...props}) {
+export function Form ({children, childrenProps = {}, ...props}) {
     return <RJSForm {...props} >
-        {children && (children instanceof Element ? children : React.cloneElement(children, props))}
+        {children && (children instanceof Element ? children : React.cloneElement(children, childrenProps))}
     </RJSForm>
 }
 
@@ -52,5 +52,6 @@ Form.propTypes = {
     additionalMetaSchemas: PropTypes.arrayOf(PropTypes.object),
     omitExtraData: PropTypes.bool,
     extraErrors: PropTypes.object,
-    children: PropTypes.node
+    children: PropTypes.node,
+    childrenProps: PropTypes.object
 };
