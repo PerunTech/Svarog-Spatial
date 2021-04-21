@@ -12,7 +12,7 @@ export const renderCycle = {
         raster({ 
             'Мапи и авионски снимки': {
                 'Ортофото 2017 [380-740 nm]': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm',
                         format: 'image/png',
                         transparent: true,
@@ -20,7 +20,7 @@ export const renderCycle = {
                     }
                 ).addTo(Map),
                 'Ортофото 2017 [IR 700-1100 nm]': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_cir',   // Macedonia_30cm_cir
                         format: 'image/png',
                         transparent: true,
@@ -30,7 +30,7 @@ export const renderCycle = {
                     }
                 ),
                 'Ортофото 2009 [380-740 nm]': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_2009',
                         format: 'image/png',
                         transparent: true,
@@ -40,7 +40,7 @@ export const renderCycle = {
                     }
                 ),
                 'Ортофото 2009 [IR 700-1100 nm]': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_cir_2009',
                         format: 'image/png',
                         transparent: true,
@@ -50,7 +50,7 @@ export const renderCycle = {
                     }
                 ),
                 'Ортофото 2004 [380-740 nm]': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_30cm_2004',
                         format: 'image/png',
                         transparent: true,
@@ -60,7 +60,7 @@ export const renderCycle = {
                     }
                 ),
                 'Топографска карта': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_topo',
                         format: 'image/png',
                         transparent: true,
@@ -70,7 +70,7 @@ export const renderCycle = {
                     }
                 ),
                 'Модел на теренот, РМ 2017': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_dtm_2017',
                         format: 'image/png',
                         transparent: true,
@@ -80,7 +80,7 @@ export const renderCycle = {
                     }
                 ),
                 'Модел на теренот, РМ 2009': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_dtm_2009',
                         format: 'image/png',
                         transparent: true,
@@ -92,7 +92,7 @@ export const renderCycle = {
             },
             'Сателитски снимки': {
                 'ИПАРД, 10km x 10km, 2012-2015': factory.tileLayer.wms(
-                    'http://192.168.9.88:8080/geoserver/mk/wms', { 
+                    '/geoserver/mk/wms', { 
                         layers: 'Macedonia_dtm_2009',
                         format: 'image/png',
                         transparent: true,
@@ -123,7 +123,7 @@ export const renderCycle = {
                         minZoom: 2,
                         maxZoom: 18 
                     }
-                ).addTo(Map),
+                ),
             },
             'Катастар': {
                 'Катастарски општини': factory.tileLayer.wms(
@@ -167,7 +167,7 @@ export const renderCycle = {
                         minZoom: 2,
                         maxZoom: 18
                     }
-                ).addTo(Map),
+                ),
                 'Општини': factory.tileLayer.wms(
                     '/geoserver/mk/wms', { 
                         layers: 'muni',
@@ -177,7 +177,7 @@ export const renderCycle = {
                         minZoom: 2,
                         maxZoom: 18
                     }
-                ).addTo(Map),
+                ),
                 'Топографска мрежа 25км': factory.tileLayer.wms(
                     '/geoserver/mk/wms', { 
                         layers: 'tk25',
