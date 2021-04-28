@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -69,7 +70,7 @@ public class ApplicationServices {
 	 * @return
 	 */
 	@GET
-	@Path("/grid/get/{objectName}/")
+	@Path("/grid/get/{objectName}")
 	@Produces("application/pbf")
 	public StreamingOutput getGrid(@PathParam("objectName") final String objectName) {
 
@@ -101,11 +102,12 @@ public class ApplicationServices {
 		};
 	}
 
+	@Path("/grid/put/{token}/{objectName}/{objectId}")
 	@POST
-	@Path("/grid/put/{token}/{objectName}/{objectId}/")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public StreamingOutput saveGrid(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, @PathParam("objectName") final Long objectId,
+			@PathParam("objectName") final String objectName, @PathParam("objectId") final Long objectId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
@@ -114,7 +116,7 @@ public class ApplicationServices {
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Geometry geom = getInputGeometry(formVals, null);
 					SvGrid svgrid = new SvGrid(objectName);
-					Set<Geometry> updates = svgrid.getRelations(geom, SDIRelation.OVERLAPS, true);
+					Set<Geometry> updates = svgrid.getRelations(geom, SDIRelation.OVERLAPS, false);
 					DbDataArray modifiedGeoms = new DbDataArray();
 					Iterator<Geometry> it = updates.iterator();
 					while (it.hasNext()) {

@@ -74,7 +74,7 @@ export const MAP_CONTAINER = 'mapContainer';
 /** @constant */
 export const MAP_CONFIG = {
     center: SYS_CENTER,
-    zoom: 3,
+    zoom: 2,
     minZoom: 0,
     maxZoom: 18,
     dragging: true,

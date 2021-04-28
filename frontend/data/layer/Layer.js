@@ -130,8 +130,6 @@ factory.Layer.include({
      */
     publish: function () {
         const currState = store.getState().data.layers;
-        // console.log(currState)
-        // this.hasMetadata() && console.log(this)
 
         this.hasMetadata()
             && store.dispatch({ layers: { ...currState, [ this.getId() ]: this} });
