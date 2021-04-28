@@ -1,4 +1,4 @@
-import { factory, Map } from '../../core';
+import { factory, Map, util } from '../../core';
 
 /* private refs to source methods, to be overriden below. */
 const _initialize = factory.GeoJSON.prototype.initialize,
@@ -52,7 +52,7 @@ factory.GeoJSON.include({
 /**
 * Creates geojson from vectors.
 * 
-* Compatible with all factory entities.
+* Compatible with all factory entities, including multipolygons with holes
 * Re-projects coordinates.
 * 
 * &nbsp;
@@ -66,16 +66,18 @@ factory.GeoJSON.include({
 */
 factory.GeoJSON.fromLayer = function (layer, crs) {
    const geojson = layer.toGeoJSON(),
-         coords = geojson.geometry.coordinates.length > 1 
-            ? geojson.geometry.coordinates 
-            : geojson.geometry.coordinates[0],
+         coords = geojson.geometry.coordinates,
          _crs = crs || layer._map.getCRS();
 
-   coords.forEach((val, i, self) => {
-       let ll = factory.latLng(val[1], val[0]);
-       let p = _crs.projection.project(ll);
-       
-       self[i] = [ p.x, p.y ];
+   coords.forEach((arr, i, self) => {
+        util.isArray(arr) && arr.forEach((val, j, self) => {
+            let ll = factory.latLng(val[1], val[0]);
+            let p = _crs.projection.project(ll);
+        
+            self[j] = [ p.x, p.y ];
+        })
+
+        self[i] = arr;
    });
 
    return geojson;
