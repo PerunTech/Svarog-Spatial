@@ -52,7 +52,15 @@ import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 
 @Path("/spatial")
 public class ApplicationServices {
+
+	static int precisionScale = 2;
 	private static final Logger log = SvConf.getLogger(ApplicationServices.class);
+
+	static {
+		Long d = new Long(Math.round(SvConf.getSDIPrecision() / 10));
+		String s = d.toString();
+		precisionScale = s.length();
+	}
 
 	/**
 	 * 
@@ -68,7 +76,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try {
 					SvGrid svg = new SvGrid(objectName);
 					Set<Geometry> geomArr = svg.getInternalGeometries();
@@ -104,7 +112,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Geometry geom = getInputGeometry(formVals, null);
 					SvGrid svgrid = new SvGrid(objectName);
@@ -156,7 +164,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Set<Geometry> geomArr = svg.getGeometriesByBBOX(SvCore.getTypeIdByName(objectName), bbox);
 					enc.writeSvGeometry(geomArr);
@@ -184,7 +192,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
@@ -238,7 +246,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Geometry geom = getInputGeometry(formVals, geometryWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
@@ -269,7 +277,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 					Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
@@ -315,7 +323,7 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, boolean preview) {
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Geometry geom = getInputGeometry(formVals, lineStringWKT);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
@@ -426,7 +434,7 @@ public class ApplicationServices {
 			final String lineStringWKT, MultivaluedMap<String, String> formVals) {
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					LineString lineString = (LineString) getInputGeometry(formVals, lineStringWKT);
 					ArrayList<Point> p = new ArrayList<>();
@@ -474,7 +482,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					MultiPolygon hole = (MultiPolygon) getInputGeometry(formVals, polygonWkt);
 
@@ -561,7 +569,7 @@ public class ApplicationServices {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
 					Geometry geom = (Polygon) getInputGeometry(formVals, polygonWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
