@@ -5,7 +5,9 @@
 .leaflet-control-better-scale {
     /* Because measurements numbers of the scale overflow, bring element up so we can see them */
     margin-bottom: 10px; 
+    margin-right: 20px;
     padding: 10px;
+    max-width: fit-content;
     }
 .leaflet-control-better-scale-upper-first-piece {
     top: 0%;

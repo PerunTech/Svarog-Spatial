@@ -9,7 +9,7 @@ import { useUpdate } from '../../ui';
  * 
  * &nbsp;
  * 
- * @function _MapContainer (bbox: string, sid: number, refreshing: boolean): JSX.Element
+ * @function _MapContainer (bbox: string, sid: number, refresh: boolean): JSX.Element
  * 
  * @param {Object} props - Properties.
  * @param {string} props.id - The id of the map. Defaults to 'mapContainer'. Useful for isolating DOM instances of the map via id.
@@ -17,11 +17,11 @@ import { useUpdate } from '../../ui';
  * @param {number} props.sid - The current map spatial id of the render cycle.
  * @param {number} props.minZoom - The minimum zoom level of the map.
  * @param {number} props.maxZoom - The maximum zoom level of the map.
- * @param {boolean} props.refreshing - A flag for a manual refresh of all rendered geometries.
+ * @param {boolean} props.refresh - A flag for a manual refresh of all rendered geometries.
  * 
  * @returns JSX.Element;
  */
-function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refreshing }) {
+function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refresh }) {
     /* Mount / Unmount effect */
     React.useEffect(() => {
         rc.start(); // Init program.
@@ -33,7 +33,7 @@ function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refre
     /* Runtime effects. */
     useUpdate(rc.fetch, [bbox]);
     useUpdate(rc.render, [sid]);
-    useUpdate(rc.refresh, [refreshing]);
+    useUpdate(rc.refresh, [refresh]);
 
     React.useEffect(() => {
         Map.setMinZoom(minZoom).setMaxZoom(maxZoom)
@@ -48,7 +48,7 @@ _MapContainer.propTypes = {
     sid: PropTypes.number,
     minZoom: PropTypes.number,
     maxZoom: PropTypes.number,
-    refreshing: PropTypes.bool,
+    refresh: PropTypes.bool,
 };
 
 export const MapContainer = connect(({ map }) => {
@@ -58,5 +58,5 @@ export const MapContainer = connect(({ map }) => {
         sid: map.sid,
         minZoom: map.minZoom,
         maxZoom: map.maxZoom,
-        refreshing: map.refreshing
+        refresh: map.refresh
 }})(_MapContainer);

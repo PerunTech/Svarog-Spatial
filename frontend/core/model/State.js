@@ -41,6 +41,10 @@ export const state = {
     measurement: {
         totalLength: '0 m',
         totalArea: '0 m²'
+    },
+    layerList: {
+        collapsed: false, 
+        position: 'topright'
     }
 };
 Object.keys(state).map(key => store.addState(key, state[key]));
