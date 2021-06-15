@@ -162,7 +162,7 @@ public class SDIImporter {
 			} else if (key.equals("LAND_COVER_CODE_2") && rs.getObject("LAND_USE_ID_2") != null) {
 				int lc = ((BigDecimal) rs.getObject("LAND_USE_ID_2")).intValue();
 				if (lc > 0)
-					dbo.setVal("LAND_COVER_CODE", Integer.valueOf(lc).toString());
+					dbo.setVal("LAND_COVER_CODE_2", Integer.valueOf(lc).toString());
 			} else if (key.equals("INVISIBLE_BORDER") && rs.getObject("INVISIBLE_BORDER") != null) {
 				Boolean bool = ((BigDecimal) rs.getObject("INVISIBLE_BORDER")).intValue() > 0;
 				dbo.setVal("INVISIBLE_BORDER", bool);
