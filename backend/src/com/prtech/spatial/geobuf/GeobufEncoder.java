@@ -122,16 +122,17 @@ public class GeobufEncoder {
 
 		if (userData instanceof DbDataObject && userData != null) {
 			DbDataObject dbo = (DbDataObject) userData;
-			feat.id = dbo.getObject_id().toString();
+			feat.id = dbo.getObjectId().toString();
+			feat.properties.put("type", dbo.getObjectType().toString());
 
-			if (dbo.getParent_id() != null)
-				feat.properties.put("parent_id", dbo.getParent_id().toString());
+			if (dbo.getParentId() != null)
+				feat.properties.put("parent_id", dbo.getParentId().toString());
 
 			// Assign default type descriptor if not specified already
 			String desc = (String) dbo.getVal("DESCRIPTOR");
 			if (desc == null)
 				try {
-					dbo.setVal("DESCRIPTOR", SvCore.getDbt(dbo.getObject_type()).getVal("TABLE_NAME"));
+					dbo.setVal("DESCRIPTOR", SvCore.getDbt(dbo.getObjectType()).getVal("TABLE_NAME"));
 				} catch (SvException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -152,7 +153,7 @@ public class GeobufEncoder {
 		Geometry g = null;
 
 		for (DbDataObject dbo : dbArr.getItems()) {
-			if (SvGeometry.hasGeometries(dbo.getObject_type())) {
+			if (SvGeometry.hasGeometries(dbo.getObjectType())) {
 				g = SvGeometry.getGeometry(dbo);
 			}
 
