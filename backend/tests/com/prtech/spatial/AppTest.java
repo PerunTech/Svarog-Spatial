@@ -3,7 +3,9 @@ package com.prtech.spatial;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -76,8 +78,15 @@ public class AppTest {
 	public void testExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");
 		CRSFactory crsFactory = new CRSFactory();
-		CoordinateReferenceSystem systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:6316" );
-		ProjCoordinate p = Util.readImgCoordinates(file, null, systemCRS);
+		CoordinateReferenceSystem systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:6316");
+		InputStream inputStream = new FileInputStream(file);
+		ProjCoordinate p = null;
+		try {
+			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS);
+		} finally {
+			inputStream.close();
+		}
+
 		System.out.println(p);
 	}
 }

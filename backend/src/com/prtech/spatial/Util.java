@@ -1,7 +1,9 @@
 package com.prtech.spatial;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map.Entry;
@@ -167,9 +169,9 @@ public class Util {
 		dbo.setVal("PERIMETER", Double.parseDouble(df.format(geom.getLength()).replace(",", ".")));
 	}
 
-	public static ProjCoordinate readImgCoordinates(File file, CoordinateReferenceSystem fileCRS,
+	public static ProjCoordinate readImgCoordinates(InputStream fileInputStream, long streamLength, CoordinateReferenceSystem fileCRS,
 			CoordinateReferenceSystem systemCRS) throws SvException, ImageProcessingException, IOException {
-		Metadata metadata = ImageMetadataReader.readMetadata(file);
+		Metadata metadata = ImageMetadataReader.readMetadata(fileInputStream, streamLength);
 		String latRef = "";
 		String longRef = "";
 		String latDMS = "";
