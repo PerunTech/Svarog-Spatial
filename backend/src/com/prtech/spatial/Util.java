@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -21,6 +22,7 @@ import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
 
+import com.drew.imaging.FileType;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -169,9 +171,47 @@ public class Util {
 		dbo.setVal("PERIMETER", Double.parseDouble(df.format(geom.getLength()).replace(",", ".")));
 	}
 
-	public static ProjCoordinate readImgCoordinates(InputStream fileInputStream, long streamLength, CoordinateReferenceSystem fileCRS,
-			CoordinateReferenceSystem systemCRS) throws SvException, ImageProcessingException, IOException {
-		Metadata metadata = ImageMetadataReader.readMetadata(fileInputStream, streamLength);
+	static FileType getFileTypeByExt(String filename) {
+		if (filename == null)
+			return null;
+		String extension = FilenameUtils.getExtension(filename);
+		for (String ex : FileType.Jpeg.getAllExtensions()) {
+			if (ex.equals(extension))
+				return FileType.Jpeg;
+		}
+		for (String ex : FileType.Png.getAllExtensions()) {
+			if (ex.equals(extension))
+				return FileType.Png;
+		}
+		for (String ex : FileType.Tiff.getAllExtensions()) {
+			if (ex.equals(extension))
+				return FileType.Tiff;
+		}
+		for (String ex : FileType.Bmp.getAllExtensions()) {
+			if (ex.equals(extension))
+				return FileType.Bmp;
+		}
+		return null;
+
+	}
+
+	public static ProjCoordinate readImgCoordinates(InputStream fileInputStream, long streamLength,
+			CoordinateReferenceSystem fileCRS, CoordinateReferenceSystem systemCRS)
+			throws SvException, ImageProcessingException, IOException {
+		return readImgCoordinates(fileInputStream, streamLength, fileCRS, systemCRS, null);
+	}
+
+	public static ProjCoordinate readImgCoordinates(InputStream fileInputStream, long streamLength,
+			CoordinateReferenceSystem fileCRS, CoordinateReferenceSystem systemCRS, String filename)
+			throws SvException, ImageProcessingException, IOException {
+
+		FileType ft = getFileTypeByExt(filename);
+		Metadata metadata = null;
+		if (ft == null)
+			metadata = ImageMetadataReader.readMetadata(fileInputStream, streamLength);
+		else
+			metadata = ImageMetadataReader.readMetadata(fileInputStream, streamLength, ft);
+
 		String latRef = "";
 		String longRef = "";
 		String latDMS = "";
@@ -202,21 +242,27 @@ public class Util {
 			}
 
 		}
+		ProjCoordinate result = null;
 		String dms = latDMS.replace(" ", "") + latRef + " " + longDMS.replace(" ", "") + longRef;
-		// System.out.println(dms);
-		double[] d = convert(dms);
+		if (!(latDMS.isEmpty() || longDMS.isEmpty())) {
+			try {
+				double[] d = convert(dms);
+				CRSFactory crsFactory = new CRSFactory();
+				if (fileCRS == null)
+					fileCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:4326");
+				if (systemCRS == null)
+					systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:" + SvConf.getSDISrid());
 
-		CRSFactory crsFactory = new CRSFactory();
-		if (fileCRS == null)
-			fileCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:4326");
-		if (systemCRS == null)
-			systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:" + SvConf.getSDISrid());
-
-		CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-		CoordinateTransform wgsToUtm = (CoordinateTransform) ctFactory.createTransform(fileCRS, systemCRS);
-		// `result` is an output parameter to `transform()`
-		ProjCoordinate result = new ProjCoordinate();
-		wgsToUtm.transform(new ProjCoordinate(d[1], d[0]), result);
+				CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
+				CoordinateTransform wgsToUtm = (CoordinateTransform) ctFactory.createTransform(fileCRS, systemCRS);
+				// `result` is an output parameter to `transform()`
+				result = new ProjCoordinate();
+				wgsToUtm.transform(new ProjCoordinate(d[1], d[0]), result);
+			} catch (Exception e) {
+				log.error("Error reading exif GPS coordinates", e);
+				result = null;
+			}
+		}
 		return result;
 	}
 

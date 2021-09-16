@@ -82,11 +82,31 @@ public class AppTest {
 		InputStream inputStream = new FileInputStream(file);
 		ProjCoordinate p = null;
 		try {
-			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS);
+			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Reading coordinates threw exception");
 		} finally {
 			inputStream.close();
 		}
 
 		System.out.println(p);
+	}
+
+	@Test
+	public void testNoExif() throws SvException, ImageProcessingException, IOException {
+		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
+		CRSFactory crsFactory = new CRSFactory();
+		CoordinateReferenceSystem systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:6316");
+		InputStream inputStream = new FileInputStream(file);
+		ProjCoordinate p = null;
+		try {
+			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+			if (p != null)
+				fail("Projected coordinates should be null when exif is broken");
+		} finally {
+			inputStream.close();
+		}
+
 	}
 }
