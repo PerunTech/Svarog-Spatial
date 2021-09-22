@@ -2,17 +2,34 @@ package com.prtech.spatial;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CoordinateTransform;
+import org.locationtech.proj4j.CoordinateTransformFactory;
+import org.locationtech.proj4j.ProjCoordinate;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.prtech.spatial.cwrs.zones.Ranking;
 import com.prtech.svarog.Sv;
+import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -30,6 +47,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * Unit test for simple App.
  */
 public class AppTest {
+
 	static String token = null;
 
 	public static void initToken() throws SvException {
@@ -54,5 +72,41 @@ public class AppTest {
 			}
 
 		}
+	}
+
+	@Test
+	public void testExif() throws SvException, ImageProcessingException, IOException {
+		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");
+		CRSFactory crsFactory = new CRSFactory();
+		CoordinateReferenceSystem systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:6316");
+		InputStream inputStream = new FileInputStream(file);
+		ProjCoordinate p = null;
+		try {
+			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Reading coordinates threw exception");
+		} finally {
+			inputStream.close();
+		}
+
+		System.out.println(p);
+	}
+
+	@Test
+	public void testNoExif() throws SvException, ImageProcessingException, IOException {
+		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
+		CRSFactory crsFactory = new CRSFactory();
+		CoordinateReferenceSystem systemCRS = (CoordinateReferenceSystem) crsFactory.createFromName("epsg:6316");
+		InputStream inputStream = new FileInputStream(file);
+		ProjCoordinate p = null;
+		try {
+			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+			if (p != null)
+				fail("Projected coordinates should be null when exif is broken");
+		} finally {
+			inputStream.close();
+		}
+
 	}
 }
