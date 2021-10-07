@@ -66,7 +66,8 @@ factory.GeoJSON.include({
 */
 factory.GeoJSON.fromLayer = function (layer, crs) {
     const geojson = layer.toGeoJSON();
-    return factory.GeoJSON.reproject(geojson, crs);
+    _crs = crs || layer._map.getCRS();
+    return factory.GeoJSON.reproject(geojson, _crs);
 }
 
 /**
@@ -83,14 +84,13 @@ factory.GeoJSON.fromLayer = function (layer, crs) {
 */
 factory.GeoJSON.reproject = function (geojson, crs) {
     const coords = geojson.geometry.coordinates,
-        type = geojson.geometry.type,
-        _crs = crs || layer._map.getCRS();
+        type = geojson.geometry.type;
 
     coords.forEach((arr, i, self) => {
         if (type != "LineString") {
             util.isArray(arr) && arr.forEach((val, j, self) => {
                 let ll = factory.latLng(val[1], val[0]);
-                let p = _crs.projection.project(ll);
+                let p = crs.projection.project(ll);
 
                 self[j] = [p.x, p.y];
             })
@@ -98,7 +98,7 @@ factory.GeoJSON.reproject = function (geojson, crs) {
 
         } else {
             let ll = factory.latLng(arr[1], arr[0]);
-            let p = _crs.projection.project(ll);
+            let p = crs.projection.project(ll);
             self[i] = [p.x, p.y];
         }
 
