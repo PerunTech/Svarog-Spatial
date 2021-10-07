@@ -77,7 +77,7 @@ prod_install:
     - rm -rf node_modules
     - npm install
     - rm -rf backend/www/*.js
-    - npm run build-dev
+    - npm run build
     - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
     - git remote set-url origin "https://gitlab-ci-token:${K8S_SECRET_GITLABCI_TOKEN}@${url_host}"
     - git remote -v
