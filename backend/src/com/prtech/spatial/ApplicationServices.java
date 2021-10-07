@@ -403,6 +403,7 @@ public class ApplicationServices {
 			for (Polygon poly : (Collection<Polygon>) polygonizer.getPolygons()) {
 				if (originalDbo != null) {
 					DbDataObject dbo = new DbDataObject(originalDbo.getObjectType());
+					dbo.setParentId(originalDbo.getParentId());
 					dbo.setValuesMap(originalDbo.getValuesMap());
 					poly.setUserData(dbo);
 				}
