@@ -395,10 +395,17 @@ public class ApplicationServices {
 			Geometry[] geometries = new Geometry[] { originalGeom.getBoundary(), line };
 			GeometryCollection col = SvUtil.sdiFactory.createGeometryCollection(geometries);
 			Geometry union = UnaryUnionOp.union(col);
+			DbDataObject originalDbo = null;
+			if (originalGeom.getUserData() != null && originalGeom.getUserData() instanceof DbDataObject)
+				originalDbo = (DbDataObject) originalGeom.getUserData();
 			Polygonizer polygonizer = new Polygonizer();
 			polygonizer.add(union);
 			for (Polygon poly : (Collection<Polygon>) polygonizer.getPolygons()) {
-				poly.setUserData(originalGeom.getUserData());
+				if (originalDbo != null) {
+					DbDataObject dbo = new DbDataObject(originalDbo.getObjectType());
+					dbo.setValuesMap(originalDbo.getValuesMap());
+					poly.setUserData(dbo);
+				}
 				result.add(poly);
 			}
 
