@@ -66,8 +66,8 @@ factory.GeoJSON.include({
 */
 factory.GeoJSON.fromLayer = function (layer, crs) {
     const geojson = layer.toGeoJSON();
-    _crs = crs || layer._map.getCRS();
-    return factory.GeoJSON.reproject(geojson, _crs);
+    let lcrs = crs || layer._map.getCRS();
+    return factory.GeoJSON.reproject(geojson, lcrs);
 }
 
 /**
