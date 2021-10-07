@@ -349,15 +349,15 @@ public class ApplicationServices {
 			SvGeometry svg) throws SvException {
 		// get the previous state of autocommit
 		boolean oldAutoCommit = svg.getAutoCommit();
+		// set autocommit to false to ensure all deletes and saves are in single
+		// transaction
+		svg.setAutoCommit(false);
 		try (SvWriter svw = new SvWriter(svg)) {
-			// set autocommit to false to ensure all deletes and saves are in single
-			// transaction
-			svg.setAutoCommit(false);
 			DbDataObject dbo = null;
 			// delete the others
 			for (Geometry g : deletedGeometries) {
 				dbo = (DbDataObject) g.getUserData();
-				svw.deleteObject(dbo);
+				svw.deleteObject(dbo, false);
 			}
 			for (Geometry g : newGeometries) {
 				dbo = (DbDataObject) g.getUserData();
