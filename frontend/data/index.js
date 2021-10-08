@@ -11,4 +11,3 @@ export { geobuf } from './geobuf/Geobuf';
 
 /* raster */
 export { layerControl } from './raster/LayerControl';
-export { layerList } from './raster/LayerList';
