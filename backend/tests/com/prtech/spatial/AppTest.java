@@ -74,7 +74,7 @@ public class AppTest {
 		}
 	}
 
-	@Test
+	
 	public void testExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");
 		CRSFactory crsFactory = new CRSFactory();
@@ -93,7 +93,7 @@ public class AppTest {
 		System.out.println(p);
 	}
 
-	@Test
+	
 	public void testNoExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
 		CRSFactory crsFactory = new CRSFactory();
