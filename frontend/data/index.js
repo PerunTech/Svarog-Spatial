@@ -9,5 +9,5 @@ import './geojson/GeoJSON';
 export { protobuf, Pbf } from './protobuf/Protobuf';
 export { geobuf } from './geobuf/Geobuf';
 
+/* raster */
 export { layerControl } from './raster/LayerControl';
-export { layerList, raster } from './raster/Raster';
