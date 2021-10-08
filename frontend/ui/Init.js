@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { store, Provider, MapContainer, control, Map } from '../core';
+import { store, Provider, MapContainer, control, Map, factory } from '../core';
 import { layerList } from '../data';
 import { NavigationControl, scale } from '../ui';
 
@@ -26,13 +26,17 @@ const _appBuilder = {
     },
 
     addRasterLayers (base = {}, overlay = {}, opt = {}) {
-        // Add object has own property check.
+        // Merge configuration
+        factory.setOptions(layerList, opt);
+
+        // Add base layers
         for (let i in base) {
 			for (let m in base[i]) {
 				layerList.addBaseLayer(base[i][m], m, i);
 			}
 		}
-		for (let o in overlay) {
+        // Add overlays
+        for (let o in overlay) {
 			for (let n in overlay[o]) {
 				layerList.addOverlay(overlay[o][n], n, o, true);
 			}
