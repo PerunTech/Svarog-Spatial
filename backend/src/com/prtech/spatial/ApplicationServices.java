@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -345,9 +346,11 @@ public class ApplicationServices {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			Set<Geometry> geomArr = new HashSet<>();
 			//result.add(svg.mergeGeometries(p, layerTypeId, false, false, true));
-			result.add(svg.mergeGeometries(p, layerTypeId, false, false, SC.PARENT_ID, parentId, true));
+			result.add(mergeGeometries(p, layerTypeId, false, false, SC.PARENT_ID, parentId, true, svg));
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
-			errMsg = ((SvException) e).getJsonMessage();
+			errMsg = e.getMessage();
 		}
 		if (errMsg.isEmpty()) {
 			StreamingOutput pbfStream = new StreamingOutput() {
@@ -364,6 +367,98 @@ public class ApplicationServices {
 
 	}
 
+	Set<Geometry> getGeometryByPoint(Point p, Long layerTypeId, boolean allowMultiGeometries, SvCharId filterFieldName,
+			Object filterValue, SvGeometry svg) throws SvException {
+		Set<Geometry> intersected = svg.getRelatedGeometries(p, layerTypeId, SDIRelation.INTERSECTS, filterFieldName,
+				filterValue, false);
+		Iterator<Geometry> iterator = intersected.iterator();
+		if (intersected.size() > 1 && !allowMultiGeometries)
+			throw (new SvException(Sv.Exceptions.SDI_MULTIPLE_GEOMS_FOUND, svCONST.systemUser, null, p));
+
+		if (!iterator.hasNext())
+			throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_EMPTY, svCONST.systemUser, null, p));
+
+		return intersected;
+	}
+	
+	/**
+	 * Method to select a set of geometries from the database by seleting a point on
+	 * the map.
+	 * 
+	 * @param p                    The point which was selected on the map
+	 * @param layerTypeId          The layer ID from the geometries shall be
+	 *                             selected
+	 * @param allowMultiGeometries If the flag is true, the method will return more
+	 *                             than one geometry. If the flag is false any
+	 *                             overlap will raise exception
+	 * @param filterFieldName      The field name of the associated DbDataObject of
+	 *                             the layer geometry which should be filtered
+	 * @param filterValue          The which should be matched as equal
+	 * @return
+	 * @throws SvException
+	 */
+	public Geometry mergeGeometries(List<Point> points, Long layerTypeId, boolean allowMultiGeometries, boolean preview,
+			SvCharId filterFieldName, Object filterValue, boolean autoCommit, SvGeometry svg) throws SvException {
+
+		ArrayList<Object> objectsToDelete = new ArrayList<>();
+		if (points.size() < 2)
+			throw (new SvException(Sv.Exceptions.SDI_MERGE_REQUIRES_2PLUS, svCONST.systemUser, null, points));
+
+		Geometry result = getGeometryByPoint(points.get(0), layerTypeId, allowMultiGeometries, filterFieldName, filterValue, svg ).iterator().next();
+
+		for (int i = 1; i < points.size(); i++) {
+			Iterator<Geometry> iterator = getGeometryByPoint(points.get(i), layerTypeId, allowMultiGeometries,
+					filterFieldName, filterValue, svg ).iterator();
+
+			while (iterator.hasNext()) {
+				Geometry g = iterator.next();
+				if (result.disjoint(g))
+					throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_DISJOINT, svCONST.systemUser, null, g));
+
+				if (!objectsToDelete.contains(g.getUserData())) {
+					result = result.union(g);
+					objectsToDelete.add(g.getUserData());
+				}
+			}
+		}
+
+		if (!preview) {
+			mergeGeometriesDbUpdate(result, objectsToDelete, autoCommit, svg);
+		}
+
+		return result;
+	}
+
+	private void mergeGeometriesDbUpdate(Geometry first, ArrayList<Object> deletedGeometries, boolean autoCommit, SvGeometry svg)
+			throws SvException {
+		// get the previous state of autocommit
+		boolean oldAutoCommit = svg.getAutoCommit();
+		try (SvWriter svw = new SvWriter(svg)) {
+			// set autocommit to false to ensure all deletes and saves are in single
+			// transaction
+			svg.setAutoCommit(false);
+			DbDataObject dbo = null;
+			// delete the others
+			for (Object dbd : deletedGeometries) {
+				dbo = (DbDataObject) dbd;
+				svw.deleteObject(dbo, false);
+			}
+			// now save the first updated, geometry
+			dbo = (DbDataObject) first.getUserData();
+			SvGeometry.setGeometry(dbo, first);
+			DbDataArray dba = new DbDataArray();
+			dba.addDataItem(dbo);
+			svg.saveGeometry(dba);
+
+			if (autoCommit)
+				svg.dbCommit();
+		} finally {
+			svg.dbSetAutoCommit(oldAutoCommit);
+		}
+
+	}
+	
+	
 	@POST
 	@Path("/geometry/hole/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
