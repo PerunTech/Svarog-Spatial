@@ -53,7 +53,13 @@ const _appBuilder = {
 _appBuilder.render.displayName = 'spatial-root';
 
 /**
+ * The spatial init function.
  * 
+ * Provide a valid token to initialize.
+ * Returns the _appBuilder object, callers can then call individual methods
+ * on this object and shape the web map instance.
+ * 
+ * The order of the method calls does not matter, as long as _appBuilder.render is called last.
  */
 export const init = token =>
     (store.dispatch({token: token}), _appBuilder);
