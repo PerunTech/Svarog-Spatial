@@ -406,6 +406,7 @@ public class ApplicationServices {
 
 		Geometry result = getGeometryByPoint(points.get(0), layerTypeId, allowMultiGeometries, filterFieldName, filterValue, svg ).iterator().next();
 
+		DbDataObject resultDbo = (DbDataObject)result.getUserData();
 		for (int i = 1; i < points.size(); i++) {
 			Iterator<Geometry> iterator = getGeometryByPoint(points.get(i), layerTypeId, allowMultiGeometries,
 					filterFieldName, filterValue, svg ).iterator();
@@ -421,7 +422,7 @@ public class ApplicationServices {
 				}
 			}
 		}
-
+		result.setUserData(resultDbo);
 		if (!preview) {
 			mergeGeometriesDbUpdate(result, objectsToDelete, autoCommit, svg);
 		}
