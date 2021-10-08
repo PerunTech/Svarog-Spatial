@@ -39,6 +39,7 @@ import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -53,14 +54,8 @@ import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 @Path("/spatial")
 public class ApplicationServices {
 
-	static int precisionScale = 2;
+	static int precisionScale = Util.PRECISION_SCALE;
 	private static final Logger log = SvConf.getLogger(ApplicationServices.class);
-
-	static {
-		Long d = new Long(Math.round(SvConf.getSDIPrecision() / 10));
-		String s = d.toString();
-		precisionScale = s.length();
-	}
 
 	/**
 	 * 
@@ -310,13 +305,32 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/split/confirm/{token}/{objectName}")
+	@Path("/geometry/split/confirm/{token}/{objectName}/{parentId}")
 	@Produces("application/pbf")
-	public StreamingOutput splitGeometryConfirm(@PathParam("token") final String token,
-			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
-
-		return splitGeometry(token, objectName, "", formVals, false);
+	public Response splitGeometryConfirm(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			Geometry geom = getInputGeometry(formVals, null);
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			Set<Geometry> split = splitGeometryImpl((LineString) geom, layerTypeId, false, svg, false, true,
+					SC.PARENT_ID, parentId);
+			result.addAll(split);
+		} catch (Exception e) {
+			errMsg = ((SvException) e).getJsonMessage();
+		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).build();
 	}
 
 	private StreamingOutput splitGeometry(final String token, final String objectName, final String lineStringWKT,
@@ -328,7 +342,7 @@ public class ApplicationServices {
 					Geometry geom = getInputGeometry(formVals, lineStringWKT);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = splitGeometryImpl((LineString) geom, layerTypeId, false, svg, preview,
-							true);
+							true, null, null);
 					enc.writeSvGeometry(geomArr);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
@@ -374,7 +388,8 @@ public class ApplicationServices {
 	}
 
 	public Set<Geometry> splitGeometryImpl(LineString line, Long layerTypeId, boolean allowMultiGeometries,
-			SvGeometry svg, boolean preview, boolean autoCommit) throws SvException {
+			SvGeometry svg, boolean preview, boolean autoCommit, SvCharId filterFieldName, Object filterValue)
+			throws SvException {
 		if (!line.isSimple())
 			throw (new SvException("system.error.sdi.line_intersects_self", svCONST.systemUser, null, line));
 

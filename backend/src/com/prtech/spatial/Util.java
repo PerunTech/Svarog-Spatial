@@ -43,7 +43,13 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
 public class Util {
-
+	public static int PRECISION_SCALE = 2;
+	static {
+		int i = (int) (SvConf.getSDIPrecision() / 10);
+		String s = Integer.toString(i);
+		PRECISION_SCALE = s.length();
+	}
+	
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
 	// dms regex pattern to match string format
 	static final Pattern DMS_PATTERN = Pattern
