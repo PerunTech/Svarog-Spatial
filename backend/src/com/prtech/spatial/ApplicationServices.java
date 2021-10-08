@@ -305,10 +305,10 @@ public class ApplicationServices {
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Geometry geom = getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			Set<Geometry> split = svg.splitGeometry((LineString) geom, layerTypeId, false, false, true);
-			// Set<Geometry> split = svg.splitGeometryImpl((LineString) geom, layerTypeId,
-			// false, false,
-			// SC.PARENT_ID, parentId, true);
+			//Set<Geometry> split = svg.splitGeometry((LineString) geom, layerTypeId, false, false, true);
+			 Set<Geometry> split = svg.splitGeometryImpl((LineString) geom, layerTypeId,
+			 false, false,
+			 SC.PARENT_ID, parentId, true);
 
 			result.addAll(split);
 		} catch (SvException e) {
@@ -344,8 +344,8 @@ public class ApplicationServices {
 				p.add(SvUtil.sdiFactory.createPoint(c));
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			Set<Geometry> geomArr = new HashSet<>();
-			result.add(svg.mergeGeometries(p, layerTypeId, false, false, true));
-			//result.add(svg.mergeGeometries(p, layerTypeId, false, false, SC.PARENT_ID, parentId, true));
+			//result.add(svg.mergeGeometries(p, layerTypeId, false, false, true));
+			result.add(svg.mergeGeometries(p, layerTypeId, false, false, SC.PARENT_ID, parentId, true));
 		} catch (Exception e) {
 			errMsg = ((SvException) e).getJsonMessage();
 		}
