@@ -264,6 +264,8 @@ public class ApplicationServices {
 		};
 	}
 
+
+	
 	@GET
 	@Path("/geometry/layer/cutoff/{token}/{objectName1}/{objectName2}/{x}/{y}")
 	@Produces("application/pbf")
