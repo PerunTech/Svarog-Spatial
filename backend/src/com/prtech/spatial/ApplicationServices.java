@@ -110,7 +110,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = getInputGeometry(formVals, null);
+					Geometry geom = Util.getInputGeometry(formVals, null);
 					SvGrid svgrid = new SvGrid(objectName);
 					Set<Geometry> updates = svgrid.getRelations(geom, SDIRelation.OVERLAPS, false);
 					DbDataArray modifiedGeoms = new DbDataArray();
@@ -210,28 +210,6 @@ public class ApplicationServices {
 		};
 	}
 
-	Geometry getInputGeometry(MultivaluedMap<String, String> formVals, final String geometryWkt) {
-		Geometry geom = null;
-		if (geometryWkt != null && !geometryWkt.isEmpty()) {
-			try {
-				WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
-				geom = wkr.read(geometryWkt);
-			} catch (Exception e) {
-				log.warn("Invalid WKT string", e);
-			}
-		}
-		if (geom == null) {
-			JsonObject json = null;
-			json = Util.dataToJson(formVals);
-
-			JsonElement je = json.get("GEOM");
-			if (je == null)
-				je = json.get("geometry");
-
-			geom = Util.jsonToGeometry(je);
-		}
-		return geom;
-	}
 
 	@POST
 	@Path("/geometry/get/wkt/{token}/{objectName}/{geometryWkt}")
@@ -244,7 +222,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = getInputGeometry(formVals, geometryWkt);
+					Geometry geom = Util.getInputGeometry(formVals, geometryWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = svg.getRelatedGeometries(geom, layerTypeId, SDIRelation.INTERSECTS, null,
 							null, false);
@@ -264,8 +242,6 @@ public class ApplicationServices {
 		};
 	}
 
-
-	
 	@GET
 	@Path("/geometry/layer/cutoff/{token}/{objectName1}/{objectName2}/{x}/{y}")
 	@Produces("application/pbf")
@@ -298,21 +274,19 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/split/confirm/{token}/{objectName}/{parentId}")
+	@Path("/geometry/split/preview/{token}/{objectName}/{parentId}")
 	@Produces("application/pbf")
-	public Response splitGeometryConfirm(@PathParam("token") final String token,
+	public Response splitGeometryPreview(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Geometry geom = getInputGeometry(formVals, null);
+			Geometry geom = Util.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			//Set<Geometry> split = svg.splitGeometry((LineString) geom, layerTypeId, false, false, true);
-			 Set<Geometry> split = svg.splitGeometryImpl((LineString) geom, layerTypeId,
-			 false, false,
-			 SC.PARENT_ID, parentId, true);
-
+			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
+					parentId, false);
 			result.addAll(split);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
@@ -328,27 +302,25 @@ public class ApplicationServices {
 			};
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
-			return Response.status(500).entity(errMsg).build();
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@POST
-	@Path("/geometry/merge/confirm/{token}/{objectName}/{parentId}")
+	@Path("/geometry/split/confirm/{token}/{objectName}/{parentId}")
 	@Produces("application/pbf")
-	public Response mergeGeometryConfirm(@PathParam("token") final String token,
+	public Response splitGeometryConfirm(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			LineString lineString = (LineString) getInputGeometry(formVals, null);
-			ArrayList<Point> p = new ArrayList<>();
-			for (Coordinate c : lineString.getCoordinates())
-				p.add(SvUtil.sdiFactory.createPoint(c));
+			Geometry geom = Util.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			Set<Geometry> geomArr = new HashSet<>();
-			//result.add(svg.mergeGeometries(p, layerTypeId, false, false, true));
-			result.add(mergeGeometries(p, layerTypeId, false, false, SC.PARENT_ID, parentId, true, svg));
+			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
+					parentId, false);
+			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, true);
+			result.addAll(split);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
@@ -363,105 +335,90 @@ public class ApplicationServices {
 			};
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
-			return Response.status(500).entity(errMsg).build();
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+	}
+
+	@POST
+	@Path("/geometry/merge/confirm/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response mergeGeometryConfirm(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+			ArrayList<Point> p = new ArrayList<>();
+			for (Coordinate c : lineString.getCoordinates())
+				p.add(SvUtil.sdiFactory.createPoint(c));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+
+			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+			Geometry split = svg.mergeGeometries(p, layerTypeId, toBeDeleted, false, SC.PARENT_ID, parentId, false);
+			result.add(split);
+			svg.splitMergeGeometryDbUpdate(result, toBeDeleted, true);
+
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
 
-	Set<Geometry> getGeometryByPoint(Point p, Long layerTypeId, boolean allowMultiGeometries, SvCharId filterFieldName,
-			Object filterValue, SvGeometry svg) throws SvException {
-		Set<Geometry> intersected = svg.getRelatedGeometries(p, layerTypeId, SDIRelation.INTERSECTS, filterFieldName,
-				filterValue, false);
-		Iterator<Geometry> iterator = intersected.iterator();
-		if (intersected.size() > 1 && !allowMultiGeometries)
-			throw (new SvException(Sv.Exceptions.SDI_MULTIPLE_GEOMS_FOUND, svCONST.systemUser, null, p));
+	@POST
+	@Path("/geometry/merge/preview/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response mergeGeometryPreview(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		if (!iterator.hasNext())
-			throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_EMPTY, svCONST.systemUser, null, p));
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+			ArrayList<Point> p = new ArrayList<>();
+			for (Coordinate c : lineString.getCoordinates())
+				p.add(SvUtil.sdiFactory.createPoint(c));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 
-		return intersected;
-	}
-	
-	/**
-	 * Method to select a set of geometries from the database by seleting a point on
-	 * the map.
-	 * 
-	 * @param p                    The point which was selected on the map
-	 * @param layerTypeId          The layer ID from the geometries shall be
-	 *                             selected
-	 * @param allowMultiGeometries If the flag is true, the method will return more
-	 *                             than one geometry. If the flag is false any
-	 *                             overlap will raise exception
-	 * @param filterFieldName      The field name of the associated DbDataObject of
-	 *                             the layer geometry which should be filtered
-	 * @param filterValue          The which should be matched as equal
-	 * @return
-	 * @throws SvException
-	 */
-	public Geometry mergeGeometries(List<Point> points, Long layerTypeId, boolean allowMultiGeometries, boolean preview,
-			SvCharId filterFieldName, Object filterValue, boolean autoCommit, SvGeometry svg) throws SvException {
+			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+			Geometry split = svg.mergeGeometries(p, layerTypeId, toBeDeleted, false, SC.PARENT_ID, parentId, false);
+			result.add(split);
 
-		ArrayList<Object> objectsToDelete = new ArrayList<>();
-		if (points.size() < 2)
-			throw (new SvException(Sv.Exceptions.SDI_MERGE_REQUIRES_2PLUS, svCONST.systemUser, null, points));
-
-		Geometry result = getGeometryByPoint(points.get(0), layerTypeId, allowMultiGeometries, filterFieldName, filterValue, svg ).iterator().next();
-
-		DbDataObject resultDbo = (DbDataObject)result.getUserData();
-		for (int i = 1; i < points.size(); i++) {
-			Iterator<Geometry> iterator = getGeometryByPoint(points.get(i), layerTypeId, allowMultiGeometries,
-					filterFieldName, filterValue, svg ).iterator();
-
-			while (iterator.hasNext()) {
-				Geometry g = iterator.next();
-				if (result.disjoint(g))
-					throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_DISJOINT, svCONST.systemUser, null, g));
-
-				if (!objectsToDelete.contains(g.getUserData())) {
-					result = result.union(g);
-					objectsToDelete.add(g.getUserData());
-				}
-			}
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
 		}
-		result.setUserData(resultDbo);
-		if (!preview) {
-			mergeGeometriesDbUpdate(result, objectsToDelete, autoCommit, svg);
-		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
-		return result;
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
 	}
 
-	private void mergeGeometriesDbUpdate(Geometry first, ArrayList<Object> deletedGeometries, boolean autoCommit, SvGeometry svg)
-			throws SvException {
-		// get the previous state of autocommit
-		boolean oldAutoCommit = svg.getAutoCommit();
-		try (SvWriter svw = new SvWriter(svg)) {
-			// set autocommit to false to ensure all deletes and saves are in single
-			// transaction
-			svg.setAutoCommit(false);
-			DbDataObject dbo = null;
-			// delete the others
-			for (Object dbd : deletedGeometries) {
-				dbo = (DbDataObject) dbd;
-				svw.deleteObject(dbo, false);
-			}
-			// now save the first updated, geometry
-			dbo = (DbDataObject) first.getUserData();
-			SvGeometry.setGeometry(dbo, first);
-			DbDataArray dba = new DbDataArray();
-			dba.addDataItem(dbo);
-			svg.saveGeometry(dba);
-
-			if (autoCommit)
-				svg.dbCommit();
-		} finally {
-			svg.dbSetAutoCommit(oldAutoCommit);
-		}
-
-	}
-	
-	
 	@POST
 	@Path("/geometry/hole/{token}/{objectName}/{polygonWkt}")
 	@Produces("application/pbf")
@@ -486,7 +443,7 @@ public class ApplicationServices {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			MultiPolygon hole = (MultiPolygon) getInputGeometry(formVals, polygonWkt);
+			MultiPolygon hole = (MultiPolygon) Util.getInputGeometry(formVals, polygonWkt);
 			result.add(svg.holeInPolygon(hole, layerTypeId, remove));
 		} catch (Exception e) {
 			errMsg = ((SvException) e).getJsonMessage();
@@ -500,7 +457,7 @@ public class ApplicationServices {
 			};
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
-			return Response.status(500).entity(errMsg).build();
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
 	}
 
@@ -512,7 +469,7 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		JsonObject validationResult = new JsonObject();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Polygon geom = (Polygon) getInputGeometry(formVals, polygonWkt);
+			Polygon geom = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
 			try {
 				svg.verifyBounds(geom);
 				validationResult.addProperty("topo.check.pass", true);
@@ -570,7 +527,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = (Polygon) getInputGeometry(formVals, polygonWkt);
+					Geometry geom = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 
 					Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);

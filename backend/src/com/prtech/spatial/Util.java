@@ -39,6 +39,7 @@ import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
@@ -49,7 +50,7 @@ public class Util {
 		String s = Integer.toString(i);
 		PRECISION_SCALE = s.length();
 	}
-	
+
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
 	// dms regex pattern to match string format
 	static final Pattern DMS_PATTERN = Pattern
@@ -300,4 +301,26 @@ public class Util {
 		}
 	}
 
+	public static Geometry getInputGeometry(MultivaluedMap<String, String> formVals, final String geometryWkt) {
+		Geometry geom = null;
+		if (geometryWkt != null && !geometryWkt.isEmpty()) {
+			try {
+				WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
+				geom = wkr.read(geometryWkt);
+			} catch (Exception e) {
+				log.warn("Invalid WKT string", e);
+			}
+		}
+		if (geom == null) {
+			JsonObject json = null;
+			json = Util.dataToJson(formVals);
+
+			JsonElement je = json.get("GEOM");
+			if (je == null)
+				je = json.get("geometry");
+
+			geom = Util.jsonToGeometry(je);
+		}
+		return geom;
+	}
 }
