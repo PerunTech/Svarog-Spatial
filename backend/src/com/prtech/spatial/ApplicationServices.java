@@ -257,12 +257,13 @@ public class ApplicationServices {
 					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 					Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
 					Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
-					Set<Geometry> geomSet = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false);
+					Set<Geometry> set = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false);
+					List<Geometry> list = new ArrayList<Geometry>(set.size());
 					// fix spikes or bad segments
-					for (Geometry g : geomSet)
-						svg.fixPolygonSpikes(g, 1.0);
+					for (Geometry g : set)
+						list.add(svg.fixPolygonSpikes(g, 1.0));
 
-					enc.writeSvGeometry(geomSet);
+					enc.writeSvGeometry(list);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
 					if (e instanceof SvException)
