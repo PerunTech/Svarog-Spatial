@@ -34,6 +34,8 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvGrid;
 import com.prtech.svarog.SvParameter;
+import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
@@ -210,7 +212,6 @@ public class ApplicationServices {
 		};
 	}
 
-
 	@POST
 	@Path("/geometry/get/wkt/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
@@ -256,8 +257,12 @@ public class ApplicationServices {
 					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 					Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
 					Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
-					Set<Geometry> geomArr = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false);
-					enc.writeSvGeometry(geomArr);
+					Set<Geometry> geomSet = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false);
+					// fix spikes or bad segments
+					for (Geometry g : geomSet)
+						svg.fixPolygonSpikes(g, 1.0);
+
+					enc.writeSvGeometry(geomSet);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
 					if (e instanceof SvException)
@@ -336,6 +341,49 @@ public class ApplicationServices {
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+	}
+
+	@POST
+	@Path("/geometry/delete/confirm/{token}/{objectId}/{objectType}/")
+	@Produces("application/pbf")
+	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("objectType") final Long objectType, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+			DbDataObject dbo = svr.getObjectById(objectId, objectType, null);
+			if (dbo == null)
+				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
+			else {
+				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
+				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
+				svw.deleteObject(dbo);
+				svTile.setIsTileDirty(true);
+			}
+
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
 	}
 
 	@POST
