@@ -1,5 +1,6 @@
 stages:
   - test
+  - dev_install
   - install
   - sonar
 
@@ -66,6 +67,27 @@ prod_install:
     - master
     - staging
     - dev
+
+1_perun-core-dev-generate-js:
+  stage: dev_install
+  script:  
+    - pwd
+    - cd $CI_PROJECT_DIR/
+    - git reset --hard HEAD
+    - rm -rf node_modules
+    - npm install
+    - rm -rf backend/www/*.js
+    - npm run build
+    - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
+    - git remote set-url origin "https://gitlab-ci-token:${K8S_SECRET_GITLABCI_TOKEN}@${url_host}"
+    - git remote -v
+    - git add backend/www/*.js
+    - git commit -m "Auto commit of perun-core library for npm" || exit 0
+    - git push origin HEAD:$CI_COMMIT_REF_NAME    
+  only:
+    - dev
+  when: manual
+
 
 sonarqube_backend:
   stage: sonar

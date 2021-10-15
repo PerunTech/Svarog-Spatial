@@ -2,8 +2,8 @@ import { factory, Map, util } from '../../core';
 
 /* private refs to source methods, to be overriden below. */
 const _initialize = factory.GeoJSON.prototype.initialize,
-      _addData = factory.GeoJSON.prototype.addData,
-      _crs = Map.getCRS();
+    _addData = factory.GeoJSON.prototype.addData,
+    _crs = Map.getCRS();
 
 
 /** @extends section */
@@ -14,7 +14,7 @@ factory.GeoJSON.include({
      * @param {*} geojson 
      * @param {*} options 
      */
-    initialize: function(geojson, options) {
+    initialize: function (geojson, options) {
         this._callLevel = 0;
         _initialize.call(this, geojson, options);
     },
@@ -24,10 +24,10 @@ factory.GeoJSON.include({
      * 
      * @param {*} geojson 
      */
-    addData: function(geojson) {
-        if (geojson)  {
+    addData: function (geojson) {
+        if (geojson) {
             if (_crs !== undefined) {
-                this.options.coordsToLatLng = function(coords) {
+                this.options.coordsToLatLng = function (coords) {
                     var point = factory.point(coords[0], coords[1]);
                     return _crs.projection.unproject(point);
                 };
@@ -65,20 +65,44 @@ factory.GeoJSON.include({
 * @returns GeoJSON;
 */
 factory.GeoJSON.fromLayer = function (layer, crs) {
-   const geojson = layer.toGeoJSON(),
-         coords = geojson.geometry.coordinates,
-         _crs = crs || layer._map.getCRS();
+    const geojson = layer.toGeoJSON();
+    let lcrs = crs || layer._map.getCRS();
+    return factory.GeoJSON.reproject(geojson, lcrs);
+}
 
-   coords.forEach((arr, i, self) => {
-        util.isArray(arr) && arr.forEach((val, j, self) => {
-            let ll = factory.latLng(val[1], val[0]);
-            let p = _crs.projection.project(ll);
-        
-            self[j] = [ p.x, p.y ];
-        })
+/**
+* Reproject geoJson
+* 
+* &nbsp;
+* 
+* @function fromLayer(layer: Layer, crs?: CRS): GeoJSON
+* 
+* @param {GeoJSON} geojson - The layer to be serialized.
+* @param {CRS} crs - The coordinate reference system for coords transformation.
+* 
+* @returns GeoJSON;
+*/
+factory.GeoJSON.reproject = function (geojson, crs) {
+    const coords = geojson.geometry.coordinates,
+        type = geojson.geometry.type;
 
-        self[i] = arr;
-   });
+    coords.forEach((arr, i, self) => {
+        if (type != "LineString") {
+            util.isArray(arr) && arr.forEach((val, j, self) => {
+                let ll = factory.latLng(val[1], val[0]);
+                let p = crs.projection.project(ll);
 
-   return geojson;
+                self[j] = [p.x, p.y];
+            })
+            self[i] = arr;
+
+        } else {
+            let ll = factory.latLng(arr[1], arr[0]);
+            let p = crs.projection.project(ll);
+            self[i] = [p.x, p.y];
+        }
+
+    });
+
+    return geojson;
 }
