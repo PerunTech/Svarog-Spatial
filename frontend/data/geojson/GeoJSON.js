@@ -75,7 +75,7 @@ factory.GeoJSON.fromLayer = function (layer, crs) {
 * 
 * &nbsp;
 * 
-* @function fromLayer(layer: Layer, crs?: CRS): GeoJSON
+* @function reproject(layer: Layer, crs?: CRS): GeoJSON
 * 
 * @param {GeoJSON} geojson - The layer to be serialized.
 * @param {CRS} crs - The coordinate reference system for coords transformation.
@@ -86,23 +86,39 @@ factory.GeoJSON.reproject = function (geojson, crs) {
     const coords = geojson.geometry.coordinates,
         type = geojson.geometry.type;
 
-    coords.forEach((arr, i, self) => {
-        if (type != "LineString") {
-            util.isArray(arr) && arr.forEach((val, j, self) => {
-                let ll = factory.latLng(val[1], val[0]);
-                let p = crs.projection.project(ll);
-
-                self[j] = [p.x, p.y];
-            })
-            self[i] = arr;
-
-        } else {
-            let ll = factory.latLng(arr[1], arr[0]);
-            let p = crs.projection.project(ll);
-            self[i] = [p.x, p.y];
-        }
-
-    });
-
+    if (type == "MultiPolygon")
+        reprojectMultiPolygon(coords, crs);
+    else
+        if (type == "Polygon")
+            reprojectPolygon(coords, crs);
+        else
+            if (type == "LineString")
+                reprojectLineString(coords, crs);
     return geojson;
+
+}
+
+
+factory.GeoJSON.reprojectPoint = function (coords, crs) {
+    let ll = factory.latLng(coords[1], coords[0]);
+    let p = crs.projection.project(ll);
+    return [p.x, p.y];
+}
+
+factory.GeoJSON.reprojectLineString = function (coords, crs) {
+    coords.forEach((arr, i, self) => {
+        let result = reprojectPoint(arr, crs);
+        self[i] = result;
+    });
+}
+
+factory.GeoJSON.reprojectPolygon = function (coords, crs) {
+    coords.forEach((arr, i, self) => {
+        reprojectLineString(arr, crs);
+    });
+}
+factory.GeoJSON.reprojectMultiPolygon = function (coords, crs) {
+    coords.forEach((arr, i, self) => {
+        reprojectPolygon(arr, crs);
+    });
 }
