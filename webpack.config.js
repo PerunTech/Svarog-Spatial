@@ -2,6 +2,7 @@ let path = require('path');
 
 module.exports = (mode, {env}) => {
     return {
+        devtool: 'source-map',
         mode: mode,
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
