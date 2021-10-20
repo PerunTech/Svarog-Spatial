@@ -87,13 +87,13 @@ factory.GeoJSON.reproject = function (geojson, crs) {
         type = geojson.geometry.type;
 
     if (type == "MultiPolygon")
-        reprojectMultiPolygon(coords, crs);
+        factory.GeoJSON.reprojectMultiPolygon(coords, crs);
     else
         if (type == "Polygon")
-            reprojectPolygon(coords, crs);
+            factory.GeoJSON.reprojectPolygon(coords, crs);
         else
             if (type == "LineString")
-                reprojectLineString(coords, crs);
+                factory.GeoJSON.reprojectLineString(coords, crs);
     return geojson;
 
 }
