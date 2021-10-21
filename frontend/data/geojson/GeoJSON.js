@@ -107,18 +107,18 @@ factory.GeoJSON.reprojectPoint = function (coords, crs) {
 
 factory.GeoJSON.reprojectLineString = function (coords, crs) {
     coords.forEach((arr, i, self) => {
-        let result = reprojectPoint(arr, crs);
+        let result = factory.GeoJSON.reprojectPoint(arr, crs);
         self[i] = result;
     });
 }
 
 factory.GeoJSON.reprojectPolygon = function (coords, crs) {
     coords.forEach((arr, i, self) => {
-        reprojectLineString(arr, crs);
+        factory.GeoJSON.reprojectLineString(arr, crs);
     });
 }
 factory.GeoJSON.reprojectMultiPolygon = function (coords, crs) {
     coords.forEach((arr, i, self) => {
-        reprojectPolygon(arr, crs);
+        factory.GeoJSON.reprojectPolygon(arr, crs);
     });
 }
