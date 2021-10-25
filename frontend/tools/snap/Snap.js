@@ -3,9 +3,9 @@ import { util, factory, Map } from '../../core';
 export const snap = {
     _initSnappableMarkers() {
         this.options.snapDistance = this.options.snapDistance || 30;
-    
+
         this._assignEvents(this._markers);
-    
+
         this._layer.off('pm:dragstart', this._unsnap, this);
         this._layer.on('pm:dragstart', this._unsnap, this);
     },
@@ -17,12 +17,12 @@ export const snap = {
     _assignEvents(markerArr) {
         // loop through marker array and assign events to the markers
         markerArr.forEach(marker => {
-          // if the marker is another array (Multipolygon stuff), recursively do this again
+            // if the marker is another array (Multipolygon stuff), recursively do this again
             if (util.isArray(marker)) {
                 this._assignEvents(marker);
                 return;
             }
-    
+
             // add handleSnapping event on drag
             marker.off('drag', this._handleSnapping, this);
             marker.on('drag', this._handleSnapping, this);
@@ -36,22 +36,22 @@ export const snap = {
         // delete the last snap
         delete this._snapLatLng;
     },
-    
+
     _cleanupSnapping() {
         // delete it, we need to refresh this with each start of a drag because
         // meanwhile, new layers could've been added to the map
         delete this._snapList;
-    
+
         // remove map event
         Map.off('pm:remove', this._handleSnapLayerRemoval, this);
-    
+
         if (this.debugIndicatorLines) {
             this.debugIndicatorLines.forEach(line => {
                 line.remove();
             });
         }
     },
-    
+
     _handleSnapLayerRemoval({ layer }) {
         // find the layers index in snaplist
         const index = this._snapList.findIndex(
@@ -65,48 +65,48 @@ export const snap = {
         function throttledList() {
             return util.throttle(this._createSnapList, 100, this);
         }
-    
+
         // if snapping is disabled via holding ALT during drag, stop right here
         if (e.originalEvent.altKey) {
             return false;
         }
-    
+
         // create a list of layers that the marker could snap to
         // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
         // after dragstart/movestart so it wouldn't fire for them
         if (this._snapList === undefined) {
             this._createSnapList();
-    
+
             // re-create the snaplist again when a layer is added during draw
             Map.off('layeradd', throttledList, this);
             Map.on('layeradd', throttledList, this);
         }
-    
+
         // if there are no layers to snap to, stop here
         if (this._snapList.length <= 0) {
             return false;
         }
-    
+
         const marker = e.target;
-    
+
         // get the closest layer, it's closest latlng, segment and the distance
         const closestLayer = this._calcClosestLayer(
             marker.getLatLng(),
             this._snapList
         );
-    
+
         const isMarker =
             closestLayer.layer instanceof factory.Marker ||
             closestLayer.layer instanceof factory.CircleMarker;
-    
+
         // find the final latlng that we want to snap to
         let snapLatLng = !isMarker
             ? this._checkPrioritiySnapping(closestLayer)
             : closestLayer.latlng;
-    
+
         // minimal distance before marker snaps (in pixels)
         const minDistance = this.options.snapDistance;
-    
+
         // event info for pm:snap and pm:unsnap
         const eventInfo = {
             marker,
@@ -116,38 +116,38 @@ export const snap = {
             layerInteractedWith: closestLayer.layer, // for lack of a better property name
             distance: closestLayer.distance,
         };
-    
+
         eventInfo.marker.fire('pm:snapdrag', eventInfo);
         this._layer.fire('pm:snapdrag', eventInfo);
-    
+
         if (closestLayer.distance < minDistance) {
             // snap the marker
             marker.setLatLng(snapLatLng);
-    
+
             marker._snapped = true;
-    
+
             const triggerSnap = () => {
                 this._snapLatLng = snapLatLng;
                 marker.fire('pm:snap', eventInfo);
                 this._layer.fire('pm:snap', eventInfo);
             };
-    
+
             // check if the snapping position differs from the last snap
             const a = this._snapLatLng || {};
             const b = snapLatLng || {};
-    
+
             if (a.lat !== b.lat || a.lng !== b.lng) {
                 triggerSnap();
             }
         } else if (this._snapLatLng) {
-          // no more snapping
-    
+            // no more snapping
+
             // if it was previously snapped...
             // ...unsnap
             this._unsnap(eventInfo);
-    
+
             marker._snapped = false;
-    
+
             // and fire unsnap event
             eventInfo.marker.fire('pm:unsnap', eventInfo);
             this._layer.fire('pm:unsnap', eventInfo);
@@ -158,10 +158,10 @@ export const snap = {
 
     _calcMiddleLatLng(map, latlng1, latlng2) {
         // calculate the middle coordinates between two markers
-    
+
         const p1 = map.project(latlng1);
         const p2 = map.project(latlng2);
-    
+
         return map.unproject(p1._add(p2)._divideBy(2));
     },
 
@@ -218,73 +218,76 @@ export const snap = {
         let layers = [];
         const debugIndicatorLines = [];
         const map = Map;
-    
+
         map.off('pm:remove', this._handleSnapLayerRemoval, this);
         map.on('pm:remove', this._handleSnapLayerRemoval, this);
-    
+
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
         map.eachLayer(layer => {
-            if ((layer instanceof factory.Polyline 
-                || layer instanceof factory.Marker 
-                || layer instanceof factory.CircleMarker) 
+            if ((layer instanceof factory.Polyline
+                || layer instanceof factory.Marker
+                || layer instanceof factory.CircleMarker)
                 && layer.options.snapIgnore !== true) {
-            
-                    layers.push(layer);
 
-                    // this is for debugging
-                    const debugLine = factory.polyline([], { color: 'red', pmIgnore: true });
-                    debugLine._pmTempLayer = true;
-                    debugIndicatorLines.push(debugLine);
-    
-                    // uncomment 👇 this line to show helper lines for debugging
-                    // debugLine.addTo(map);
+                layers.push(layer);
+
+                // this is for debugging
+                const debugLine = factory.polyline([], { color: 'red', pmIgnore: true });
+                debugLine._pmTempLayer = true;
+                debugIndicatorLines.push(debugLine);
+
+                // uncomment 👇 this line to show helper lines for debugging
+                // debugLine.addTo(map);
             }
         });
-    
+
         // ...except self
         layers = layers.filter(layer => this._layer !== layer);
-    
+
         // also remove everything that has no coordinates yet
         layers = layers.filter(
             layer => layer._latlng || (layer._latlngs && layer._latlngs.length > 0)
         );
-    
+
         // finally remove everything that's temporary stuff
         layers = layers.filter(layer => !layer._pmTempLayer);
-    
+
         // save snaplist from layers and the other snap layers added from other classes/scripts
         if (this._otherSnapLayers) {
             this._snapList = layers.concat(this._otherSnapLayers);
         } else {
             this._snapList = layers;
         }
-    
+
         this.debugIndicatorLines = debugIndicatorLines;
     },
 
     _calcClosestLayer(latlng, layers) {
+        const map = Map;
         // the closest polygon to our dragged marker latlng
         let closestLayer = {};
-    
+
         // loop through the layers
         layers.forEach((layer, index) => {
-            // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
-            const results = this._calcLayerDistances(latlng, layer);
-    
-            // show indicator lines, it's for debugging
-            this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
-    
-            // save the info if it doesn't exist or if the distance is smaller than the previous one
-            if (
-                closestLayer.distance === undefined ||
-                results.distance < closestLayer.distance
-            ) {
-                closestLayer = results;
-                closestLayer.layer = layer;
+            if (map.getBounds().intersects(layer.getBounds())) {
+                // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
+                const results = this._calcLayerDistances(latlng, layer);
+
+                // show indicator lines, it's for debugging
+                this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+
+                // save the info if it doesn't exist or if the distance is smaller than the previous one
+                if (
+                    closestLayer.distance === undefined ||
+                    results.distance < closestLayer.distance
+                ) {
+                    closestLayer = results;
+                    closestLayer.layer = layer;
+                }
             }
         });
-    
+
         // return the closest layer and it's data
         // if there is no closest layer, return undefined
         return closestLayer;
@@ -292,33 +295,33 @@ export const snap = {
 
     _calcLayerDistances(latlng, layer) {
         const map = Map;
-    
+
         // is this a marker?
         const isMarker = layer instanceof factory.Marker || layer instanceof factory.CircleMarker;
-    
+
         // is it a polygon?
         const isPolygon = layer instanceof factory.Polygon;
-    
+
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
-    
+
         // the coords of the layer
         const latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
-    
+
         if (isMarker) {
             // return the info for the marker, no more calculations needed
             return {
-                latlng: { ...latlngs},
+                latlng: { ...latlngs },
                 distance: this._getDistance(map, latlngs, P),
             };
         }
-    
+
         // the closest segment (line between two points) of the layer
         let closestSegment;
-    
+
         // the shortest distance from P to closestSegment
         let shortestDistance;
-    
+
         // loop through the coords of the layer
         const loopThroughCoords = coords => {
             coords.forEach((coord, index) => {
@@ -326,18 +329,18 @@ export const snap = {
                     loopThroughCoords(coord);
                     return;
                 }
-            
+
                 // take this coord (A)...
                 // and the next coord (B) as points
                 const A = coord;
                 const B = coords[isPolygon
                     ? index + 1 === coords.length ? 0 : index + 1
                     : index + 1 === coords.length ? undefined : index + 1];
-            
+
                 if (B) {
                     // calc the distance between P and AB-segment
                     const distance = this._getDistanceToSegment(map, P, A, B);
-                    
+
                     // is the distance shorter than the previous one? Save it and the segment
                     if (shortestDistance === undefined || distance < shortestDistance) {
                         shortestDistance = distance;
@@ -346,9 +349,9 @@ export const snap = {
                 }
             });
         };
-    
+
         loopThroughCoords(latlngs);
-    
+
         // now, take the closest segment (closestSegment) and calc the closest point to P on it.
         const C = this._getClosestPointOnSegment(
             map,
@@ -356,7 +359,7 @@ export const snap = {
             closestSegment[0],
             closestSegment[1]
         );
-    
+
         // return the latlng of that sucker
         return {
             latlng: Object.assign({}, C),
@@ -375,7 +378,7 @@ export const snap = {
         const A = map.project(latlngA, maxzoom);
         const B = map.project(latlngB, maxzoom);
         const closest = factory.LineUtil.closestPointOnSegment(P, A, B);
-        
+
         return map.unproject(closest, maxzoom);
     },
 
@@ -383,7 +386,7 @@ export const snap = {
         const P = map.latLngToLayerPoint(latlng);
         const A = map.latLngToLayerPoint(latlngA);
         const B = map.latLngToLayerPoint(latlngB);
-        
+
         return factory.LineUtil.pointToSegmentDistance(P, A, B);
     },
 
