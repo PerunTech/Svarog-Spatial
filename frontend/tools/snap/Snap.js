@@ -270,22 +270,23 @@ export const snap = {
 
         // loop through the layers
         layers.forEach((layer, index) => {
-            if (map.getBounds().intersects(layer.getBounds())) {
-                // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
-                const results = this._calcLayerDistances(latlng, layer);
+            if (layer.getBounds && !map.getBounds().intersects(layer.getBounds()))
+                continue;
+            // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
+            const results = this._calcLayerDistances(latlng, layer);
 
-                // show indicator lines, it's for debugging
-                this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+            // show indicator lines, it's for debugging
+            this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
 
-                // save the info if it doesn't exist or if the distance is smaller than the previous one
-                if (
-                    closestLayer.distance === undefined ||
-                    results.distance < closestLayer.distance
-                ) {
-                    closestLayer = results;
-                    closestLayer.layer = layer;
-                }
+            // save the info if it doesn't exist or if the distance is smaller than the previous one
+            if (
+                closestLayer.distance === undefined ||
+                results.distance < closestLayer.distance
+            ) {
+                closestLayer = results;
+                closestLayer.layer = layer;
             }
+
         });
 
         // return the closest layer and it's data

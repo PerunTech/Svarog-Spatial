@@ -59,13 +59,17 @@ export const MIN_DIGI_AREA = 100;
 export const COORDINATE_REFERENCE_SYSTEM = {
     code: 'EPSG:6316',
     def: '+proj=tmerc +lat_0=0 +lon_0=21 +k=0.9999 +x_0=7500000 +y_0=0'
-        + ' +ellps=bessel +towgs84=682,-203,480,0,0,0,0 +units=m +no_defs',
+        //+ ' +ellps=bessel +towgs84=682,-203,480,0,0,0,0 +units=m +no_defs',
+        + ' +ellps=bessel +towgs84=521.748, 229.489, 590.921, -4.029, -4.488, 15.521, -9.78 +units=m +no_defs',
+
+
     opt: {
-        distances: [ 5000000, 2500000, 1000000, 750000, 500000,
+        distances: [5000000, 2500000, 1000000, 750000, 500000,
             250000, 100000, 75000, 50000, 25000, 10000,
-            7500, 5000, 2500, 1000, 750, 500, 250, 100 ],
+            7500, 5000, 2500, 1000, 750, 500, 250, 100],
         description: 'MGI 1901 / Balkans zone 7'
-    }
+    },
+    wkt: 'PROJCS["unnamed",GEOGCS["Bessel 1841",DATUM["unknown",SPHEROID["bessel",6377397.155,299.1528128],TOWGS84[521.748,229.489,590.921,-4.029,-4.488,15.521,-9.78]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",21],PARAMETER["scale_factor",0.9999],PARAMETER["false_easting",7500000],PARAMETER["false_northing",0],UNIT["Meter",1],AUTHORITY["epsg","6316"]]'
 }
 
 /** @constant */
@@ -125,7 +129,7 @@ export const MEASURE_CONFIG = {
         dashArray: [10, 10],
         /* This will enable runtime calculation of measurements on each new pixel location of the mouse cursor. */
         /* DO NOT ENABLE, impedes application performance, creates hundreds - thousands DOM elements each second. */
-        /* showMeasurements: true */ 
+        /* showMeasurements: true */
     },
     // show a marker at the cursor
     cursorMarker: false,
