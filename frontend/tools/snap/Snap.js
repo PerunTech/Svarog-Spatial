@@ -271,7 +271,8 @@ export const snap = {
         // loop through the layers
         layers.forEach((layer, index) => {
             if (layer.getBounds && !map.getBounds().intersects(layer.getBounds()))
-                continue;
+                return;
+
             // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
             const results = this._calcLayerDistances(latlng, layer);
 
