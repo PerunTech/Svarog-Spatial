@@ -124,6 +124,7 @@ public class GeobufEncoder {
 			DbDataObject dbo = (DbDataObject) userData;
 			feat.id = dbo.getObjectId().toString();
 			feat.properties.put("type", dbo.getObjectType().toString());
+			feat.properties.put("status", dbo.getStatus());
 
 			if (dbo.getParentId() != null)
 				feat.properties.put("parent_id", dbo.getParentId().toString());
