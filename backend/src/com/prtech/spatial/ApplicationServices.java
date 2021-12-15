@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
@@ -38,21 +37,15 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
-import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
-import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.operation.polygonize.Polygonizer;
-import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 
 @Path("/spatial")
 public class ApplicationServices {
@@ -212,6 +205,35 @@ public class ApplicationServices {
 		};
 	}
 
+	/**
+	 * Method to generate a PBF binary response from a DbDataArray or JSON error
+	 * response based on input parameters
+	 * 
+	 * @param result       The collection of objects with geometry. Either
+	 *                     DbDataArray or List<Geometry>
+	 * @param errorMessage The error message which shoul be sent with HTTP status
+	 *                     500
+	 * @return The HTTP response with the appropriate data.
+	 */
+	public Response preparePbfStream(final Object result, String errorMessage) {
+		assert (result != null);
+		if (errorMessage == null || errorMessage.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, Util.PRECISION_SCALE);
+					if (result instanceof DbDataArray)
+						enc.writeDbDataArray((DbDataArray) result);
+					else if (result instanceof Collection<?>)
+						enc.writeSvGeometry((Collection<Geometry>) result);
+					else
+						log.error("Result is not DbDataArray nor Collection<Geometry>! It can't be streamed");
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
+	}
+
 	@POST
 	@Path("/geometry/get/wkt/{token}/{objectName}/{geometryWkt}")
 	@Produces("application/pbf")
@@ -244,39 +266,62 @@ public class ApplicationServices {
 	}
 
 	@GET
+	@Path("/geometry/layer/cutoff/{token}/{objectName1}/{objectName2}/{x}/{y}/{parentId}")
+	@Produces("application/pbf")
+	public Response getGeometry(@PathParam("token") final String token,
+			@PathParam("objectName1") final String objectName1, @PathParam("objectName2") final String objectName2,
+			@PathParam("x") final Double x, @PathParam("y") final Double y,
+			@PathParam("parentId") final Long parentId) {
+
+		String errMsg = null;
+		List<Geometry> list = new ArrayList<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
+			Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
+			Collection<Geometry> set = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false, true);
+
+			// fix spikes or bad segments
+			for (Geometry g : set) {
+				DbDataObject o = (DbDataObject) g.getUserData();
+				if (o != null && o.getParentId().equals(parentId)) {
+					list.add(svg.fixPolygonSpikes(g, 1.0));
+					break;
+				}
+			}
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		return preparePbfStream(list, errMsg);
+	}
+
+	@GET
 	@Path("/geometry/layer/cutoff/{token}/{objectName1}/{objectName2}/{x}/{y}")
 	@Produces("application/pbf")
-	public StreamingOutput getGeometry(@PathParam("token") final String token,
+	public Response getGeometry(@PathParam("token") final String token,
 			@PathParam("objectName1") final String objectName1, @PathParam("objectName2") final String objectName2,
 			@PathParam("x") final Double x, @PathParam("y") final Double y) {
 
-		return new StreamingOutput() {
-			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				try (SvGeometry svg = new SvGeometry(token)) {
-					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
-					Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
-					Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
-					Set<Geometry> set = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false);
-					List<Geometry> list = new ArrayList<Geometry>(set.size());
-					// fix spikes or bad segments
-					for (Geometry g : set)
-						list.add(svg.fixPolygonSpikes(g, 1.0));
-
-					enc.writeSvGeometry(list);
-				} catch (Exception e) {
-					String errMsg = "Failed fetching geometry set. Please see server logs";
-					if (e instanceof SvException)
-						errMsg = ((SvException) e).getJsonMessage();
-					try {
-						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
-					} catch (IOException ioe) {
-						log.error("Stream closed, can't write error", ioe);
-					}
-					log.error(errMsg, e);
-				}
-			};
-		};
+		String errMsg = null;
+		List<Geometry> list = new ArrayList<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
+			Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
+			Collection<Geometry> set = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false, true);
+			// fix spikes or bad segments
+			for (Geometry g : set) {
+				list.add(svg.fixPolygonSpikes(g, 1.0));
+				break;
+			}
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		return preparePbfStream(list, errMsg);
 	}
 
 	@POST

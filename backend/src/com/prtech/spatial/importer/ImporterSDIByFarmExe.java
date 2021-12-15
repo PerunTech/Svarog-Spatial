@@ -66,6 +66,9 @@ public class ImporterSDIByFarmExe implements ISvExecutor {
 						farm.getObjectId(), "VLPIS_FULL", svr);
 			} catch (SQLException | ParseException | java.text.ParseException e) {
 				throw new SvException("error.update_agri_parcel", svr.getInstanceUser(), farm, "VLPIS_FULL", e);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return true;

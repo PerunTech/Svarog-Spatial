@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>svarog</groupId>
 			<artifactId>svarog</artifactId>
-			<version>[3.2.4,)</version>
+			<version>[3.2.4,3.2.99)</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -180,5 +180,12 @@
 			<artifactId>metadata-extractor</artifactId>
 			<version>2.16.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-imaging -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>1.0-alpha2</version>
+		</dependency>
+
 	</dependencies>
 </project>

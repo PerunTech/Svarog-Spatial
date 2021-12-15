@@ -392,7 +392,7 @@ public class SDIImporter {
 	}
 
 	public static void importSDIByFarm(Long targetTypeId, Long farmId, Long farmObjId, String source, SvReader svr)
-			throws SvException, SQLException, ParseException, java.text.ParseException {
+			throws SvException, SQLException, ParseException, java.text.ParseException, InterruptedException {
 		final String fieldMap = "GEOM=geometry;FARM_ID=farm_id;LAND_COVER_CODE=land_use_id;HOME_NAME=home_name;"
 				+ "NOTE_INSERT=note_insert;NOTE_FARMER=note_farmer;NOTE_ORGANISATION=note_organisation;"
 				+ "LAND_COVER_CODE_2=land_use_id_2;KO_ID=ko_id;INVISIBLE_BORDER=invisible_border;"

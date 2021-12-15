@@ -1,5 +1,6 @@
 package com.prtech.spatial;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -7,13 +8,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.proj4j.CRSFactory;
@@ -42,6 +49,30 @@ import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.imaging.FormatCompliance;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
+import org.apache.commons.imaging.common.RationalNumber;
+import org.apache.commons.imaging.common.bytesource.ByteSourceArray;
+import org.apache.commons.imaging.common.bytesource.ByteSourceFile;
+import org.apache.commons.imaging.formats.tiff.constants.GeoTiffTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.MicrosoftHdPhotoTagConstants;
+import org.apache.commons.imaging.formats.tiff.TiffContents;
+import org.apache.commons.imaging.formats.tiff.TiffDirectory;
+import org.apache.commons.imaging.formats.tiff.TiffField;
+import org.apache.commons.imaging.formats.tiff.TiffReader;
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
+import org.apache.commons.imaging.formats.tiff.write.TiffImageWriterLossy;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 
 /**
  * Unit test for simple App.
@@ -74,7 +105,6 @@ public class AppTest {
 		}
 	}
 
-	
 	public void testExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");
 		CRSFactory crsFactory = new CRSFactory();
@@ -93,7 +123,6 @@ public class AppTest {
 		System.out.println(p);
 	}
 
-	
 	public void testNoExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
 		CRSFactory crsFactory = new CRSFactory();
@@ -109,4 +138,59 @@ public class AppTest {
 		}
 
 	}
+
+	@Test
+	public void testReadWriteTags() throws ImageWriteException, ImageReadException, IOException {
+		final File target = new File("test-data/etst.tiff");
+		String rootName = null;
+
+		final boolean optionalImageReadingEnabled = rootName != null && !rootName.isEmpty();
+
+		final ByteSourceFile byteSource = new ByteSourceFile(target);
+		final HashMap<String, Object> params = new HashMap<>();
+
+		// Establish a TiffReader. This is just a simple constructor that
+		// does not actually access the file. So the application cannot
+		// obtain the byteOrder, or other details, until the contents has
+		// been read. Then read the directories associated with the
+		// file by passing in the byte source and options.
+		final TiffReader tiffReader = new TiffReader(true);
+		final TiffContents contents = tiffReader.readDirectories(byteSource, optionalImageReadingEnabled, // read imagepresent
+				FormatCompliance.getDefault());
+
+		// Loop on the directories and fetch the metadata and
+		// image (if available, and configured to do so)
+		int iDirectory = 0;
+		for (final TiffDirectory directory : contents.directories) {
+			// Get the metadata (Tags) and write them to standard output
+			final boolean hasTiffImageData = directory.hasTiffImageData();
+			System.out.format("Directory %2d %s, description: %s%n", iDirectory,
+					hasTiffImageData ? "Has TIFF Image Data" : "No TIFF Image Data", directory.description());
+			// Loop on the fields, printing the metadata (fields) ----------
+			final List<TiffField> fieldList = directory.getDirectoryEntries();
+			for (final TiffField tiffField : fieldList) {
+				String s = tiffField.toString();
+				// In the case if the offsets (file positions) for the Strips
+				// or Tiles, the string may be way too long for output and
+				// will be truncated. Therefore, indicate the numnber of entries.
+				// These fields are indicated by numerical tags 0x144 and 0x145
+				if (tiffField.getTag() == 0x144 || tiffField.getTag() == 0x145) {
+					final int i = s.indexOf(')');
+					final int[] a = tiffField.getIntArrayValue();
+					s = s.substring(0, i + 2) + " [" + a.length + " entries]";
+				}
+				System.out.println(" " + s);
+			}
+
+			if (optionalImageReadingEnabled && hasTiffImageData) {
+				final File output = new File(rootName + "_" + iDirectory + ".jpg");
+				System.out.println("Writing image to " + output.getPath());
+				final BufferedImage bImage = directory.getTiffImage(params);
+				ImageIO.write(bImage, "JPEG", output);
+			}
+			System.out.println("");
+			iDirectory++;
+		}
+	}
+
 }
