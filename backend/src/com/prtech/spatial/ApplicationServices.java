@@ -70,8 +70,8 @@ public class ApplicationServices {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try {
 					SvGrid svg = new SvGrid(objectName);
-					Set<Geometry> geomArr = svg.getInternalGeometries();
-					Set<Geometry> gridResult = new HashSet<Geometry>();
+					Collection<Geometry> geomArr = svg.getInternalGeometries();
+					Collection<Geometry> gridResult = new ArrayList<Geometry>();
 					for (Geometry g : geomArr) {
 						Geometry newG = SvUtil.sdiFactory.createGeometry(g);
 						newG.setUserData(svg.getTileDbo((String) g.getUserData()));
@@ -116,13 +116,17 @@ public class ApplicationServices {
 						if (!t.getObjectId().equals(objectId)) {
 							g = g.difference(geom);
 						}
+						if (t.getVal("GRIDTILE_ID").toString().indexOf("-") < 0)
+							t.setVal("GRIDTILE_ID",
+									t.getVal("GRIDTILE_ID").toString() + "-" + t.getVal("IS_BORDER").toString());
+
 						SvGeometry.setGeometry(t, g);
 						modifiedGeoms.addDataItem(t);
 
 					}
 					svg.saveGeometry(modifiedGeoms);
 					svgrid.setIsTileDirty(true);
-					Set<Geometry> geomArr = svgrid.getInternalGeometries();
+					Collection<Geometry> geomArr = svgrid.getInternalGeometries();
 					enc.writeSvGeometry(geomArr);
 
 				} catch (Exception e) {

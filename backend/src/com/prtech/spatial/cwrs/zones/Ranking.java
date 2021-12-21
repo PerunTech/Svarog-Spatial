@@ -1,6 +1,7 @@
 package com.prtech.spatial.cwrs.zones;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class Ranking {
 				exists = false;
 		}
 		if (!exists) {
-			Set<Geometry> b = SvGeometry.getSysBoundary().getInternalGeometries();
+			Collection<Geometry> b = SvGeometry.getSysBoundary().getInternalGeometries();
 			Geometry boundary = b.iterator().next();
 			GeometryCollection gcl = SvGrid.generateGrid(boundary, 10, svc);
 			SvGrid.saveGridToDatabase(gcl, gridName, svc);
@@ -97,7 +98,7 @@ public class Ranking {
 		DbDataArray selectedTiles = new DbDataArray();
 		try (SvGeometry svg = new SvGeometry((SvCore) svc)) {
 			SvGrid grid = getGrid(gridName, svc);
-			Set<Geometry> gridset = grid.getInternalGeometries();
+			Collection<Geometry> gridset = grid.getInternalGeometries();
 			DbDataObject layerType = SvCore.getDbtByName(parcelLayerName);
 			for (Geometry cell : gridset) {
 				if (tileNameFilter != null && !tileNameFilter.equals(cell.getUserData()))
