@@ -115,7 +115,8 @@ public class ApplicationServices {
 						DbDataObject t = svgrid.getTileDbo((String) g.getUserData());
 						if (!t.getObjectId().equals(objectId)) {
 							g = g.difference(geom);
-						}
+						}else 
+							g = geom;
 						if (t.getVal("GRIDTILE_ID").toString().indexOf("-") < 0)
 							t.setVal("GRIDTILE_ID",
 									t.getVal("GRIDTILE_ID").toString() + "-" + t.getVal("IS_BORDER").toString());
