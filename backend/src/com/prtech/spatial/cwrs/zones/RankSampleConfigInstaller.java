@@ -103,7 +103,21 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k5", "JAVA",
 					"CWRS_ZONES.RANK_VALUE_SANCTION");
 			
-			createCritScale(svw, svr, -1L, -1L, 0L, "crit_def.cwrs.rank_k1");
+			createCritScale(svw, svr, 0L, 499L, 0L, "crit_def.cwrs.rank_k1","cwrs_k1.a");
+			createCritScale(svw, svr, 500L, 1000L, 32L, "crit_def.cwrs.rank_k1","cwrs_k1.b");
+			createCritScale(svw, svr, 1001L, 999999999L, 64L, "crit_def.cwrs.rank_k1","cwrs_k1.c");
+			
+			createCritScale(svw, svr, 0L, 4999L, 0L, "crit_def.cwrs.rank_k2","cwrs_k2.a");
+			createCritScale(svw, svr, 5000L, 10000L, 24L, "crit_def.cwrs.rank_k2","cwrs_k2.b");
+			createCritScale(svw, svr, 10001L, 999999999L, 48L, "crit_def.cwrs.rank_k2","cwrs_k2.c");
+			
+			createCritScale(svw, svr, 0L, 30L, 10L, "crit_def.cwrs.rank_k4","cwrs_k4.a");
+			createCritScale(svw, svr, 31L, 50L, 20L, "crit_def.cwrs.rank_k4","cwrs_k4.b");
+			createCritScale(svw, svr, 51L, 999999999L, 40L, "crit_def.cwrs.rank_k4","cwrs_k4.c");
+			
+			createCritScale(svw, svr, 0L, 5L, 10L, "crit_def.cwrs.rank_k5","cwrs_k5.a");
+			createCritScale(svw, svr, 6L, 20L, 20L, "crit_def.cwrs.rank_k5","cwrs_k5.b");
+			createCritScale(svw, svr, 21L, 999999999L, 40L, "crit_def.cwrs.rank_k5","cwrs_k5.c");
 
 			createSampleType(svw, svr, "sample_type.cwrs_zone",
 					"[{\"id\":\"cwrs_zone\",\"text\":\"Екстрахирани CWRS зони\"}]");
@@ -311,23 +325,49 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 		}
 	}
 
-	private void createCritScale(SvWriter svw, SvReader svr, Long valFrom, Long valTo, Long score, String critTypeLabel)
+	private void createCritScale(SvWriter svw, SvReader svr, Long valFrom, Long valTo, Long score, String critTypeLabel, String critScaleLabel)
 			throws SvException {
 
 		DbDataObject critDef = searchForObject(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_DEF"), "LABEL_CODE",
 				critTypeLabel, svr);
-		if (critDef != null && svr
-				.getObjectsByParentId(critDef.getObjectId(), SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"), null)
-				.getItems().isEmpty()) {
-			DbDataObject dbObj = new DbDataObject();
-			dbObj = new DbDataObject();
-			dbObj.setObjectType(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"));
-			dbObj.setVal("VALUE_FROM", valFrom);
-			dbObj.setVal("VALUE_TO", valTo);
-			dbObj.setVal("SCORE", score);
-			dbObj.setParentId(critDef.getObjectId());
-			svw.saveObject(dbObj, false);
-			log4j.info("Object SVAROG_SCORE_CRIT_SCALE created for parent: " + critTypeLabel);
+		if (critDef != null) {
+			DbDataArray critScales = svr.getObjectsByParentId(critDef.getObjectId(),
+					SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"), null);
+			if (critScales.isEmpty()) {
+				DbDataObject dbObj = new DbDataObject();
+				dbObj = new DbDataObject();
+				dbObj.setObjectType(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"));
+				dbObj.setVal("VALUE_FROM", valFrom);
+				dbObj.setVal("VALUE_TO", valTo);
+				dbObj.setVal("SCORE", score);
+				dbObj.setVal("LABEL_CODE", critScaleLabel);
+				dbObj.setParentId(critDef.getObjectId());
+				svw.saveObject(dbObj, false);
+				log4j.info("Object SVAROG_SCORE_CRIT_SCALE created for parent: " + critTypeLabel);
+			} else {
+				for (DbDataObject critScale : critScales.getItems()) {
+					if (critScale.getVal("LABEL_CODE") == null) {
+						svw.deleteObject(critScale, false);
+					} else if (critScale.getVal("LABEL_CODE").toString().equals(critScaleLabel)) {
+						if (critScale.getVal("VALUE_FROM") != null && !critScale.getVal("VALUE_FROM").equals(valFrom)) {
+							critScale.setVal("VALUE_FROM", valFrom);
+						}
+						if (critScale.getVal("VALUE_TO") != null && !critScale.getVal("VALUE_TO").equals(valTo)) {
+							critScale.setVal("VALUE_TO", valTo);
+						}
+						if (critScale.getVal("SCORE") != null && !critScale.getVal("SCORE").equals(score)) {
+							critScale.setVal("SCORE", score);
+						}
+						if (critScale.getIsDirty()) {
+							svw.saveObject(critScale, false);
+							log4j.info("Object SVAROG_SCORE_CRIT_SCALE updated with label code: " + critScaleLabel);
+						} else {
+							log4j.info(
+									"Object SVAROG_SCORE_CRIT_SCALE already exists with label code: " + critScaleLabel);
+						}
+					}
+				}
+			}
 		} else {
 			log4j.info(
 					"The parent SVAROG_SCORE_CRIT_DEF with label code: crit_def.cwrs.rank_k1 doesen't exist or already has scale items.");
