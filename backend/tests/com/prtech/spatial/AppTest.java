@@ -86,7 +86,7 @@ public class AppTest {
 			token = svs.logon("ADMIN", SvUtil.getMD5("welcome13"));
 		}
 	}
-	@Test
+	
 	public void testRank() throws SvException {
 		initToken();
 		try (SvReader svs = new SvReader(token)) {
