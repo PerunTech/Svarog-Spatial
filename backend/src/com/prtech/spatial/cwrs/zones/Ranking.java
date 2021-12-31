@@ -1,6 +1,7 @@
 package com.prtech.spatial.cwrs.zones;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -318,7 +319,7 @@ public class Ranking {
 
 		}
 		int farmCount = getFarmIds(svc, tile, parcelLayerName).size();
-		rank = new BigDecimal(otsFarmCount/(double)farmCount*100);
+		rank = new BigDecimal(otsFarmCount/(double)farmCount*100).setScale(0, RoundingMode.CEILING);
 		return rank;
 	}
 
@@ -371,7 +372,7 @@ public class Ranking {
 
 			}
 			int farmCount = getFarmIds(svc, tile, parcelLayerName).size();
-			rank = new BigDecimal(sanctionedFarmCount/(double)farmCount*100);
+			rank = new BigDecimal(sanctionedFarmCount/(double)farmCount*100).setScale(0, RoundingMode.CEILING);;
 		}
 		return rank;
 	}
