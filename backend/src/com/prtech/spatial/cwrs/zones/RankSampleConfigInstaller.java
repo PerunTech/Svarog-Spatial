@@ -325,30 +325,22 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 		}
 	}
 
-	private void createCritScale(SvWriter svw, SvReader svr, Long valFrom, Long valTo, Long score, String critTypeLabel, String critScaleLabel)
-			throws SvException {
+	private void createCritScale(SvWriter svw, SvReader svr, Long valFrom, Long valTo, Long score, String critTypeLabel,
+			String critScaleLabel) throws SvException {
 
 		DbDataObject critDef = searchForObject(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_DEF"), "LABEL_CODE",
 				critTypeLabel, svr);
+		boolean isNew = true;
 		if (critDef != null) {
 			DbDataArray critScales = svr.getObjectsByParentId(critDef.getObjectId(),
 					SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"), null);
-			if (critScales.isEmpty()) {
-				DbDataObject dbObj = new DbDataObject();
-				dbObj = new DbDataObject();
-				dbObj.setObjectType(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"));
-				dbObj.setVal("VALUE_FROM", valFrom);
-				dbObj.setVal("VALUE_TO", valTo);
-				dbObj.setVal("SCORE", score);
-				dbObj.setVal("LABEL_CODE", critScaleLabel);
-				dbObj.setParentId(critDef.getObjectId());
-				svw.saveObject(dbObj, false);
-				log4j.info("Object SVAROG_SCORE_CRIT_SCALE created for parent: " + critTypeLabel);
-			} else {
+
+			if (!critScales.isEmpty()) {
 				for (DbDataObject critScale : critScales.getItems()) {
 					if (critScale.getVal("LABEL_CODE") == null) {
 						svw.deleteObject(critScale, false);
 					} else if (critScale.getVal("LABEL_CODE").toString().equals(critScaleLabel)) {
+						isNew = false;
 						if (critScale.getVal("VALUE_FROM") != null && !critScale.getVal("VALUE_FROM").equals(valFrom)) {
 							critScale.setVal("VALUE_FROM", valFrom);
 						}
@@ -365,8 +357,21 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 							log4j.info(
 									"Object SVAROG_SCORE_CRIT_SCALE already exists with label code: " + critScaleLabel);
 						}
+						break;
 					}
 				}
+			}
+			if (isNew) {
+				DbDataObject dbObj = new DbDataObject();
+				dbObj = new DbDataObject();
+				dbObj.setObjectType(SvReader.getTypeIdByName("SVAROG_SCORE_CRIT_SCALE"));
+				dbObj.setVal("VALUE_FROM", valFrom);
+				dbObj.setVal("VALUE_TO", valTo);
+				dbObj.setVal("SCORE", score);
+				dbObj.setVal("LABEL_CODE", critScaleLabel);
+				dbObj.setParentId(critDef.getObjectId());
+				svw.saveObject(dbObj, false);
+				log4j.info("Object SVAROG_SCORE_CRIT_SCALE created for parent: " + critTypeLabel);
 			}
 		} else {
 			log4j.info(
@@ -402,7 +407,7 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 	@Override
 	public int getVersion(int currentVersion) {
 		// TODO Auto-generated method stub
-		return 2;
+		return 3;
 	}
 
 	@Override
