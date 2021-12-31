@@ -2,6 +2,7 @@ package com.prtech.spatial.cwrs.zones;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
@@ -17,9 +18,10 @@ import com.prtech.svarog_common.DbSearchCriterion;
 import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.prtech.svarog_interfaces.ISvConfiguration;
+import com.prtech.svarog_interfaces.ISvConfigurationMulti;
 import com.prtech.svarog_interfaces.ISvCore;
 
-public class RankSampleConfigInstaller implements ISvConfiguration {
+public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 
 	final static Logger log4j = SvConf.getLogger(RankSampleConfigInstaller.class);
 
@@ -79,10 +81,9 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 				SvNote svn = new SvNote(svr);) {
 
 			createJobType("batch_job_type.score.cwrs_zone", "SCORE", svr, svw);
-			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Име на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Име на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"COUNT_TOLERANCE\",\"name\":\"Толеранција\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
+			String params = "[{\"id\":\"GRID_NAME\",\"name\":\"Име на грид\",\"type\":\"NVARCHAR\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"LAYER_NAME\",\"name\":\"Име на слој\",\"type\":\"NVARCHAR\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"AGRI_PERCENT\",\"name\":\"Процент\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"YEAR\",\"name\":\"Последна кампања\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.score.cwrs_zone", "template.selection.rank.cwrs_zone", 8L, 1L, "EXECUTOR",
-					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, "", params, null, null, svr, svw,
-					svn);
+					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, "", params, null, null, svr, svw, svn);
 
 			createJobType("batch_job_type.sample.cwrs_zone", "SAMPLE", svr, svw);
 			params = "[{\"id\":\"random_percent\",\"name\":\"Процент случаен избор\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"risk_percent\",\"name\":\"Процент анализа на ризик\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
@@ -93,8 +94,15 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 			createScoreType(svw, svr, "score_type.rank.cwrs_zone",
 					"[{\"id\":\"rank_cwrs_zone\",\"text\":\"Рангирани CWRS зони\"}]");
 
-			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k1", "JAVA", "CWRS_ZONES.RANK_VALUE");
-
+			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k1", "JAVA",
+					"CWRS_ZONES.RANK_VALUE");
+			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k2", "JAVA",
+					"CWRS_ZONES.RANK_VALUE_PARCELS");
+			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k4", "JAVA",
+					"CWRS_ZONES.RANK_VALUE_OTS");
+			createCritDef(svw, svr, "score_type.rank.cwrs_zone", "crit_def.cwrs.rank_k5", "JAVA",
+					"CWRS_ZONES.RANK_VALUE_SANCTION");
+			
 			createCritScale(svw, svr, -1L, -1L, 0L, "crit_def.cwrs.rank_k1");
 
 			createSampleType(svw, svr, "sample_type.cwrs_zone",
@@ -349,6 +357,20 @@ public class RankSampleConfigInstaller implements ISvConfiguration {
 				log4j.info("Object SAMPLE_TYPE already exists with label code: " + labelCode);
 			}
 		}
+	}
+
+	@Override
+	public int getVersion(int currentVersion) {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+
+	@Override
+	public List<UpdateType> getUpdateTypes() {
+		// TODO Auto-generated method stub
+		List<UpdateType> types = new ArrayList<>();
+		types.add(UpdateType.FINAL);
+		return types;
 	}
 
 }

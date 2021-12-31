@@ -83,23 +83,41 @@ public class AppTest {
 
 	public static void initToken() throws SvException {
 		try (SvSecurity svs = new SvSecurity()) {
-			token = svs.logon("ADMIN", SvUtil.getMD5("welcome"));
+			token = svs.logon("ADMIN", SvUtil.getMD5("welcome13"));
 		}
 	}
-
+	@Test
 	public void testRank() throws SvException {
-		if (SvCore.getDbtByName("AGRI_PARCEL") == null)
-			return;
+		initToken();
 		try (SvReader svs = new SvReader(token)) {
+			if (SvCore.getDbtByName("AGRI_PARCEL") == null)
+				return;
 			Ranking rnk = new Ranking("KNT_2020");
-			DbDataArray selectedTiles = rnk.getAgriTiles(svs, "AGRI_PARCEL", "11:12", 15.0);
+			DbDataArray selectedTiles = rnk.getAgriTiles(svs, "AGRI_PARCEL", "3:8", 15.0);
 			System.out.println("Selected " + selectedTiles.size() + " is selected!");
 			for (DbDataObject tile : selectedTiles.getItems()) {
-				BigDecimal rank = rnk.rankTile(svs, tile, "AGRI_PARCEL", 1);
+				BigDecimal rank;
+				
+				rank = rnk.rankTile(svs, tile, "AGRI_PARCEL");
 				if (rank == null)
 					fail("No farms were counted");
+				System.out.println("FIC Count:"+rank.toString());
+				
+				rank = rnk.getDeclaredParcels(svs, tile, "AGRI_PARCEL");
+				if (rank == null)
+					fail("No parcels were counted");
+				System.out.println("Parcel Count:"+rank.toString());
+				
+				rank = rnk.otsCount(svs, tile, "AGRI_PARCEL",2021);
+				if (rank == null)
+					fail("No OTs were counted");
+				System.out.println("OTS Count:"+rank.toString());
+				
+				rank = rnk.sanctionedCount(svs, tile, "AGRI_PARCEL",2021);
+				if (rank == null)
+					fail("No Sanction were counted");
+				System.out.println("Sanction Count:"+rank.toString());
 
-				System.out.println(rank.toString());
 			}
 
 		}

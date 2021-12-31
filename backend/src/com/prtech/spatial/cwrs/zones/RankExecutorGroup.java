@@ -35,9 +35,13 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 	static final List<String> names;
 	static final Map<String, String> descriptions = new HashMap<String, String>();
 
+	static final String RANK_VALUE_SANCTION = "RANK_VALUE_SANCTION";
 	static final String SELECTOR = "SELECTOR";
 	static final String RANK = "RANK";
 	static final String RANK_VALUE = "RANK_VALUE";
+	static final String RANK_VALUE_PARCELS = "RANK_VALUE_PARCELS";
+	static final String RANK_VALUE_OTS = "RANK_VALUE_OTS";
+	
 	static final String SELECTOR_SAMPLE = "SELECTOR_SAMPLE";
 	static final String SAMPLE = "SAMPLE";
 
@@ -45,6 +49,9 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 		retTypes.put(SELECTOR, DbDataArray.class);
 		retTypes.put(RANK, DbDataObject.class);
 		retTypes.put(RANK_VALUE, BigDecimal.class);
+		retTypes.put(RANK_VALUE_PARCELS, BigDecimal.class);
+		retTypes.put(RANK_VALUE_OTS, BigDecimal.class);
+		retTypes.put(RANK_VALUE_SANCTION, BigDecimal.class);
 		retTypes.put(SELECTOR_SAMPLE, DbDataArray.class);
 		retTypes.put(SAMPLE, DbDataObject.class);
 
@@ -52,6 +59,10 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 		names.add(SELECTOR);
 		names.add(RANK);
 		names.add(RANK_VALUE);
+		names.add(RANK_VALUE_PARCELS);
+		names.add(RANK_VALUE_OTS);
+		names.add(RANK_VALUE_SANCTION);
+		
 		names.add(SELECTOR_SAMPLE);
 		names.add(SAMPLE);
 
@@ -59,6 +70,10 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 				"Method which selects the CRWS zones which have a required percentage of agricultural area");
 		descriptions.put(RANK_VALUE, "Method which counts the number of farm holdings in single zone");
 		descriptions.put(RANK, "Method which ranks a single selected zone to count the number of farm holdings");
+		descriptions.put(RANK_VALUE_PARCELS, "Method which ranks a single selected zone to count the number of LPIS Parcels");
+		descriptions.put(RANK_VALUE_OTS, "Method which ranks a single selected zone to count the number of farm holdings who had OTS in the last X years");
+		descriptions.put(RANK_VALUE_SANCTION, "Method which ranks a single selected zone to count the number of farm holdings had OTS sanctions in the last X years");
+
 		descriptions.put(SELECTOR_SAMPLE, "Method which selects already ranked CRWS zones");
 		descriptions.put(SAMPLE, "Method which extracts a zone by random and risk");
 
@@ -107,12 +122,11 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 
 	@Override
 	public Object execute(String name, Map<String, Object> params, ISvCore svCore) throws SvException {
-
 		Long batchId = (Long) (params.get("JOB_ID"));
 		DbDataObject tileObject = (DbDataObject) params.get("RECORD");
 		String gridName = null;
 		Double agriPercentage = null;
-		Integer tolerance = null;
+		Integer year = null;
 		String layerName = null;
 		String tileName = null;
 
@@ -127,8 +141,8 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 						gridName = jsonParamDetails.get("value").getAsString();
 					} else if (jsonParamDetails.get("id").getAsString().equals("AGRI_PERCENT")) {
 						agriPercentage = jsonParamDetails.get("value").getAsDouble();
-					} else if (jsonParamDetails.get("id").getAsString().equals("COUNT_TOLERANCE")) {
-						tolerance = jsonParamDetails.get("value").getAsInt();
+					} else if (jsonParamDetails.get("id").getAsString().equals("YEAR")) {
+						year = jsonParamDetails.get("value").getAsInt();
 					} else if (jsonParamDetails.get("id").getAsString().equals("LAYER_NAME")) {
 						layerName = jsonParamDetails.get("value").getAsString();
 					} else if (jsonParamDetails.get("id").getAsString().equals("TILE_FILTER")) {
@@ -150,7 +164,16 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 			createRank(batchId, svCore);
 			break;
 		case RANK_VALUE:
-			result = rnk.rankTile(svCore, tileObject, layerName, tolerance);
+			result = rnk.rankTile(svCore, tileObject, layerName);
+			break;
+		case RANK_VALUE_PARCELS:
+			result = rnk.getDeclaredParcels(svCore, tileObject, layerName);
+			break;
+		case RANK_VALUE_OTS:
+			result = rnk.otsCount(svCore, tileObject, layerName,year);
+			break;
+		case RANK_VALUE_SANCTION:
+			result = rnk.sanctionedCount(svCore, tileObject, layerName,year);
 			break;
 		case SELECTOR_SAMPLE:
 			result = getRankedTiles(batchId, svCore);
