@@ -86,7 +86,7 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 					"CWRS_ZONES.SELECTOR", null, null, "CWRS_ZONES.RANK", null, "", params, null, null, svr, svw, svn);
 
 			createJobType("batch_job_type.sample.cwrs_zone", "SAMPLE", svr, svw);
-			params = "[{\"id\":\"random_percent\",\"name\":\"Процент случаен избор\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"risk_percent\",\"name\":\"Процент анализа на ризик\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
+			params = "[{\"id\":\"control_percent\",\"name\":\"Процент за контрола\",\"type\":\"NUMERIC\",\"mandatory\":\"true\",\"value\":\"\"},{\"id\":\"random_percent\",\"name\":\"Процент случаен избор\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"},{\"id\":\"risk_percent\",\"name\":\"Процент анализа на ризик\",\"type\":\"NUMERIC\",\"mandatory\":\"false\",\"value\":\"\"}]";
 			createJobTemplate("batch_job_type.sample.cwrs_zone", "template.selection.sample.cwrs_zone", 8L, 1L,
 					"EXECUTOR", "CWRS_ZONES.SELECTOR_SAMPLE", null, null, "CWRS_ZONES.SAMPLE", null, "", params, null,
 					null, svr, svw, svn);
@@ -407,7 +407,7 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 	@Override
 	public int getVersion(int currentVersion) {
 		// TODO Auto-generated method stub
-		return 3;
+		return 4;
 	}
 
 	@Override
