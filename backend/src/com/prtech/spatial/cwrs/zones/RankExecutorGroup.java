@@ -263,9 +263,10 @@ public class RankExecutorGroup implements ISvExecutorGroup {
 			DbDataArray arrObjectsToExtracte = svr.getObjectsByParentId(score.getObjectId(),
 					SvReader.getTypeIdByName("SVAROG_SCORE_VALUE"), null, 0, 0);
 			Sample sample = new Sample(params, arrObjectsToExtracte);
-			DbDataArray randomSample = sample.getRandomSample(svr);
+			DbDataArray randomSample = sample.getRandomSampleV1(svr);
+			sample.setAlreadyExtracted(randomSample);
 			svw.saveObject(randomSample, true, true);
-			DbDataArray riskSample = sample.getRiskSample(svr);
+			DbDataArray riskSample = sample.getRiskSampleV1(svr);
 			svw.saveObject(riskSample, true, true);
 			score.setVal("RISK_SAMPLE", riskSample);
 			score.setVal("RANDOM_SAMPLE", randomSample);
