@@ -407,7 +407,7 @@ public class RankSampleConfigInstaller implements ISvConfigurationMulti {
 	@Override
 	public int getVersion(int currentVersion) {
 		// TODO Auto-generated method stub
-		return 3;
+		return 4;
 	}
 
 	@Override
