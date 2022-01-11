@@ -12,10 +12,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.prtech.spatial.Config;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
@@ -23,6 +26,7 @@ import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvGrid;
+import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvSDITile.SDIRelation;
@@ -43,6 +47,34 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 
 public class Ranking {
 	private static final Logger log = SvConf.getLogger(Ranking.class);
+	private static String parcelPercentageParam = "CWRS_PARC_IN_ZONE";
+	private static Integer parcelPercentage = null;
+
+	private Integer getParcelPercentage() throws SvException {
+		if (parcelPercentage == null) {
+			synchronized (Ranking.class) {
+				if (parcelPercentage == null)
+					parcelPercentage = SvParameter.getSysParam(parcelPercentageParam, 50);
+			}
+		}
+		return parcelPercentage;
+	}
+
+	static Cache<String, Collection<Long>> farmsCache = initFarmsCache();
+
+	/**
+	 * Method to initialise the params cache.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	static Cache<String, Collection<Long>> initFarmsCache() {
+		@SuppressWarnings("rawtypes")
+		CacheBuilder builder = CacheBuilder.newBuilder();
+		builder = builder.maximumSize(Sv.DEFAULT_CACHE_SIZE);
+		builder = builder.expireAfterAccess(5, TimeUnit.MINUTES);
+		return (Cache<String, Collection<Long>>) builder.<Long, Collection<Long>>build();
+	}
 
 	String gridName = null;
 	// double areaPercentage = 15;
@@ -174,14 +206,18 @@ public class Ranking {
 		return selectedTiles;
 	}
 
-	boolean verifyParcelCount(Set<Long> allParcelIds, DbDataArray allFarmParcels, int errorMargin) {
+	boolean verifyParcelCount(Set<Geometry> tileParcels, DbDataArray allFarmParcels, int parcelPercentage) {
 		int found = 0;
 
 		for (DbDataObject parcel : allFarmParcels.getItems()) {
-			if (allParcelIds.contains(parcel.getObjectId()))
-				found++;
+			for (Geometry geom : tileParcels) {
+				DbDataObject tileParcel = (DbDataObject) geom.getUserData();
+				if (tileParcel.getObjectId().equals(parcel.getObjectId()))
+					found++;
+			}
 		}
-		return (found + errorMargin) > allFarmParcels.size();
+		double requiredParcels = allFarmParcels.size() * (parcelPercentage / 100.0);
+		return (found) > requiredParcels;
 	}
 
 	/**
@@ -208,29 +244,42 @@ public class Ranking {
 	}
 
 	public Collection<Long> getFarmIds(ISvCore svc, DbDataObject tile, String parcelLayerName) throws SvException {
-		DbDataObject layerType = SvCore.getDbtByName(parcelLayerName);
-		Set<Long> allFarmIds = new HashSet<Long>();
+		Set<Long> allFarmIds = (Set<Long>) farmsCache.getIfPresent((String) tile.getVal(SvGrid.GRIDTILE_ID));
+		if (allFarmIds == null) {
+			synchronized (Ranking.class) {
+				if (allFarmIds == null) {
+					DbDataObject layerType = SvCore.getDbtByName(parcelLayerName);
+					allFarmIds = new HashSet<Long>();
 
-		try (SvGeometry svg = new SvGeometry((SvCore) svc); SvReader svr = new SvReader(svg)) {
-			Geometry cell = SvGeometry.getGeometry(tile);
-			if (cell == null) {
-				SvGrid g = getGrid((String) tile.getVal(SvGrid.GRID_NAME), svc);
-				DbDataObject gdbo = g.getTileDbo((String) tile.getVal(SvGrid.GRIDTILE_ID));
-				cell = SvGeometry.getGeometry(gdbo);
-			}
-			Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
-					layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
+					try (SvGeometry svg = new SvGeometry((SvCore) svc); SvReader svr = new SvReader(svg)) {
+						Geometry cell = SvGeometry.getGeometry(tile);
+						if (cell == null) {
+							SvGrid g = getGrid((String) tile.getVal(SvGrid.GRID_NAME), svc);
+							DbDataObject gdbo = g.getTileDbo((String) tile.getVal(SvGrid.GRIDTILE_ID));
+							cell = SvGeometry.getGeometry(gdbo);
+						}
+						Set<Geometry> gridGeoms = svg.getRelatedGeometries(
+								SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1), layerType.getObjectId(),
+								SDIRelation.INTERSECTS, null, null, false);
 
-			for (Geometry gg : gridGeoms) {
-				DbDataObject parcel = (DbDataObject) gg.getUserData();
-				if (parcel.getParentId() > 0L) {
-					if (!allFarmIds.contains(parcel.getParentId()))
-						allFarmIds.add(parcel.getParentId());
+						for (Geometry gg : gridGeoms) {
+							DbDataObject parcel = (DbDataObject) gg.getUserData();
+							if (parcel.getParentId() > 0L) {
+								if (!allFarmIds.contains(parcel.getParentId())) {
+									DbDataArray allFarmParcels = svr.getObjectsByParentId(parcel.getParentId(),
+											layerType.getObjectId(), null);
+									if (verifyParcelCount(gridGeoms, allFarmParcels, getParcelPercentage()))
+										allFarmIds.add(parcel.getParentId());
+								}
+							}
+						}
+					}
+					farmsCache.put((String) tile.getVal(SvGrid.GRIDTILE_ID), allFarmIds);
 				}
 			}
-			return allFarmIds;
-
 		}
+		return allFarmIds;
+
 	}
 
 	public Collection<Long> getParcelIds(ISvCore svc, DbDataObject tile, String parcelLayerName) throws SvException {
@@ -247,9 +296,10 @@ public class Ranking {
 			Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
 					layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
 
+			Collection<Long> farmIds= getFarmIds(svc, tile, parcelLayerName);
 			for (Geometry gg : gridGeoms) {
 				DbDataObject parcel = (DbDataObject) gg.getUserData();
-				if (parcel.getParentId() > 0L) {
+				if (parcel.getParentId() > 0L && farmIds.contains(parcel.getParentId())) {
 					if (!allParcels.contains((Long) parcel.getVal("OLD_ID")))
 						allParcels.add((Long) parcel.getVal("OLD_ID"));
 				}
@@ -319,7 +369,7 @@ public class Ranking {
 
 		}
 		int farmCount = getFarmIds(svc, tile, parcelLayerName).size();
-		rank = new BigDecimal(otsFarmCount/(double)farmCount*100).setScale(0, RoundingMode.CEILING);
+		rank = new BigDecimal(otsFarmCount / (double) farmCount * 100).setScale(0, RoundingMode.CEILING);
 		return rank;
 	}
 
@@ -359,7 +409,7 @@ public class Ranking {
 				DbDataArray allApps = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName("APPLICATION"), null);
 				List<Long> appIds = new ArrayList<Long>();
 				for (DbDataObject app : allApps.getItems()) {
-					
+
 					if (app.getStatus().equals("ADM_CTRL") || app.getStatus().equals("REFUSED")) {
 						Long typeId = (Long) app.getVal("APP_TYPE_ID");
 						if (getEdbarAppTypes(svc, year).contains(typeId)) {
@@ -372,7 +422,8 @@ public class Ranking {
 
 			}
 			int farmCount = getFarmIds(svc, tile, parcelLayerName).size();
-			rank = new BigDecimal(sanctionedFarmCount/(double)farmCount*100).setScale(0, RoundingMode.CEILING);;
+			rank = new BigDecimal(sanctionedFarmCount / (double) farmCount * 100).setScale(0, RoundingMode.CEILING);
+			;
 		}
 		return rank;
 	}
