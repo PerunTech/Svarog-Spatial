@@ -49,7 +49,9 @@ public class Ranking {
 	private static final Logger log = SvConf.getLogger(Ranking.class);
 	private static String parcelPercentageParam = "CWRS_PARC_IN_ZONE";
 	private static Integer parcelPercentage = null;
-
+	private static String gridSizeParam = "CWRS_GRID_SIZE";
+	private static Integer gridSize = null;
+	
 	private Integer getParcelPercentage() throws SvException {
 		if (parcelPercentage == null) {
 			synchronized (Ranking.class) {
@@ -58,6 +60,16 @@ public class Ranking {
 			}
 		}
 		return parcelPercentage;
+	}
+
+	private Integer gridSizeParam() throws SvException {
+		if (gridSize == null) {
+			synchronized (Ranking.class) {
+				if (gridSize == null)
+					gridSize = SvParameter.getSysParam(gridSizeParam, 10);
+			}
+		}
+		return gridSize;
 	}
 
 	static Cache<String, Collection<Long>> farmsCache = initFarmsCache();
@@ -124,7 +136,7 @@ public class Ranking {
 		if (!exists) {
 			Collection<Geometry> b = SvGeometry.getSysBoundary().getInternalGeometries();
 			Geometry boundary = b.iterator().next();
-			GeometryCollection gcl = SvGrid.generateGrid(boundary, 10, svc);
+			GeometryCollection gcl = SvGrid.generateGrid(boundary, gridSizeParam(), svc);
 			SvGrid.saveGridToDatabase(gcl, gridName, svc);
 			grid = new SvGrid(gridName);
 		}
@@ -181,7 +193,7 @@ public class Ranking {
 				if (tileNameFilter != null && !tileNameFilter.equals(cell.getUserData()))
 					continue;
 				Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
-						layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
+						layerType.getObjectId(), SDIRelation.COVEREDBY, null, null, false);
 				GeometryCollection gcl = SvUtil.sdiFactory.createGeometryCollection(gridGeoms.toArray(new Geometry[0]));
 
 				double hac = (cell.getArea() / 10000);
@@ -206,7 +218,7 @@ public class Ranking {
 		return selectedTiles;
 	}
 
-	boolean verifyParcelCount(Set<Geometry> tileParcels, DbDataArray allFarmParcels, int parcelPercentage) {
+	boolean verifyParcelCount(Collection<Geometry> tileParcels, DbDataArray allFarmParcels, int parcelPercentage) {
 		int found = 0;
 
 		for (DbDataObject parcel : allFarmParcels.getItems()) {
@@ -217,7 +229,7 @@ public class Ranking {
 			}
 		}
 		double requiredParcels = allFarmParcels.size() * (parcelPercentage / 100.0);
-		return (found) > requiredParcels;
+		return !((found) < requiredParcels);
 	}
 
 	/**
@@ -229,7 +241,7 @@ public class Ranking {
 	 * @param svc             The ISvCore instance which shall be used for
 	 *                        connection sharing and authentication
 	 * @param tile            The descriptor of the tile which shall be used as
-	 *                        filter to identify parcels intersected
+	 *                        filter to identify parcels covered
 	 * @param parcelLayerName The name of the layer (object type) which contains the
 	 *                        geometries to be analysed
 	 * @return DbDataObject which contains number of matched farms in the field
@@ -258,12 +270,13 @@ public class Ranking {
 							DbDataObject gdbo = g.getTileDbo((String) tile.getVal(SvGrid.GRIDTILE_ID));
 							cell = SvGeometry.getGeometry(gdbo);
 						}
-						Set<Geometry> gridGeoms = svg.getRelatedGeometries(
+						Collection<Geometry> gridGeoms = svg.getRelatedGeometries(
 								SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1), layerType.getObjectId(),
-								SDIRelation.INTERSECTS, null, null, false);
+								SDIRelation.COVEREDBY, null, null, false, false, true);
 
 						for (Geometry gg : gridGeoms) {
 							DbDataObject parcel = (DbDataObject) gg.getUserData();
+
 							if (parcel.getParentId() > 0L) {
 								if (!allFarmIds.contains(parcel.getParentId())) {
 									DbDataArray allFarmParcels = svr.getObjectsByParentId(parcel.getParentId(),
@@ -294,9 +307,9 @@ public class Ranking {
 				cell = SvGeometry.getGeometry(gdbo);
 			}
 			Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
-					layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
+					layerType.getObjectId(), SDIRelation.COVEREDBY, null, null, false);
 
-			Collection<Long> farmIds= getFarmIds(svc, tile, parcelLayerName);
+			Collection<Long> farmIds = getFarmIds(svc, tile, parcelLayerName);
 			for (Geometry gg : gridGeoms) {
 				DbDataObject parcel = (DbDataObject) gg.getUserData();
 				if (parcel.getParentId() > 0L && farmIds.contains(parcel.getParentId())) {
@@ -317,7 +330,7 @@ public class Ranking {
 	 * @param svc             The ISvCore instance which shall be used for
 	 *                        connection sharing and authentication
 	 * @param tile            The descriptor of the tile which shall be used as
-	 *                        filter to identify parcels intersected
+	 *                        filter to identify parcels covered
 	 * @param parcelLayerName The name of the layer (object type) which contains the
 	 *                        geometries to be analysed
 	 * @return DbDataObject which contains number of matched farms in the field
@@ -439,7 +452,7 @@ public class Ranking {
 				cell = SvGeometry.getGeometry(gdbo);
 			}
 			Set<Geometry> gridGeoms = svg.getRelatedGeometries(SvUtil.sdiFactory.createGeometry(cell).buffer(-0.1),
-					layerType.getObjectId(), SDIRelation.INTERSECTS, null, null, false);
+					layerType.getObjectId(), SDIRelation.COVEREDBY, null, null, false);
 			GeometryCollection gcl = SvUtil.sdiFactory.createGeometryCollection(gridGeoms.toArray(new Geometry[0]));
 
 			double haa = 0;
