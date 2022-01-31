@@ -117,7 +117,7 @@ public class GeobufEncoder {
 	public GeobufFeature createGeobufFeature(Geometry g, Object userData) {
 
 		GeobufFeature feat = new GeobufFeature();
-		feat.geometry = g; // should we allow feat.geometry: null ?
+		feat.geometry = (g.getGeometryType().equals("GeometryCollection") ? null : g);
 		feat.properties = new HashMap<>();
 
 		if (userData instanceof DbDataObject && userData != null) {

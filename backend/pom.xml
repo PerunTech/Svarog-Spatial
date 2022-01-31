@@ -5,7 +5,7 @@
 
 	<groupId>perun</groupId>
 	<artifactId>spatial</artifactId>
-	<version>1.4.11</version>
+	<version>1.4.12-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>Perun Spatial</name>
 	<description>Spatial data management, geometry tools and GIS services.</description>
