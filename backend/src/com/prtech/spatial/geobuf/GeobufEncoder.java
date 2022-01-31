@@ -156,9 +156,10 @@ public class GeobufEncoder {
 		for (DbDataObject dbo : dbArr.getItems()) {
 			if (SvGeometry.hasGeometries(dbo.getObjectType())) {
 				g = SvGeometry.getGeometry(dbo);
+				if (!g.getGeometryType().equals("GeometryCollection"))
+					gbfc.add(createGeobufFeature(g, dbo));
 			}
 
-			gbfc.add(createGeobufFeature(g, dbo));
 		}
 
 		return gbfc;
