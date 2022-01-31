@@ -156,8 +156,10 @@ public class GeobufEncoder {
 		for (DbDataObject dbo : dbArr.getItems()) {
 			if (SvGeometry.hasGeometries(dbo.getObjectType())) {
 				g = SvGeometry.getGeometry(dbo);
-				if (!g.getGeometryType().equals("GeometryCollection"))
+				if (g != null && !g.getGeometryType().equals("GeometryCollection"))
 					gbfc.add(createGeobufFeature(g, dbo));
+				else
+					LOG.error("Unsupported geometry" + dbo.toSimpleJson().toString());
 			}
 
 		}
