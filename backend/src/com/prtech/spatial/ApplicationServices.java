@@ -145,6 +145,35 @@ public class ApplicationServices {
 		};
 	}
 
+	
+	@GET
+	@Path("/geometry/get/byparent/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public StreamingOutput getGeometry(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId) {
+
+		return new StreamingOutput() {
+			public void write(OutputStream stream) {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				try (SvReader svr = new SvReader(token)) {
+					Long layerTypeId = SvCore.getTypeIdByName(objectName);
+					svr.setIncludeGeometries(true);
+					DbDataArray geomArr =svr.getObjectsByParentId(parentId, layerTypeId, null);
+					enc.writeDbDataArray(geomArr);
+				} catch (Exception e) {
+					String errMsg = "Failed fetching geometry set. Please see server logs";
+					if (e instanceof SvException)
+						errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				}
+			};
+		};
+	}
 	/**
 	 * 
 	 * @param token
