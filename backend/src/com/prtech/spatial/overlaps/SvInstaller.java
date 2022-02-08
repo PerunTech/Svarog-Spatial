@@ -63,6 +63,17 @@ public class SvInstaller implements ISvConfigurationMulti {
 
 	@Override
 	public String beforeAclUpdate(Connection conn, ISvCore core, String schema) throws Exception {
+		return null;
+	}
+
+	@Override
+	public String beforeSidAclUpdate(Connection conn, ISvCore core, String schema) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String afterUpdate(Connection conn, ISvCore core, String schema) throws Exception {
 		SvReader svr = null;
 		SvWriter svw = null;
 		SvNote svn = null;
@@ -96,18 +107,6 @@ public class SvInstaller implements ISvConfigurationMulti {
 				svn.release();
 			}
 		}
-		return null;
-	}
-
-	@Override
-	public String beforeSidAclUpdate(Connection conn, ISvCore core, String schema) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String afterUpdate(Connection conn, ISvCore core, String schema) throws Exception {
-
 		return null;
 	}
 
@@ -188,7 +187,7 @@ public class SvInstaller implements ISvConfigurationMulti {
 	@Override
 	public int getVersion(int currentVersion) {
 		// TODO Auto-generated method stub
-		return 1;
+		return 2;
 	}
 
 	@Override
