@@ -114,7 +114,7 @@ public class OverlapCheckExecutor implements ISvExecutor {
 			Overlaps overlap = new Overlaps(dtRef, dbApp);
 
 			if (overlap.hasOverlap(svr)) {
-				DbDataObject paramType = createParamType(0L, "spatial.overlap.parcels", "NVARCHAR", "TEXT", svr, svw);
+				DbDataObject paramType = createParamType(0L, "spatial.overlap.parcels", "NVARCHAR", "TEXT_AREA", svr, svw);
 				svp.setParamString(dbApp, paramType.getVal("LABEL_CODE").toString(), "true");
 				throw new SvException("application.has_overlap", svr.getInstanceUser());
 			}
