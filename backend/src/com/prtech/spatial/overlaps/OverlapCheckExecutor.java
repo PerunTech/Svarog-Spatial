@@ -29,7 +29,7 @@ public class OverlapCheckExecutor implements ISvExecutor {
 	private final String name = "OVERLAP_PARCEL";
 	private final String description = "It checks if application has overlap on parcels";
 	private final DateTime start = new DateTime();
-	private final DateTime end = new DateTime("9999-12-31T00:00:00+00");
+	private final DateTime end = SvConf.MAX_DATE;
 	private final Class<?> type = DbDataObject.class;
 
 	@Override
@@ -107,12 +107,12 @@ public class OverlapCheckExecutor implements ISvExecutor {
 				throw new SvException("could not find JSON_PARAMS", svr.getInstanceUser());
 
 			Overlaps overlap = new Overlaps(new DateTime(), dbApp);
-			
-			if(overlap.hasOverlap(svr)) {
+
+			if (overlap.hasOverlap(svr)) {
 				createParamType(dbApp.getObjectId(), "spatial.overlap.parcels", "NVARCHAR", "true", svr, svw);
 				throw new SvException("application.has_overlap", svr.getInstanceUser());
 			}
-			
+
 		} finally {
 			if (svr != null) {
 				svr.release();
@@ -123,7 +123,7 @@ public class OverlapCheckExecutor implements ISvExecutor {
 		}
 		return dbApp;
 	}
-	
+
 	public void createParamType(Long parent_id, String label_code, String dataType, String inputType, SvReader svReader,
 			SvWriter svw) throws SvException {
 
