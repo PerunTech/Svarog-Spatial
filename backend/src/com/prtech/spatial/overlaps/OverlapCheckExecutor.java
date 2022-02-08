@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -12,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog_common.DbDataArray;
@@ -69,13 +72,13 @@ public class OverlapCheckExecutor implements ISvExecutor {
 
 	@Override
 	public Object execute(Map<String, Object> params, ISvCore svCore) throws SvException {
-		SvReader svr = null;
-		SvWriter svw = null;
+
 		String ref_date = "";
+		DateTime dtRef = null;
 		DbDataObject dbApp = new DbDataObject();
-		try {
-			svr = new SvReader((SvCore) svCore);
-			svw = new SvWriter(svr);
+		try (SvReader svr = new SvReader((SvCore) svCore);
+				SvWriter svw = new SvWriter(svr);
+				SvParameter svp = new SvParameter(svr);) {
 
 			if (params.containsKey("RECORD")) {
 				dbApp = (DbDataObject) (params.get("RECORD"));
@@ -95,6 +98,8 @@ public class OverlapCheckExecutor implements ISvExecutor {
 					if (jsonParamDetails.has("id")) {
 						if (jsonParamDetails.get("id").getAsString().equals("ref_date")) {
 							ref_date = jsonParamDetails.get("value").getAsString();
+							DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
+							dtRef = formatter.parseDateTime(ref_date);
 						}
 					}
 				}
@@ -106,34 +111,28 @@ public class OverlapCheckExecutor implements ISvExecutor {
 			} else
 				throw new SvException("could not find JSON_PARAMS", svr.getInstanceUser());
 
-			Overlaps overlap = new Overlaps(new DateTime(), dbApp);
+			Overlaps overlap = new Overlaps(dtRef, dbApp);
 
 			if (overlap.hasOverlap(svr)) {
-				createParamType(dbApp.getObjectId(), "spatial.overlap.parcels", "NVARCHAR", "true", svr, svw);
+				DbDataObject paramType = createParamType(0L, "spatial.overlap.parcels", "NVARCHAR", "TEXT", svr, svw);
+				svp.setParamString(dbApp, paramType.getVal("LABEL_CODE").toString(), "true");
 				throw new SvException("application.has_overlap", svr.getInstanceUser());
 			}
 
-		} finally {
-			if (svr != null) {
-				svr.release();
-			}
-			if (svw != null) {
-				svw.release();
-			}
 		}
 		return dbApp;
 	}
 
-	public void createParamType(Long parent_id, String label_code, String dataType, String inputType, SvReader svReader,
-			SvWriter svw) throws SvException {
+	public DbDataObject createParamType(Long parent_id, String label_code, String dataType, String inputType,
+			SvReader svReader, SvWriter svw) throws SvException {
 
 		DbSearchExpression expr = new DbSearchExpression();
 		expr.addDbSearchItem(new DbSearchCriterion("LABEL_CODE", DbCompareOperand.EQUAL, label_code));
 
 		DbDataArray arr = svReader.getObjects(expr, SvReader.getTypeIdByName("SVAROG_PARAM_TYPE"), null, 0, 0);
-
+		DbDataObject dbObj = null;
 		if (arr.isEmpty()) {
-			DbDataObject dbObj = new DbDataObject();
+			dbObj = new DbDataObject();
 			dbObj.setObjectType(SvReader.getTypeIdByName("SVAROG_PARAM_TYPE"));
 			dbObj.setVal("LABEL_CODE", label_code);
 			dbObj.setVal("DATA_TYPE", dataType);
@@ -141,7 +140,10 @@ public class OverlapCheckExecutor implements ISvExecutor {
 			dbObj.setParentId(parent_id);
 			svw.saveObject(dbObj, false);
 
+		} else {
+			dbObj = arr.get(0);
 		}
+		return dbObj;
 	}
 
 }
