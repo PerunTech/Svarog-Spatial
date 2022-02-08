@@ -6,9 +6,12 @@ import java.util.Collection;
 
 import javax.measure.unit.SystemOfUnits;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.impl.Log4jContextFactory;
 import org.joda.time.DateTime;
 
+import com.prtech.spatial.importer.ImporterSDIByFarmExe;
+import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -19,6 +22,7 @@ import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class Overlaps {
+	static final Logger log4j = SvConf.getLogger(Overlaps.class);
 	static BigDecimal bdZero = new BigDecimal(0);
 	DateTime cutOverDate;
 	DbDataObject application;
@@ -38,7 +42,7 @@ public class Overlaps {
 
 		for (Geometry g : gc) {
 			DbDataObject dbintersect = (DbDataObject) g.getUserData();
-			if (dbintersect.getObjectId() != dbo.getObjectId()) {
+			if (dbintersect.getObjectId() != dbo.getObjectId() &&  lpis.equals(dbintersect.getVal("old_id"))) {
 				BigDecimal b = (BigDecimal) dbintersect.getVal("ALLOWED_AREA");
 				if (b == null)
 					return false;
@@ -48,7 +52,7 @@ public class Overlaps {
 		lpisSumArea.setScale(1, RoundingMode.HALF_UP);
 		lpisArea.setScale(1, RoundingMode.HALF_UP);
 		if (lpisSumArea.compareTo(lpisArea) > 0) {
-			System.out.println("Total sum:" + lpisSumArea.toString() + " while max area:" + lpisArea.toString()
+			log4j.debug("Total sum:" + lpisSumArea.toString() + " while max area:" + lpisArea.toString()
 					+ " oldid:" + lpis.toString());
 			return false;
 		}
@@ -69,7 +73,7 @@ public class Overlaps {
 						SDIRelation.INTERSECTS, null, agriParcels, false, true, true, cutOverDate);
 				if ((Boolean) parcel.getVal("COMMON_USE")) {
 					if (!commonUseValid(parcel, related)) {
-						System.out.println("Parcel has invalid common use:" + parcel.getObjectId());
+						log4j.debug("Parcel has invalid common use:" + parcel.getObjectId());
 						hasOverlap = true;
 					}
 				} else if (related.size() > 0) {
@@ -77,7 +81,7 @@ public class Overlaps {
 						Geometry fin = geom.intersection(gr);
 						if (fin.getArea() > 1) {
 							DbDataObject dbr = (DbDataObject) gr.getUserData();
-							System.out.println("Parcel has no common use, but area overlaps: " + fin.getArea() + " :"
+							log4j.debug("Parcel has no common use, but area overlaps: " + fin.getArea() + " :"
 									+ parcel.getVal("old_id") + "/" + parcel.getObjectId() + " and "
 									+ dbr.getVal("old_id") + "/" + dbr.getObjectId());
 							hasOverlap = true;
