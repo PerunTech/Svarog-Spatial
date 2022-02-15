@@ -571,7 +571,7 @@ public class ApplicationServices {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			MultiPolygon hole = (MultiPolygon) Util.getInputGeometry(formVals, polygonWkt);
+			Polygon hole = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
 			result.add(svg.holeInPolygon(hole, layerTypeId, remove));
 		} catch (Exception e) {
 			errMsg = ((SvException) e).getJsonMessage();
