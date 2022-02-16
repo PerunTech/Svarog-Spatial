@@ -23,6 +23,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
@@ -40,6 +41,7 @@ import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -50,6 +52,7 @@ import com.vividsolutions.jts.geom.Polygon;
 @Path("/spatial")
 public class ApplicationServices {
 
+	final static SvCharId parentIdKey = new SvCharId(Sv.PARENT_ID);
 	static int precisionScale = Util.PRECISION_SCALE;
 	private static final Logger log = SvConf.getLogger(ApplicationServices.class);
 
@@ -115,7 +118,7 @@ public class ApplicationServices {
 						DbDataObject t = svgrid.getTileDbo((String) g.getUserData());
 						if (!t.getObjectId().equals(objectId)) {
 							g = g.difference(geom);
-						}else 
+						} else
 							g = geom;
 						if (t.getVal("GRIDTILE_ID").toString().indexOf("-") < 0)
 							t.setVal("GRIDTILE_ID",
@@ -145,7 +148,6 @@ public class ApplicationServices {
 		};
 	}
 
-	
 	@GET
 	@Path("/geometry/get/byparent/{token}/{objectName}/{parentId}")
 	@Produces("application/pbf")
@@ -158,7 +160,7 @@ public class ApplicationServices {
 				try (SvReader svr = new SvReader(token)) {
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					svr.setIncludeGeometries(true);
-					DbDataArray geomArr =svr.getObjectsByParentId(parentId, layerTypeId, null);
+					DbDataArray geomArr = svr.getObjectsByParentId(parentId, layerTypeId, null);
 					enc.writeDbDataArray(geomArr);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
@@ -174,6 +176,7 @@ public class ApplicationServices {
 			};
 		};
 	}
+
 	/**
 	 * 
 	 * @param token
@@ -553,7 +556,16 @@ public class ApplicationServices {
 	public Response createHoleGeometry(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		return holeInGeometry(token, objectName, polygonWkt, false, formVals);
+		return holeInGeometry(token, objectName, polygonWkt, false, formVals, null);
+	}
+
+	@POST
+	@Path("/geometry/hole/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response createHoleGeometryByParent(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, false, formVals, parentId);
 	}
 
 	@POST
@@ -562,17 +574,30 @@ public class ApplicationServices {
 	public Response fillHoleGeometry(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		return holeInGeometry(token, objectName, polygonWkt, true, formVals);
+		return holeInGeometry(token, objectName, polygonWkt, true, formVals, null);
+	}
+
+	@POST
+	@Path("/geometry/fill/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response fillHoleGeometry(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, true, formVals, parentId);
 	}
 
 	public Response holeInGeometry(final String token, final String objectName, final String polygonWkt, boolean remove,
-			MultivaluedMap<String, String> formVals) {
+			MultivaluedMap<String, String> formVals, Long parentId) {
 		String errMsg = "";
+
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			Polygon hole = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
-			result.add(svg.holeInPolygon(hole, layerTypeId, remove));
+			SvCharId filterKey = parentId != null ? ApplicationServices.parentIdKey : null;
+
+			Geometry g = svg.holeInPolygon(hole, layerTypeId, remove, filterKey, parentId, false, true, null);
+			result.add(g);
 		} catch (Exception e) {
 			errMsg = ((SvException) e).getJsonMessage();
 		}
