@@ -11,6 +11,13 @@ before_script:
   - git reset --hard HEAD
   - git stash
   - git pull origin $CI_BUILD_REF_NAME
+  - echo $CI_COMMIT_REF_NAME
+  - status_one=0
+  - status_two=0
+  - (ping -w 5 -c 1 192.168.9.61 > /dev/null) || status_one=$? || true
+  - if [ $status_one -ne 0 ]; then if [ "$CI_COMMIT_REF_NAME" != "iacs2020/ut" ]; then /opt/vpn.sh start; fi; fi;
+  - (ping -w 5 -c 1 192.168.9.60 > /dev/null) || status_two=$? || true
+  - if [ $status_two -ne 0 ]; then if [ "$CI_COMMIT_REF_NAME" != "iacs2020/ut" ]; then echo "VPN DOWN" && killall vpnagentd && /opt/vpn.sh stop || exit 1; fi; fi;
 
 after_script:
   - git reset --hard HEAD
