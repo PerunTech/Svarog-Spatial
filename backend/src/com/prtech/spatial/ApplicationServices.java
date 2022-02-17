@@ -551,12 +551,12 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/hole/{token}/{objectName}/{polygonWkt}")
+	@Path("/geometry/hole/{token}/{objectName}")
 	@Produces("application/pbf")
 	public Response createHoleGeometry(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		return holeInGeometry(token, objectName, polygonWkt, false, formVals, null);
+		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, false, formVals, null);
 	}
 
 	@POST
@@ -569,12 +569,12 @@ public class ApplicationServices {
 	}
 
 	@POST
-	@Path("/geometry/fill/{token}/{objectName}/{polygonWkt}")
+	@Path("/geometry/fill/{token}/{objectName}")
 	@Produces("application/pbf")
 	public Response fillHoleGeometry(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		return holeInGeometry(token, objectName, polygonWkt, true, formVals, null);
+		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, true, formVals, null);
 	}
 
 	@POST
