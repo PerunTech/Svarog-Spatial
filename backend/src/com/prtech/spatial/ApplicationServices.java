@@ -260,8 +260,8 @@ public class ApplicationServices {
 				DbDataObject dbo = (DbDataObject) g.getUserData();
 				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
 				DbDataObject dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
-				result.add(dboP);
-				result.add(dbo);
+				result.addDataItem(dboP);
+				result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
 			errMsg = "Failed fetching geometry set. Please see server logs";
