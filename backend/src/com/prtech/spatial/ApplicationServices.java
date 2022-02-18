@@ -264,12 +264,13 @@ public class ApplicationServices {
 				result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
+			log.error("Error fetching geometry info",e);
 			errMsg = "Failed fetching geometry set. Please see server logs";
 		}
 		if (errMsg != null)
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 		else
-			return Response.status(200).entity(result.toSimpleJson()).type(MediaType.APPLICATION_JSON).build();
+			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	/**
