@@ -242,6 +242,36 @@ public class ApplicationServices {
 		};
 	}
 
+	@GET
+	@Path("/geometry/info/{token}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public Response getGeometryInfo(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y) {
+
+		DbDataArray result = new DbDataArray();
+		String errMsg = null;
+		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+					null, false);
+			for (Geometry g : geomArr) {
+				DbDataObject dbo = (DbDataObject) g.getUserData();
+				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
+				DbDataObject dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+				result.add(dboP);
+				result.add(dbo);
+			}
+		} catch (Exception e) {
+			errMsg = "Failed fetching geometry set. Please see server logs";
+		}
+		if (errMsg != null)
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		else
+			return Response.status(200).entity(result.toSimpleJson()).type(MediaType.APPLICATION_JSON).build();
+	}
+
 	/**
 	 * Method to generate a PBF binary response from a DbDataArray or JSON error
 	 * response based on input parameters
