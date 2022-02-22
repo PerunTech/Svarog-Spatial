@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 @Path("/spatial")
 public class ApplicationServices {
@@ -264,13 +265,14 @@ public class ApplicationServices {
 				result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
-			log.error("Error fetching geometry info",e);
+			log.error("Error fetching geometry info", e);
 			errMsg = "Failed fetching geometry set. Please see server logs";
 		}
 		if (errMsg != null)
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 		else
-			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
+			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+					.build();
 	}
 
 	/**
@@ -606,6 +608,73 @@ public class ApplicationServices {
 			@PathParam("objectName") final String objectName, @PathParam("polygonWkt") final String polygonWkt,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, true, formVals, null);
+	}
+
+	
+	/**
+	 * Method to verify and align a geometry with the old object (transforming a polygon from/to WGS can create a few centimeters distorsion in the vertices and thats why we need to align.
+	 * Besides alignmnt, we remove duplicate points, we cut angles smaller than 1% and we prevent or allow overlaps with the other polygons of the parent
+	 * @param geom The geometry to be prepared
+	 * @param oldDbo The old data object attached to the geometry
+	 * @param svg The SvGeometry used for the operations
+	 * @param overlapParent Flag if we want to cutoff the geometries from the same parent
+	 * @return
+	 * @throws SvException
+	 */
+	public boolean prepareGeometry(Geometry geom, DbDataObject oldDbo, SvGeometry svg, boolean overlapParent)
+			throws SvException {
+		Geometry oldGeometry = SvGeometry.getGeometry(oldDbo);
+		// Init geom
+
+		if (CC.MULTIPOLYGON.equalsIgnoreCase(geom.getGeometryType()))
+			geom = ((MultiPolygon) geom).getGeometryN(0);
+		else if (!CC.POLYGON.equalsIgnoreCase(geom.getGeometryType()))
+			throw (new SvException(CC.NON_POLYGON_GEOM, svg.getInstanceUser()));
+
+		geom = TopologyPreservingSimplifier.simplify(geom, 0.1);
+
+		boolean isGeomUpdated = true;
+		if (oldDbo.getObjectId() > 0L && oldGeometry != null) {
+			if (oldGeometry.getGeometryType().equals("MultiPolygon"))
+				svg.alignMultiPolygons((MultiPolygon) oldGeometry, (MultiPolygon) geom);
+			else
+				svg.alignPolygon((Polygon) oldGeometry, (Polygon) geom);
+			if (oldGeometry.equalsTopo(geom))
+				isGeomUpdated = false;
+
+		}
+		geom.setUserData(oldDbo); // append spatial control dbo as user
+
+		boolean hasSpikes = true;
+		// data to geom
+		Geometry g;
+		if (!overlapParent)
+			g = svg.cutLayerFromGeom(geom, oldDbo.getObjectType(), CC.PARENT_ID, oldDbo.getParentId());
+		else
+			g = geom;
+		if (g.isEmpty() || g.getArea() < 1)
+			g = null;
+		else
+			while (hasSpikes) {
+				try {
+					svg.testPolygonSpikes(g, 1.0);
+					hasSpikes = false;
+				} catch (SvException e) {
+					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+						g = svg.fixPolygonSpikes(g, 1.0);
+					}
+				}
+			}
+
+		geom.setUserData(oldDbo); // append spatial control dbo as user
+		// data to geom
+
+		if (g != null) {
+			SvGeometry.setGeometry(oldDbo, g);
+		} else {
+			SvGeometry.setGeometry(oldDbo, geom);
+		}
+		return isGeomUpdated;
 	}
 
 	@POST
