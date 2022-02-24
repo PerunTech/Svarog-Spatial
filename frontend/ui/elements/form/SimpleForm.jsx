@@ -1,9 +1,7 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../..';
+import { Button, Modal } from '../../';
 
-const { Button, Modal } = ui;
-
-export function SimpleForm({ formTitle, schema, uiSchema, formData, onSubmit, onChange, children }) {
+export function SimpleForm ({ formTitle, schema, uiSchema, formData, onSubmit, onChange, children }) {
     const vFormTitle = formTitle || 'Пополнете ја формата';
     return <Modal id='measure-dialog'
         show
@@ -30,11 +28,11 @@ export function SimpleForm({ formTitle, schema, uiSchema, formData, onSubmit, on
 }
 
 SimpleForm.propTypes = {
-    formData: PropTypes.object.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    formTitle: PropTypes.string,
+    schema: PropTypes.object,
+    uiSchema: PropTypes.object,
+    formData: PropTypes.object,
+    onSubmit: PropTypes.func,
+    onChange: PropTypes.func,
     children: PropTypes.node,
-    enumIdx: PropTypes.array,
-    enumNames: PropTypes.array,
 }
-
