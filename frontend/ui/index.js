@@ -28,6 +28,7 @@ export { Tab } from './elements/tab/Tab';
 export { Tabs } from './elements/tab/Tabs';
 export { Step } from './elements/wizard/Step';
 export { Wizard } from './elements/wizard/Wizard';
+export { SimpleForm } from './elements/form/SimpleForm';
 
 /* ------- */
 /* modules */
