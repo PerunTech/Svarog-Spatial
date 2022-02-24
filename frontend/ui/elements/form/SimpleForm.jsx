@@ -29,7 +29,7 @@ export function SimpleForm({ formTitle, schema, uiSchema, formData, onSubmit, on
     </Modal>;
 }
 
-Form.propTypes = {
+SimpleForm.propTypes = {
     formData: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
