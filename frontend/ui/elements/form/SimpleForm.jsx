@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { Button, Modal } from '../../';
+import { Button, Modal, Form } from '../../';
 
 export function SimpleForm ({ formTitle, schema, uiSchema, formData, onSubmit, onChange, children }) {
     const vFormTitle = formTitle || 'Пополнете ја формата';
@@ -13,7 +13,7 @@ export function SimpleForm ({ formTitle, schema, uiSchema, formData, onSubmit, o
             {children}
         </Modal.Title>
         <Modal.Body className='ap-modal-body' >
-            <ui.Form
+            <Form
                 schema={schema}
                 uiSchema={uiSchema}
                 formData={{ ...formData }}
@@ -22,17 +22,17 @@ export function SimpleForm ({ formTitle, schema, uiSchema, formData, onSubmit, o
                 <Button type='submit' size='' className='save-cnt' >
                     Зачувај
                 </Button>
-            </ui.Form>
+            </Form>
         </Modal.Body>
     </Modal>;
 }
 
 SimpleForm.propTypes = {
     formTitle: PropTypes.string,
-    schema: PropTypes.object,
+    schema: PropTypes.object.isRequired,
     uiSchema: PropTypes.object,
     formData: PropTypes.object,
-    onSubmit: PropTypes.func,
-    onChange: PropTypes.func,
+    onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     children: PropTypes.node,
 }
