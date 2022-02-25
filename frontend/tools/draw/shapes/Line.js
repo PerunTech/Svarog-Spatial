@@ -9,9 +9,9 @@ export const line = {
     enabled: false,
     _doesSelfIntersect: false,
 
-    enable (opt) {
+    enable (opt, minZoom, maxZoom) {
         this.options = opt;
-        store.dispatch({minZoom: MIN_DIGI_SCALE});
+        store.dispatch({ minZoom: minZoom || MIN_DIGI_SCALE, ...maxZoom && { maxZoom } });
 
         /* #revise_me, rubbish logic */
         if (this.options.finishOnDoubleClick && !this.options.finishOn) {
