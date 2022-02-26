@@ -9,7 +9,7 @@ export const line = {
     enabled: false,
     _doesSelfIntersect: false,
 
-    enable (opt, minZoom, maxZoom) {
+    enable (opt, minZoom, maxZoom, showTooltip) {
         this.options = opt;
         store.dispatch({ minZoom: minZoom || MIN_DIGI_SCALE, ...maxZoom && { maxZoom } });
 
@@ -47,15 +47,17 @@ export const line = {
         if (this.options.cursorMarker) {
             factory.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
-    
-        // add tooltip to hintmarker
-        this.options.tooltips && this._hintMarker
-            .bindTooltip(getDrawTooltip('firstVertex'), {
-                permanent: true,
-                offset: factory.point(0, 10),
-                direction: 'bottom',
-                opacity: 0.8,
-            }).openTooltip();
+        
+        if (showTooltip) {
+            // add tooltip to hintmarker
+            this.options.tooltips && this._hintMarker
+                .bindTooltip(getDrawTooltip('firstVertex'), {
+                    permanent: true,
+                    offset: factory.point(0, 10),
+                    direction: 'bottom',
+                    opacity: 0.8,
+                }).openTooltip();
+        }
     
         // change map cursor
         Map._container.style.cursor = 'crosshair';
