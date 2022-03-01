@@ -64,9 +64,8 @@ export const COORDINATE_REFERENCE_SYSTEM = {
 
 
     opt: {
-        distances: [5000000, 2500000, 1000000, 750000, 500000,
-            250000, 100000, 75000, 50000, 25000, 10000,
-            7500, 5000, 2500, 1000, 750, 500, 250, 100],
+        distances: [100000, 75000, 50000, 25000, 10000,
+            7500, 5000, 4000, 3000, 2500, 2000, 1750, 1500, 1000, 750, 500, 250, 100, 50],
         description: 'MGI 1901 / Balkans zone 7'
     },
     wkt: 'PROJCS["unnamed",GEOGCS["Bessel 1841",DATUM["unknown",SPHEROID["bessel",6377397.155,299.1528128],TOWGS84[521.748,229.489,590.921,-4.029,-4.488,15.521,-9.78]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",21],PARAMETER["scale_factor",0.9999],PARAMETER["false_easting",7500000],PARAMETER["false_northing",0],UNIT["Meter",1],AUTHORITY["epsg","6316"]]'
