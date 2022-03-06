@@ -626,12 +626,13 @@ public class ApplicationServices {
 		Geometry oldGeometry = SvGeometry.getGeometry(oldDbo);
 		// Init geom
 
+
 		if (CC.MULTIPOLYGON.equalsIgnoreCase(geom.getGeometryType()))
 			geom = ((MultiPolygon) geom).getGeometryN(0);
 		else if (!CC.POLYGON.equalsIgnoreCase(geom.getGeometryType()))
 			throw (new SvException(CC.NON_POLYGON_GEOM, svg.getInstanceUser()));
-
-		geom = TopologyPreservingSimplifier.simplify(geom, 0.1);
+		
+		geom = svg.deduplicatePolygon((Polygon) geom);
 
 		boolean isGeomUpdated = true;
 		if (oldDbo.getObjectId() > 0L && oldGeometry != null) {
@@ -647,11 +648,7 @@ public class ApplicationServices {
 
 		boolean hasSpikes = true;
 		// data to geom
-		Geometry g;
-		if (!overlapParent)
-			g = svg.cutLayerFromGeom(geom, oldDbo.getObjectType(), CC.PARENT_ID, oldDbo.getParentId());
-		else
-			g = geom;
+		Geometry g = geom;
 		if (g.isEmpty() || g.getArea() < 1)
 			g = null;
 		else
