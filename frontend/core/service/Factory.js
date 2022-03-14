@@ -1,5 +1,6 @@
 import { util } from '..';
 import L from 'leaflet';
+import 'leaflet-polylinedecorator';
 
 /**
  * Class factory.

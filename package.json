@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "leaflet": "~1.5.1",
+    "leaflet-polylinedecorator": "^1.6.0",
     "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
     "proj4": "~2.5.0"
   },
@@ -33,6 +34,8 @@
     "build-dev": "webpack --mode=development --env=development",
     "build-lpis": "npm run build && (cp backend/www/spatial.js ../lpis/node_modules/spatial/backend/www/ || true)",
     "build-otsc": "npm run build && (cp backend/www/spatial.js ../otscm_iacs/node_modules/spatial/backend/www/ || true)",
+    "build-dala": "npm run build && (cp backend/www/spatial.js ../pdna/node_modules/spatial/backend/www/ || true)",
+    "build-knt-grid-manager": "npm run build && (cp backend/www/spatial.js ../knt-grid-manager/node_modules/spatial/backend/www/ || true)",
     "deploy": "npm run build && cd backend && mvn clean package && (cp target/spatial* ../../svarog/osgi-bundles/ || true)",
     "dev": "webpack-dev-server --mode=development",
     "test": "eslint --fix frontend/ || exit 0"
