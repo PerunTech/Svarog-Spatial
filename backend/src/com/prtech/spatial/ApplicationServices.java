@@ -3,6 +3,10 @@ package com.prtech.spatial;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,11 +47,14 @@ import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 @Path("/spatial")
@@ -261,8 +268,10 @@ public class ApplicationServices {
 				DbDataObject dbo = (DbDataObject) g.getUserData();
 				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
 				DbDataObject dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
-				result.addDataItem(dboP);
-				result.addDataItem(dbo);
+				if (dboP != null)
+					result.addDataItem(dboP);
+				if (dbo != null)
+					result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
 			log.error("Error fetching geometry info", e);
@@ -610,41 +619,50 @@ public class ApplicationServices {
 		return holeInGeometry(token, objectName, Sv.EMPTY_STRING, true, formVals, null);
 	}
 
-	
+	public boolean alignPolyGeom(SvGeometry svg, DbDataObject oldDbo, Geometry newGeom) {
+		Geometry oldGeometry = SvGeometry.getGeometry(oldDbo);
+		boolean isGeomUpdated = true;
+		if (oldDbo.getObjectId() > 0L && oldGeometry != null) {
+			if (oldGeometry.getGeometryType().equals("MultiPolygon"))
+				svg.alignMultiPolygons((MultiPolygon) oldGeometry, (MultiPolygon) newGeom);
+			else
+				svg.alignPolygon((Polygon) oldGeometry, (Polygon) newGeom);
+			if (oldGeometry.equalsTopo(newGeom))
+				isGeomUpdated = false;
+
+		}
+		newGeom.setUserData(oldDbo);
+		return isGeomUpdated;
+	}
+
 	/**
-	 * Method to verify and align a geometry with the old object (transforming a polygon from/to WGS can create a few centimeters distorsion in the vertices and thats why we need to align.
-	 * Besides alignmnt, we remove duplicate points, we cut angles smaller than 1% and we prevent or allow overlaps with the other polygons of the parent
-	 * @param geom The geometry to be prepared
-	 * @param oldDbo The old data object attached to the geometry
-	 * @param svg The SvGeometry used for the operations
-	 * @param overlapParent Flag if we want to cutoff the geometries from the same parent
+	 * Method to verify and align a geometry with the old object (transforming a
+	 * polygon from/to WGS can create a few centimeters distorsion in the vertices
+	 * and thats why we need to align. Besides alignmnt, we remove duplicate points,
+	 * we cut angles smaller than 1% and we prevent or allow overlaps with the other
+	 * polygons of the parent
+	 * 
+	 * @param geom          The geometry to be prepared
+	 * @param oldDbo        The old data object attached to the geometry
+	 * @param svg           The SvGeometry used for the operations
+	 * @param overlapParent Flag if we want to cutoff the geometries from the same
+	 *                      parent
 	 * @return
 	 * @throws SvException
 	 */
 	public boolean prepareGeometry(Geometry geom, DbDataObject oldDbo, SvGeometry svg, boolean overlapParent)
 			throws SvException {
-		Geometry oldGeometry = SvGeometry.getGeometry(oldDbo);
-		// Init geom
 
+		// Init geom
 
 		if (CC.MULTIPOLYGON.equalsIgnoreCase(geom.getGeometryType()))
 			geom = ((MultiPolygon) geom).getGeometryN(0);
 		else if (!CC.POLYGON.equalsIgnoreCase(geom.getGeometryType()))
 			throw (new SvException(CC.NON_POLYGON_GEOM, svg.getInstanceUser()));
-		
+
 		geom = svg.deduplicatePolygon((Polygon) geom);
 
-		boolean isGeomUpdated = true;
-		if (oldDbo.getObjectId() > 0L && oldGeometry != null) {
-			if (oldGeometry.getGeometryType().equals("MultiPolygon"))
-				svg.alignMultiPolygons((MultiPolygon) oldGeometry, (MultiPolygon) geom);
-			else
-				svg.alignPolygon((Polygon) oldGeometry, (Polygon) geom);
-			if (oldGeometry.equalsTopo(geom))
-				isGeomUpdated = false;
-
-		}
-		geom.setUserData(oldDbo); // append spatial control dbo as user
+		boolean isGeomUpdated = alignPolyGeom(svg, oldDbo, geom);
 
 		boolean hasSpikes = true;
 		// data to geom
@@ -736,7 +754,7 @@ public class ApplicationServices {
 				validationResult.addProperty("topo.spikes.reason", ex.getLabelCode());
 				validationResult.addProperty("topo.spikes.min_angle", maxAngle);
 			}
-			Integer minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
+			Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
 					Sv.DEFAULT_MIN_POINT_DISTANCE);
 			try {
 
@@ -783,7 +801,7 @@ public class ApplicationServices {
 					Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
 					geom = svg.fixPolygonSpikes(geom, maxAngle);
 
-					Integer minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
+					Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
 							Sv.DEFAULT_MIN_POINT_DISTANCE);
 					geom = svg.fixMinVertexDistance(geom, minPointDistance);
 
