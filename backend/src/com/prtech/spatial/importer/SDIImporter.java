@@ -441,10 +441,8 @@ public class SDIImporter {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
 						if (geometry != null && geometry.getGeometryType().equals(CC.POLYGON)
 								&& geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
-							try (SvGeometry svg = new SvGeometry(svr)) {
-								geometry = svg.deduplicatePolygon((Polygon) geometry);
+								geometry = com.prtech.spatial.Util.deduplicatePolygon((Polygon) geometry,0.01);
 								SvGeometry.setGeometry(dboGeom, geometry);
-							}
 						} else {
 							throw (new SvException("sdi.invalid.geom", svr.getInstanceUser(), dboGeom, null));
 						}

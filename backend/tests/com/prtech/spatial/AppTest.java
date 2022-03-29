@@ -44,11 +44,17 @@ import com.prtech.svarog.SvGrid;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -86,7 +92,7 @@ public class AppTest {
 			token = svs.logon("ADMIN", SvUtil.getMD5("welcome13"));
 		}
 	}
-	
+
 	public void testRank() throws SvException {
 		initToken();
 		try (SvReader svs = new SvReader(token)) {
@@ -97,26 +103,26 @@ public class AppTest {
 			System.out.println("Selected " + selectedTiles.size() + " is selected!");
 			for (DbDataObject tile : selectedTiles.getItems()) {
 				BigDecimal rank;
-				
+
 				rank = rnk.rankTile(svs, tile, "AGRI_PARCEL");
 				if (rank == null)
 					fail("No farms were counted");
-				System.out.println("FIC Count:"+rank.toString());
-				
+				System.out.println("FIC Count:" + rank.toString());
+
 				rank = rnk.getDeclaredParcels(svs, tile, "AGRI_PARCEL");
 				if (rank == null)
 					fail("No parcels were counted");
-				System.out.println("Parcel Count:"+rank.toString());
-				
-				rank = rnk.otsCount(svs, tile, "AGRI_PARCEL",2021);
+				System.out.println("Parcel Count:" + rank.toString());
+
+				rank = rnk.otsCount(svs, tile, "AGRI_PARCEL", 2021);
 				if (rank == null)
 					fail("No OTs were counted");
-				System.out.println("OTS Count:"+rank.toString());
-				
-				rank = rnk.sanctionedCount(svs, tile, "AGRI_PARCEL",2021);
+				System.out.println("OTS Count:" + rank.toString());
+
+				rank = rnk.sanctionedCount(svs, tile, "AGRI_PARCEL", 2021);
 				if (rank == null)
 					fail("No Sanction were counted");
-				System.out.println("Sanction Count:"+rank.toString());
+				System.out.println("Sanction Count:" + rank.toString());
 
 			}
 
@@ -173,7 +179,8 @@ public class AppTest {
 		// been read. Then read the directories associated with the
 		// file by passing in the byte source and options.
 		final TiffReader tiffReader = new TiffReader(true);
-		final TiffContents contents = tiffReader.readDirectories(byteSource, optionalImageReadingEnabled, // read imagepresent
+		final TiffContents contents = tiffReader.readDirectories(byteSource, optionalImageReadingEnabled, // read
+																											// imagepresent
 				FormatCompliance.getDefault());
 
 		// Loop on the directories and fetch the metadata and
@@ -209,6 +216,19 @@ public class AppTest {
 			System.out.println("");
 			iDirectory++;
 		}
+	}
+
+	@Test
+	public void testdedup() throws ParseException
+	{
+		String deduPoly="POLYGON ((7549667.66 4656038.028, 7549667.645 4656038.031, 7549660.05 4656038.58, 7549648.21 4656039.741, 7549640.066 4656035.269, 7549631.13 4656027.349, 7549627.778 4656021.335, 7549627.38 4656014.53, 7549620.341 4656004.833, 7549617.9 4656001.47, 7549620.16 4655979.01, 7549622.19 4655958.3, 7549625.85 4655948.957, 7549639.66 4655933.319, 7549646.971 4655924.587, 7549652.454 4655922.556, 7549661.187 4655924.384, 7549667.077 4655926.618, 7549669.514 4655933.116, 7549671.339 4655949.569, 7549672.761 4655959.318, 7549675.88 4655979.39, 7549674.29 4655994.87, 7549671.33 4656002.94, 7549663.4 4656009.69, 7549667.66 4656038.028))";
+		GeometryFactory gf = SvUtil.sdiFactory;
+		WKTReader wkr = new WKTReader(gf);
+		
+		Geometry geom =wkr.read(deduPoly);
+		//the polygon has double points
+		geom = Util.deduplicatePolygon((Polygon)geom, 0.01);
+		System.out.println(geom);
 	}
 
 }

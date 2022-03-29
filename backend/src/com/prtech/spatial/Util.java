@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -36,8 +37,12 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
@@ -323,4 +328,101 @@ public class Util {
 		}
 		return geom;
 	}
+	
+
+	/**
+	 * Method to deduplicate vertices
+	 * 
+	 * @param line   The existing line string
+	 * @param isRing Flag to signify that the string is ring and we guarantee that
+	 *               we'll always close it
+	 * @return Deduplicated line string or the same object if the line does not have
+	 *         duplicate vertices
+	 */
+	public static LineString deduplicateLineString(LineString line, boolean isRing, double tolerance ) {
+
+		int dedupEnd = line.getCoordinates().length;
+
+		boolean hasDuplicates = false;
+		for (int i = 1; i < dedupEnd; i++) {
+			Coordinate prevCoord = line.getCoordinates()[i - 1];
+			Coordinate oc = line.getCoordinates()[i];
+			if (oc.equals2D(prevCoord, tolerance )) {
+				hasDuplicates = true;
+				break;
+			}
+		}
+		if (hasDuplicates) {
+			ArrayList<Coordinate> newCoords = new ArrayList<>(line.getCoordinates().length - 1);
+			Coordinate prevCoord, cuurentCoord = null;
+			for (int i = 1; i < dedupEnd; i++) {
+				prevCoord = line.getCoordinates()[i - 1];
+				cuurentCoord = line.getCoordinates()[i];
+				if (!cuurentCoord.equals2D(prevCoord, tolerance )) {
+					newCoords.add(prevCoord);
+				}
+			}
+			// after we iterated to the end, we add the current coordinate
+			if (cuurentCoord != null) {
+				if (isRing) {
+					newCoords.add(newCoords.get(0));
+					line = SvUtil.sdiFactory.createLinearRing(newCoords.toArray(new Coordinate[newCoords.size()]));
+				} else {
+					newCoords.add(cuurentCoord);
+					line = SvUtil.sdiFactory.createLineString(newCoords.toArray(new Coordinate[newCoords.size()]));
+				}
+			}
+
+		}
+
+		return line;
+		// ensure the first and last are the same
+	}
+
+	/**
+	 * Method to deduplicate polygon geometries, line ring by line ring to ensure
+	 * that all vertices are within SDI_VERTEX_ALIGN_TOLERANCE parameter
+	 * 
+	 * @param oldG The existing polygon
+	 * @return the new polygon with deduplicated vertices
+	 */
+	public static Polygon deduplicatePolygon(Polygon poly, double tolerance) {
+		LinearRing shell = (LinearRing) deduplicateLineString(poly.getExteriorRing(), true, tolerance);
+		boolean isModified = !shell.equalsExact(poly.getExteriorRing());
+		LinearRing[] holes = new LinearRing[poly.getNumInteriorRing()];
+		for (int i = 0; i < poly.getNumInteriorRing(); i++) {
+			holes[i] = (LinearRing) deduplicateLineString(poly.getInteriorRingN(i), true, tolerance);
+			if (!isModified)
+				isModified = !holes[i].equalsExact(poly.getInteriorRingN(i));
+		}
+		if (isModified)
+			return SvUtil.sdiFactory.createPolygon(shell, holes);
+		else
+			return poly;
+
+	}
+
+	/**
+	 * Method to deduplicate multi polygon geometries, polygon by polygon to ensure
+	 * that all polygons have vertices are within SDI_VERTEX_ALIGN_TOLERANCE
+	 * parameter
+	 * 
+	 * @param mpoly The existing polygon
+	 * @return the new polygon with deduplicated vertices
+	 */
+	public static MultiPolygon deduplicateMultiPolygons(MultiPolygon mpoly, double tolerance) {
+		boolean isModified = false;
+		Polygon[] polys = new Polygon[mpoly.getNumGeometries()];
+		for (int i = 0; i < mpoly.getNumGeometries(); i++) {
+			polys[i] = deduplicatePolygon((Polygon) mpoly.getGeometryN(i), tolerance);
+			if (!isModified)
+				isModified = !polys[i].equalsExact(mpoly.getGeometryN(i));
+		}
+		if (isModified)
+			return SvUtil.sdiFactory.createMultiPolygon(polys);
+		else
+			return mpoly;
+
+	}
+
 }
