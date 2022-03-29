@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.filter.And;
 
+import com.prtech.spatial.CC;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
@@ -33,6 +34,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
@@ -437,20 +439,14 @@ public class SDIImporter {
 				for (String key : fields.keySet()) {
 					if (key.toUpperCase().equals("GEOM")) {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
-						if (geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
-							dboGeom.setVal(key, geometry);
+						if (geometry != null && geometry.getGeometryType().equals(CC.POLYGON)
+								&& geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
+							try (SvGeometry svg = new SvGeometry(svr)) {
+								geometry = svg.deduplicatePolygon((Polygon) geometry);
+								SvGeometry.setGeometry(dboGeom, geometry);
+							}
 						} else {
-							ArrayList<Coordinate> points = new ArrayList<Coordinate>();
-							points.add(new Coordinate(7606326.4898, 4689204.6929));
-							points.add(new Coordinate(7606329.9135, 4689038.0987));
-							points.add(new Coordinate(7606533.0659, 4689044.9483));
-							points.add(new Coordinate(7606523.0754, 4689203.9997));
-							points.add(new Coordinate(7606326.4898, 4689204.6929));
-							Geometry tempGeom = SvUtil.sdiFactory.createPolygon(new LinearRing(
-									new CoordinateArraySequence(points.toArray(new Coordinate[points.size()])),
-									SvUtil.sdiFactory), null);
-							dboGeom.setVal(key, tempGeom);
-							dboGeom.setStatus("INVALID");
+							throw (new SvException("sdi.invalid.geom", svr.getInstanceUser(), dboGeom, null));
 						}
 					} else {
 						setField(dboGeom, key.toUpperCase(), rs);
@@ -506,8 +502,8 @@ public class SDIImporter {
 //							dbo.setParentId(agriParcel.getParentId());
 //							updateObjects.addDataItem(dbo);
 //						}
-						
-						if(SvarogInstall.shouldUpgradeConfig(agriParcel, dbo,
+
+						if (SvarogInstall.shouldUpgradeConfig(agriParcel, dbo,
 								SvCore.getFields(SvCore.getTypeIdByName("AGRI_PARCEL")), true)) {
 							dbo.setPkid(agriParcel.getPkid());
 							dbo.setObjectId(agriParcel.getObjectId());
