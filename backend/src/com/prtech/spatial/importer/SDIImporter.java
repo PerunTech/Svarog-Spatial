@@ -38,6 +38,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 /** Utility class for spatial data import */
 public class SDIImporter {
@@ -441,8 +442,10 @@ public class SDIImporter {
 						Geometry geometry = wkbReader.read(rs.getBytes(fields.get(key)));
 						if (geometry != null && geometry.getGeometryType().equals(CC.POLYGON)
 								&& geometry.getDimension() > 1 && geometry.isValid() && geometry.isSimple()) {
-								geometry = com.prtech.spatial.Util.deduplicatePolygon((Polygon) geometry,0.01);
-								SvGeometry.setGeometry(dboGeom, geometry);
+							geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
+							// geometry = com.prtech.spatial.Util.deduplicatePolygon((Polygon)
+							// geometry,0.01);
+							SvGeometry.setGeometry(dboGeom, geometry);
 						} else {
 							throw (new SvException("sdi.invalid.geom", svr.getInstanceUser(), dboGeom, null));
 						}
