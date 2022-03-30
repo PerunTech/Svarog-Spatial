@@ -429,7 +429,7 @@ public class SDIImporter {
 			ps.setLong(1, farmId);
 			rs = ps.executeQuery();
 
-			WKBReader wkbReader = new WKBReader();
+			WKBReader wkbReader = new WKBReader(SvUtil.sdiFactory);
 			DbDataArray dbArray = new DbDataArray();
 
 			while (rs.next()) {
