@@ -295,7 +295,7 @@ public class SDIImporter {
 			ps = conn.prepareStatement(sqlStmt);
 			rs = ps.executeQuery();
 
-			WKBReader wkbReader = new WKBReader();
+			WKBReader wkbReader = new WKBReader(SvUtil.sdiFactory);
 			DbDataArray dbArray = new DbDataArray();
 
 			int batchCnt = 0;
