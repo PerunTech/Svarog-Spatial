@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
+import com.prtech.iacs.importer.Importer;
+import com.prtech.iacs.importer.SDIImporter;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -60,16 +62,8 @@ public class ImporterSDIByFarmExe implements ISvExecutor {
 
 		try (SvReader svr = new SvReader((SvCore) svCore);) {
 			DbDataObject farm = svr.getObjectById((Long) params.get("farmId"), SvCore.getTypeIdByName("FARMER"), null);
-
-			try {
-				SDIImporter.importSDIByFarm(SvCore.getTypeIdByName("AGRI_PARCEL"), (Long) farm.getVal("OLD_PKID"),
-						farm.getObjectId(), "VLPIS_FULL", svr);
-			} catch (SQLException | ParseException | java.text.ParseException e) {
-				throw new SvException("error.update_agri_parcel", svr.getInstanceUser(), farm, "VLPIS_FULL", e);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Importer.updateParcels(farm.getVal("OLD_PKID").toString(), svr, null, "VLPIS_IMP2", "AGRI_PARCEL");
+			Importer.updateParcels(farm.getVal("OLD_PKID").toString(), svr, null, "VLPIS_DEL2", "AGRI_PARCEL");
 		}
 		return true;
 	}
