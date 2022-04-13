@@ -66,6 +66,7 @@ public class ImporterSDIByFarmExe implements ISvExecutor {
 			Importer.updateParcels(farm.getVal("OLD_PKID").toString(), svr, null, "VLPIS_DEL2", "AGRI_PARCEL");
 			Importer.updateParcels(farm.getVal("OLD_PKID").toString(), svr, null, "VCOMMON_USE_IMP2", "COMMON_USE");
 			Importer.updateParcels(farm.getVal("OLD_PKID").toString(), svr, null, "VCOMMON_USE_DEL2", "COMMON_USE");
+			svr.dbCommit();
 		}
 		return true;
 	}
