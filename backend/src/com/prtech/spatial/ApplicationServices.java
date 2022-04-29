@@ -42,6 +42,7 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
@@ -358,7 +359,7 @@ public class ApplicationServices {
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 			Long layerTypeId1 = SvCore.getTypeIdByName(objectName1);
 			Long layerTypeId2 = SvCore.getTypeIdByName(objectName2);
-			Collection<Geometry> set = svg.geometryFromPoint(point, layerTypeId1, layerTypeId2, false, true);
+			Collection<Geometry> set = geometryFromPoint(point, layerTypeId1, layerTypeId2, false, true, svg);
 
 			// fix spikes or bad segments
 			for (Geometry g : set) {
@@ -374,6 +375,60 @@ public class ApplicationServices {
 			errMsg = e.getMessage();
 		}
 		return preparePbfStream(list, errMsg);
+	}
+
+	/**
+	 * Method to create a geometry from point selector over layer identified with
+	 * layerTypeId. The geometries found in the base layer shall be cut off from the
+	 * diff layer and the result will be provided back to the caller
+	 * 
+	 * @param point                The point from which we can select the source
+	 *                             geometries
+	 * @param layerTypeId          The layer from which we shall load the geometries
+	 * @param diffLayer            The target layer over which we should do
+	 *                             difference
+	 * @param allowMultiGeometries Flag to allow one point to select more than one
+	 *                             geometry
+	 * @param allowDuplicates      If the method should return equal geometries as
+	 *                             separate objects
+	 * @return A collection of resulting geometries
+	 * @throws SvException if allowMulti geometries is false, and the base layer has
+	 *                     more than one geometry intersecting with the point, a
+	 *                     Sv.Exceptions.SDI_MULTIPLE_GEOMS_FOUND exception will be
+	 *                     raised
+	 */
+	public Collection<Geometry> geometryFromPoint(Point point, Long layerTypeId, Long diffLayer,
+			boolean allowMultiGeometries, boolean allowDuplicates, SvGeometry svg) throws SvException {
+		Collection<Geometry> intersected = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+				null, false, false, allowDuplicates);
+		if (intersected.size() > 1 && !allowMultiGeometries)
+			throw (new SvException(Sv.Exceptions.SDI_MULTIPLE_GEOMS_FOUND, svCONST.systemUser, null, point));
+		Collection<Geometry> result = allowDuplicates ? new ArrayList<>() : new HashSet<>();
+		for (Geometry originalGeom : intersected) {
+			Collection<Geometry> related = svg.getRelatedGeometries(originalGeom, diffLayer, SDIRelation.INTERSECTS,
+					null, null, false, false, allowDuplicates);
+			for (Geometry relatedGeom : related) {
+				if (originalGeom.overlaps(relatedGeom)) {
+					Object ud = originalGeom.getUserData();
+					originalGeom = originalGeom.difference(relatedGeom);
+					originalGeom.setUserData(ud);
+				}
+
+			}
+			// if the difference resulted in multipolygon, we are interested only in the
+			// polygon which covers the point
+			if (originalGeom.getNumGeometries() > 1)
+				for (int i = 0; i < originalGeom.getNumGeometries(); i++) {
+					Geometry gp = originalGeom.getGeometryN(i);
+					if (gp.covers(point)) {
+						originalGeom = gp;
+						break;
+					}
+
+				}
+			result.add(originalGeom);
+		}
+		return result;
 	}
 
 	@GET
@@ -754,8 +809,7 @@ public class ApplicationServices {
 				validationResult.addProperty("topo.spikes.reason", ex.getLabelCode());
 				validationResult.addProperty("topo.spikes.min_angle", maxAngle);
 			}
-			Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
-					Sv.DEFAULT_MIN_POINT_DISTANCE);
+			Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 			try {
 
 				svg.testMinVertexDistance(geom, minPointDistance);
