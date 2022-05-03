@@ -365,7 +365,7 @@ public class ApplicationServices {
 			for (Geometry g : set) {
 				DbDataObject o = (DbDataObject) g.getUserData();
 				if (o != null && o.getParentId().equals(parentId)) {
-					list.add(svg.fixPolygonSpikes(g, 1.0));
+					list.add(g);
 					break;
 				}
 			}
