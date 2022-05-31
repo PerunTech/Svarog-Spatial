@@ -32,7 +32,9 @@ import com.drew.metadata.Tag;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
+import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
@@ -166,8 +168,8 @@ public class Util {
 			geom = gjr.read(el.toString());
 
 			String polyType = geom.getGeometryType();
-			//if ("Polygon".equalsIgnoreCase(polyType))
-			//	geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
+			// if ("Polygon".equalsIgnoreCase(polyType))
+			// geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
 		} catch (Exception e) {
 			log.error("Failed parsing geometry. " + e);
 		}
@@ -328,7 +330,6 @@ public class Util {
 		}
 		return geom;
 	}
-	
 
 	/**
 	 * Method to deduplicate vertices
@@ -339,7 +340,7 @@ public class Util {
 	 * @return Deduplicated line string or the same object if the line does not have
 	 *         duplicate vertices
 	 */
-	public static LineString deduplicateLineString(LineString line, boolean isRing, double tolerance ) {
+	public static LineString deduplicateLineString(LineString line, boolean isRing, double tolerance) {
 
 		int dedupEnd = line.getCoordinates().length;
 
@@ -347,7 +348,7 @@ public class Util {
 		for (int i = 1; i < dedupEnd; i++) {
 			Coordinate prevCoord = line.getCoordinates()[i - 1];
 			Coordinate oc = line.getCoordinates()[i];
-			if (oc.equals2D(prevCoord, tolerance )) {
+			if (oc.equals2D(prevCoord, tolerance)) {
 				hasDuplicates = true;
 				break;
 			}
@@ -358,7 +359,7 @@ public class Util {
 			for (int i = 1; i < dedupEnd; i++) {
 				prevCoord = line.getCoordinates()[i - 1];
 				cuurentCoord = line.getCoordinates()[i];
-				if (!cuurentCoord.equals2D(prevCoord, tolerance )) {
+				if (!cuurentCoord.equals2D(prevCoord, tolerance)) {
 					newCoords.add(prevCoord);
 				}
 			}
@@ -425,4 +426,23 @@ public class Util {
 
 	}
 
+	/**
+	 * Method to ensure that the geometry is of the type needed by svarog
+	 * 
+	 * @param dbo The DbDataObject to be saved
+	 * @param g   The geometry object
+	 * @return Corrected geometry
+	 * @throws SvException
+	 */
+	public static Geometry verifyGeometryType(DbDataObject dbo, Geometry g) throws SvException {
+		DbDataObject dbt = SvCore.getDbt(dbo);
+		DbDataObject geomField = SvCore.getFieldByName((String) dbt.getVal(Sv.TABLE_NAME), Sv.GEOM);
+		String geomType = (String) geomField.getVal(Sv.GEOMETRY_TYPE);
+		if (g.getGeometryType().equalsIgnoreCase("POLYGON") && geomType.equals("MULTIPOLYGON")) {
+			Polygon[] p = new Polygon[1];
+			p[0] = (Polygon) g;
+			g = SvUtil.sdiFactory.createMultiPolygon(p);
+		}
+		return g;
+	}
 }
