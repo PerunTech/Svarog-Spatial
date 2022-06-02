@@ -156,6 +156,9 @@ public class GeobufEncoder {
 		for (DbDataObject dbo : dbArr.getItems()) {
 			if (SvGeometry.hasGeometries(dbo.getObjectType())) {
 				g = SvGeometry.getGeometry(dbo);
+				if (SvGeometry.getCentroid(dbo) == null)
+					SvGeometry.setCentroid(dbo, g.getCentroid());
+
 				if (g != null && !g.getGeometryType().equals("GeometryCollection"))
 					gbfc.add(createGeobufFeature(g, dbo));
 				else
