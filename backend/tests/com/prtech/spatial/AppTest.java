@@ -28,6 +28,28 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Transaction;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.*;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -218,16 +240,34 @@ public class AppTest {
 		}
 	}
 
-	public void testdedup() throws ParseException
-	{
-		String deduPoly="POLYGON ((7549667.66 4656038.028, 7549667.645 4656038.031, 7549660.05 4656038.58, 7549648.21 4656039.741, 7549640.066 4656035.269, 7549631.13 4656027.349, 7549627.778 4656021.335, 7549627.38 4656014.53, 7549620.341 4656004.833, 7549617.9 4656001.47, 7549620.16 4655979.01, 7549622.19 4655958.3, 7549625.85 4655948.957, 7549639.66 4655933.319, 7549646.971 4655924.587, 7549652.454 4655922.556, 7549661.187 4655924.384, 7549667.077 4655926.618, 7549669.514 4655933.116, 7549671.339 4655949.569, 7549672.761 4655959.318, 7549675.88 4655979.39, 7549674.29 4655994.87, 7549671.33 4656002.94, 7549663.4 4656009.69, 7549667.66 4656038.028))";
+	@Test
+	public void testdedup() throws ParseException, SvException {
+		String deduPoly = "POLYGON ((7549667.66 4656038.028, 7549667.645 4656038.031, 7549660.05 4656038.58, 7549648.21 4656039.741, 7549640.066 4656035.269, 7549631.13 4656027.349, 7549627.778 4656021.335, 7549627.38 4656014.53, 7549620.341 4656004.833, 7549617.9 4656001.47, 7549620.16 4655979.01, 7549622.19 4655958.3, 7549625.85 4655948.957, 7549639.66 4655933.319, 7549646.971 4655924.587, 7549652.454 4655922.556, 7549661.187 4655924.384, 7549667.077 4655926.618, 7549669.514 4655933.116, 7549671.339 4655949.569, 7549672.761 4655959.318, 7549675.88 4655979.39, 7549674.29 4655994.87, 7549671.33 4656002.94, 7549663.4 4656009.69, 7549667.66 4656038.028))";
 		GeometryFactory gf = SvUtil.sdiFactory;
 		WKTReader wkr = new WKTReader(gf);
-		
-		Geometry geom =wkr.read(deduPoly);
-		//the polygon has double points
-		geom = Util.deduplicatePolygon((Polygon)geom, 0.01);
-		System.out.println(geom);
+
+		Geometry geom = wkr.read(deduPoly);
+		// the polygon has double points
+		System.out.println(geom.getCoordinates().length);
+		initToken();
+		geom = TopologyPreservingSimplifier.simplify(geom, 0.01);
+		// geom = Util.deduplicatePolygon((Polygon) geom, 0.01);
+		System.out.println(geom.getCoordinates().length);
+		try (SvGeometry g = new SvGeometry(token)) {
+			g.testMinVertexDistance(geom, 0.01);
+		} catch (Exception e) {
+			System.out.println("ok, duplicates found");
+		}
+		geom = TopologyPreservingSimplifier.simplify(geom, 0.01);
+		System.out.println(geom.getCoordinates().length);
+		try (SvGeometry g = new SvGeometry(token)) {
+			g.testMinVertexDistance(geom, 0.01);
+		} catch (Exception e) {
+			System.out.println("again, duplicates found");
+		}
+		System.out.println(geom.getCoordinates().length);
 	}
+
+
 
 }
