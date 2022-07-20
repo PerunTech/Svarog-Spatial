@@ -95,6 +95,11 @@ export const snap = {
             this._snapList
         );
 
+        // if no layers found. Can happen when circle is the only visible layer on the map and the hidden snapping-border circle layer is also on the map
+        if (Object.keys(closestLayer).length === 0) {
+            return false;
+        }
+
         const isMarker =
             closestLayer.layer instanceof factory.Marker ||
             closestLayer.layer instanceof factory.CircleMarker;
