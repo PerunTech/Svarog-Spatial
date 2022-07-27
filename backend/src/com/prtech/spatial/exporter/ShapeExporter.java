@@ -72,8 +72,7 @@ public class ShapeExporter {
 
 		SimpleFeature feature = toFeature(dbo, polygonSFT);
 		collection.add(feature);
-
-		File shapeFile = new File(new File("2021-").getAbsolutePath() + "shapefile.shp");
+		File shapeFile = new File(new File(dbo.getObjectId().toString()).getAbsolutePath() + ".shp");
 		shapeFile.setReadOnly();
 
 		Map<String, Serializable> params = new HashMap<>();
