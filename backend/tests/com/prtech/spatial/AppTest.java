@@ -227,7 +227,7 @@ public class AppTest {
 		System.out.println(geom.getCoordinates().length);
 	}
 
-	@Test
+	//@Test
 	public void testToShape() throws SvException, ParseException, FactoryException {
 		initToken();
 		try (SvReader svr = new SvReader(token)) {
