@@ -1,4 +1,5 @@
 import { util, factory, Map } from '../../core';
+import { prioritiseSort } from './Util';
 
 export const snap = {
     _initSnappableMarkers() {
@@ -42,6 +43,11 @@ export const snap = {
         // meanwhile, new layers could've been added to the map
         delete this._snapList;
 
+        if (this.throttledList) {
+            Map.off('layeradd', this.throttledList, this);
+            this.throttledList = undefined;
+        }
+
         // remove map event
         Map.off('pm:remove', this._handleSnapLayerRemoval, this);
 
@@ -49,6 +55,14 @@ export const snap = {
             this.debugIndicatorLines.forEach(line => {
                 line.remove();
             });
+        }
+    },
+
+    _handleThrottleSnapping() {
+        // we check if the throttledList is existing, else the function is deleted but the `layeradd` event calls it.
+        // this made problems when layer was removed and added to the map in the `pm:create` event
+        if (this.throttledList) {
+          this._createSnapList();
         }
     },
 
@@ -62,8 +76,8 @@ export const snap = {
     },
 
     _handleSnapping(e) {
-        function throttledList() {
-            return util.throttle(this._createSnapList, 100, this);
+        if (!this.throttledList) {
+            this.throttledList = util.throttle(this._handleThrottleSnapping, 100, this);
         }
 
         // if snapping is disabled via holding ALT during drag, stop right here
@@ -78,8 +92,8 @@ export const snap = {
             this._createSnapList();
 
             // re-create the snaplist again when a layer is added during draw
-            Map.off('layeradd', throttledList, this);
-            Map.on('layeradd', throttledList, this);
+            Map.off('layeradd', this.throttledList, this);
+            Map.on('layeradd', this.throttledList, this);
         }
 
         // if there are no layers to snap to, stop here
@@ -88,6 +102,7 @@ export const snap = {
         }
 
         const marker = e.target;
+        marker._snapped = false;
 
         // get the closest layer, it's closest latlng, segment and the distance
         const closestLayer = this._calcClosestLayer(
@@ -271,6 +286,7 @@ export const snap = {
     _calcClosestLayer(latlng, layers) {
         const map = Map;
         // the closest polygon to our dragged marker latlng
+        let closestLayers = [];
         let closestLayer = {};
 
         // loop through the layers
@@ -289,15 +305,55 @@ export const snap = {
                 closestLayer.distance === undefined ||
                 results.distance < closestLayer.distance
             ) {
+                if (results.distance < closestLayer.distance) {
+                    closestLayers = [];
+                }
                 closestLayer = results;
                 closestLayer.layer = layer;
+                closestLayers.push(closestLayer);
             }
 
         });
 
         // return the closest layer and it's data
-        // if there is no closest layer, return undefined
-        return closestLayer;
+        // if there is no closest layer, return an empty object
+        return this._getClosestLayerByPriority(closestLayers);
+    },
+
+    _getClosestLayerByPriority(layers) {
+        // sort the layers by creation, so it is snapping to the oldest layer from the same shape
+        layers = layers.sort((a, b) => a._leaflet_id - b._leaflet_id);
+    
+        const shapes = [
+          'Marker',
+          'CircleMarker',
+          'Circle',
+          'Line',
+          'Polygon',
+          'Rectangle',
+        ];
+        const order = [
+          'Marker',
+          'CircleMarker',
+          'Circle',
+          'Line',
+          'Polygon',
+          'Rectangle',
+        ];
+    
+        let lastIndex = 0;
+        const prioOrder = {};
+        // merge user-preferred priority with default priority
+        order.concat(shapes).forEach((shape) => {
+          if (!prioOrder[shape]) {
+            lastIndex += 1;
+            prioOrder[shape] = lastIndex;
+          }
+        });
+    
+        // sort layers by priority
+        layers.sort(prioritiseSort('instanceofShape', prioOrder));
+        return layers[0] || {};
     },
 
     _calcLayerDistances(latlng, layer) {
