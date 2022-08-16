@@ -3,10 +3,14 @@ package com.prtech.spatial;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,8 +28,12 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import com.drew.imaging.ImageProcessingException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.prtech.spatial.cwrs.zones.Ranking;
 import com.prtech.spatial.exporter.ShapeExporter;
+import com.prtech.spatial.geobuf.GeobufEncoder;
+import com.prtech.spatial.geobuf.GeobufFeature;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -37,6 +45,7 @@ import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
@@ -215,7 +224,7 @@ public class AppTest {
 		System.out.println(geom.getCoordinates().length);
 	}
 
-	//@Test
+	// @Test
 	public void testExport() throws ParseException, SvException, NoSuchAuthorityCodeException, IOException,
 			SchemaException, FactoryException {
 		String deduPoly = "POLYGON ((7549667.66 4656038.028, 7549667.645 4656038.031, 7549660.05 4656038.58, 7549648.21 4656039.741, 7549640.066 4656035.269, 7549631.13 4656027.349, 7549627.778 4656021.335, 7549627.38 4656014.53, 7549620.341 4656004.833, 7549617.9 4656001.47, 7549620.16 4655979.01, 7549622.19 4655958.3, 7549625.85 4655948.957, 7549639.66 4655933.319, 7549646.971 4655924.587, 7549652.454 4655922.556, 7549661.187 4655924.384, 7549667.077 4655926.618, 7549669.514 4655933.116, 7549671.339 4655949.569, 7549672.761 4655959.318, 7549675.88 4655979.39, 7549674.29 4655994.87, 7549671.33 4656002.94, 7549663.4 4656009.69, 7549667.66 4656038.028))";
@@ -227,7 +236,7 @@ public class AppTest {
 		System.out.println(geom.getCoordinates().length);
 	}
 
-	//@Test
+	// @Test
 	public void testToShape() throws SvException, ParseException, FactoryException {
 		initToken();
 		try (SvReader svr = new SvReader(token)) {
@@ -241,4 +250,31 @@ public class AppTest {
 		}
 	}
 
+	@Test
+	public void testGbuf() throws ParseException, SvException, NoSuchAuthorityCodeException, IOException,
+			SchemaException, FactoryException {
+		String deduPoly = "POLYGON ((7549667.66 4656038.028, 7549667.645 4656038.031, 7549660.05 4656038.58, 7549648.21 4656039.741, 7549640.066 4656035.269, 7549631.13 4656027.349, 7549627.778 4656021.335, 7549627.38 4656014.53, 7549620.341 4656004.833, 7549617.9 4656001.47, 7549620.16 4655979.01, 7549622.19 4655958.3, 7549625.85 4655948.957, 7549639.66 4655933.319, 7549646.971 4655924.587, 7549652.454 4655922.556, 7549661.187 4655924.384, 7549667.077 4655926.618, 7549669.514 4655933.116, 7549671.339 4655949.569, 7549672.761 4655959.318, 7549675.88 4655979.39, 7549674.29 4655994.87, 7549671.33 4656002.94, 7549663.4 4656009.69, 7549667.66 4656038.028))";
+		GeometryFactory gf = SvUtil.sdiFactory;
+		WKTReader wkr = new WKTReader(gf);
+
+		Geometry geom = wkr.read(deduPoly);
+		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
+		Gson gs = new Gson();
+		JsonObject json = gs.fromJson(input, JsonObject.class);
+		Geometry g = (LineString) Util.jsonToGeometry(json);
+		HashMap<String, Object> mp = new HashMap<>();
+		mp.put("1", 1);
+		mp.put("CENTROID", "SSSSSSSSSSSSSSSSSSSSSSSSS");
+		g.setUserData(mp);
+		List<Geometry> gg = new ArrayList<>();
+		gg.add(g);
+		OutputStream os = new FileOutputStream(FileDescriptor.out);
+		GeobufEncoder enc = new GeobufEncoder(os, 1);
+		GeobufFeature gf1 = enc.createGeobufFeature(g, g.getUserData());
+		if (gf1.properties == null)
+			fail("proerties not set");
+		enc.writeSvGeometry(gg);
+		System.out.println(gg.toString());
+
+	};
 }

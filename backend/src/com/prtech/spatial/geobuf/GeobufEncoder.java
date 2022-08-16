@@ -120,7 +120,7 @@ public class GeobufEncoder {
 		feat.geometry = (g.getGeometryType().equals("GeometryCollection") ? null : g);
 		feat.properties = new HashMap<>();
 
-		if (userData instanceof DbDataObject && userData != null) {
+		if (userData != null && userData instanceof DbDataObject) {
 			DbDataObject dbo = (DbDataObject) userData;
 			feat.id = dbo.getObjectId().toString();
 			feat.properties.put("type", dbo.getObjectType().toString());
@@ -144,6 +144,8 @@ public class GeobufEncoder {
 				if (v != null && !SvGeometry.getGeometryFieldName(dbo.getObjectType()).equals(k.toString()))
 					feat.properties.put(k.toString(), v);
 			});
+		} else if (userData != null && userData instanceof Map) {
+			feat.properties = new HashMap<>((Map) userData);
 		}
 
 		return feat;
