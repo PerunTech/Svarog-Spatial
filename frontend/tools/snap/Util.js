@@ -1,3 +1,5 @@
+import { factory } from '../../core';
+
 // this function is used with the .sort(prioritiseSort(key, sortingOrder)) function of arrays
 export function prioritiseSort (key, _sortingOrder, order = 'asc') {
   /* the sorting order has all possible keys (lowercase) with the index and then it is sorted by the key on the object */
@@ -18,22 +20,22 @@ export function prioritiseSort (key, _sortingOrder, order = 'asc') {
   }
 
   function getShape (layer) {
-    if (layer instanceof L.Marker) {
+    if (layer instanceof factory.Marker) {
       return 'Marker';
     }
-    if (layer instanceof L.Circle) {
+    if (layer instanceof factory.Circle) {
       return 'Circle';
     }
-    if (layer instanceof L.CircleMarker) {
+    if (layer instanceof factory.CircleMarker) {
       return 'CircleMarker';
     }
-    if (layer instanceof L.Rectangle) {
+    if (layer instanceof factory.Rectangle) {
       return 'Rectangle';
     }
-    if (layer instanceof L.Polygon) {
+    if (layer instanceof factory.Polygon) {
       return 'Polygon';
     }
-    if (layer instanceof L.Polyline) {
+    if (layer instanceof factory.Polyline) {
       return 'Line';
     }
     return undefined;
