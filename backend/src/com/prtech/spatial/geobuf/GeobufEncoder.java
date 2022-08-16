@@ -304,11 +304,13 @@ public class GeobufEncoder {
 				val.setDoubleValue(((Number) featVal).doubleValue());
 			else {
 				// TODO serialize to JSON
-				LOG.debug(
-						"Unable to save object of type " + featVal.getClass().getTypeName()
+				if (val != null) {
+					if (LOG.isDebugEnabled())
+						LOG.debug("Unable to save object of type " + featVal.getClass().getTypeName()
 								+ " to geobuf, falling back on toString. Deserialization will not work as expected.",
-						featVal.getClass());
-				val.setStringValue(featVal.toString());
+								featVal.getClass());
+					val.setStringValue(featVal.toString());
+				}
 			}
 
 			int keyIdx = keys.indexOf(e.getKey());
