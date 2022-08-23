@@ -26,12 +26,28 @@ export const renderCycle = {
      * Called when the root React container is unmounted.
      */
     cleanup () {
+        store.dispatch({ processID: '' })
         /* Containers embedded in the map, used as placeholders for UI elements (controls). */
         const controlNodes = Object.values(Map._controlCorners);
 
+        /**
+         * Containers (containing the className 'leaflet-control') created when the Controls are initially mounted
+         * Check the onAdd method on the Control class in the Control.js file
+         */
+         const controlContainers = document.getElementsByClassName('leaflet-control')
+         if (controlContainers) {
+             // Generate an array from the above HTMLCollection
+             const controlContainersArr = Array.from(controlContainers)
+             // Iterate over every container containing the className 'leaflet-control'
+             controlContainersArr.map(container => {
+                 // Fixes virtual DOM of React.
+                 ReactDOM.unmountComponentAtNode(container)
+             })
+         }
+
         controlNodes.map(el => {
             // Fixes virtual DOM of React.
-            ReactDOM.unmountComponentAtNode(el); 
+            ReactDOM.unmountComponentAtNode(el);
             
             // Removes all plain HTML elements attached to our control container,
             // which are not HTML containers themselves.
