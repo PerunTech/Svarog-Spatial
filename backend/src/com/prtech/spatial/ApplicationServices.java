@@ -54,15 +54,20 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+
 
 @Path("/spatial")
 public class ApplicationServices {
 
+	public static int PRECISION_SCALE = 2;
+	static {
+		int i = (int) (SvConf.getSDIPrecision() / 10);
+		String s = Integer.toString(i);
+		PRECISION_SCALE = s.length();
+	}
+
 	final static SvCharId parentIdKey = new SvCharId(Sv.PARENT_ID);
-	static int precisionScale = Util.PRECISION_SCALE;
+	static int precisionScale = PRECISION_SCALE;
 	private static final Logger log = SvConf.getLogger(ApplicationServices.class);
 
 	/**
@@ -300,7 +305,7 @@ public class ApplicationServices {
 		if (errorMessage == null || errorMessage.isEmpty()) {
 			StreamingOutput pbfStream = new StreamingOutput() {
 				public void write(OutputStream stream) throws IOException {
-					GeobufEncoder enc = new GeobufEncoder(stream, Util.PRECISION_SCALE);
+					GeobufEncoder enc = new GeobufEncoder(stream, PRECISION_SCALE);
 					if (result instanceof DbDataArray)
 						enc.writeDbDataArray((DbDataArray) result);
 					else if (result instanceof Collection<?>)
