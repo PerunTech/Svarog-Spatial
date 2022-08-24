@@ -335,7 +335,33 @@ public class Util {
 	 *         duplicate vertices
 	 */
 	public static LineString deduplicateLineString(LineString line, boolean isRing, double tolerance) {
+		int dedupEnd = line.getCoordinates().length;
 
+		ArrayList<Coordinate> newCoords = new ArrayList<>(line.getCoordinates().length - 1);
+		Coordinate prevCoord, cuurentCoord = null;
+		for (int i = 1; i < dedupEnd; i++) {
+			prevCoord = line.getCoordinates()[i - 1];
+			cuurentCoord = line.getCoordinates()[i];
+			if (!cuurentCoord.equals2D(prevCoord, tolerance)) {
+				newCoords.add(prevCoord);
+			}
+		}
+		// after we iterated to the end, we add the current coordinate
+		if (cuurentCoord != null) {
+			if (isRing) {
+				newCoords.add(newCoords.get(0));
+				line = SvUtil.sdiFactory.createLinearRing(newCoords.toArray(new Coordinate[newCoords.size()]));
+			} else {
+				newCoords.add(cuurentCoord);
+				line = SvUtil.sdiFactory.createLineString(newCoords.toArray(new Coordinate[newCoords.size()]));
+			}
+		}
+
+		return line;
+		// ensure the first and last are the same
+	}
+
+	public static boolean hasDuplicates(LineString line, double tolerance) {
 		int dedupEnd = line.getCoordinates().length;
 
 		boolean hasDuplicates = false;
@@ -347,31 +373,49 @@ public class Util {
 				break;
 			}
 		}
-		if (hasDuplicates) {
-			ArrayList<Coordinate> newCoords = new ArrayList<>(line.getCoordinates().length - 1);
-			Coordinate prevCoord, cuurentCoord = null;
-			for (int i = 1; i < dedupEnd; i++) {
-				prevCoord = line.getCoordinates()[i - 1];
-				cuurentCoord = line.getCoordinates()[i];
-				if (!cuurentCoord.equals2D(prevCoord, tolerance)) {
-					newCoords.add(prevCoord);
-				}
-			}
-			// after we iterated to the end, we add the current coordinate
-			if (cuurentCoord != null) {
-				if (isRing) {
-					newCoords.add(newCoords.get(0));
-					line = SvUtil.sdiFactory.createLinearRing(newCoords.toArray(new Coordinate[newCoords.size()]));
-				} else {
-					newCoords.add(cuurentCoord);
-					line = SvUtil.sdiFactory.createLineString(newCoords.toArray(new Coordinate[newCoords.size()]));
-				}
-			}
+		return hasDuplicates;
 
+	}
+
+	/**
+	 * Method to detect duplicate points in polygon geometries, line ring by line
+	 * ring to ensure that all vertices are within SDI_VERTEX_ALIGN_TOLERANCE
+	 * parameter
+	 * 
+	 * @param oldG The existing polygon
+	 * @return the new polygon with deduplicated vertices
+	 */
+	public static boolean hasDuplicates(Polygon poly, double tolerance) {
+		boolean hasDuplicates = hasDuplicates(poly.getExteriorRing(), tolerance);
+		if (hasDuplicates)
+			return hasDuplicates;
+		LinearRing[] holes = new LinearRing[poly.getNumInteriorRing()];
+		for (int i = 0; i < poly.getNumInteriorRing(); i++) {
+			hasDuplicates = hasDuplicates(poly.getInteriorRingN(i), tolerance);
+			if (hasDuplicates)
+				return hasDuplicates;
+		}
+		return hasDuplicates;
+	}
+
+	/**
+	 * Method to deduplicate multi polygon geometries, polygon by polygon to ensure
+	 * that all polygons have vertices are within SDI_VERTEX_ALIGN_TOLERANCE
+	 * parameter
+	 * 
+	 * @param mpoly The existing polygon
+	 * @return the new polygon with deduplicated vertices
+	 */
+	public static boolean hasDuplicates(MultiPolygon mpoly, double tolerance) {
+		boolean hasDuplicates = false;
+		Polygon[] polys = new Polygon[mpoly.getNumGeometries()];
+		for (int i = 0; i < mpoly.getNumGeometries(); i++) {
+			hasDuplicates = hasDuplicates((Polygon) mpoly.getGeometryN(i), tolerance);
+			if (hasDuplicates)
+				return hasDuplicates;
 		}
 
-		return line;
-		// ensure the first and last are the same
+		return hasDuplicates;
 	}
 
 	/**
