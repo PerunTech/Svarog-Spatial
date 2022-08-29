@@ -68,7 +68,7 @@ export const markerPoints = {
   _createMarker (latlng) {
     const marker = factory.marker(latlng, {
       name: 'marker-point',
-      icon: factory.divIcon({ className: 'marker-icon' }),
+      icon: factory.divIcon({ className: 'marker-icon secondary-marker-icon' }),
     });
 
     this._markerGroup.addLayer(marker);
@@ -90,7 +90,7 @@ export const markerPoints = {
     );
 
     const middleMarker = this._createMarker(latlng)
-      .setIcon(factory.divIcon({ className: 'marker-icon marker-icon-middle' }));
+      .setIcon(factory.divIcon({ className: 'marker-icon secondary-marker-icon marker-icon-middle' }));
 
     // save reference to this middle markers on the neighboor regular markers
     leftM._middleMarkerNext = middleMarker;
