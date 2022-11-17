@@ -1,7 +1,5 @@
 package com.prtech.spatial;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -32,6 +30,7 @@ import com.drew.metadata.Tag;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.perun.PerunUtil;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
@@ -50,15 +49,7 @@ import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
-@Deprecated
-/**
- * Please switch to SpatialUtil, this one will be removed in the next versions
- * 
- * @author ristepejov
- *
- */
-public class Util {
-
+public class SpatialUtil extends PerunUtil {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
 	// dms regex pattern to match string format
 	static final Pattern DMS_PATTERN = Pattern

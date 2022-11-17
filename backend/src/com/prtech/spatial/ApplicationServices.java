@@ -122,7 +122,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = Util.getInputGeometry(formVals, null);
+					Geometry geom = SpatialUtil.getInputGeometry(formVals, null);
 					SvGrid svgrid = new SvGrid(objectName);
 					Set<Geometry> updates = svgrid.getRelations(geom, SDIRelation.OVERLAPS, false);
 					DbDataArray modifiedGeoms = new DbDataArray();
@@ -330,7 +330,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = Util.getInputGeometry(formVals, geometryWkt);
+					Geometry geom = SpatialUtil.getInputGeometry(formVals, geometryWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 					Set<Geometry> geomArr = svg.getRelatedGeometries(geom, layerTypeId, SDIRelation.INTERSECTS, null,
 							null, false);
@@ -472,7 +472,7 @@ public class ApplicationServices {
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Geometry geom = Util.getInputGeometry(formVals, null);
+			Geometry geom = SpatialUtil.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
 			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
@@ -504,7 +504,7 @@ public class ApplicationServices {
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Geometry geom = Util.getInputGeometry(formVals, null);
+			Geometry geom = SpatialUtil.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
 			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
@@ -581,7 +581,7 @@ public class ApplicationServices {
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+			LineString lineString = (LineString) SpatialUtil.getInputGeometry(formVals, null);
 			ArrayList<Point> p = new ArrayList<>();
 			for (Coordinate c : lineString.getCoordinates())
 				p.add(SvUtil.sdiFactory.createPoint(c));
@@ -622,7 +622,7 @@ public class ApplicationServices {
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+			LineString lineString = (LineString) SpatialUtil.getInputGeometry(formVals, null);
 			ArrayList<Point> p = new ArrayList<>();
 			for (Coordinate c : lineString.getCoordinates())
 				p.add(SvUtil.sdiFactory.createPoint(c));
@@ -768,7 +768,7 @@ public class ApplicationServices {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			Polygon hole = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
+			Polygon hole = (Polygon) SpatialUtil.getInputGeometry(formVals, polygonWkt);
 			SvCharId filterKey = parentId != null ? ApplicationServices.parentIdKey : null;
 
 			Geometry g = svg.holeInPolygon(hole, layerTypeId, remove, filterKey, parentId, false, true, null);
@@ -797,7 +797,7 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		JsonObject validationResult = new JsonObject();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Polygon geom = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
+			Polygon geom = (Polygon) SpatialUtil.getInputGeometry(formVals, polygonWkt);
 			try {
 				svg.verifyBounds(geom);
 				validationResult.addProperty("topo.check.pass", true);
@@ -854,7 +854,7 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				try (SvGeometry svg = new SvGeometry(token)) {
-					Geometry geom = (Polygon) Util.getInputGeometry(formVals, polygonWkt);
+					Geometry geom = (Polygon) SpatialUtil.getInputGeometry(formVals, polygonWkt);
 					Long layerTypeId = SvCore.getTypeIdByName(objectName);
 
 					Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);

@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.prtech.iacs.importer.Importer;
-import com.prtech.iacs.importer.SDIImporter;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -15,7 +14,6 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvCore;
 import com.prtech.svarog_interfaces.ISvExecutor;
-import com.vividsolutions.jts.io.ParseException;
 
 public class ImporterSDIByFarmExe implements ISvExecutor {
 
