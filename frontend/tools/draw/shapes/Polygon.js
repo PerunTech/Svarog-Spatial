@@ -53,7 +53,7 @@ export const polygon = {
         // create the new marker
         const marker = factory.marker(latlng, {
             draggable: false,
-            icon: factory.divIcon({ className: 'marker-icon' }),
+            icon: factory.divIcon({ className: 'marker-icon draw-marker-icon' }),
         });
     
         // mark this marker as temporary

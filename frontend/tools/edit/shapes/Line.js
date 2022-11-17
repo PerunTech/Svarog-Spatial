@@ -112,7 +112,7 @@ export const line = {
     _createMarker (latlng) {
         const marker = factory.marker(latlng, {
             draggable: true,
-            icon: factory.divIcon({ className: 'marker-icon' }),
+            icon: factory.divIcon({ className: 'marker-icon edit-marker-icon' }),
         });
 
         marker._pmTempLayer = true;
