@@ -775,7 +775,7 @@ public class ApplicationServices {
 			filterKey = new SvCharId(Sv.PARENT_ID);
 			filterValue = parentId;
 		}
-		return holeInGeometry(token, objectName, polygonWkt, remove, formVals, filterKey, parentId);
+		return holeInGeometry(token, objectName, polygonWkt, remove, formVals, filterKey, filterValue);
 
 	}
 
