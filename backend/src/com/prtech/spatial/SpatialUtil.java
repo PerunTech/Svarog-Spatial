@@ -36,7 +36,9 @@ import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
+import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -50,7 +52,6 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
 public class SpatialUtil extends PerunUtil {
-	private static final Logger log = LogManager.getLogger(Util.class.getName());
 	// dms regex pattern to match string format
 	static final Pattern DMS_PATTERN = Pattern
 			.compile("(-?)([0-9]{1,2})°([0-5]?[0-9])'([0-5]?[0-9](\\.[0-9]*)?)\"([NS])\\s"
@@ -65,6 +66,15 @@ public class SpatialUtil extends PerunUtil {
 		return true;
 	}
 
+	void topologyCheck(DbDataArray result) throws SvException {
+		double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
+		for (DbDataObject prc : result.getItems()) {
+			Geometry g = SvGeometry.getGeometry(prc);
+			if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+				prc.setStatus(CC.TOPO_ERR);
+		}
+	}
+	
 	public static DbDataObject addValueToDataObject(DbDataObject dbo, String fieldName, DbDataObject fieldObject,
 			JsonObject jsonData) {
 
@@ -79,7 +89,7 @@ public class SpatialUtil extends PerunUtil {
 				guiMetadata = gson.fromJson(fieldObject.getVal("GUI_METADATA").toString(), JsonObject.class);
 			}
 		} catch (Exception e) {
-			log.debug(e);
+			log4j.debug(e);
 		}
 
 		if (guiMetadata != null && guiMetadata.has("react")) {
@@ -163,7 +173,7 @@ public class SpatialUtil extends PerunUtil {
 			// if ("Polygon".equalsIgnoreCase(polyType))
 			// geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
 		} catch (Exception e) {
-			log.error("Failed parsing geometry. " + e);
+			log4j.error("Failed parsing geometry. " + e);
 		}
 
 		return geom;
@@ -265,7 +275,7 @@ public class SpatialUtil extends PerunUtil {
 				result = new ProjCoordinate();
 				wgsToUtm.transform(new ProjCoordinate(d[1], d[0]), result);
 			} catch (Exception e) {
-				log.error("Error reading exif GPS coordinates", e);
+				log4j.error("Error reading exif GPS coordinates", e);
 				result = null;
 			}
 		}
@@ -307,7 +317,7 @@ public class SpatialUtil extends PerunUtil {
 				WKTReader wkr = new WKTReader(SvUtil.sdiFactory);
 				geom = wkr.read(geometryWkt);
 			} catch (Exception e) {
-				log.warn("Invalid WKT string", e);
+				log4j.warn("Invalid WKT string", e);
 			}
 		}
 		if (geom == null) {

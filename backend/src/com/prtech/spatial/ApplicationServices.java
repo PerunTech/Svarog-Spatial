@@ -55,7 +55,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-
 @Path("/spatial")
 public class ApplicationServices {
 
@@ -763,15 +762,35 @@ public class ApplicationServices {
 
 	public Response holeInGeometry(final String token, final String objectName, final String polygonWkt, boolean remove,
 			MultivaluedMap<String, String> formVals, Long parentId) {
-		String errMsg = "";
+		JsonObject j = SpatialUtil.dataToJson(formVals);
+		SvCharId filterKey = null;
+		Object filterValue= null;
+		if(j.has(Sv.OBJECT_ID))
+		{
+			filterKey = new SvCharId(Sv.OBJECT_ID);
+			filterValue = j.get(Sv.OBJECT_ID).getAsLong();
+		}
+		else if(parentId != null && parentId>0L)
+		{
+			filterKey = new SvCharId(Sv.PARENT_ID);
+			filterValue = parentId;
+		}
+		return holeInGeometry(token, objectName, polygonWkt, remove, formVals, filterKey, parentId);
 
+	}
+
+
+	
+	
+	public Response holeInGeometry(final String token, final String objectName, final String polygonWkt, boolean remove,
+			MultivaluedMap<String, String> formVals, SvCharId filterKey, Object filterValue) {
+		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			Polygon hole = (Polygon) SpatialUtil.getInputGeometry(formVals, polygonWkt);
-			SvCharId filterKey = parentId != null ? ApplicationServices.parentIdKey : null;
 
-			Geometry g = svg.holeInPolygon(hole, layerTypeId, remove, filterKey, parentId, false, true, null);
+			Geometry g = svg.holeInPolygon(hole, layerTypeId, remove, filterKey, filterValue, false, true, null);
 			result.add(g);
 		} catch (Exception e) {
 			errMsg = ((SvException) e).getJsonMessage();
@@ -786,7 +805,6 @@ public class ApplicationServices {
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
-
 	}
 
 	@POST
