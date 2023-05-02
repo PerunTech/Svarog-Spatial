@@ -7,3 +7,4 @@ geoman
 svarog.properties
 backend/conf
 backend/src/com/prtech/spatial/resources/conf/*
+/.babelrc

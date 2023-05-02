@@ -30,7 +30,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import com.drew.imaging.ImageProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.prtech.spatial.cwrs.zones.Ranking;
 import com.prtech.spatial.exporter.ShapeExporter;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.spatial.geobuf.GeobufFeature;
@@ -72,41 +71,7 @@ public class AppTest {
 		}
 	}
 
-	public void testRank() throws SvException {
-		initToken();
-		try (SvReader svs = new SvReader(token)) {
-			if (SvCore.getDbtByName("AGRI_PARCEL") == null)
-				return;
-			Ranking rnk = new Ranking("KNT_2020");
-			DbDataArray selectedTiles = rnk.getAgriTiles(svs, "AGRI_PARCEL", "3:8", 15.0);
-			System.out.println("Selected " + selectedTiles.size() + " is selected!");
-			for (DbDataObject tile : selectedTiles.getItems()) {
-				BigDecimal rank;
 
-				rank = rnk.rankTile(svs, tile, "AGRI_PARCEL");
-				if (rank == null)
-					fail("No farms were counted");
-				System.out.println("FIC Count:" + rank.toString());
-
-				rank = rnk.getDeclaredParcels(svs, tile, "AGRI_PARCEL");
-				if (rank == null)
-					fail("No parcels were counted");
-				System.out.println("Parcel Count:" + rank.toString());
-
-				rank = rnk.otsCount(svs, tile, "AGRI_PARCEL", 2021);
-				if (rank == null)
-					fail("No OTs were counted");
-				System.out.println("OTS Count:" + rank.toString());
-
-				rank = rnk.sanctionedCount(svs, tile, "AGRI_PARCEL", 2021);
-				if (rank == null)
-					fail("No Sanction were counted");
-				System.out.println("Sanction Count:" + rank.toString());
-
-			}
-
-		}
-	}
 
 	public void testExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");

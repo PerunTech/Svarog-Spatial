@@ -10,8 +10,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.prtech.spatial.cwrs.zones.RankExecutorGroup;
-import com.prtech.spatial.importer.ImporterSDIByFarmExe;
 import com.prtech.spatial.overlaps.OverlapCheckExecutor;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog_interfaces.IPerunPlugin;
@@ -73,14 +71,12 @@ public class Activator implements BundleActivator {
 	 */
 	private ArrayList<ISvExecutor> initExecutors() {
 		ArrayList<ISvExecutor> list = new ArrayList<ISvExecutor>();
-		list.add(new ImporterSDIByFarmExe());
 		list.add(new OverlapCheckExecutor());
 		return list;
 	}
 
 	private ArrayList<ISvExecutorGroup> initExecGroups() {
 		ArrayList<ISvExecutorGroup> list = new ArrayList<ISvExecutorGroup>();
-		list.add(new RankExecutorGroup());
 		return list;
 	}
 

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.impl.Log4jContextFactory;
 import org.joda.time.DateTime;
 
-import com.prtech.spatial.importer.ImporterSDIByFarmExe;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
