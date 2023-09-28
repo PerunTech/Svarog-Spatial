@@ -27,7 +27,7 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 
 import com.prtech.svarog_common.DbDataObject;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygon;
 
 public class ShapeExporter {
 

@@ -1,6 +1,6 @@
 package com.prtech.spatial.geobuf;
 
-import com.vividsolutions.jts.geom.*;
+import org.locationtech.jts.geom.*;
 
 import org.geotools.feature.type.GeometryTypeImpl;
 import org.opengis.feature.Property;

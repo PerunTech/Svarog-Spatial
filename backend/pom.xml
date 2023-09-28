@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>perun</groupId>
-	<artifactId>spatial</artifactId>
-	<version>1.5.0</version>
+	<groupId>org.peruntech</groupId>
+	<artifactId>svarog-spatial</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
-	<name>Perun Spatial</name>
+	<name>Svarog Spatial</name>
 	<description>Spatial data management, geometry tools and GIS services.</description>
 
 	<properties>
@@ -105,9 +105,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>svarog</groupId>
+			<groupId>org.peruntech</groupId>
 			<artifactId>svarog</artifactId>
-			<version>[3.2.34,3.2.99)</version>
+			<version>[4.0.0-SNAPSHOT,5)</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -116,17 +116,17 @@
 			<version>[2.0,)</version>
 		</dependency>
 		<dependency>
-			<groupId>perun</groupId>
+			<groupId>org.peruntech</groupId>
 			<artifactId>perun-core-services</artifactId>
-			<version>[2.0,)</version>
+			<version>[4.0.0-SNAPSHOT,5)</version>
 		</dependency>
-		<dependency>
+		<!-- 		<dependency>
 			<groupId>svarog</groupId>
 			<artifactId>svarog-io</artifactId>
 			<version>[1.0.4,)</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency>
+<dependency>
 			<groupId>svarog-score</groupId>
 			<artifactId>svarog-score</artifactId>
 			<version>1.0.2</version>
@@ -160,13 +160,13 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-api</artifactId>
-			<version>12.0</version>
+			<version>20.5</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-shapefile</artifactId>
-			<version>12.0</version>
+			<version>20.5</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

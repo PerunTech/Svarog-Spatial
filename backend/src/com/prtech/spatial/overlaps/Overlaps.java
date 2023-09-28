@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
 
-import javax.measure.unit.SystemOfUnits;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.impl.Log4jContextFactory;
@@ -18,7 +17,7 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class Overlaps {
 	static final Logger log4j = SvConf.getLogger(Overlaps.class);

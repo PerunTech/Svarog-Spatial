@@ -22,8 +22,8 @@ import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvUtil;
 import com.prtech.spatial.geobuf.GeobufEncoder;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 @Path("/wsg")
 // Should this class publish http services? It may be the case that we should provide base (extendable) implementation here
