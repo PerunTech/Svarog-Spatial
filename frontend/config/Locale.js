@@ -1,25 +1,27 @@
+import { getLabel } from "../ui/utils/labels";
+
 export const getProcessTitle = id => {
     const PROCESS_TITLE = {
-        'zoom-in': 'Зголеми размер', 
-        'zoom-out': 'Намали размер',
-        search: 'Пребарај',
-        origin: 'Оди на почеток',
-        location: 'Оди на локација',
+        'zoom-in': `${getLabel('zoom_in')}`,
+        'zoom-out': `${getLabel('zoom_out')}`,
+        search: `${getLabel('search')}`,
+        origin: `${getLabel('go_to_origin')}`,
+        location: `${getLabel('go_to_location')}`,
         view: 'Оди на рамка',
-        draw: 'Додај земјоделска парцела',
-        edit: 'Промени земјоделска парцела',
-        cut: 'Пресечи парцела',
-        split: 'Подели парцела',
-        merge: 'Спои парцели',
-        landscape: 'Додај пејсажни карактеристики',
-        length: 'Измери должина',
-        area: 'Измери површина',
-        radius: 'Измери радиус',
-        angle: 'Измери агол',
-        erase: 'Отстрани мерења',
-        'finish-shape': 'Затвори форма',
-        'delete-last-vertex': 'Отстрани последен вертекс',
-        'cancel-draw': 'Откажи'
+        draw: `${getLabel('draw')}`,
+        edit: `${getLabel('edit')}`,
+        cut: `${getLabel('cut')}`,
+        split: `${getLabel('split')}`,
+        merge: `${getLabel('merge')}`,
+        landscape: `${getLabel('landscape')}`,
+        length: `${getLabel('length')}`,
+        area: `${getLabel('area')}`,
+        radius: `${getLabel('radius')}`,
+        angle: `${getLabel('angle')}`,
+        erase: `${getLabel('erase')}`,
+        'finish-shape': `${getLabel('finish_shape')}`,
+        'delete-last-vertex': `${getLabel('delete_last_vertex')}`,
+        'cancel-draw': `${getLabel('cancel')}`
     }
 
     return PROCESS_TITLE[id] || '';
@@ -27,15 +29,15 @@ export const getProcessTitle = id => {
 
 export const getDrawTooltip = type => {
     const tooltips = {
-        'placeMarker': 'Кликнете за да поставите маркер.',
-        'firstVertex': 'Кликнете за да го поставите првото теме.',
-        'continueLine': 'Додадете темиња за да ја обликувате формата.',
-        'finishLine': 'Кликнете на последното поставено теме за да формирате линија.',
-        'finishPoly': 'Кликнете на првото поставено теме за да формирате полигон.',
-        'finishRect': 'Кликнете за да завршите со цртање.',
-        'startCircle': 'Кликнете за да поставите центар на кругот.',
-        'finishCircle': 'Кликнете за да формирате круг.',
-        'placeCircleMarker': 'Кликнете за да поставите маркер.'
+        'placeMarker': `${getLabel('place_marker')}`,
+        'firstVertex': `${getLabel('place_first_vertex')}`,
+        'continueLine': `${getLabel('continue_line')}`,
+        'finishLine': `${getLabel('finish_line')}`,
+        'finishPoly': `${getLabel('finish_polygon')}`,
+        'finishRect': `${getLabel('finish_rect')}`,
+        'startCircle': `${getLabel('start_circle')}`,
+        'finishCircle': `${getLabel('finish_circle')}`,
+        'placeCircleMarker': `${getLabel('place_circle_marker')}`
     };
 
     return tooltips[type] || '';
