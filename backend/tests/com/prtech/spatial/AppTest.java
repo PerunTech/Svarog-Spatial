@@ -1,5 +1,6 @@
 package com.prtech.spatial;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -70,7 +71,11 @@ public class AppTest {
 		}
 	}
 
-
+	@Test
+	public void testHttp() {
+		String context = Activator.httpContextPath.replace("/", "");
+		assertEquals(context, "spatial");
+	}
 
 	public void testExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004.jpg");

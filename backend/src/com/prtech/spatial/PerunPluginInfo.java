@@ -14,7 +14,7 @@ import com.prtech.svarog_interfaces.ISvCore;
 public class PerunPluginInfo implements IPerunPlugin {
 	
 	private static final Logger log = LogManager.getLogger(PerunPluginInfo.class.getName());
-	
+	private static int pluginVersion = 1;
 	/**
 	 * This value is used in triggering update of the plugin dbo.
 	 *
@@ -26,24 +26,13 @@ public class PerunPluginInfo implements IPerunPlugin {
 	 */
 	@Override
 	public int getVersion() {
-		int i = 1; // default
-		
-		try {
-			String[] vArr = Config.getProjectVersion().split("\\.");
-			
-			if (vArr.length > 1)
-				i = Integer.parseInt(vArr[1]);
-		} catch (NumberFormatException e) {
-			log.error("Failed to parse project version: " + e);
-		}
-		
-		return i;
+		return pluginVersion;
 	}
 
 	/** @return Maven artifactId || "spatial" */
 	@Override
 	public String getContextName() {
-		return Config.getProjectName();
+		return Activator.httpContextPath.replace("/", "");
 	}
 
 	/** @return Name of the JavaScript bundle. */
