@@ -12,9 +12,17 @@ el.style.height = '100vh';
 
 const opt = {
     ...MAP_CONFIG,
+    crs: L.CRS.EPSG4326,
+    origin: [7453631.01165012, 4523013.16848829]
+};
+
+/** 
+const opt = {
+    ...MAP_CONFIG,
     crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
     origin: [7453631.01165012, 4523013.16848829]
 };
+*/
 
 
 
@@ -38,17 +46,20 @@ factory.Map.prototype._initControlPos = function () {
 
     /* Preserve order of top/center/bottom, layout is vertical (flexbox), elements are blocks. */
     ['top', 'center', 'bottom'].map(side => {
-        this._controlCorners[side] = stopEventBubble(createElement(this._controlContainer, side)); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlContainer, side));
+    });
     /* Sub-locations of the main (center) screen, inline layout.
-    Data and layer panels on the side, earth-view (the Map) in the center. */ 
+    Data and layer panels on the side, earth-view (the Map) in the center. */
     ['left', 'map', 'right'].map(side => {
-        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.center, side)); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.center, side));
+    });
     /**
      * Added corner locations embedded in control.map (the main content view), these are the default leaflet locations.
      * Use for helper controls with transparent background. Details in the leaflet documentation.
      */
     ['topleft', 'topright', 'bottomleft', 'bottomright'].map(side => {
-        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.map, side)); });
+        this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.map, side));
+    });
 };
 
 
@@ -66,7 +77,7 @@ export const Map = factory.map(el, opt);
  * @extends segment. 
  * Extends Map.
  */
-Map.render = function render () {
+Map.render = function render() {
     let container = document.getElementById(store.getState().map.id);
     container.appendChild(el);
 
@@ -76,22 +87,22 @@ Map.render = function render () {
      * Hide them each time this plugin is initialized.
      * Show them whenever the plugin is uninitialized.
      * #revise_me
-     */ 
+     */
     document.getElementById('navbar').style.display = 'none';
     document.getElementById('footer').style.display = 'none';
-    
+
     return this.invalidateSize();
 };
 Map.setCursor = function (type) {
     return this.getContainer().style.cursor = type, this;
 };
-Map.getCRS = function () { 
+Map.getCRS = function () {
     return this.options.crs;
 }
 Map.transform = function (latlng, precision) {
     return Map.getCRS().projection.project(
-        latlng instanceof factory.LatLng 
-            ? latlng 
+        latlng instanceof factory.LatLng
+            ? latlng
             : factory.latLng(latlng),
         precision);
 }

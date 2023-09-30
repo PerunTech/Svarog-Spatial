@@ -21,7 +21,7 @@ export const R = 6371000;
  * 
  * @constant
  */
-export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569, lng: 24.017592 }];
+export const SYS_BOUNDS = [{ lat: 26.63, lng: 45.44 }, { lat: 30.13, lng: 48.47 }];
 
 /**
  * System center - a fallback point location for the map to center to. 
@@ -29,7 +29,8 @@ export const SYS_BOUNDS = [{ lat: 40.794402, lng: 19.596202 }, { lat: 42.344569,
  * 
  * @constant
  */
-export const SYS_CENTER = { lat: 41.664956, lng: 21.674375 };
+export const SYS_CENTER = { lat: 28.8638, lng: 47.0105 };
+
 
 /**
  * The minimum allowed scale for digitization.
