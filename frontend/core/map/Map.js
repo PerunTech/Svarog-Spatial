@@ -12,7 +12,7 @@ el.style.height = '100vh';
 
 const opt = {
     ...MAP_CONFIG,
-    crs: L.CRS.EPSG4326,
+    crs: crs('EPSG:4326', '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'),
     origin: [7453631.01165012, 4523013.16848829]
 };
 
