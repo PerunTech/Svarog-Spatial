@@ -7,7 +7,7 @@ export const getProcessTitle = id => {
         search: `${getLabel('search')}`,
         origin: `${getLabel('go_to_origin')}`,
         location: `${getLabel('go_to_location')}`,
-        view: 'Оди на рамка',
+        view: `${getLabel('go_to_frame')}`,
         draw: `${getLabel('draw')}`,
         edit: `${getLabel('edit')}`,
         cut: `${getLabel('cut')}`,
