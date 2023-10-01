@@ -12,19 +12,9 @@ el.style.height = '100vh';
 
 const opt = {
     ...MAP_CONFIG,
-    crs: crs('EPSG:4026', '+title=MOLDREF99 (long/lat) +proj=longlat +ellps=GRS 1980 +datum=MOLDREF99'),
-    origin: [7453631.01165012, 4523013.16848829]
-};
-
-/** 
-const opt = {
-    ...MAP_CONFIG,
     crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
-    origin: [7453631.01165012, 4523013.16848829]
+    origin: [45.44, 26.63]
 };
-*/
-
-
 
 /**
  * @override segment. Keep this on top of file.

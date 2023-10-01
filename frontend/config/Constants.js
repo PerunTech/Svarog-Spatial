@@ -21,15 +21,15 @@ export const R = 6371000;
  * 
  * @constant
  */
-export const SYS_BOUNDS = [{ lat: 26.63, lng: 45.44 }, { lat: 30.13, lng: 48.47 }];
-
+export const SYS_BOUNDS = [{ lat: 45.44, lng: 26.63 }, { lat: 48.47, lng: 30.13 }];
 /**
  * System center - a fallback point location for the map to center to. 
  * Represented as simple latitude / longitude pair.
  * 
  * @constant
  */
-export const SYS_CENTER = { lat: 28.8638, lng: 47.0105 };
+// export const SYS_CENTER = { lat: 45.44, lng: 26.63 };
+export const SYS_CENTER = { lat: 47.184434, lng: 28.489772 };
 
 
 /**
@@ -58,18 +58,13 @@ export const MIN_DIGI_AREA = 100;
  * @constant
  */
 export const COORDINATE_REFERENCE_SYSTEM = {
-    code: 'EPSG:6316',
-    def: '+proj=tmerc +lat_0=0 +lon_0=21 +k=0.9999 +x_0=7500000 +y_0=0'
-        //+ ' +ellps=bessel +towgs84=682,-203,480,0,0,0,0 +units=m +no_defs',
-        + ' +ellps=bessel +towgs84=521.748, 229.489, 590.921, -4.029, -4.488, 15.521, -9.78 +units=m +no_defs',
-
-
+    code: 'EPSG:4026',
+    def: '+proj=tmerc +lat_0=0 +lon_0=28.4 +k=0.99994 +x_0=200000 +y_0=-5000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs',
     opt: {
-        distances: [100000, 75000, 50000, 25000, 10000,
-            7500, 5000, 4000, 3000, 2500, 2000, 1750, 1500, 1000, 750, 500, 250, 100, 50],
-        description: 'MGI 1901 / Balkans zone 7'
+        distances: [2000000, 1000000, 545000, 273000, 136000, 68000, 34000, 17000, 8521, 4261],
+        description: 'MOLDREF99 / Moldova TM',
     },
-    wkt: 'PROJCS["unnamed",GEOGCS["Bessel 1841",DATUM["unknown",SPHEROID["bessel",6377397.155,299.1528128],TOWGS84[521.748,229.489,590.921,-4.029,-4.488,15.521,-9.78]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",21],PARAMETER["scale_factor",0.9999],PARAMETER["false_easting",7500000],PARAMETER["false_northing",0],UNIT["Meter",1],AUTHORITY["epsg","6316"]]'
+    wkt: 'PROJCS["MOLDREF99 / Moldova TM",GEOGCS["MOLDREF99",DATUM["MOLDREF99",SPHEROID["GRS 1980",6378137,298.257222101],TOWGS84[0,0,0,0,0,0,0]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4023"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",28.4],PARAMETER["scale_factor",0.99994],PARAMETER["false_easting",200000],PARAMETER["false_northing",-5000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","4026"]]'
 }
 
 /** @constant */
