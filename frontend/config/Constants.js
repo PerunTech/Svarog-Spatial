@@ -21,16 +21,14 @@ export const R = 6371000;
  * 
  * @constant
  */
-export const SYS_BOUNDS = [{ lat: 45.44, lng: 26.63 }, { lat: 48.47, lng: 30.13 }];
+export const SYS_BOUNDS = window.sysBounds || [{ lat: 45.44, lng: 26.63 }, { lat: 48.47, lng: 30.13 }];
 /**
  * System center - a fallback point location for the map to center to. 
  * Represented as simple latitude / longitude pair.
  * 
  * @constant
  */
-// export const SYS_CENTER = { lat: 45.44, lng: 26.63 };
-export const SYS_CENTER = { lat: 47.184434, lng: 28.489772 };
-
+export const SYS_CENTER = window.sysCenter || { lat: 47.184434, lng: 28.489772 };
 
 /**
  * The minimum allowed scale for digitization.
