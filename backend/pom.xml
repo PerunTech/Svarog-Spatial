@@ -79,6 +79,7 @@
 						<Bundle-Vendor>Perun.Technologies</Bundle-Vendor>
 						<Bundle-Description>${project.description}</Bundle-Description>
 						<Bundle-Activator>com.prtech.spatial.Activator</Bundle-Activator>
+						<Export-Package>*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
