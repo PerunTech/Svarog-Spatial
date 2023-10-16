@@ -10,9 +10,30 @@ el.id = 'map';
 el.style.height = '100vh';
 /*el.style.border = '4px inset';*/
 
+let coordinateReferenceSystem
+// Check if the CRS is defined as a window variable
+if (window.sysCrs) {
+    // Check if it is an object and contains the `code` property
+    if (typeof window.sysCrs === 'object' && window.sysCrs.code) {
+        coordinateReferenceSystem = crs(...Object.values(window.sysCrs))
+    } else if (typeof window.sysCrs === 'string') {
+        // If it is a string, check if corresponds with one of the defined coordinate reference systems
+        if (window.sysCrs === 'EPSG:3857') {
+            coordinateReferenceSystem = factory.CRS.EPSG3857
+        } else if (window.sysCrs === 'EPSG:3395') {
+            coordinateReferenceSystem = factory.CRS.EPSG3395
+        } else if (window.sysCrs === 'EPSG:4326') {
+            coordinateReferenceSystem = factory.CRS.EPSG4326
+        }
+    }
+} else {
+    // Fallback, just in case the coordinate reference system is not defined
+    coordinateReferenceSystem = crs(...Object.values(COORDINATE_REFERENCE_SYSTEM))
+}
+
 const opt = {
     ...MAP_CONFIG,
-    crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
+    crs: coordinateReferenceSystem,
     origin: [45.44, 26.63]
 };
 
