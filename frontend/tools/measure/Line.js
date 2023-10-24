@@ -16,7 +16,8 @@ export const measureLine = {
                 totalLength: 'Total length',
                 totalArea: 'Total area',
                 segmentLength: 'Segment length'
-            }
+            },
+            imperial: (window.measurementSystem && window.measurementSystem === 'imperial') || false
         }, options || {});
 
         this._measurementLayer = layerGroup().addTo(this._map);
@@ -76,7 +77,7 @@ export const measureLine = {
                         options.lang.segmentLength,
                         this._getRotation(ll1, ll2),
                         options)
-                            .addTo(this._measurementLayer);
+                        .addTo(this._measurementLayer);
                 }
             }
 
@@ -90,7 +91,7 @@ export const measureLine = {
         if (isPolygon && options.showArea && latLngs.length > 2) {
             formatter = options.formatArea || util.bind(this.formatArea, this);
             let area = calculateArea(latLngs);
-            
+
             marker.measurement(this.getBounds().getCenter(), formatter(area), options.lang.totalArea, 0, options)
                 .addTo(this._measurementLayer);
         }

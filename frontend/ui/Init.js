@@ -7,33 +7,33 @@ import { NavigationControl, scale } from '../ui';
  * 
  */
 const _appBuilder = {
-    withNavigationControl (props = {}, opt = {}) {
-        control(NavigationControl, props, {position: 'bottomright', ...opt});
-        
-        return this;
-    },
-
-    withWindRose (opt = {}) {
-        scale({ metric: true, imperial: false, ...opt }).addTo(Map);
+    withNavigationControl(props = {}, opt = {}) {
+        control(NavigationControl, props, { position: 'bottomright', ...opt });
 
         return this;
     },
 
-    addControl (ui, props, opt) {
+    withWindRose(opt = {}) {
+        scale({ ...opt }).addTo(Map);
+
+        return this;
+    },
+
+    addControl(ui, props, opt) {
         control(ui, props, opt);
 
         return this;
     },
 
-    addRasterLayers (base = {}, overlay = {}, opt = {}) {
+    addRasterLayers(base = {}, overlay = {}, opt = {}) {
         layerControl(base, overlay, opt).addTo(Map);
         return this;
     },
 
-    render (id) {
-        store.dispatch({id: id})
+    render(id) {
+        store.dispatch({ id: id })
         return <Provider children={<MapContainer />} />;
-    } 
+    }
 }
 _appBuilder.render.displayName = 'spatial-root';
 
@@ -47,4 +47,4 @@ _appBuilder.render.displayName = 'spatial-root';
  * The order of the method calls does not matter, as long as _appBuilder.render is called last.
  */
 export const init = token =>
-    (store.dispatch({token: token}), _appBuilder);
+    (store.dispatch({ token: token }), _appBuilder);
