@@ -88,7 +88,7 @@ export const Map = factory.map(el, opt);
  * @extends segment. 
  * Extends Map.
  */
-Map.render = function render() {
+Map.render = function render(showHeaderAndFooter) {
     let container = document.getElementById(store.getState().map.id);
     container.appendChild(el);
 
@@ -97,10 +97,13 @@ Map.render = function render() {
      * Header and footer are forced to always render by core.
      * Hide them each time this plugin is initialized.
      * Show them whenever the plugin is uninitialized.
+     * If the showHeaderAndFooter flag is passed, the map render function will not hide the perun-core header and footer.
      * #revise_me
      */
-    document.getElementById('navbar').style.display = 'none';
-    document.getElementById('footer').style.display = 'none';
+    if (!showHeaderAndFooter) {
+        document.getElementById('navbar').style.display = 'none';
+        document.getElementById('footer').style.display = 'none';
+    }
 
     return this.invalidateSize();
 };

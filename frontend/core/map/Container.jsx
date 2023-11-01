@@ -1,4 +1,4 @@
-import {React, PropTypes} from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { Map, connect, renderCycle as rc } from '..';
 import { MAP_CONTAINER } from '../../config';
 import { useUpdate } from '../../ui';
@@ -21,12 +21,13 @@ import { useUpdate } from '../../ui';
  * 
  * @returns JSX.Element;
  */
-function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refresh }) {
+function _MapContainer({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refresh, showHeaderAndFooter }) {
     /* Mount / Unmount effect */
     React.useEffect(() => {
-        rc.start(); // Init program.
-        
-        return () => 
+        // If the showHeaderAndFooter prop is passed, the map render function will not hide the perun-core header and footer
+        rc.start(showHeaderAndFooter); // Init program.
+
+        return () =>
             rc.cleanup(); // Release program. 
     }, []);
 
@@ -39,7 +40,7 @@ function _MapContainer ({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refre
         Map.setMinZoom(minZoom).setMaxZoom(maxZoom)
     }, [maxZoom, minZoom]);
 
-    return <div id={id} style={{height: '100vh'}} />
+    return <div id={id} style={{ height: '100vh' }} />
 }
 
 _MapContainer.propTypes = {
@@ -52,11 +53,12 @@ _MapContainer.propTypes = {
 };
 
 export const MapContainer = connect(({ map }) => {
-    return { 
+    return {
         id: map.id,
         bbox: map.bbox,
         sid: map.sid,
         minZoom: map.minZoom,
         maxZoom: map.maxZoom,
         refresh: map.refresh
-}})(_MapContainer);
+    }
+})(_MapContainer);
