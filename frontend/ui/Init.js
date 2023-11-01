@@ -30,9 +30,10 @@ const _appBuilder = {
         return this;
     },
 
-    render(id) {
+    // If the showHeaderAndFooter flag is passed, the map render function will not hide the perun-core header and footer
+    render(id, showHeaderAndFooter) {
         store.dispatch({ id: id })
-        return <Provider children={<MapContainer />} />;
+        return <Provider children={<MapContainer showHeaderAndFooter={showHeaderAndFooter} />} />;
     }
 }
 _appBuilder.render.displayName = 'spatial-root';
