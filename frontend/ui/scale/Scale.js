@@ -6,7 +6,7 @@ export const Scale = factory.Control.extend({
         position: 'bottomleft',
         maxWidth: 150,
         metric: (window.measurementSystem && window.measurementSystem === 'metric'),
-        imperial: (window.measurementSystem && window.measurementSystem === 'metric'),
+        imperial: (window.measurementSystem && window.measurementSystem === 'imperial'),
         updateWhenIdle: !1
     },
 
