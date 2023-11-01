@@ -1,6 +1,7 @@
 import { util } from '..';
 import L from 'leaflet';
 import 'leaflet-polylinedecorator';
+import * as extendedWms from './WMS'
 
 /**
  * Class factory.
@@ -17,6 +18,7 @@ import 'leaflet-polylinedecorator';
 export const factory = {
     /** Merge leaflet */
     ...L,
+    ...extendedWms,
 
     /**
      * Bounding box factory.
@@ -41,10 +43,10 @@ export const factory = {
      *                                     Expressable in any combination of arrays / strings / numbers. 
      * @returns BBox; 
      */
-    boundingBox () {
-        return L.latLngBounds(function assemble (arr) {
-                return [[arr[0], arr[1]], [arr[2], arr[3]]];
-            }(util.normalize([...arguments], Number)));
+    boundingBox() {
+        return L.latLngBounds(function assemble(arr) {
+            return [[arr[0], arr[1]], [arr[2], arr[3]]];
+        }(util.normalize([...arguments], Number)));
     },
 
     /**
@@ -66,7 +68,7 @@ export const factory = {
      * 
      * @returns GeoJSON;
      */
-    geoJSON (geojson, opt) {
+    geoJSON(geojson, opt) {
         return L.geoJSON(geojson, opt);
     },
 
@@ -90,9 +92,9 @@ export const factory = {
      * 
      * @return LatLng;
      */
-    latLng (lat, lng, alt) {
+    latLng(lat, lng, alt) {
         // Argument check
-        if (lat instanceof L.LatLng || lat === undefined || lat === null ) { return lat; }
+        if (lat instanceof L.LatLng || lat === undefined || lat === null) { return lat; }
         // Object arg
         if (typeof lat === 'object' && 'lat' in lat) {
             return L.latLng(lat.lat, 'lng' in lat ? lat.lng : lat.lon, lat.alt);
@@ -127,7 +129,7 @@ export const factory = {
      * 
      * @returns Point;
      */
-    point (x, y, r) {
+    point(x, y, r) {
         // Argument check
         if (x instanceof L.Point || x === undefined || x === null) { return x; }
         // Object arg
@@ -159,7 +161,7 @@ export const factory = {
      * 
      * @returns Transformation {};
      */
-    transformation (a, b, c, d) {
+    transformation(a, b, c, d) {
         // Coef array arg
         if (util.isArray(a)) { return L.transformation(a[0], a[1], a[2], a[3]); }
 
