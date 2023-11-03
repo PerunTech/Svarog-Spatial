@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Map, http } from '../../core';
+import { Map } from '../../core';
 
 L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
 
@@ -18,20 +18,10 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
   },
 
   getFeatureInfo: function (evt) {
-    const url = this.getFeatureInfoUrl(evt.latlng)
-    http.call('getFeatureInfo', { url, method: 'get' }).then(res => {
-      if (res.data) {
-        if (this.options.callback && this.options.callback instanceof Function) {
-          this.options.callback(res.data)
-        }
-      }
-    }).catch(err => {
-      console.error(err)
-    })
+    this.getFeatureInfoParams(evt.latlng, this.options.callback)
   },
 
-  getFeatureInfoUrl: function (latlng) {
-    // Construct a GetFeatureInfo request URL given a point
+  getFeatureInfoParams: function (latlng, callback) {
     const point = this._map.latLngToContainerPoint(latlng, this._map.getZoom())
     const size = this._map.getSize()
 
@@ -47,14 +37,16 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
       height: size.y,
       width: size.x,
       layers: this.wmsParams.layers,
-      query_layers: this.wmsParams.layers,
-      info_format: 'application/json'
+      queryLayers: this.wmsParams.layers,
+      infoFormat: 'application/json'
     };
 
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
     params[params.version === '1.3.0' ? 'j' : 'y'] = point.y;
 
-    return this._url + L.Util.getParamString(params, this._url, true);
+    if (callback && callback instanceof Function) {
+      callback(params)
+    }
   }
 });
 
