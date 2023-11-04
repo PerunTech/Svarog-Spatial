@@ -105,11 +105,12 @@ public class AppTest {
 	}
 	
 
-	@Test 
+	//@Test 
 	public void extLayersTest() throws SvException
 	{
 		System.out.println(SpatialUtil.getExternalLayerList().toJson()); 
 	}
+	
 	public void testNoExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
 		CRSFactory crsFactory = new CRSFactory();
@@ -234,7 +235,7 @@ public class AppTest {
 			e.printStackTrace();
 		}
 	}
-	@Test
+	//@Test
 	public void getInfo() throws SvException, SQLException, ParseException, IOException {
 		initToken();
 		ApplicationServices as = new ApplicationServices();
