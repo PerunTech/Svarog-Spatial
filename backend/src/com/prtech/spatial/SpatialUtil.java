@@ -37,9 +37,14 @@ import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
+import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.DbQueryObject;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -56,6 +61,15 @@ public class SpatialUtil extends PerunUtil {
 	static final Pattern DMS_PATTERN = Pattern
 			.compile("(-?)([0-9]{1,2})°([0-5]?[0-9])'([0-5]?[0-9](\\.[0-9]*)?)\"([NS])\\s"
 					+ "(-?)([0-1]?[0-9]{1,2})°([0-5]?[0-9])'([0-5]?[0-9](\\.[0-9]*)?)\"([EW])");
+	/**
+	 * Array of Svarog internal layers
+	 */
+	private static DbDataArray layers;
+
+	/**
+	 * Array of External (WMS) layers
+	 */
+	private static DbDataArray externalLayers;
 
 	public static Boolean excludeField(String fieldName) {
 		if ("PKID".equalsIgnoreCase(fieldName) || "GUI_METADATA".equalsIgnoreCase(fieldName)
@@ -70,11 +84,11 @@ public class SpatialUtil extends PerunUtil {
 		double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 		for (DbDataObject prc : result.getItems()) {
 			Geometry g = SvGeometry.getGeometry(prc);
-			if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+			if (!g.isSimple() || !g.isValid() || hasDuplicates((Polygon) g, minPointDistance))
 				prc.setStatus(CC.TOPO_ERR);
 		}
 	}
-	
+
 	public static DbDataObject addValueToDataObject(DbDataObject dbo, String fieldName, DbDataObject fieldObject,
 			JsonObject jsonData) {
 
@@ -322,13 +336,13 @@ public class SpatialUtil extends PerunUtil {
 		}
 		if (geom == null) {
 			JsonObject json = null;
-			json = Util.dataToJson(formVals);
+			json = dataToJson(formVals);
 
 			JsonElement je = json.get("GEOM");
 			if (je == null)
 				je = json.get("geometry");
 
-			geom = Util.jsonToGeometry(je);
+			geom = jsonToGeometry(je);
 		}
 		return geom;
 	}
@@ -470,6 +484,54 @@ public class SpatialUtil extends PerunUtil {
 		else
 			return mpoly;
 
+	}
+
+	static DbDataArray getAllTables() throws SvException {
+		try (SvSecurity svs = new SvSecurity()) {
+			svs.switchUser(svCONST.serviceUser);
+			try (SvReader svr = new SvReader(svs)) {
+				DbQueryObject dbo = new DbQueryObject(SvCore.getDbt(svCONST.OBJECT_TYPE_TABLE), null, null, null);
+				return svr.getObjects(dbo, null, null);
+			}
+		}
+	}
+
+	/**
+	 * Method to return all object types which contain Geometry (GIS Layers)
+	 * 
+	 * @param beginsWith
+	 * @return list of all layers (objects with geometry column)
+	 * @throws SvException
+	 */
+	public static DbDataArray getLayerList() throws SvException {
+		if (layers == null)
+			synchronized (layers) {
+				if (layers == null) {
+					layers = new DbDataArray();
+					DbDataArray dbts = getAllTables();
+					for (DbDataObject dbo : dbts.getItems()) {
+						if (SvCore.hasGeometries(dbo.getObjectId()))
+							layers.addDataItem(dbo);
+					}
+				}
+			}
+		return layers;
+	}
+
+	/**
+	 * Method to return all object types which contain Geometry (GIS Layers)
+	 * 
+	 * @param beginsWith
+	 * @return list of all layers (objects with geometry column)
+	 * @throws SvException
+	 */
+	public static DbDataArray getExternalLayerList() throws SvException {
+		try (SvSecurity svs = new SvSecurity()) {
+			svs.switchUser(svCONST.serviceUser);
+			try (SvReader svr = new SvReader(svs)) {
+				return svr.getObjectsByParentId(0L,SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),null); 
+			}
+		}
 	}
 
 	/**

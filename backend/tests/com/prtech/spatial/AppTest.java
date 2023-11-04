@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.ParseException;
@@ -67,7 +70,7 @@ public class AppTest {
 
 	public static void initToken() throws SvException {
 		try (SvSecurity svs = new SvSecurity()) {
-			token = svs.logon("ADMIN", SvUtil.getMD5("welcome13"));
+			token = svs.logon("ADMIN", SvUtil.getMD5("welcome"));
 		}
 	}
 
@@ -84,7 +87,7 @@ public class AppTest {
 		InputStream inputStream = new FileInputStream(file);
 		ProjCoordinate p = null;
 		try {
-			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+			p = SpatialUtil.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Reading coordinates threw exception");
@@ -95,6 +98,18 @@ public class AppTest {
 		System.out.println(p);
 	}
 
+	@Test 
+	public void tablesTest() throws SvException
+	{
+		System.out.println(SpatialUtil.getAllTables().toJson()); 
+	}
+	
+
+	@Test 
+	public void extLayersTest() throws SvException
+	{
+		System.out.println(SpatialUtil.getExternalLayerList().toJson()); 
+	}
 	public void testNoExif() throws SvException, ImageProcessingException, IOException {
 		File file = new File("test-data/468083.00000000 28_1_20200921_124004-noexif.jpg");
 		CRSFactory crsFactory = new CRSFactory();
@@ -102,7 +117,7 @@ public class AppTest {
 		InputStream inputStream = new FileInputStream(file);
 		ProjCoordinate p = null;
 		try {
-			p = Util.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
+			p = SpatialUtil.readImgCoordinates(inputStream, -1, null, systemCRS, file.getName());
 			if (p != null)
 				fail("Projected coordinates should be null when exif is broken");
 		} finally {
@@ -219,7 +234,37 @@ public class AppTest {
 			e.printStackTrace();
 		}
 	}
+	@Test
+	public void getInfo() throws SvException, SQLException, ParseException, IOException {
+		initToken();
+		ApplicationServices as = new ApplicationServices();
+		GeometryFactory gf = SvUtil.sdiFactory;
 
+		Envelope e = SvGeometry.parseBBox("7452549.065335996,4519504.284285896,7677998.951467971,4697211.004479155");
+		GeoJsonReader gjr = new GeoJsonReader(gf);
+		gjr.setUseFeatureType(true);
+		gjr.setUsePropertiesAsUserData(true);
+
+		
+		String bbox="137493.0473%2C193905.6432%2C276176.9114%2C260936.1989";
+		javax.ws.rs.core.Response json = as.getFeatureInfo(token, "w_rsuat:mv_uat1", bbox, 928, 1920, 1071, 476);
+
+	
+		
+
+		System.out.println(json.getEntity().toString());
+
+		/*
+		 * String token = getUserSessionIdForTestPurpose(); if
+		 * (!token.equals(CC.EMPTY_STRING)) { try (SvReader svr = new SvReader(token)) {
+		 * File fl = new File("labels/PARCELI_KATASTARSKI_OPSTINI_WMS.json"); String
+		 * json = com.google.common.io.Files.toString(fl,Charset.defaultCharset());
+		 * 
+		 * System.out.println(json); } }
+		 */
+	}
+
+	
 	@Test
 	public void testGbuf() throws ParseException, SvException, NoSuchAuthorityCodeException, IOException,
 			SchemaException, FactoryException {

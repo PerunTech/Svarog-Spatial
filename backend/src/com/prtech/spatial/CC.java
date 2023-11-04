@@ -10,4 +10,10 @@ public class CC {
 	public static final String NOT_GEOM_TYPE = "otscm.error.non_geometry_type";
 	public static final SvCharId PARENT_ID = new SvCharId(Sv.PARENT_ID);
 	public static final String TOPO_ERR = "TOPO_ERR";
+	public static final String WFS_SERVER_URL = "WFS_SERVER_URL";
+	public static final String WFS_NOT_CONFIGURED = "lpis.error.wfs.notconfigured";
+	public static final String GEO_LAYER_TYPE = "GEO_LAYER_TYPE";
+	public static final String EPSG = "EPSG";
+	public static final String WMS = "WMS";
+
 }

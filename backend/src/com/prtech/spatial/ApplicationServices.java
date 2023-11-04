@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
+import com.prtech.perun.PerunUtil;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
@@ -159,6 +160,54 @@ public class ApplicationServices {
 				}
 			};
 		};
+	}
+	@GET
+	@Path("/getLayers/{sessionId}/")
+	@Produces("application/json")
+	public Response getLayers(@PathParam("sessionId") final String sessionId) {
+
+		try (SvReader svr = new SvReader(sessionId)) {
+
+			return Response.ok(SpatialUtil.getLayerList().toJson(), MediaType.APPLICATION_JSON).build();
+
+		} catch (SvException e) {
+			// TODO Auto-generated catch block
+			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
+		}
+	}
+	
+	@GET
+	@Path("/getFeatureInfo/{sessionId}/{layerCode}/{BBOX}/{HEIGHT}/{WIDTH}/{INFO_FORMAT}/{X}/{Y}")
+	@Produces("application/json")
+	public Response getFeatureInfo(@PathParam("sessionId") final String sessionId,
+			@PathParam("layerCode") final String layerCode, @PathParam("BBOX") final String bbox,
+			@PathParam("HEIGHT") final int height, @PathParam("WIDTH") final int width,
+			@PathParam("x") final int x,
+			@PathParam("y") final int y) {
+
+		try (SvReader svr = new SvReader(sessionId)) {
+			DbDataArray layers = svr.getObjectsByParentId(0L, SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),
+					null);
+			String url = null;
+			for (DbDataObject dbl : layers.getItems()) {
+				if (dbl.getVal("TITLE").equals(layerCode))
+					url = (String) dbl.getVal("URL");
+
+			}
+			if (url == null)
+				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
+
+			WFSReader wfs = new WFSReader(layerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
+			System.out.println(wfs.buildWfsRequestUrl(bbox));
+
+			String json = wfs.getWMSFeatureInfo(bbox, height, width, x, y);
+			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
+			return Response.ok(json, MediaType.APPLICATION_JSON).build();
+
+		} catch (SvException e) {
+			// TODO Auto-generated catch block
+			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
+		}
 	}
 
 	@GET
@@ -764,14 +813,11 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, Long parentId) {
 		JsonObject j = SpatialUtil.dataToJson(formVals);
 		SvCharId filterKey = null;
-		Object filterValue= null;
-		if(j.has(Sv.OBJECT_ID))
-		{
+		Object filterValue = null;
+		if (j.has(Sv.OBJECT_ID)) {
 			filterKey = new SvCharId(Sv.OBJECT_ID);
 			filterValue = j.get(Sv.OBJECT_ID).getAsLong();
-		}
-		else if(parentId != null && parentId>0L)
-		{
+		} else if (parentId != null && parentId > 0L) {
 			filterKey = new SvCharId(Sv.PARENT_ID);
 			filterValue = parentId;
 		}
@@ -779,9 +825,6 @@ public class ApplicationServices {
 
 	}
 
-
-	
-	
 	public Response holeInGeometry(final String token, final String objectName, final String polygonWkt, boolean remove,
 			MultivaluedMap<String, String> formVals, SvCharId filterKey, Object filterValue) {
 		String errMsg = "";
