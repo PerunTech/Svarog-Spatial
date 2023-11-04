@@ -5,8 +5,8 @@ export const Scale = factory.Control.extend({
     options: {
         position: 'bottomleft',
         maxWidth: 150,
-        metric: !1,
-        imperial: !0,
+        metric: (window.measurementSystem && window.measurementSystem === 'metric'),
+        imperial: (window.measurementSystem && window.measurementSystem === 'imperial'),
         updateWhenIdle: !1
     },
 
@@ -17,13 +17,13 @@ export const Scale = factory.Control.extend({
             n = this.options,
             c = factory.DomUtil.create('div', 'compass', i),
             s = factory.DomUtil.create('div', e + '-ruler', i);
-        
+
         factory.DomUtil.create('div', 'wind-rose', c);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-first-piece', s);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-upper-second-piece', s);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-lower-first-piece', s);
         factory.DomUtil.create('div', e + '-ruler-block ' + e + '-lower-second-piece', s);
-        
+
         return this._addScales(n, e, i),
             this.ScaleContainer = i,
             map.on(n.updateWhenIdle ? 'moveend' : 'move', this._update, this),
@@ -37,9 +37,9 @@ export const Scale = factory.Control.extend({
 
     _addScales: function (t, e, i) {
         this._iScale = factory.DomUtil.create('div', e + '-label-div', i),
-        this._iScaleLabel = factory.DomUtil.create('div', e + '-label', this._iScale),
-        this._iScaleFirstNumber = factory.DomUtil.create('div', e + '-label ' + e + '-first-number', this._iScale),
-        this._iScaleSecondNumber = factory.DomUtil.create('div', e + '-label ' + e + '-second-number', this._iScale)
+            this._iScaleLabel = factory.DomUtil.create('div', e + '-label', this._iScale),
+            this._iScaleFirstNumber = factory.DomUtil.create('div', e + '-label ' + e + '-first-number', this._iScale),
+            this._iScaleSecondNumber = factory.DomUtil.create('div', e + '-label ' + e + '-second-number', this._iScale)
     },
 
     _update: function () {
@@ -50,9 +50,9 @@ export const Scale = factory.Control.extend({
             o = this._map.getSize(),
             s = this.options,
             a = 0;
-        
+
         o.x > 0 && (a = n * (s.maxWidth / o.x))
-            
+
         this._updateScales(s, a);
     },
 
@@ -74,19 +74,19 @@ export const Scale = factory.Control.extend({
             u = this._iScaleLabel;
 
         u.innerHTML = '0',
-        
-        a > 500 
-            ? (e = a / 1000, 
-                i = this._getRoundNum(e),
-                o = this._getRoundNum(e / 2),
-                l.style.width = this._getScaleWidth(i / e) + 'px',
-                r.innerHTML = o,
-                h.innerHTML = i + 'km')
-            : (n = this._getRoundNum(a),
-                s = this._getRoundNum(a / 2),
-                l.style.width = this._getScaleWidth(n / a) + 'px',
-                r.innerHTML = s,
-                h.innerHTML = n + 'm');
+
+            a > 500
+                ? (e = a / 1000,
+                    i = this._getRoundNum(e),
+                    o = this._getRoundNum(e / 2),
+                    l.style.width = this._getScaleWidth(i / e) + 'px',
+                    r.innerHTML = o,
+                    h.innerHTML = i + 'km')
+                : (n = this._getRoundNum(a),
+                    s = this._getRoundNum(a / 2),
+                    l.style.width = this._getScaleWidth(n / a) + 'px',
+                    r.innerHTML = s,
+                    h.innerHTML = n + 'm');
     },
 
     _updateImperial: function (t) {
@@ -97,19 +97,19 @@ export const Scale = factory.Control.extend({
             u = this._iScaleLabel;
 
         u.innerHTML = '0',
-        
-        a > 2640 
-            ? (e = a / 5280,
-                i = this._getRoundNum(e),
-                o = this._getRoundNum(e / 2),
-                l.style.width = this._getScaleWidth(i / e) + 'px',
-                r.innerHTML = o,
-                h.innerHTML = i + 'mi')
-            : (n = this._getRoundNum(a),
-                s = this._getRoundNum(a / 2),
-                l.style.width = this._getScaleWidth(n / a) + 'px',
-                r.innerHTML = s,
-                h.innerHTML = n + 'ft');
+
+            a > 2640
+                ? (e = a / 5280,
+                    i = this._getRoundNum(e),
+                    o = this._getRoundNum(e / 2),
+                    l.style.width = this._getScaleWidth(i / e) + 'px',
+                    r.innerHTML = o,
+                    h.innerHTML = i + 'mi')
+                : (n = this._getRoundNum(a),
+                    s = this._getRoundNum(a / 2),
+                    l.style.width = this._getScaleWidth(n / a) + 'px',
+                    r.innerHTML = s,
+                    h.innerHTML = n + 'ft');
     },
 
     _getScaleWidth: function (t) {

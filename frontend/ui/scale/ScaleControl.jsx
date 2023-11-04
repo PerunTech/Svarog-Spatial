@@ -1,4 +1,4 @@
-import { React, PropTypes} from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { connect, Map } from '../../core';
 import { DropdownButton, Dropdown } from '..';
 
@@ -10,24 +10,28 @@ import { DropdownButton, Dropdown } from '..';
  * but rather with resolutions or scales directly. The crs class needs to be revised,
  * before any assumptions are made here. 
  */
-function _ScaleControl ({currZoom}) {
-    const distances = React.useMemo(() => 
-        [...Map.getCRS().options.distances], []);
+function _ScaleControl({ currZoom }) {
+    const distances = React.useMemo(() => [...Map.getCRS().options?.distances || []], []);
 
-    return <DropdownButton title={`1 : ${distances[currZoom]}`} drop='up' alignRight >
-        {distances.map((dist, i) => {
-            return <Dropdown.Item 
-                key={i} 
-                eventKey={i} 
-                active={i === currZoom} 
-                onClick={() => Map.setView(Map.getCenter(), i)} >
-                    {`1 : ${dist}`}
-                </Dropdown.Item>})}
-        </DropdownButton>
+    return (
+        distances.length > 0 && (
+            <DropdownButton title={`1 : ${distances[currZoom]}`} drop='up' alignRight >
+                {distances.map((dist, i) => {
+                    return <Dropdown.Item
+                        key={i}
+                        eventKey={i}
+                        active={i === currZoom}
+                        onClick={() => Map.setView(Map.getCenter(), i)} >
+                        {`1 : ${dist}`}
+                    </Dropdown.Item>
+                })}
+            </DropdownButton>
+        )
+    )
 }
 
 _ScaleControl.propTypes = {
     currZoom: PropTypes.number,
 }
 
-export const ScaleControl = connect(({map}) => ({currZoom: map.zoom}))(_ScaleControl);
+export const ScaleControl = connect(({ map }) => ({ currZoom: map.zoom }))(_ScaleControl);

@@ -10,9 +10,30 @@ el.id = 'map';
 el.style.height = '100vh';
 /*el.style.border = '4px inset';*/
 
+let coordinateReferenceSystem
+// Check if the CRS is defined as a window variable
+if (window.sysCrs) {
+    // Check if it is an object and contains the `code` property
+    if (typeof window.sysCrs === 'object' && window.sysCrs.code) {
+        coordinateReferenceSystem = crs(...Object.values(window.sysCrs))
+    } else if (typeof window.sysCrs === 'string') {
+        // If it is a string, check if corresponds with one of the defined coordinate reference systems
+        if (window.sysCrs === 'EPSG:3857') {
+            coordinateReferenceSystem = factory.CRS.EPSG3857
+        } else if (window.sysCrs === 'EPSG:3395') {
+            coordinateReferenceSystem = factory.CRS.EPSG3395
+        } else if (window.sysCrs === 'EPSG:4326') {
+            coordinateReferenceSystem = factory.CRS.EPSG4326
+        }
+    }
+} else {
+    // Fallback, just in case the coordinate reference system is not defined
+    coordinateReferenceSystem = crs(...Object.values(COORDINATE_REFERENCE_SYSTEM))
+}
+
 const opt = {
     ...MAP_CONFIG,
-    crs: crs(...Object.values(COORDINATE_REFERENCE_SYSTEM)),
+    crs: coordinateReferenceSystem,
     origin: [45.44, 26.63]
 };
 
@@ -67,7 +88,7 @@ export const Map = factory.map(el, opt);
  * @extends segment. 
  * Extends Map.
  */
-Map.render = function render() {
+Map.render = function render(showHeaderAndFooter) {
     let container = document.getElementById(store.getState().map.id);
     container.appendChild(el);
 
@@ -76,10 +97,13 @@ Map.render = function render() {
      * Header and footer are forced to always render by core.
      * Hide them each time this plugin is initialized.
      * Show them whenever the plugin is uninitialized.
+     * If the showHeaderAndFooter flag is passed, the map render function will not hide the perun-core header and footer.
      * #revise_me
      */
-    document.getElementById('navbar').style.display = 'none';
-    document.getElementById('footer').style.display = 'none';
+    if (!showHeaderAndFooter) {
+        document.getElementById('navbar').style.display = 'none';
+        document.getElementById('footer').style.display = 'none';
+    }
 
     return this.invalidateSize();
 };
