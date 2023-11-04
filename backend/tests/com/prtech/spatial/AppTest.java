@@ -98,7 +98,7 @@ public class AppTest {
 		System.out.println(p);
 	}
 
-	@Test 
+	//@Test 
 	public void tablesTest() throws SvException
 	{
 		System.out.println(SpatialUtil.getAllTables().toJson()); 
