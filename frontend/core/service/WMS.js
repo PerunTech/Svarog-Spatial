@@ -26,6 +26,7 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
     const size = this._map.getSize()
 
     const params = {
+      url: this._url,
       request: 'GetFeatureInfo',
       service: 'WMS',
       srs: this._map.options.crs.code,
