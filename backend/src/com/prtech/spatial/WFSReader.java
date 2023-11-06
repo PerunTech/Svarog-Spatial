@@ -258,7 +258,7 @@ public class WFSReader {
 
 			// This line makes the request
 			InputStream responseStream = con.getInputStream();
-			ret = IOUtils.toString(responseStream, StandardCharsets.UTF_8);
+			ret = IOUtils.toString(responseStream, "UTF-8");
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
