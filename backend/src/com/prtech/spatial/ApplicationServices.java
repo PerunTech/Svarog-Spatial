@@ -2,6 +2,7 @@ package com.prtech.spatial;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -183,14 +184,16 @@ public class ApplicationServices {
 			@PathParam("layerCode") final String layerCode, @PathParam("BBOX") final String bbox,
 			@PathParam("HEIGHT") final int height, @PathParam("WIDTH") final int width,
 			@PathParam("x") final int x,
-			@PathParam("y") final int y) {
+			@PathParam("y") final int y) throws UnsupportedEncodingException {
 
 		try (SvReader svr = new SvReader(sessionId)) {
+			 String layerCodeDecoded = java.net.URLDecoder.decode(layerCode, StandardCharsets.UTF_8.name());
+
 			DbDataArray layers = svr.getObjectsByParentId(0L, SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),
 					null);
 			String url = null;
 			for (DbDataObject dbl : layers.getItems()) {
-				if (dbl.getVal("TITLE").equals(layerCode))
+				if (dbl.getVal("TITLE").equals(layerCodeDecoded))
 					url = (String) dbl.getVal("URL");
 
 			}
