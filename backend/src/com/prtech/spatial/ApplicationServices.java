@@ -201,8 +201,7 @@ public class ApplicationServices {
 				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
 
 			WFSReader wfs = new WFSReader(layerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
-			System.out.println(wfs.buildWfsRequestUrl(bbox));
-
+			
 			String json = wfs.getWMSFeatureInfo(bbox, height, width, x, y);
 			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
 			return Response.ok(json, MediaType.APPLICATION_JSON).build();

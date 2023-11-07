@@ -242,14 +242,14 @@ public class AppTest {
 		GeometryFactory gf = SvUtil.sdiFactory;
 
 		//896/1920/application%2Fjson/
-		Envelope e = SvGeometry.parseBBox("7452549.065335996,4519504.284285896,7677998.951467971,4697211.004479155");
+		// BBOX=&HEIGHT=896&WIDTH=1920&LAYERS=w_rsuat%3Amv_uat1&QUERY_LAYERS=w_rsuat%3Amv_uat1&INFO_FORMAT=application%2Fjson&X=1010&Y=472
 		GeoJsonReader gjr = new GeoJsonReader(gf);
 		gjr.setUseFeatureType(true);
 		gjr.setUsePropertiesAsUserData(true);
 
 		
-		String bbox="158656.7552,180253.9126,297340.6822,244973.0358";
-		javax.ws.rs.core.Response json = as.getFeatureInfo(token, "w_rsuat%3Amv_uat1", bbox,896,1920, 1064,492);
+		String bbox="137493.0044,195061.2904,276176.9359,259780.4823";
+		javax.ws.rs.core.Response json = as.getFeatureInfo(token, "w_rsuat%3Amv_uat1", bbox,896,1920, 1010,472);
 
 	
 		

@@ -116,7 +116,7 @@ public class WFSReader {
 	public String buildWfsRequestUrl() {
 		String url = wfsServerUrl + "?" + getService() + "&" + serviceVersion + "&" + getServiceRequest() + "&"
 				+ getLayerType() + "&srs=" + epsg + "&" + getServiceFormat() + getExtendedServiceParams();
-		;
+	
 		return url;
 	}
 
@@ -192,7 +192,10 @@ public class WFSReader {
 		this.mapX=x;
 		this.mapY=y;
 		this.serviceRequest="GetFeatureInfo";
-		return executeGet(buildWfsRequestUrl(bbox), Sv.EMPTY_STRING, 0, Sv.EMPTY_STRING, Sv.EMPTY_STRING);
+		String url=	buildWfsRequestUrl(bbox);
+		if (log.isDebugEnabled())
+			log.debug("WFS url:" + url);
+		return executeGet(url, Sv.EMPTY_STRING, 0, Sv.EMPTY_STRING, Sv.EMPTY_STRING);
 
 	}
 	
