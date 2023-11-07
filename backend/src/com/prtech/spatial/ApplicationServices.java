@@ -178,13 +178,13 @@ public class ApplicationServices {
 	}
 	
 	@GET
-	@Path("/getFeatureInfo/{sessionId}/{layerCode}/{BBOX}/{HEIGHT}/{WIDTH}/{INFO_FORMAT}/{X}/{Y}")
+	@Path("/getFeatureInfo/{sessionId}/{layerCode}/{BBOX}/{HEIGHT}/{WIDTH}/{INFO_FORMAT}/{MAP_X}/{MAP_Y}")
 	@Produces("application/json")
 	public Response getFeatureInfo(@PathParam("sessionId") final String sessionId,
 			@PathParam("layerCode") final String layerCode, @PathParam("BBOX") final String bbox,
 			@PathParam("HEIGHT") final int height, @PathParam("WIDTH") final int width,
-			@PathParam("x") final int x,
-			@PathParam("y") final int y) throws UnsupportedEncodingException {
+			@PathParam("MAP_X") final int mapX,
+			@PathParam("MAP_Y") final int mapY) throws UnsupportedEncodingException {
 
 		try (SvReader svr = new SvReader(sessionId)) {
 			 String layerCodeDecoded = java.net.URLDecoder.decode(layerCode, StandardCharsets.UTF_8.name());
@@ -202,7 +202,7 @@ public class ApplicationServices {
 
 			WFSReader wfs = new WFSReader(layerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
 			
-			String json = wfs.getWMSFeatureInfo(bbox, height, width, x, y);
+			String json = wfs.getWMSFeatureInfo(bbox, height, width, mapX, mapY);
 			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
 			return Response.ok(json, MediaType.APPLICATION_JSON).build();
 
