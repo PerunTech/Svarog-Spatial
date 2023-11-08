@@ -512,7 +512,7 @@ public class SpatialUtil extends PerunUtil {
 					for (DbDataObject dbo : dbts) {
 						if (SvCore.hasGeometries(dbo.getObjectId()) && dbo.getVal(Sv.GUI_METADATA) != null) {
 							JsonObject jgui = (JsonObject) dbo.getVal(Sv.GUI_METADATA);
-							if (jgui.has("lpisImport") && jgui.get("lpisImport").getAsBoolean())
+							if (jgui.has(CC.LPIS_IMPORT) && jgui.get(CC.LPIS_IMPORT).getAsBoolean())
 								layers.addDataItem(dbo);
 						}
 
