@@ -101,13 +101,14 @@ public class AppTest {
 	//@Test 
 	public void tablesTest() throws SvException
 	{
-		System.out.println(SpatialUtil.getAllTables().toJson()); 
+		System.out.println(SpatialUtil.getLayerList().toJson()); 
 	}
 	
 
 	//@Test 
 	public void extLayersTest() throws SvException
 	{
+		
 		System.out.println(SpatialUtil.getExternalLayerList().toJson()); 
 	}
 	

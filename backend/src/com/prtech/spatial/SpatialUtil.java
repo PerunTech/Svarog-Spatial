@@ -505,7 +505,7 @@ public class SpatialUtil extends PerunUtil {
 	 */
 	public static DbDataArray getLayerList() throws SvException {
 		if (layers == null)
-			synchronized (layers) {
+			synchronized (SpatialUtil.class) {
 				if (layers == null) {
 					layers = new DbDataArray();
 					DbDataArray dbts = getAllTables();
