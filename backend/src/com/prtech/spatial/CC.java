@@ -15,5 +15,6 @@ public class CC {
 	public static final String GEO_LAYER_TYPE = "GEO_LAYER_TYPE";
 	public static final String EPSG = "EPSG";
 	public static final String WMS = "WMS";
+	public static final String LPIS_IMPORT = "LPIS_IMPORT";
 
 }

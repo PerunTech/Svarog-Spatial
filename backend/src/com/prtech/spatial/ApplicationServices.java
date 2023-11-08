@@ -169,9 +169,10 @@ public class ApplicationServices {
 
 		try (SvReader svr = new SvReader(sessionId)) {
 
-			return Response.ok(SpatialUtil.getLayerList().toJson(), MediaType.APPLICATION_JSON).build();
+			DbDataArray dba = SpatialUtil.getLayerList();
+			return Response.ok(dba.toSimpleJson().toString(), MediaType.APPLICATION_JSON).build();
 
-		} catch (SvException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
 		}

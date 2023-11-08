@@ -508,10 +508,14 @@ public class SpatialUtil extends PerunUtil {
 			synchronized (SpatialUtil.class) {
 				if (layers == null) {
 					layers = new DbDataArray();
-					DbDataArray dbts = getAllTables();
-					for (DbDataObject dbo : dbts.getItems()) {
-						if (SvCore.hasGeometries(dbo.getObjectId()))
-							layers.addDataItem(dbo);
+					List<DbDataObject> dbts = SvCore.getTypes();
+					for (DbDataObject dbo : dbts) {
+						if (SvCore.hasGeometries(dbo.getObjectId()) && dbo.getVal(Sv.GUI_METADATA) != null) {
+							JsonObject jgui = (JsonObject) dbo.getVal(Sv.GUI_METADATA);
+							if (jgui.has("lpisImport") && jgui.get("lpisImport").getAsBoolean())
+								layers.addDataItem(dbo);
+						}
+
 					}
 				}
 			}
@@ -529,7 +533,7 @@ public class SpatialUtil extends PerunUtil {
 		try (SvSecurity svs = new SvSecurity()) {
 			svs.switchUser(svCONST.serviceUser);
 			try (SvReader svr = new SvReader(svs)) {
-				return svr.getObjectsByParentId(0L,SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),null); 
+				return svr.getObjectsByParentId(0L, SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(), null);
 			}
 		}
 	}
