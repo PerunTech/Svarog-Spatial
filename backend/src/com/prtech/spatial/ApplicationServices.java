@@ -436,7 +436,6 @@ public class ApplicationServices {
 			@PathParam("y") final Double y) {
 
 		DbDataArray result = new DbDataArray();
-		String errMsg = null;
 		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
@@ -444,22 +443,22 @@ public class ApplicationServices {
 					null, false);
 			for (Geometry g : geomArr) {
 				DbDataObject dbo = (DbDataObject) g.getUserData();
-				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
-				DbDataObject dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
-				if (dboP != null)
-					result.addDataItem(dboP);
+				// check if our geometry has Parent data
+				Long parentType = SvCore.getDbt(dbo).getParentId();
+				if (parentType > 0) {
+					DbDataObject dbt = SvCore.getDbt(parentType);
+					DbDataObject dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+					if (dboP != null)
+						result.addDataItem(dboP);
+				}
 				if (dbo != null)
 					result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
-			log.error("Error fetching geometry info", e);
-			errMsg = "Failed fetching geometry set. Please see server logs";
+			// TODO Auto-generated catch block
+			return PerunUtil.handleException(e, null, "spatial.err.getinfo");
 		}
-		if (errMsg != null)
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
-		else
-			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
-					.build();
+		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	/**
