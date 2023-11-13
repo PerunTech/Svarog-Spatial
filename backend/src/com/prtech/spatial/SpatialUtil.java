@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import com.prtech.svarog_common.DbQueryObject;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
@@ -146,6 +148,23 @@ public class SpatialUtil extends PerunUtil {
 		}
 
 		return dbo;
+	}
+
+	public static DbDataArray transformGeomCollection(GeometryCollection geom, Long typeId) {
+		DbDataArray db = new DbDataArray();
+
+		for (int i = 0; i < geom.getNumGeometries(); i++) {
+			Geometry g = geom.getGeometryN(i);
+			DbDataObject dbo = new DbDataObject(typeId);
+			if (g.getUserData() != null)
+				for (Map.Entry<String, Object> e : ((Map<String, Object>) g.getUserData()).entrySet())
+					dbo.setVal(e.getKey(), e.getValue());
+
+			SvGeometry.setGeometry(dbo, g);
+			SpatialUtil.calculateGeometryDerivatives(dbo);
+			db.addDataItem(dbo);
+		}
+		return db;
 	}
 
 	public static JsonObject dataToJson(MultivaluedMap<String, String> data) {

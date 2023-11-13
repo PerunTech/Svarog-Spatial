@@ -10,9 +10,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,13 +51,19 @@ import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.SvCharId;
+import com.prtech.svarog_geojson.GeoJsonReader;
+import com.prtech.svarog_interfaces.ISvCore;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
 
 @Path("/spatial")
 public class ApplicationServices {
@@ -162,6 +170,7 @@ public class ApplicationServices {
 			};
 		};
 	}
+
 	@GET
 	@Path("/getLayers/{sessionId}/")
 	@Produces("application/json")
@@ -177,18 +186,18 @@ public class ApplicationServices {
 			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
 		}
 	}
-	
+
 	@GET
 	@Path("/getFeatureInfo/{sessionId}/{layerCode}/{BBOX}/{HEIGHT}/{WIDTH}/{INFO_FORMAT}/{MAP_X}/{MAP_Y}")
 	@Produces("application/json")
 	public Response getFeatureInfo(@PathParam("sessionId") final String sessionId,
 			@PathParam("layerCode") final String layerCode, @PathParam("BBOX") final String bbox,
 			@PathParam("HEIGHT") final int height, @PathParam("WIDTH") final int width,
-			@PathParam("MAP_X") final int mapX,
-			@PathParam("MAP_Y") final int mapY) throws UnsupportedEncodingException {
+			@PathParam("MAP_X") final int mapX, @PathParam("MAP_Y") final int mapY)
+			throws UnsupportedEncodingException {
 
 		try (SvReader svr = new SvReader(sessionId)) {
-			 String layerCodeDecoded = java.net.URLDecoder.decode(layerCode, StandardCharsets.UTF_8.name());
+			String layerCodeDecoded = java.net.URLDecoder.decode(layerCode, StandardCharsets.UTF_8.name());
 
 			DbDataArray layers = svr.getObjectsByParentId(0L, SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),
 					null);
@@ -202,12 +211,124 @@ public class ApplicationServices {
 				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
 
 			WFSReader wfs = new WFSReader(layerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
-			
+
 			String json = wfs.getWMSFeatureInfo(bbox, height, width, mapX, mapY);
 			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
 			return Response.ok(json, MediaType.APPLICATION_JSON).build();
 
 		} catch (SvException e) {
+			// TODO Auto-generated catch block
+			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
+		}
+	}
+
+	@Path("/save/{token}/{LAYER_NAME}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveParcel(@PathParam("token") String token, @PathParam("LAYER_NAME") String layerName,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		SvReader svr = null;
+		SvGeometry svg = null;
+		DbDataArray db = new DbDataArray();
+		try {
+			svr = new SvReader(token);
+			svr.setIncludeGeometries(true);
+			svg = new SvGeometry(svr);
+
+			Long typeId = SvCore.getTypeIdByName(layerName);
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+//			JsonObject metadata = SpatialUtil.dataToJson(formVals);
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+			String json = null;
+
+			for (String key : formVals.keySet())
+				json = key;
+			Geometry geom = gjr.read(json);
+
+			if (geom.getGeometryType().equals("GeometryCollection")) {
+				db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, typeId);
+				try {
+					svg.saveGeometry(db);
+				} catch (SvException e) {
+					if (e.getLabelCode().equals("system.error.unq_constraint_violated"))
+						log.warn("Object already exists, mass import will ignore it:" + db.toSimpleJson());
+				}
+			}
+
+		} catch (Exception e) {
+			return PerunUtil.handleException(e, "Errror saving geometry");
+		} finally {
+			if (svg != null)
+				svg.close();
+		}
+
+		return Response.status(200).entity(db.toSimpleJson().toString()).build();
+	}
+
+	@GET
+	@Path("/scanWMSFeatureInfo/{sessionId}/{objectName}/{objectId}/{gridSize}/{externalLayerCode}/{targetName}")
+	@Produces("application/json")
+	public Response scanWMSFeatureInfo(@PathParam("sessionId") final String sessionId,
+			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
+			@PathParam("gridSize") final int gridSize, @PathParam("externalLayerCode") final String externalLayerCode,
+			@PathParam("targetName") final String targetName
+
+	) throws UnsupportedEncodingException {
+
+		try (SvReader svr = new SvReader(sessionId); SvGeometry svg = new SvGeometry(sessionId)) {
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+
+			DbDataObject type = SvCore.getDbtByName(targetName);
+			DbDataObject scannedType = SvCore.getDbtByName(objectName);
+			if (type == null || scannedType == null)
+				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
+
+			// get existing object type
+			svr.setIncludeGeometries(true);
+			DbDataObject layer = svr.getObjectById(objectId, scannedType.getObjectId(), null);
+			if (SvCore.hasGeometries(objectId))
+				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
+
+			// prepare WFS request
+			String layerCodeDecoded = java.net.URLDecoder.decode(externalLayerCode, StandardCharsets.UTF_8.name());
+			DbDataArray layers = svr.getObjectsByParentId(0L, SvCore.getDbtByName(CC.GEO_LAYER_TYPE).getObjectId(),
+					null);
+			String url = null;
+			for (DbDataObject dbl : layers.getItems()) {
+				if (dbl.getVal("TITLE").equals(layerCodeDecoded))
+					url = (String) dbl.getVal("URL");
+
+			}
+			WFSReader wfs = new WFSReader(externalLayerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
+			DbDataArray finalGeoms = new DbDataArray();
+			GeometryCollection grid = SvGrid.generateGrid(SvGeometry.getGeometry(layer), gridSize, svr);
+			Map<String, String> map = new HashMap<>();
+			for (int i = 0; i < grid.getNumGeometries(); i++) {
+				Geometry cell = grid.getGeometryN(i);
+				String bbox = SvGeometry.getBBox(cell.getEnvelopeInternal());
+				String json = wfs.getWMSFeatureInfo(bbox, 1000, 1000, 500, 500);
+				Geometry geom = gjr.read(json);
+				if (geom.getGeometryType().equals("GeometryCollection")) {
+
+					DbDataArray db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, type.getObjectId());
+					finalGeoms.getItems().addAll(db.getItems());
+					svg.saveGeometry(db);
+				}
+
+			}
+
+			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
+			return Response.ok(finalGeoms.toSimpleJson().toString(), MediaType.APPLICATION_JSON).build();
+
+		} catch (SvException | ParseException e) {
 			// TODO Auto-generated catch block
 			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
 		}
