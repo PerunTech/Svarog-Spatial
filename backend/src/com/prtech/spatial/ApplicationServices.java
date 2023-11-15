@@ -279,6 +279,31 @@ public class ApplicationServices {
 	}
 
 	@GET
+	@Path("/geometry/svg/{sessionId}/{objectName}/{objectId}/{fillColor}/{strokeColor}/{strokeWidth}")
+	@Produces("image/svg+xml")
+	public Response getSvg(@PathParam("sessionId") final String sessionId,
+			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
+			@PathParam("strokeWidth") final int strokeWidth, @PathParam("strokeColor") final String strokeColor,
+			@PathParam("fillColor") final String fillColor) {
+		try (SvReader svr = new SvReader(sessionId);) {
+			DbDataObject objectType = SvCore.getDbtByName(objectName);
+			if (objectType == null || !SvCore.hasGeometries(objectType.getObjectId()))
+				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
+
+			// get existing object type
+			svr.setIncludeGeometries(true);
+			DbDataObject layer = svr.getObjectById(objectId, objectType.getObjectId(), null);
+			String svg = SpatialUtil.geometryToSvg(SvGeometry.getGeometry(layer), fillColor, strokeColor, strokeWidth);
+			return Response.ok(svg, MediaType.APPLICATION_SVG_XML).build();
+
+		} catch (SvException e) {
+			// TODO Auto-generated catch block
+			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
+		}
+
+	}
+
+	@GET
 	@Path("/scanWMSFeatureInfo/{sessionId}/{objectName}/{objectId}/{gridSize}/{externalLayerCode}/{targetName}/{useMeters}")
 	@Produces("application/json")
 	public Response scanWMSFeatureInfo(@PathParam("sessionId") final String sessionId,
@@ -312,17 +337,20 @@ public class ApplicationServices {
 			}
 			WFSReader wfs = new WFSReader(externalLayerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
 			DbDataArray finalGeoms = new DbDataArray();
-			double previousArea=0; 
+			double previousArea = 0;
 			svg.setAutoCommit(false);
-			while (scannedArea.getArea() >(useMeters?gridSize:gridSize*1000) && Math.abs(scannedArea.getArea()-previousArea)>1) {
+			while (scannedArea.getArea() > (useMeters ? gridSize : gridSize * 1000)
+					&& Math.abs(scannedArea.getArea() - previousArea) > 1) {
 				List<Geometry> result = scanWMS(scannedArea, targetType, gridSize, svg, wfs, useMeters);
 				previousArea = scannedArea.getArea();
 				if (result.size() > 0) {
 					GeometryCollection grc = SvUtil.sdiFactory
 							.createGeometryCollection(result.toArray(new Geometry[result.size()]));
-					
-					scannedArea = scannedArea.difference(grc.union());
-				}else break;
+					Geometry imported = grc.union();
+					if (imported.isValid())
+						scannedArea = scannedArea.difference(imported);
+				} else
+					break;
 
 			}
 

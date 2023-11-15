@@ -265,7 +265,27 @@ public class SpatialUtil extends PerunUtil {
 		return relationIndex;
 
 	}
+	public static String geometryToSvg(Geometry geom, String fill, String stroke, int width)
+	{
+		double mx = geom.getEnvelopeInternal().getMinX();
+		double my = geom.getEnvelopeInternal().getMinY();
 
+		double mxx = geom.getEnvelopeInternal().getMaxX();
+		double mxy = geom.getEnvelopeInternal().getMaxY();
+
+		StringBuilder sbr = new StringBuilder();
+		sbr.append("<svg height=\""+((int) (mxy-my))+"\" width=\""+((int)(mxx-mx))+"\">");
+		
+		sbr.append("<polygon points=\"");
+		for(int i=0; i<geom.getCoordinates().length;i++)
+		{
+			Coordinate c = geom.getCoordinates()[i];
+			sbr.append(((int) (c.x-mx))+","+((int)(c.y-my))+" ");
+
+		}
+		sbr.append("\" style=\"fill:"+fill+";stroke:"+stroke+";stroke-width:"+width+"\" /></svg>");
+		return sbr.toString();
+	}
 	/**
 	 * Helper method to prepare a geometry based on the type
 	 * 
