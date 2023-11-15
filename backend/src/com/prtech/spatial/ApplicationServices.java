@@ -63,6 +63,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.io.ParseException;
 
 @Path("/spatial")
@@ -252,12 +253,7 @@ public class ApplicationServices {
 
 			if (geom.getGeometryType().equals("GeometryCollection")) {
 				db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, typeId);
-				try {
-					svg.saveGeometry(db);
-				} catch (SvException e) {
-					if (e.getLabelCode().equals("system.error.unq_constraint_violated"))
-						log.warn("Object already exists, mass import will ignore it:" + db.toSimpleJson());
-				}
+				svg.saveGeometry(db);
 			}
 
 		} catch (Exception e) {
@@ -276,19 +272,25 @@ public class ApplicationServices {
 	public Response scanWMSFeatureInfo(@PathParam("sessionId") final String sessionId,
 			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
 			@PathParam("gridSize") final int gridSize, @PathParam("externalLayerCode") final String externalLayerCode,
-			@PathParam("targetName") final String targetName
+			@PathParam("targetName") final String targetName) {
 
-	) throws UnsupportedEncodingException {
+		return scanWMSFeatureInfo(sessionId, objectName, objectId, gridSize, externalLayerCode, targetName, false);
+
+	}
+
+	@GET
+	@Path("/scanWMSFeatureInfo/{sessionId}/{objectName}/{objectId}/{gridSize}/{externalLayerCode}/{targetName}/{useMeters}")
+	@Produces("application/json")
+	public Response scanWMSFeatureInfo(@PathParam("sessionId") final String sessionId,
+			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
+			@PathParam("gridSize") final int gridSize, @PathParam("externalLayerCode") final String externalLayerCode,
+			@PathParam("targetName") final String targetName, @PathParam("useMeters") final Boolean useMeters) {
 
 		try (SvReader svr = new SvReader(sessionId); SvGeometry svg = new SvGeometry(sessionId)) {
-			GeometryFactory gf = SvUtil.sdiFactory;
-			GeoJsonReader gjr = new GeoJsonReader(gf);
-			gjr.setUseFeatureType(true);
-			gjr.setUsePropertiesAsUserData(true);
 
-			DbDataObject type = SvCore.getDbtByName(targetName);
+			DbDataObject targetType = SvCore.getDbtByName(targetName);
 			DbDataObject scannedType = SvCore.getDbtByName(objectName);
-			if (type == null || scannedType == null)
+			if (targetType == null || scannedType == null)
 				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
 
 			// get existing object type
@@ -296,6 +298,7 @@ public class ApplicationServices {
 			DbDataObject layer = svr.getObjectById(objectId, scannedType.getObjectId(), null);
 			if (SvCore.hasGeometries(objectId))
 				throw (new SvException("spatial.err.layer.notfound", svr.getInstanceUser()));
+			Geometry scannedArea = SvGeometry.getGeometry(layer);
 
 			// prepare WFS request
 			String layerCodeDecoded = java.net.URLDecoder.decode(externalLayerCode, StandardCharsets.UTF_8.name());
@@ -309,29 +312,95 @@ public class ApplicationServices {
 			}
 			WFSReader wfs = new WFSReader(externalLayerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
 			DbDataArray finalGeoms = new DbDataArray();
-			GeometryCollection grid = SvGrid.generateGrid(SvGeometry.getGeometry(layer), gridSize, svr);
-			Map<String, String> map = new HashMap<>();
-			for (int i = 0; i < grid.getNumGeometries(); i++) {
-				Geometry cell = grid.getGeometryN(i);
-				String bbox = SvGeometry.getBBox(cell.getEnvelopeInternal());
-				String json = wfs.getWMSFeatureInfo(bbox, 1000, 1000, 500, 500);
-				Geometry geom = gjr.read(json);
-				if (geom.getGeometryType().equals("GeometryCollection")) {
 
-					DbDataArray db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, type.getObjectId());
-					finalGeoms.getItems().addAll(db.getItems());
-					svg.saveGeometry(db);
-				}
+			svg.setAutoCommit(false);
+			double previousArea = scannedArea.getArea();
 
+			while (scannedArea.getArea() > 100 && Math.abs(previousArea - scannedArea.getArea()) < 1) {
+				List<Geometry> result = scanWMS(scannedArea, targetType, gridSize, svg, wfs, useMeters);
+				GeometryCollection grc = SvUtil.sdiFactory
+						.createGeometryCollection(result.toArray(new Geometry[result.size()]));
+				scannedArea = scannedArea.difference(grc.union());
 			}
+
+			svg.dbCommit();
 
 			// WFSReader reader= new WFSReader(layerCode, bbox, infoFormat);
 			return Response.ok(finalGeoms.toSimpleJson().toString(), MediaType.APPLICATION_JSON).build();
 
-		} catch (SvException | ParseException e) {
+		} catch (SvException | ParseException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			return PerunUtil.handleException(e, null, "spatial.err.wmf.getfeatureinfo");
 		}
+	}
+
+	/**
+	 * Based on the layer geometry, the method will generate a grid and for each
+	 * cell it will send a WMS GetInfo request to see if there is a geometry
+	 * covering that point
+	 * 
+	 * @param layer       The geometry from which we will generate a cell grid
+	 * @param targetLayer The object type which will be used to store the result
+	 * @param gridSize    The size of the grid (if useMeters is false, then its in
+	 *                    KM, otherwise Meters)
+	 * @param svg         SvGeometry instance used for the database operations
+	 * @param wfs         WFS Reader class used for generating the requests
+	 * @param useMeters   Flag if we should generate the grid using meters or
+	 *                    kilometers
+	 * @return List of geometries which were loaded
+	 * @throws SvException    Raise any underlying svarog exception
+	 * @throws ParseException If the JSON returned by the WMS Server is invalid it
+	 *                        will throw parse exception
+	 */
+
+	public List<Geometry> scanWMS(Geometry layer, DbDataObject targetLayer, int gridSize, SvGeometry svg, WFSReader wfs,
+			boolean useMeters) throws SvException, ParseException {
+		GeometryFactory gf = SvUtil.sdiFactory;
+		GeoJsonReader gjr = new GeoJsonReader(gf);
+		gjr.setUseFeatureType(true);
+		gjr.setUsePropertiesAsUserData(true);
+		List<Geometry> savedGeoms = new ArrayList<Geometry>();
+
+		// the grid is used for calculating the bbox
+		GeometryCollection grid = SvGrid.generateGrid(layer, gridSize, svg, useMeters);
+		// the centroid is the simulated click point
+		GeometryCollection centroids = SpatialUtil.extractCentroids(grid);
+		// the set is used to mark grid cells which were already processed. This is
+		// used in case one geometry covers more than one cell so we don't send WMS
+		// GetInfo which will return the same geometry
+		Set<Integer> processedCells = new HashSet<>();
+
+		for (int i = 0; i < grid.getNumGeometries(); i++) {
+			if (processedCells.contains(i))
+				continue;
+
+			Geometry cell = grid.getGeometryN(i);
+			String bbox = SvGeometry.getBBox(cell.getEnvelopeInternal());
+			String json = wfs.getWMSFeatureInfo(bbox, 1000, 1000, 500, 500);
+			Geometry geom = gjr.read(json);
+			if (geom.getGeometryType().equals("GeometryCollection")) {
+				// when we get a geometry, check if it also covers other cells.
+				Set<Integer> used = SpatialUtil.collectionOverlap((GeometryCollection) geom, centroids,
+						SDIRelation.COVERS, false);
+				// mark these cells as processed
+				processedCells.addAll(used);
+
+				DbDataArray db = SpatialUtil.transformGeomCollection((GeometryCollection) geom,
+						targetLayer.getObjectId());
+				try {
+					svg.saveGeometry(db);
+					for (DbDataObject d : db.getItems())
+						savedGeoms.add(SvGeometry.getGeometry(d));
+				} catch (SvException e) {
+					if (e.getLabelCode().equals("system.error.unq_constraint_violated"))
+						log.warn("Object already exists, mass import will ignore it:" + db.toSimpleJson());
+				}
+
+			}
+
+		}
+		return savedGeoms;
+
 	}
 
 	@GET

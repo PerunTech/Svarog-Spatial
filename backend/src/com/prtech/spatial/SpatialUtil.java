@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +41,7 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.svCONST;
@@ -51,9 +54,16 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.Puntal;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
+import org.locationtech.jts.geom.prep.PreparedLineString;
+import org.locationtech.jts.geom.prep.PreparedPoint;
+import org.locationtech.jts.geom.prep.PreparedPolygon;
 import org.locationtech.jts.io.WKTReader;
 import com.prtech.svarog_geojson.GeoJsonReader;
 import com.prtech.svarog_geojson.GeoJsonWriter;
@@ -150,6 +160,17 @@ public class SpatialUtil extends PerunUtil {
 		return dbo;
 	}
 
+	/**
+	 * Method to transform a GeometryCollection to DbDataArray of DbDataObject based
+	 * on the typeId, which identifies the type to enable matching of the metatadata
+	 * fields
+	 * 
+	 * @param geom   The geometry collection from which the DbDataObjects will be
+	 *               created
+	 * @param typeId The ID of the object type which will be created
+	 * @return a DbDataArray containing all generated objects including the
+	 *         geometries
+	 */
 	public static DbDataArray transformGeomCollection(GeometryCollection geom, Long typeId) {
 		DbDataArray db = new DbDataArray();
 
@@ -160,11 +181,126 @@ public class SpatialUtil extends PerunUtil {
 				for (Map.Entry<String, Object> e : ((Map<String, Object>) g.getUserData()).entrySet())
 					dbo.setVal(e.getKey(), e.getValue());
 
+			g.setUserData(dbo);
 			SvGeometry.setGeometry(dbo, g);
 			SpatialUtil.calculateGeometryDerivatives(dbo);
 			db.addDataItem(dbo);
 		}
 		return db;
+	}
+
+	public static boolean geometryRelates(PreparedGeometry g, Geometry geom, SDIRelation relation) {
+		boolean relates = false;
+		switch (relation) {
+		case INTERSECTS:
+			relates = g.intersects(geom);
+			break;
+		case COVEREDBY:
+			relates = g.coveredBy(geom);
+			break;
+		case CONTAINS:
+			relates = g.contains(geom);
+			break;
+		case CROSSES:
+			relates = g.crosses(geom);
+			break;
+		case COVERS:
+			relates = g.covers(geom);
+			break;
+		case DISJOINT:
+			relates = g.disjoint(geom);
+			break;
+		case EQUALS:
+			relates = g.equals(geom);
+			break;
+		case OVERLAPS:
+			relates = g.overlaps(geom);
+			break;
+		case WITHIN:
+			relates = g.within(geom);
+			break;
+		case TOUCHES:
+			relates = g.touches(geom);
+			break;
+		default:
+			relates = false;
+		}
+		return relates;
+	}
+
+	/**
+	 * Method to calculate the relations of two geometry collections. Each geometry
+	 * of the left collection (active) will be tested if it relates to each geometry
+	 * in the right collection (passive). The method will return list of geometry
+	 * indexes, which can be used to get the needed Geometry. The param
+	 * returnLefthand specifies which index will be returned, if returnLefthand is
+	 * true, the method will return the list of active geometries (the left hand
+	 * side). If the parameter is false, it will return the indices of passive
+	 * geometries
+	 * 
+	 * @param active              The list of geometries on which the relation
+	 *                            method will be invoked
+	 * @param passive             The list of geometries which will be used as
+	 *                            parameter to the relation operation
+	 * @param relation            The relation which should be tested (enum
+	 *                            com.prtech.svarog.SvSDITile.SDIRelation)
+	 * @param returnLefthandIndex The flag to signify which of the two indexes will
+	 *                            be returned
+	 * 
+	 * @return The list of collection indices resulting from the overlap
+	 */
+	public static Set<Integer> collectionOverlap(GeometryCollection active, GeometryCollection passive,
+			SDIRelation relation, Boolean returnLefthandIndex) {
+		Set<Integer> relationIndex = new HashSet<>();
+		for (int i = 0; i < active.getNumGeometries(); i++) {
+			Geometry left = active.getGeometryN(i);
+			PreparedGeometry pgleft = getPreparedGeom(left);
+			for (int j = 0; j < passive.getNumGeometries(); j++) {
+				Geometry right = passive.getGeometryN(j);
+				if (geometryRelates(pgleft, right, relation))
+					relationIndex.add(returnLefthandIndex ? i : j);
+			}
+
+		}
+		return relationIndex;
+
+	}
+
+	/**
+	 * Helper method to prepare a geometry based on the type
+	 * 
+	 * @param g The original geometry
+	 * @return The prepared Geometry
+	 */
+	public static PreparedGeometry getPreparedGeom(Geometry g) {
+		PreparedGeometry pg = null;
+		if (g instanceof Polygonal)
+			pg = new PreparedPolygon((Polygonal) g);
+		else if (g instanceof Lineal)
+			pg = new PreparedLineString((Lineal) g);
+		else if (g instanceof Puntal)
+			pg = new PreparedPoint((Puntal) g);
+
+		return pg;
+	}
+
+	/**
+	 * Method to extract the centroids of geometries in a GeometryCollection and
+	 * return a new GeometryCollection containing points. The centroid index,
+	 * corresponds to the geometry index
+	 * 
+	 * @param gcl The collection of geometries
+	 * @return
+	 */
+	static GeometryCollection extractCentroids(GeometryCollection gcl) {
+		Geometry[] centroids = new Geometry[gcl.getNumGeometries()];
+		for (int i = 0; i < gcl.getNumGeometries(); i++) {
+			Geometry g = gcl.getGeometryN(i);
+			centroids[i] = g.getCentroid();
+		}
+
+		return SvUtil.sdiFactory.createGeometryCollection(centroids);
+
 	}
 
 	public static JsonObject dataToJson(MultivaluedMap<String, String> data) {
