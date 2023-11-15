@@ -312,15 +312,18 @@ public class ApplicationServices {
 			}
 			WFSReader wfs = new WFSReader(externalLayerCode, CC.EPSG + ":" + SvConf.getSDISrid(), url, CC.WMS);
 			DbDataArray finalGeoms = new DbDataArray();
-
+			double previousArea=0; 
 			svg.setAutoCommit(false);
-			double previousArea = scannedArea.getArea();
-
-			while (scannedArea.getArea() > 100 && Math.abs(previousArea - scannedArea.getArea()) < 1) {
+			while (scannedArea.getArea() >(useMeters?gridSize:gridSize*1000) && Math.abs(scannedArea.getArea()-previousArea)>1) {
 				List<Geometry> result = scanWMS(scannedArea, targetType, gridSize, svg, wfs, useMeters);
-				GeometryCollection grc = SvUtil.sdiFactory
-						.createGeometryCollection(result.toArray(new Geometry[result.size()]));
-				scannedArea = scannedArea.difference(grc.union());
+				previousArea = scannedArea.getArea();
+				if (result.size() > 0) {
+					GeometryCollection grc = SvUtil.sdiFactory
+							.createGeometryCollection(result.toArray(new Geometry[result.size()]));
+					
+					scannedArea = scannedArea.difference(grc.union());
+				}else break;
+
 			}
 
 			svg.dbCommit();
