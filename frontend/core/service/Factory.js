@@ -2,6 +2,7 @@ import { util } from '..';
 import L from 'leaflet';
 import 'leaflet-polylinedecorator';
 import * as extendedWms from './WMS'
+import * as googleMutant from './google/Leaflet.GoogleMutant'
 
 /**
  * Class factory.
@@ -19,6 +20,7 @@ export const factory = {
     /** Merge leaflet */
     ...L,
     ...extendedWms,
+    ...googleMutant,
 
     /**
      * Bounding box factory.
