@@ -28,11 +28,12 @@ factory.GeoJSON.include({
         const dbCRSCode = store.getState().dbCRSCode
         if (geojson) {
             if (_crs !== undefined) {
+                const mapCRSCode = _crs.code?.split(':')[1]
                 this.options.coordsToLatLng = function (coords) {
                     const point = factory.point(coords[0], coords[1]);
                     let unprojectedPoint = _crs.projection.unproject(point)
-                    // Check if there is a predefined CRS used on the back - end
-                    if (dbCRSCode) {
+                    // Check if there is a predefined CRS used on the back-end and if it's different than the one the map is using
+                    if (dbCRSCode && dbCRSCode !== mapCRSCode) {
                         // Check if it corresponds with one of the defined coordinate reference systems
                         if (dbCRSCode === '3857') {
                             unprojectedPoint = factory.CRS.EPSG3857.unproject(point)
