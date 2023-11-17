@@ -47,6 +47,7 @@ import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
+import com.prtech.svarog.SvGrid.MapUnit;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
@@ -223,24 +224,17 @@ public class ApplicationServices {
 		}
 	}
 
-	@Path("/save/{token}/{LAYER_NAME}")
+	@Path("/save/{token}/{LAYER_NAME}/{parentId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveParcel(@PathParam("token") String token, @PathParam("LAYER_NAME") String layerName,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+			@PathParam("parentId") Long parentId, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
 
-		SvReader svr = null;
-		SvGeometry svg = null;
 		DbDataArray db = new DbDataArray();
-		try {
-			svr = new SvReader(token);
-			svr.setIncludeGeometries(true);
-			svg = new SvGeometry(svr);
-
+		try (SvGeometry svg = new SvGeometry(token);) {
 			Long typeId = SvCore.getTypeIdByName(layerName);
-			DbDataArray fieldSet = SvCore.getFields(typeId);
-//			JsonObject metadata = SpatialUtil.dataToJson(formVals);
 			GeometryFactory gf = SvUtil.sdiFactory;
 			GeoJsonReader gjr = new GeoJsonReader(gf);
 			gjr.setUseFeatureType(true);
@@ -252,17 +246,15 @@ public class ApplicationServices {
 			Geometry geom = gjr.read(json);
 
 			if (geom.getGeometryType().equals("GeometryCollection")) {
-				db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, typeId);
+				db = SpatialUtil.transformGeomCollection((GeometryCollection) geom, typeId, svg);
+				for (DbDataObject dbo : db.getItems())
+					dbo.setParentId(parentId);
 				svg.saveGeometry(db);
 			}
 
 		} catch (Exception e) {
 			return PerunUtil.handleException(e, "Errror saving geometry");
-		} finally {
-			if (svg != null)
-				svg.close();
 		}
-
 		return Response.status(200).entity(db.toSimpleJson().toString()).build();
 	}
 
@@ -393,7 +385,8 @@ public class ApplicationServices {
 		List<Geometry> savedGeoms = new ArrayList<Geometry>();
 
 		// the grid is used for calculating the bbox
-		GeometryCollection grid = SvGrid.generateGrid(layer, gridSize, svg, useMeters);
+		GeometryCollection grid = SvGrid.generateGrid(layer, Double.valueOf(gridSize), svg,
+				(useMeters ? MapUnit.METER : MapUnit.KILOMETER));
 		// the centroid is the simulated click point
 		GeometryCollection centroids = SpatialUtil.extractCentroids(grid);
 		// the set is used to mark grid cells which were already processed. This is
@@ -417,7 +410,7 @@ public class ApplicationServices {
 				processedCells.addAll(used);
 
 				DbDataArray db = SpatialUtil.transformGeomCollection((GeometryCollection) geom,
-						targetLayer.getObjectId());
+						targetLayer.getObjectId(),svg);
 				try {
 					svg.saveGeometry(db);
 					for (DbDataObject d : db.getItems())
