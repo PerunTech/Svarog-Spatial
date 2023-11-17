@@ -168,23 +168,40 @@ public class SpatialUtil extends PerunUtil {
 	 * @param geom   The geometry collection from which the DbDataObjects will be
 	 *               created
 	 * @param typeId The ID of the object type which will be created
+	 * @param svc    SvCore innstance to be used to find the existing object id the
+	 *               DB
 	 * @return a DbDataArray containing all generated objects including the
 	 *         geometries
+	 * @throws SvException
 	 */
-	public static DbDataArray transformGeomCollection(GeometryCollection geom, Long typeId) {
+	public static DbDataArray transformGeomCollection(GeometryCollection geom, Long typeId, SvCore svc)
+			throws SvException {
 		DbDataArray db = new DbDataArray();
 
-		for (int i = 0; i < geom.getNumGeometries(); i++) {
-			Geometry g = geom.getGeometryN(i);
-			DbDataObject dbo = new DbDataObject(typeId);
-			if (g.getUserData() != null)
-				for (Map.Entry<String, Object> e : ((Map<String, Object>) g.getUserData()).entrySet())
-					dbo.setVal(e.getKey(), e.getValue());
+		try (SvReader svr = new SvReader(svc)) {
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry g = geom.getGeometryN(i);
+				DbDataObject dbo = new DbDataObject(typeId);
+				long objectId = 0;
+				if (g.getUserData() != null)
+					for (Map.Entry<String, Object> e : ((Map<String, Object>) g.getUserData()).entrySet()) {
+						String keyName = e.getKey();
 
-			g.setUserData(dbo);
-			SvGeometry.setGeometry(dbo, g);
-			SpatialUtil.calculateGeometryDerivatives(dbo);
-			db.addDataItem(dbo);
+						if (Sv.OBJECT_ID.equals(keyName) && e.getValue() instanceof Number)
+							objectId = ((Number) e.getValue()).longValue();
+						else
+							dbo.setVal(keyName, e.getValue());
+					}
+				if (objectId != 0) {
+					DbDataObject existing = svr.getObjectById(objectId, typeId, null);
+					existing.setValuesMap(dbo.getValuesMap());
+					dbo = existing;
+				}
+				g.setUserData(dbo);
+				SvGeometry.setGeometry(dbo, g);
+				SpatialUtil.calculateGeometryDerivatives(dbo);
+				db.addDataItem(dbo);
+			}
 		}
 		return db;
 	}
@@ -265,8 +282,8 @@ public class SpatialUtil extends PerunUtil {
 		return relationIndex;
 
 	}
-	public static String geometryToSvg(Geometry geom, String fill, String stroke, int width)
-	{
+
+	public static String geometryToSvg(Geometry geom, String fill, String stroke, int width) {
 		double mx = geom.getEnvelopeInternal().getMinX();
 		double my = geom.getEnvelopeInternal().getMinY();
 
@@ -274,18 +291,18 @@ public class SpatialUtil extends PerunUtil {
 		double mxy = geom.getEnvelopeInternal().getMaxY();
 
 		StringBuilder sbr = new StringBuilder();
-		sbr.append("<svg height=\""+((int) (mxy-my))+"\" width=\""+((int)(mxx-mx))+"\">");
-		
+		sbr.append("<svg height=\"" + ((int) (mxy - my)) + "\" width=\"" + ((int) (mxx - mx)) + "\">");
+
 		sbr.append("<polygon points=\"");
-		for(int i=0; i<geom.getCoordinates().length;i++)
-		{
+		for (int i = 0; i < geom.getCoordinates().length; i++) {
 			Coordinate c = geom.getCoordinates()[i];
-			sbr.append(((int) (c.x-mx))+","+((int)(c.y-my))+" ");
+			sbr.append(((int) (c.x - mx)) + "," + ((int) (c.y - my)) + " ");
 
 		}
-		sbr.append("\" style=\"fill:"+fill+";stroke:"+stroke+";stroke-width:"+width+"\" /></svg>");
+		sbr.append("\" style=\"fill:" + fill + ";stroke:" + stroke + ";stroke-width:" + width + "\" /></svg>");
 		return sbr.toString();
 	}
+
 	/**
 	 * Helper method to prepare a geometry based on the type
 	 * 
