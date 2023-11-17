@@ -25,7 +25,7 @@ factory.GeoJSON.include({
      * @param {*} geojson 
      */
     addData: function (geojson) {
-        const dbCRSCode = store.getState().dbCRSCode
+        const dbCRSCode = store.getState()?.dbCRSCode?.dbCRS
         if (geojson) {
             if (_crs !== undefined) {
                 const mapCRSCode = _crs.code?.split(':')[1]
