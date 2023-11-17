@@ -1,4 +1,4 @@
-import { factory, Map, util } from '../../core';
+import { factory, Map, store } from '../../core';
 
 /* private refs to source methods, to be overriden below. */
 const _initialize = factory.GeoJSON.prototype.initialize,
@@ -25,11 +25,24 @@ factory.GeoJSON.include({
      * @param {*} geojson 
      */
     addData: function (geojson) {
+        const dbCRSCode = store.getState().dbCRSCode
         if (geojson) {
             if (_crs !== undefined) {
                 this.options.coordsToLatLng = function (coords) {
-                    var point = factory.point(coords[0], coords[1]);
-                    return _crs.projection.unproject(point);
+                    const point = factory.point(coords[0], coords[1]);
+                    let unprojectedPoint = _crs.projection.unproject(point)
+                    // Check if there is a predefined CRS used on the back - end
+                    if (dbCRSCode) {
+                        // Check if it corresponds with one of the defined coordinate reference systems
+                        if (dbCRSCode === '3857') {
+                            unprojectedPoint = factory.CRS.EPSG3857.unproject(point)
+                        } else if (dbCRSCode === '3395') {
+                            unprojectedPoint = factory.CRS.EPSG3395.unproject(point)
+                        } else if (dbCRSCode === '4326') {
+                            unprojectedPoint = factory.CRS.EPSG4326.unproject(point)
+                        }
+                    }
+                    return unprojectedPoint;
                 };
             }
         }
