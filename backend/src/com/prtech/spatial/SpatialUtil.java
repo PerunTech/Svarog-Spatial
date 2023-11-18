@@ -283,7 +283,7 @@ public class SpatialUtil extends PerunUtil {
 
 	}
 
-	public static String geometryToSvg(Geometry geom, String fill, String stroke, int width) {
+	public static String geometryToSvg(Geometry geom, String fill, String stroke, int strokeWidth, int maxSize) {
 		double mx = geom.getEnvelopeInternal().getMinX();
 		double my = geom.getEnvelopeInternal().getMinY();
 
@@ -291,15 +291,20 @@ public class SpatialUtil extends PerunUtil {
 		double mxy = geom.getEnvelopeInternal().getMaxY();
 
 		StringBuilder sbr = new StringBuilder();
-		sbr.append("<svg height=\"" + ((int) (mxy - my)) + "\" width=\"" + ((int) (mxx - mx)) + "\">");
+		double height=((mxy - my));
+		double width = ( (mxx - mx)) ;
+		double proportion = height> width?  maxSize/height: maxSize/width;
+		
+		sbr.append("<svg height=\"" + String.format("%.2f",height*proportion) + "\" width=\"" + String.format("%.2f",width*proportion)+ "\">");
 
 		sbr.append("<polygon points=\"");
 		for (int i = 0; i < geom.getCoordinates().length; i++) {
 			Coordinate c = geom.getCoordinates()[i];
-			sbr.append(((int) (c.x - mx)) + "," + ((int) (c.y - my)) + " ");
+			
+			sbr.append(String.format("%.2f",((c.x - mx)*proportion)) + "," + String.format("%.2f",((c.y - my)*proportion)) + " ");
 
 		}
-		sbr.append("\" style=\"fill:" + fill + ";stroke:" + stroke + ";stroke-width:" + width + "\" /></svg>");
+		sbr.append("\" style=\"fill:" + fill + ";stroke:" + stroke + ";stroke-width:" + strokeWidth + "\" /></svg>");
 		return sbr.toString();
 	}
 

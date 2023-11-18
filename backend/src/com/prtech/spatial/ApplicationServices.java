@@ -277,6 +277,17 @@ public class ApplicationServices {
 			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
 			@PathParam("strokeWidth") final int strokeWidth, @PathParam("strokeColor") final String strokeColor,
 			@PathParam("fillColor") final String fillColor) {
+
+		return getSvg(sessionId, objectName, objectId, strokeWidth, 40, strokeColor, fillColor);
+	}
+
+	@GET
+	@Path("/geometry/svg/{sessionId}/{objectName}/{objectId}/{fillColor}/{strokeColor}/{strokeWidth}/{maxSize}")
+	@Produces("image/svg+xml")
+	public Response getSvg(@PathParam("sessionId") final String sessionId,
+			@PathParam("objectName") final String objectName, @PathParam("objectId") final long objectId,
+			@PathParam("strokeWidth") final int strokeWidth, @PathParam("maxSize") final int maxSize,
+			@PathParam("strokeColor") final String strokeColor, @PathParam("fillColor") final String fillColor) {
 		try (SvReader svr = new SvReader(sessionId);) {
 			DbDataObject objectType = SvCore.getDbtByName(objectName);
 			if (objectType == null || !SvCore.hasGeometries(objectType.getObjectId()))
@@ -285,7 +296,8 @@ public class ApplicationServices {
 			// get existing object type
 			svr.setIncludeGeometries(true);
 			DbDataObject layer = svr.getObjectById(objectId, objectType.getObjectId(), null);
-			String svg = SpatialUtil.geometryToSvg(SvGeometry.getGeometry(layer), fillColor, strokeColor, strokeWidth);
+			String svg = SpatialUtil.geometryToSvg(SvGeometry.getGeometry(layer), fillColor, strokeColor, strokeWidth,
+					maxSize);
 			return Response.ok(svg, MediaType.APPLICATION_SVG_XML).build();
 
 		} catch (SvException e) {
@@ -410,7 +422,7 @@ public class ApplicationServices {
 				processedCells.addAll(used);
 
 				DbDataArray db = SpatialUtil.transformGeomCollection((GeometryCollection) geom,
-						targetLayer.getObjectId(),svg);
+						targetLayer.getObjectId(), svg);
 				try {
 					svg.saveGeometry(db);
 					for (DbDataObject d : db.getItems())
