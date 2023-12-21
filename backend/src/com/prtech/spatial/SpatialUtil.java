@@ -101,6 +101,22 @@ public class SpatialUtil extends PerunUtil {
 		}
 	}
 
+	public static DbDataObject getGeometryField(Long objetType) {
+		DbDataArray a = SvCore.getFields(objetType);
+		DbDataObject geomField = null;
+		for (DbDataObject f : a.getItems()) {
+			String type = f.getAsString("FIELD_TYPE");
+			String name = f.getAsString("FIELD_NAME");
+			if (type.equals("GEOMETRY") && !name.equals("CENTROID")) {
+				geomField = f;
+				break;
+			}
+		}
+
+		return geomField;
+
+	}
+
 	public static DbDataObject addValueToDataObject(DbDataObject dbo, String fieldName, DbDataObject fieldObject,
 			JsonObject jsonData) {
 
@@ -181,6 +197,10 @@ public class SpatialUtil extends PerunUtil {
 		try (SvReader svr = new SvReader(svc)) {
 			for (int i = 0; i < geom.getNumGeometries(); i++) {
 				Geometry g = geom.getGeometryN(i);
+				g = verifyGeometryType(g, typeId);
+				if (g == null)
+					throw (new SvException("system.error.sdi.noncompliant_geom_type", svc.getInstanceUser(), null,
+							geom));
 				DbDataObject dbo = new DbDataObject(typeId);
 				long objectId = 0;
 				if (g.getUserData() != null)
@@ -204,6 +224,22 @@ public class SpatialUtil extends PerunUtil {
 			}
 		}
 		return db;
+	}
+
+	private static Geometry verifyGeometryType(Geometry g, Long typeId) {
+		// TODO Auto-generated method stub
+		DbDataObject geomField = SpatialUtil.getGeometryField(typeId);
+		String geomType = geomField.getAsString("GEOMETRY_TYPE");
+
+		if (g.getGeometryType().equalsIgnoreCase(geomType))
+			return g;
+		else if (g.getGeometryType().equals(Geometry.TYPENAME_POLYGON)
+				&& geomType.equalsIgnoreCase(Geometry.TYPENAME_MULTIPOLYGON))
+			return sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
+		else if (g.getGeometryType().equals(Geometry.TYPENAME_MULTIPOLYGON)
+				&& geomType.equalsIgnoreCase(Geometry.TYPENAME_POLYGON))
+			return g.getGeometryN(0);
+		return null;
 	}
 
 	public static boolean geometryRelates(PreparedGeometry g, Geometry geom, SDIRelation relation) {
@@ -291,17 +327,19 @@ public class SpatialUtil extends PerunUtil {
 		double mxy = geom.getEnvelopeInternal().getMaxY();
 
 		StringBuilder sbr = new StringBuilder();
-		double height=((mxy - my));
-		double width = ( (mxx - mx)) ;
-		double proportion = height> width?  maxSize/height: maxSize/width;
-		
-		sbr.append("<svg height=\"" + String.format("%.2f",height*proportion) + "\" width=\"" + String.format("%.2f",width*proportion)+ "\">");
+		double height = ((mxy - my));
+		double width = ((mxx - mx));
+		double proportion = height > width ? maxSize / height : maxSize / width;
+
+		sbr.append("<svg height=\"" + String.format("%.2f", height * proportion) + "\" width=\""
+				+ String.format("%.2f", width * proportion) + "\">");
 
 		sbr.append("<polygon points=\"");
 		for (int i = 0; i < geom.getCoordinates().length; i++) {
 			Coordinate c = geom.getCoordinates()[i];
-			
-			sbr.append(String.format("%.2f",((c.x - mx)*proportion)) + "," + String.format("%.2f",((c.y - my)*proportion)) + " ");
+
+			sbr.append(String.format("%.2f", ((c.x - mx) * proportion)) + ","
+					+ String.format("%.2f", ((c.y - my) * proportion)) + " ");
 
 		}
 		sbr.append("\" style=\"fill:" + fill + ";stroke:" + stroke + ";stroke-width:" + strokeWidth + "\" /></svg>");
