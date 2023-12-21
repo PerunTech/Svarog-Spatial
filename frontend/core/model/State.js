@@ -13,8 +13,9 @@ import { MAP_CONFIG, SYS_CENTER, MAP_CONTAINER } from '../../config';
  * generated automatically and combined on store creation.
  */
 export const state = {
-    app:  {
-        processID: ''
+    app: {
+        processID: '',
+        selectedWmsFeature: undefined,
     },
     data: {
         layers: {}
@@ -37,13 +38,13 @@ export const state = {
         origin: '',
         bbox: '',
         sid: 0,
-    }, 
+    },
     measurement: {
         totalLength: '0 m',
         totalArea: '0 m²'
     },
     layerList: {
-        collapsed: false, 
+        collapsed: false,
         position: 'topright'
     }
 };
