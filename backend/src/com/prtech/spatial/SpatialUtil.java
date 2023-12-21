@@ -197,10 +197,6 @@ public class SpatialUtil extends PerunUtil {
 		try (SvReader svr = new SvReader(svc)) {
 			for (int i = 0; i < geom.getNumGeometries(); i++) {
 				Geometry g = geom.getGeometryN(i);
-				g = verifyGeometryType(g, typeId);
-				if (g == null)
-					throw (new SvException("system.error.sdi.noncompliant_geom_type", svc.getInstanceUser(), null,
-							geom));
 				DbDataObject dbo = new DbDataObject(typeId);
 				long objectId = 0;
 				if (g.getUserData() != null)
@@ -217,6 +213,10 @@ public class SpatialUtil extends PerunUtil {
 					existing.setValuesMap(dbo.getValuesMap());
 					dbo = existing;
 				}
+				g = verifyGeometryType(g, typeId);
+				if (g == null)
+					throw (new SvException("system.error.sdi.noncompliant_geom_type", svc.getInstanceUser(), null,
+							geom));
 				g.setUserData(dbo);
 				SvGeometry.setGeometry(dbo, g);
 				SpatialUtil.calculateGeometryDerivatives(dbo);
