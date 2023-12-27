@@ -16,6 +16,7 @@ export const state = {
     app: {
         processID: '',
         selectedWmsFeature: undefined,
+        layerControl: undefined,
     },
     data: {
         layers: {}

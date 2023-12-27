@@ -1,6 +1,4 @@
-
-import { factory } from '../../core';
-
+import { factory, store } from '../../core';
 
 const { Control, Util, Browser, DomEvent, DomUtil } = factory
 
@@ -83,6 +81,8 @@ export const LayerControl = Control.extend({
 				this._addLayer(overlays[o][n], n, o, true);
 			}
 		}
+
+		store.dispatch({ layerControl: this })
 	},
 
 	onAdd: function (map) {
@@ -164,8 +164,8 @@ export const LayerControl = Control.extend({
 
 	_initLayout: function () {
 		var className = 'leaflet-control-layers',
-        container = this._container = DomUtil.create('div', className),
-        collapsed = this.options.collapsed;
+			container = this._container = DomUtil.create('div', className),
+			collapsed = this.options.collapsed;
 
 		// makes this work on IE touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
@@ -300,7 +300,7 @@ export const LayerControl = Control.extend({
 	_createRadioElement: function (name, checked) {
 
 		var radioHtml = '<input type="radio" class="leaflet-control-layers-selector" name="' +
-				name + '"' + (checked ? ' checked="checked"' : '') + '/>';
+			name + '"' + (checked ? ' checked="checked"' : '') + '/>';
 
 		var radioFragment = document.createElement('div');
 		radioFragment.innerHTML = radioHtml;
@@ -310,8 +310,8 @@ export const LayerControl = Control.extend({
 
 	_addItem: function (obj) {
 		var label = document.createElement('label'),
-        checked = this._map.hasLayer(obj.layer),
-        input;
+			checked = this._map.hasLayer(obj.layer),
+			input;
 
 		if (obj.overlay) {
 			input = document.createElement('input');
@@ -337,15 +337,15 @@ export const LayerControl = Control.extend({
 
 		// Set group title in item if its not been created yet
 		if (!this._groupTitles.includes(obj.group)) {
-			let groupTitle =  document.createElement('span');
+			let groupTitle = document.createElement('span');
 			groupTitle.innerHTML = obj.group;
 			groupTitle.id = obj.group;
 			groupTitle.className = 'leaflet-control-layers-group-name';
-			
-			label.className = obj.overlay 
-				? 'leaflet-control-layers-group'   
-				: (this._baseLayersList.children.length > 0 
-					? 'leaflet-control-layers-group' 
+
+			label.className = obj.overlay
+				? 'leaflet-control-layers-group'
+				: (this._baseLayersList.children.length > 0
+					? 'leaflet-control-layers-group'
 					: '');
 
 			this._groupTitles.push(obj.group);
@@ -365,9 +365,9 @@ export const LayerControl = Control.extend({
 
 	_onInputClick: function () {
 		var inputs = this._layerControlInputs,
-        input, layer;
+			input, layer;
 		var addedLayers = [],
-        removedLayers = [];
+			removedLayers = [];
 
 		this._handlingClick = true;
 
@@ -401,15 +401,15 @@ export const LayerControl = Control.extend({
 
 	_checkDisabledLayers: function () {
 		var inputs = this._layerControlInputs,
-        input,
-        layer,
-        zoom = this._map.getZoom();
+			input,
+			layer,
+			zoom = this._map.getZoom();
 
 		for (var i = inputs.length - 1; i >= 0; i--) {
 			input = inputs[i];
 			layer = this._getLayer(input.layerId).layer;
 			input.disabled = (layer.options.minZoom !== undefined && zoom < layer.options.minZoom) ||
-                      (layer.options.maxZoom !== undefined && zoom > layer.options.maxZoom);
+				(layer.options.maxZoom !== undefined && zoom > layer.options.maxZoom);
 
 		}
 	},
