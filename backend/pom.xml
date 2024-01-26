@@ -117,14 +117,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>perun</groupId>
-			<artifactId>perun-core</artifactId>
-			<version>[2.0,)</version>
-		</dependency>
-		<dependency>
 			<groupId>org.peruntech</groupId>
 			<artifactId>perun-core-services</artifactId>
-			<version>[4.0.0-SNAPSHOT,5)</version>
+			<version>[4.0.1-SNAPSHOT,5)</version>
 		</dependency>
 		<!-- 		<dependency>
 			<groupId>svarog</groupId>
