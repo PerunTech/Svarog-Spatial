@@ -8,3 +8,5 @@ svarog.properties
 backend/conf
 backend/src/com/prtech/spatial/resources/conf/*
 /.babelrc
+backend/www/spatial.js.LICENSE.txt
+backend/www/*.png
