@@ -109,9 +109,7 @@ factory.GeoJSON.reproject = function (geojson, crs) {
             if (type == "LineString")
                 factory.GeoJSON.reprojectLineString(coords, crs);
     return geojson;
-
 }
-
 
 factory.GeoJSON.reprojectPoint = function (coords, crs) {
     let ll = factory.latLng(coords[1], coords[0]);
@@ -127,12 +125,13 @@ factory.GeoJSON.reprojectLineString = function (coords, crs) {
 }
 
 factory.GeoJSON.reprojectPolygon = function (coords, crs) {
-    coords.forEach((arr, i, self) => {
+    coords.forEach((arr) => {
         factory.GeoJSON.reprojectLineString(arr, crs);
     });
 }
+
 factory.GeoJSON.reprojectMultiPolygon = function (coords, crs) {
-    coords.forEach((arr, i, self) => {
+    coords.forEach((arr) => {
         factory.GeoJSON.reprojectPolygon(arr, crs);
     });
 }

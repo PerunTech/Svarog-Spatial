@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // GoogleMutant by Iván Sánchez Ortega <ivan@sanchezortega.es>
 
 // Based on https://github.com/shramov/leaflet-plugins
@@ -9,6 +10,7 @@
 can do whatever you want with this stuff. If we meet some day, and you think
 this stuff is worth it, you can buy me a beer in return.
 */
+import { factory } from '../..';
 import { LRUMap } from './LRUMap';
 
 function waitForAPI(callback, context) {
@@ -30,7 +32,7 @@ function waitForAPI(callback, context) {
 
 // 🍂class GridLayer.GoogleMutant
 // 🍂extends GridLayer
-L.GridLayer.GoogleMutant = L.GridLayer.extend({
+factory.GridLayer.GoogleMutant = factory.GridLayer.extend({
 	options: {
 		maxZoom: 21, // can be 23, but ugly if more than maxNativeZoom
 		// 🍂option type: String = 'roadmap'
@@ -40,7 +42,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 	},
 
 	initialize: function (options) {
-		L.GridLayer.prototype.initialize.call(this, options);
+		factory.GridLayer.prototype.initialize.call(this, options);
 
 		// Couple data structures indexed by tile key
 		this._tileCallbacks = {}; // Callbacks for promises for tiles that are expected
@@ -52,7 +54,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 	},
 
 	onAdd: function (map) {
-		L.GridLayer.prototype.onAdd.call(this, map);
+		factory.GridLayer.prototype.onAdd.call(this, map);
 		this._initMutantContainer();
 
 		// Attribution and logo nodes are not mutated a second time if the
@@ -83,14 +85,14 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 	},
 
 	onRemove: function (map) {
-		L.GridLayer.prototype.onRemove.call(this, map);
+		factory.GridLayer.prototype.onRemove.call(this, map);
 		this._observer.disconnect();
 		map._container.removeChild(this._mutantContainer);
 		if (this._logoContainer) {
-			L.DomUtil.remove(this._logoContainer);
+			factory.DomUtil.remove(this._logoContainer);
 		}
 		if (this._attributionContainer) {
-			L.DomUtil.remove(this._attributionContainer);
+			factory.DomUtil.remove(this._attributionContainer);
 		}
 		if (this._mutant) {
 			google.maps.event.clearListeners(this._mutant, 'idle');
@@ -128,15 +130,15 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 
 	_initMutantContainer: function () {
 		if (!this._mutantContainer) {
-			this._mutantContainer = L.DomUtil.create(
+			this._mutantContainer = factory.DomUtil.create(
 				'div',
 				'leaflet-google-mutant leaflet-top leaflet-left'
 			);
-			this._mutantContainer.id = '_MutantContainer_' + L.Util.stamp(this._mutantContainer);
+			this._mutantContainer.id = '_MutantContainer_' + factory.Util.stamp(this._mutantContainer);
 			this._mutantContainer.style.pointerEvents = 'none';
 			this._mutantContainer.style.visibility = 'hidden';
 
-			L.DomEvent.off(this._mutantContainer);
+			factory.DomEvent.off(this._mutantContainer);
 		}
 		this._map.getContainer().appendChild(this._mutantContainer);
 
@@ -208,7 +210,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 			clearInterval(id);
 			let positions;
 			// iterate through obfuscated key names to find positions set (atm: layoutManager.o)
-			Object.keys(layoutManager).forEach(function(key) {
+			Object.keys(layoutManager).forEach(function (key) {
 				const el = layoutManager[key];
 				if (el.get) {
 					if (el.get(1) instanceof Node) {
@@ -229,8 +231,8 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 		// https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
 		const pos = google.maps.ControlPosition;
 		const ctr = this._attributionContainer = ev.positions.get(pos.BOTTOM_RIGHT);
-		L.DomUtil.addClass(ctr, 'leaflet-control leaflet-control-attribution');
-		L.DomEvent.disableClickPropagation(ctr);
+		factory.DomUtil.addClass(ctr, 'leaflet-control leaflet-control-attribution');
+		factory.DomEvent.disableClickPropagation(ctr);
 		ctr.style.height = '14px';
 		this._map._controlCorners.bottomright.appendChild(ctr);
 
@@ -311,7 +313,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 
 	createTile: function (coords, done) {
 		const key = this._tileCoordsToKey(coords),
-			tileContainer = L.DomUtil.create('div');
+			tileContainer = factory.DomUtil.create('div');
 
 		tileContainer.style.textAlign = 'left';
 		tileContainer.dataset.pending = this._imagesPerTile;
@@ -340,7 +342,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 		}
 
 		if (!parseInt(tileContainer.dataset.pending)) {
-			L.Util.requestAnimFrame(done);
+			factory.Util.requestAnimFrame(done);
 		}
 		return tileContainer;
 	},
@@ -396,7 +398,7 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 			}
 		}
 
-		L.GridLayer.prototype._update.call(this, center);
+		factory.GridLayer.prototype._update.call(this, center);
 	},
 
 	// @method whenReady(fn: Function, context?: Object): this
@@ -414,6 +416,6 @@ L.GridLayer.GoogleMutant = L.GridLayer.extend({
 
 // 🍂factory gridLayer.googleMutant(options)
 // Returns a new `GridLayer.GoogleMutant` given its options
-L.gridLayer.googleMutant = function (options) {
-	return new L.GridLayer.GoogleMutant(options);
+factory.gridLayer.googleMutant = function (options) {
+	return new factory.GridLayer.GoogleMutant(options);
 };
