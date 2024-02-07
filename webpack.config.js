@@ -1,10 +1,10 @@
-let path = require('path');
+const path = require('path');
 
-module.exports = (mode, {env}) => {
+module.exports = (_, { mode }) => {
     return {
-        devtool: 'source-map',
+        ...mode !== 'production' && { devtool: 'source-map' },
         mode: mode,
-        entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
+        entry: mode === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve('./backend/www'),
             filename: 'spatial.js',
@@ -13,14 +13,20 @@ module.exports = (mode, {env}) => {
             globalObject: 'this'
         },
         devServer: {
-            contentBase: './backend/www',
+            client: {
+                overlay: false
+            },
+            static: {
+                directory: path.join(__dirname, './backend/www'),
+            },
+            compress: true,
             port: 8080
         },
-        externals: env === 'production' ? { 'perun-core': 'perun-core' } : {},
+        externals: mode === 'production' ? { 'perun-core': 'perun-core' } : {},
         module: {
             rules: [
                 {
-                    test: /\.(js|jsx)?$/, 
+                    test: /\.(js|jsx)?$/,
                     exclude: /(node_modules)/,
                     use: {
                         loader: 'babel-loader',
