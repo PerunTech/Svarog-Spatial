@@ -1,4 +1,4 @@
-import { React, PropTypes, Form as RJSForm } from 'perun-core';
+import { React, PropTypes, Form as RJSForm, validator } from 'perun-core';
 
 /**
  * Renders a generic form.
@@ -10,7 +10,7 @@ import { React, PropTypes, Form as RJSForm } from 'perun-core';
  * @returns JSX.Element;
  */
 export function Form({ children, childrenProps = {}, ...props }) {
-    return <RJSForm {...props} >
+    return <RJSForm {...props} validator={validator}>
         {children && (children instanceof Element ? children : React.cloneElement(children, childrenProps))}
     </RJSForm>
 }
