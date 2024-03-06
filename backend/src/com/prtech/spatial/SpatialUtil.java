@@ -306,12 +306,13 @@ public class SpatialUtil extends PerunUtil {
 		sbr.append("<svg height=\"" + String.format("%.2f", height * proportion) + "\" width=\""
 				+ String.format("%.2f", width * proportion) + "\">");
 
+		double maxheight = height * proportion;
 		sbr.append("<polygon points=\"");
 		for (int i = 0; i < geom.getCoordinates().length; i++) {
 			Coordinate c = geom.getCoordinates()[i];
 
 			sbr.append(String.format("%.2f", ((c.x - mx) * proportion)) + ","
-					+ String.format("%.2f", ((c.y - my) * proportion)) + " ");
+					+ String.format("%.2f", maxheight- ((c.y - my) * proportion)) + " ");
 
 		}
 		sbr.append("\" style=\"fill:" + fill + ";stroke:" + stroke + ";stroke-width:" + strokeWidth + "\" /></svg>");
