@@ -129,6 +129,9 @@ public class GeobufEncoder {
 			if (dbo.getParentId() != null)
 				feat.properties.put("parent_id", dbo.getParentId().toString());
 
+			if (dbo.getPkid() != null)
+				feat.properties.put("pkid", dbo.getPkid().toString());
+
 			// Assign default type descriptor if not specified already
 			String desc = (String) dbo.getVal("DESCRIPTOR");
 			if (desc == null)
