@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { store, Provider, MapContainer, control, Map } from '../core';
+import { store, Provider, MapContainer, control, Map, factory } from '../core';
 import { layerControl } from '../data';
 import { NavigationControl, scale } from '../ui';
 
@@ -27,6 +27,11 @@ const _appBuilder = {
 
     addRasterLayers(base = {}, overlay = {}, opt = {}) {
         layerControl(base, overlay, opt).addTo(Map);
+        return this;
+    },
+
+    addFullScreenControl() {
+        factory.control.fullscreen({ position: 'topleft' }).addTo(Map);
         return this;
     },
 

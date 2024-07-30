@@ -1,6 +1,7 @@
 import { util } from '..';
 import L from 'leaflet';
 import 'leaflet-polylinedecorator';
+import 'leaflet.fullscreen'
 import * as extendedWms from './WMS'
 import * as googleMutant from './google/Leaflet.GoogleMutant'
 
