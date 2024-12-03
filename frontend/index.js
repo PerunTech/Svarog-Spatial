@@ -1,3 +1,4 @@
+import proj4 from 'proj4';
 import pkg from '../package.json';
 // Import all assets
 import './assets';
@@ -24,5 +25,6 @@ export const spatial = core.util.assemble(
         data,
         tools,
         ui,
+        proj4,
     }
 );
