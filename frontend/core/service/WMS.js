@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { Map } from '../../core';
+import { util } from '../utils/Util';
 
 L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
 
@@ -15,6 +16,28 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
     // Unregister a click listener, then do all the upstream WMS things
     L.TileLayer.WMS.prototype.onRemove.call(this, map);
     map.off('click', this.getFeatureInfo, this);
+  },
+
+  getTileUrl: function (coords) {
+    let switchBboxOrder = false
+    if (window.switchBboxOrder) {
+      switchBboxOrder = window.switchBboxOrder?.toLowerCase() === 'true' ? true : false
+    }
+    // Check if the bounding box axis order (orientation) should be reversed
+    // We need this because Leaflet also checks whether the 4326 coordinate system is used in order to reverse the order itself
+    if (switchBboxOrder) {
+      const tileBounds = this._tileCoordsToNwSe(coords)
+      const crs = this._crs
+      const bounds = L.bounds(crs.project(tileBounds[0]), crs.project(tileBounds[1]))
+      const min = bounds.min
+      const max = bounds.max
+      const url = L.TileLayer.prototype.getTileUrl.call(this, coords);
+      const bbox = [min.y, min.x, max.y, max.x].join(',')
+      return url + util.getParamString(this.wmsParams, url, this.options.uppercase) + (this.options.uppercase ? '&BBOX=' : '&bbox=') + bbox;
+    } else {
+      // Call the Leaflet function for getting the tile URL if the order shouldn't be reversed
+      return L.TileLayer.WMS.prototype.getTileUrl.call(this, coords)
+    }
   },
 
   getFeatureInfo: function (evt) {
