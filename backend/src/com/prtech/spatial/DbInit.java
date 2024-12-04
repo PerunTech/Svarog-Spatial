@@ -101,8 +101,15 @@ public class DbInit implements IDbInit {
 		dbf7.setDbFieldSize(10);
 		dbf7.setLabel_code("geo_layer_type.protocol");
 		dbf7.setSort_order(1100);
+
+		DbDataField dbf8 = new DbDataField();
+		dbf8.setDbFieldName("VERSION");
+		dbf8.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf8.setDbFieldSize(10);
+		dbf8.setLabel_code("geo_layer_type.version");
+		dbf8.setSort_order(1100);
 		
-		DbDataField[] dbTableFields = new DbDataField[8];
+		DbDataField[] dbTableFields = new DbDataField[9];
 		dbTableFields[0] = dbf1;
 		dbTableFields[1] = dbf2;
 		dbTableFields[2] = dbf3;
@@ -111,6 +118,7 @@ public class DbInit implements IDbInit {
 		dbTableFields[5] = dbf5;
 		dbTableFields[6] = dbf6;
 		dbTableFields[7] = dbf7;
+		dbTableFields[8] = dbf8;
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
 	}
