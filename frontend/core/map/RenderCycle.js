@@ -26,7 +26,7 @@ export const renderCycle = {
      * Cleanup protocol for the whole module.
      * Called when the root React container is unmounted.
      */
-    cleanup() {
+    cleanup(showHeaderAndFooter) {
         store.dispatch({ processID: '' })
         /* Containers embedded in the map, used as placeholders for UI elements (controls). */
         const controlNodes = Object.values(Map._controlCorners);
@@ -62,7 +62,9 @@ export const renderCycle = {
          * Hide them each time this plugin is initialized.
          * Show them whenever the plugin is uninitialized.
          */
-        document.getElementById('navbar').style.display = 'flex';
-        document.getElementById('footer').style.display = 'flex';
+        if (!showHeaderAndFooter) {
+            document.getElementById('navbar').style.display = 'flex';
+            document.getElementById('footer').style.display = 'flex';
+        }
     }
 };

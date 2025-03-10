@@ -28,7 +28,7 @@ function _MapContainer({ id = MAP_CONTAINER, bbox, sid, minZoom, maxZoom, refres
         rc.start(showHeaderAndFooter); // Init program.
 
         return () =>
-            rc.cleanup(); // Release program. 
+            rc.cleanup(showHeaderAndFooter); // Release program. 
     }, []);
 
     /* Runtime effects. */
