@@ -5,12 +5,14 @@
     border-bottom: 1px solid rgb(0, 0, 0, 0.25) !important;
     border-radius: 0px;
 }
+
 .leaflet-container .form-control-sm:focus {
     border: 1px solid #3399ff !important;
     transition: 0.4s;
     text-align: inherit;
     box-shadow: unset;
 }
+
 .leaflet-container .form-control-sm:hover {
     border-bottom: 1px solid #3399ff !important;
     outline: 0;
@@ -18,14 +20,16 @@
     box-shadow: unset;
 }
 
-.leaflet-container .form-control.is-valid, .was-validated .form-control:valid {
+.leaflet-container .form-control.is-valid,
+.was-validated .form-control:valid {
     background-repeat: no-repeat;
     background-position: center right calc(.375em + .1875rem);
     background-size: calc(.5em + .375rem) calc(.5em + .375rem);
     box-shadow: none;
 }
 
-.leaflet-container .form-control.is-invalid, .was-validated .form-control:invalid {
+.leaflet-container .form-control.is-invalid,
+.was-validated .form-control:invalid {
     background-repeat: no-repeat;
     background-position: center right calc(.375em + .1875rem);
     background-size: calc(.5em + .375rem) calc(.5em + .375rem);
@@ -36,8 +40,11 @@
 .leaflet-container .form-control-sm::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    margin: 0;
+    /* <-- Apparently some margin are still there even though it's hidden */
 }
+
 .leaflet-container .form-control-sm[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+    /* Firefox */
+    -moz-appearance: textfield;
 }

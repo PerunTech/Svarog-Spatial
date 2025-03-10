@@ -11,7 +11,7 @@
     height: 10px !important;
     outline: 0;
     transition: opacity ease 0.3s;
-    }
+}
 
 .marker-icon-middle,
 .marker-icon-middle:focus {
@@ -19,34 +19,37 @@
     margin: -6px 0 0 -6px !important;
     width: 7px !important;
     height: 7px !important;
-    }
+}
 
 .cursor-marker {
     cursor: crosshair;
     pointer-events: none;
     display: none;
-    }
+}
+
 .cursor-marker.visible {
     display: block !important;
-    }
+}
 
 .leaflet-pm-draggable {
     cursor: move !important;
-    }
+}
+
 .leaflet-pm-invalid {
     stroke: red;
     transition: fill ease 0s, stroke ease 0s;
-    }
+}
 
 .rect-style-marker,
 .rect-start-marker {
     opacity: 0;
-    }
+}
+
 .rect-style-marker.visible,
 .rect-start-marker.visible {
     opacity: 1 !important;
-    }
+}
 
 .hidden {
     display: none;
-    }
+}

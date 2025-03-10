@@ -10,18 +10,22 @@
     right: 141px;
     bottom: 15px;
 }
+
 .control-bottomright .zoom-in {
     right: 147px;
     bottom: 70px;
 }
+
 .control-bottomright .zoom-out {
     right: 122px;
     bottom: 120px;
 }
+
 .control-bottomright .bbox-zoom {
     right: 70px;
     bottom: 147px;
 }
+
 .control-bottomright .geolocation {
     right: 15px;
     bottom: 141px;

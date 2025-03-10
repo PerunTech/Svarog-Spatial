@@ -5,14 +5,16 @@
 .leaflet-control-zoom-out {
 	font: bold 18px 'Lucida Console', Monaco, monospace;
 	text-indent: 1px;
-	}
+}
+
 .leaflet-control-zoom-out {
 	font-size: 20px;
-	}
+}
 
 .leaflet-touch .leaflet-control-zoom-in {
 	font-size: 22px;
-	}
+}
+
 .leaflet-touch .leaflet-control-zoom-out {
 	font-size: 24px;
-	}
+}

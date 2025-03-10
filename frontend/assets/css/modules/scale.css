@@ -4,38 +4,44 @@
 /* Classnames required  in the ui/modules/scale.js, DO NOT CHANGE NAMES! */
 .leaflet-control-better-scale {
     /* Because measurements numbers of the scale overflow, bring element up so we can see them */
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
     margin-right: 20px;
     padding: 10px;
     max-width: fit-content;
-    }
+}
+
 .leaflet-control-better-scale-upper-first-piece {
     top: 0%;
     left: 0%;
     width: 25%;
-    }
+}
+
 .leaflet-control-better-scale-upper-second-piece {
     top: 0%;
     left: 50%;
     width: 25%;
-    }
+}
+
 .leaflet-control-better-scale-lower-first-piece {
     top: 50%;
     left: 25%;
     width: 25%;
-    }
+}
+
 .leaflet-control-better-scale-lower-second-piece {
     top: 50%;
     left: 75%;
     width: 30%;
-    }
+}
+
 .leaflet-control-better-scale-ruler-block {
     overflow: hidden;
     position: absolute;
     height: 50%;
     background-color: #000000;
     opacity: 0.9;
-    }
+}
+
 .leaflet-control-better-scale-ruler {
     overflow: hidden;
     position: relative;
@@ -43,11 +49,13 @@
     height: 7px;
     background-color: transparent;
     border: 1px solid #000000ba;
-    }
+}
+
 .leaflet-control-better-scale-label-div {
     position: relative;
-    width: 100%;   
-    }
+    width: 100%;
+}
+
 .leaflet-control-better-scale-label {
     position: absolute;
     width: 10%;
@@ -59,13 +67,15 @@
     height: 5px;
     top: -1px;
     text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
-    }
+}
+
 .leaflet-control-better-scale-first-number {
     left: 45%;
-    }
+}
+
 .leaflet-control-better-scale-second-number {
     left: 95%;
-    }
+}
 
 /* Image segment */
 .compass {
@@ -74,11 +84,12 @@
     width: 128px;
     height: 128px;
     margin-bottom: 10px;
-    }
+}
+
 .wind-rose {
     background-image: url('../../../assets/img/wind-rose.png');
     height: 100%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center
-    }
+}

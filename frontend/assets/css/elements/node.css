@@ -5,7 +5,7 @@
 }
 
 .tree-node-item {
-  /* immediate child of .tree-node, for styling convenience */
+    /* immediate child of .tree-node, for styling convenience */
     display: flex;
     align-items: center;
 }
@@ -15,7 +15,7 @@
     border-color: #fff;
 }
 
-  /* style for the children nodes container */
+/* style for the children nodes container */
 .tree-node-children {
     margin-left: -5px;
 }
