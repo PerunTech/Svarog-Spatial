@@ -4,13 +4,11 @@
 .leaflet-div-icon {
 	background: #fff;
 	border: 1px solid #666;
-	}
-
-
+}
 
 /* ----------------- */
 /* Default icon URL */
 /* ----------------- */
 .leaflet-default-icon-path {
 	background-image: url(../../img/marker-icon.png);
-	}
+}

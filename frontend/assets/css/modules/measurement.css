@@ -29,7 +29,8 @@
     float: right;
     margin: 5px;
 }
-#measure-dialog #draw-actions > button {
+
+#measure-dialog #draw-actions>button {
     padding: 0.5rem;
     border-radius: 50%;
     transition: 0.5s;
@@ -38,7 +39,7 @@
 #measure-dialog .end-measurement {
     color: #3399ff
 }
+
 #measure-dialog .end-measurement:hover:not(.disabled) {
     background-color: #F9F9F9;
 }
-

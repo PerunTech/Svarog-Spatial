@@ -2,65 +2,80 @@
 /* Layers control */
 /* -------------- */
 .leaflet-control-layers {
-	background: #fff; /* This should be inherited */
-	}
+	background: #fff;
+	/* This should be inherited */
+}
+
 .leaflet-control-layers-toggle {
 	background-image: url(../../img/layers.png);
 	width: 50px;
 	height: 50px;
-	}
+}
+
 .leaflet-retina .leaflet-control-layers-toggle {
 	background-image: url(../../img/layers-2x.png);
 	background-size: 26px 26px;
-	}
+}
+
 .leaflet-touch .leaflet-control-layers-toggle {
 	width: 44px;
 	height: 44px;
-	}
+}
+
 .leaflet-control-layers .leaflet-control-layers-list,
 .leaflet-control-layers-expanded .leaflet-control-layers-toggle {
 	display: none;
-	}
+}
+
 .leaflet-control-layers-expanded .leaflet-control-layers-list {
 	display: block;
 	position: relative;
-	}
+}
+
 .leaflet-control-layers-expanded {
 	padding: 6px 0px 6px 6px;
 	color: #333;
-	background: #fff; /* This should be inherited */
+	background: #fff;
+	/* This should be inherited */
 	max-width: 250px;
-	}
+}
+
 .leaflet-control-layers-scrollbar {
 	/*overflow-y: scroll;*/
 	padding-right: 5px;
-	}
+}
+
 .leaflet-control-layers-selector {
 	margin-top: 2px;
 	position: relative;
 	top: 1px;
-	}
+}
+
 .leaflet-control-layers label {
 	display: block;
-	}
+}
+
 .leaflet-control-layers-separator {
 	height: 0;
 	border-top: 1px solid #ddd;
 	margin: 5px -10px 5px -6px;
-	}
+}
 
 .leaflet-control-layers-group-name {
 	font-weight: bold;
 	font-style: italic;
 	margin-left: 3px;
 }
+
 .leaflet-control-layers-group {
-    margin-top: 1rem;
+	margin-top: 1rem;
 }
+
 .leaflet-control-layers-scrollbar {
 	overflow: auto;
 	padding-right: 10px;
 }
+
 .leaflet-control-layers-name {
 	margin-left: 5px;
 }
