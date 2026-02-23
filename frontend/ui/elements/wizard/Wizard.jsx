@@ -1,6 +1,6 @@
-import { React, PropTypes} from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { Step } from '../..';
-import style from './Wizard.module.css';
+import * as style from './Wizard.module.css';
 
 /**
  * A controller for multi-step forms and wizard-like components.
@@ -24,7 +24,7 @@ import style from './Wizard.module.css';
  * 
  * @returns JSX;
  */
-export function Wizard ({children, nav = null, opt = { initialStep: 0 }}) {
+export function Wizard({ children, nav = null, opt = { initialStep: 0 } }) {
     const props = {
         activeStep: () => activeStep,
         totalSteps: () => children.length - 1,
@@ -33,12 +33,13 @@ export function Wizard ({children, nav = null, opt = { initialStep: 0 }}) {
         prev: () => props.goToStep(activeStep - 1),
         ...opt
     },
-    [activeStep, setActive] = React.useState(opt.initialStep);
+        [activeStep, setActive] = React.useState(opt.initialStep);
 
     return <div className={opt.className || style['wizard']}>
         {nav && React.cloneElement(nav, props)}
         {children.map((child, i) => {
-            return i === activeStep && <Step key={i} {...props}>{child}</Step>})}
+            return i === activeStep && <Step key={i} {...props}>{child}</Step>
+        })}
     </div>;
 }
 
