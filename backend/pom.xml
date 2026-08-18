@@ -5,7 +5,7 @@
 
 	<groupId>org.peruntech</groupId>
 	<artifactId>svarog-spatial</artifactId>
-	<version>4.0.1</version>
+	<version>4.2.0</version>
 	<packaging>bundle</packaging>
 	<name>Svarog Spatial</name>
 	<description>Spatial data management, geometry tools and GIS services.</description>
@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>org.peruntech</groupId>
 			<artifactId>svarog</artifactId>
-			<version>[4.0.0-SNAPSHOT,4.1.1)</version>
+			<version>[4.2.0,5)</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
