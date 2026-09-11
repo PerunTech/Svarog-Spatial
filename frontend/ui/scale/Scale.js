@@ -1,12 +1,15 @@
 import { factory } from '../../core';
-import { R } from '../../config';
+import { R, setting } from '../../config';
 
 export const Scale = factory.Control.extend({
     options: {
         position: 'bottomleft',
         maxWidth: 150,
-        metric: (window.measurementSystem && window.measurementSystem === 'metric'),
-        imperial: (window.measurementSystem && window.measurementSystem === 'imperial'),
+        // Null means "follow the measurementSystem setting", resolved per update
+        // in _updateScales so that configure() reaches a control already on the
+        // map. A caller passing true or false here overrides that outright.
+        metric: null,
+        imperial: null,
         updateWhenIdle: !1
     },
 
@@ -56,9 +59,13 @@ export const Scale = factory.Control.extend({
         this._updateScales(s, a);
     },
 
-    _updateScales: function (map, e) {
-        map.metric && e && this._updateMetric(e);
-        map.imperial && e && this._updateImperial(e);
+    _updateScales: function (options, e) {
+        const system = setting('measurementSystem');
+        const metric = options.metric ?? system === 'metric';
+        const imperial = options.imperial ?? system === 'imperial';
+
+        metric && e && this._updateMetric(e);
+        imperial && e && this._updateImperial(e);
     },
 
     _updateMetric_old: function (t) {

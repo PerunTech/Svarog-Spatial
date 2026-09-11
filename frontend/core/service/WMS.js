@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { Map } from '../../core';
 import { util } from '../utils/Util';
+import { setting } from '../../config';
 
 L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
 
@@ -19,10 +20,7 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
   },
 
   getTileUrl: function (coords) {
-    let switchBboxOrder = false
-    if (window.switchBboxOrder) {
-      switchBboxOrder = window.switchBboxOrder?.toLowerCase() === 'true' ? true : false
-    }
+    const switchBboxOrder = setting('switchBboxOrder')
     // Check if the bounding box axis order (orientation) should be reversed
     // We need this because Leaflet also checks whether the 4326 coordinate system is used in order to reverse the order itself
     if (switchBboxOrder) {

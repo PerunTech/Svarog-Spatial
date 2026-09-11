@@ -1,5 +1,5 @@
 import { factory, crs, store } from '..';
-import { MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM } from '../../config';
+import { MAP_CONFIG, COORDINATE_REFERENCE_SYSTEM, setting } from '../../config';
 
 /**
  * Pre-init segment. Map factory arguments.
@@ -10,26 +10,47 @@ el.id = 'map';
 el.style.height = '100vh';
 /*el.style.border = '4px inset';*/
 
-let coordinateReferenceSystem
-// Check if the CRS is defined as a window variable
-if (window.sysCrs) {
-    // Check if it is an object and contains the `code` property
-    if (typeof window.sysCrs === 'object' && window.sysCrs.code) {
-        coordinateReferenceSystem = crs(...Object.values(window.sysCrs))
-    } else if (typeof window.sysCrs === 'string') {
-        // If it is a string, check if corresponds with one of the defined coordinate reference systems
-        if (window.sysCrs === 'EPSG:3857') {
-            coordinateReferenceSystem = factory.CRS.EPSG3857
-        } else if (window.sysCrs === 'EPSG:3395') {
-            coordinateReferenceSystem = factory.CRS.EPSG3395
-        } else if (window.sysCrs === 'EPSG:4326') {
-            coordinateReferenceSystem = factory.CRS.EPSG4326
-        }
+/**
+ * The coordinate reference system this map is built with.
+ *
+ * Read from settings rather than from a window global since 4.2.1, though it is
+ * still the one setting `configure()` cannot reach: Leaflet fixes a map's CRS at
+ * construction and this module constructs the map as it evaluates, so the value
+ * has to be in place before the bundle runs. `createMap()` is what lifts that.
+ *
+ * Note the three codes below are the whole of the string form. Anything else is
+ * a value spatial cannot resolve, and leaving the CRS unset — which hands the
+ * map to Leaflet's own EPSG3857 — is what it has always done. That is easy to
+ * mistake for working, so say so.
+ */
+const BUILT_IN = {
+    'EPSG:3857': () => factory.CRS.EPSG3857,
+    'EPSG:3395': () => factory.CRS.EPSG3395,
+    'EPSG:4326': () => factory.CRS.EPSG4326
+};
+
+const resolveCrs = () => {
+    const configured = setting('crs');
+
+    if (!configured) return crs(...Object.values(COORDINATE_REFERENCE_SYSTEM));
+
+    if (typeof configured === 'object' && configured.code) {
+        return crs(...Object.values(configured));
     }
-} else {
-    // Fallback, just in case the coordinate reference system is not defined
-    coordinateReferenceSystem = crs(...Object.values(COORDINATE_REFERENCE_SYSTEM))
-}
+
+    if (typeof configured === 'string' && BUILT_IN[configured]) {
+        return BUILT_IN[configured]();
+    }
+
+    console.warn(
+        `spatial: cannot resolve crs ${JSON.stringify(configured)}. As a string it must be one of ` +
+        `${Object.keys(BUILT_IN).join(', ')}; any other projection needs the { code, def } form. ` +
+        'Falling back to Leaflet\'s own EPSG:3857, which is almost certainly not what this deployment wants.'
+    );
+    return undefined;
+};
+
+const coordinateReferenceSystem = resolveCrs();
 
 const opt = {
     ...MAP_CONFIG,

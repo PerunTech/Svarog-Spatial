@@ -1,5 +1,6 @@
 import { util, factory } from '../../core';
 import { addInitHook, formatArea, formatDistance, calculateArea, calculateDistance } from './Util';
+import { setting } from '../../config';
 
 const { marker, layerGroup, Polyline, Polygon } = factory;
 
@@ -17,7 +18,7 @@ export const measureLine = {
                 totalArea: 'Total area',
                 segmentLength: 'Segment length'
             },
-            imperial: (window.measurementSystem && window.measurementSystem === 'imperial') || false
+            imperial: setting('measurementSystem') === 'imperial'
         }, options || {});
 
         this._measurementLayer = layerGroup().addTo(this._map);
