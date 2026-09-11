@@ -6,7 +6,6 @@ import java.util.Collection;
 
 
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.impl.Log4jContextFactory;
 import org.joda.time.DateTime;
 
 import com.prtech.svarog.SvConf;

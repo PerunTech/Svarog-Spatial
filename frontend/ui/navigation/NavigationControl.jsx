@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { NAVIGATE_VIEW, SYS_CENTER } from '../../config';
+import { NAVIGATE_VIEW, setting } from '../../config';
 import { Map, store } from '../../core';
 import { draw } from '../../tools';
 import { Button, Icon, StatusIndicator } from '..';
@@ -17,7 +17,7 @@ const bboxZoom = () => {
 };
 
 const origin = () =>
-    Map.setView(SYS_CENTER, 3);
+    Map.setView(setting('center'), 3);
 
 export const NavigationControl = () =>
     <>

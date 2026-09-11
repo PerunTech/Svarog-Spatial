@@ -1,5 +1,5 @@
 import { React, PropTypes} from 'perun-core';
-import { SYS_CENTER } from '../../config';
+import { setting } from '../../config';
 import { util, Map } from '../../core';
 import { limits } from '../../tools';
 import { Coordinates } from '..';
@@ -10,7 +10,7 @@ export function CoordinatesControl (props) {
     // Component state, composite, updateable by reducer function. 
     const [{coordinates, active}, dispatch] = useReducer((currState, update) => 
         ({...currState, ...update}), {
-            coordinates: Object.values(SYS_CENTER).map(c => String(c)),
+            coordinates: Object.values(setting('center')).map(c => String(c)),
             active: false
         });
 

@@ -1,3 +1,5 @@
+import { setting } from './Settings';
+
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
  * the International Union of Geodesy and Geophysics.
@@ -20,15 +22,19 @@ export const R = 6371000;
  * as this is what the render engine uses internally, regardless of the CRS of the data.
  * 
  * @constant
+ * @deprecated since 4.2.1 — a snapshot taken as this module evaluates. Read
+ *             `setting('bounds')` instead, which follows `configure()`.
  */
-export const SYS_BOUNDS = window.sysBounds || [{ lat: 45.44, lng: 26.63 }, { lat: 48.47, lng: 30.13 }];
+export const SYS_BOUNDS = setting('bounds');
 /**
  * System center - a fallback point location for the map to center to. 
  * Represented as simple latitude / longitude pair.
  * 
  * @constant
+ * @deprecated since 4.2.1 — a snapshot taken as this module evaluates. Read
+ *             `setting('center')` instead, which follows `configure()`.
  */
-export const SYS_CENTER = window.sysCenter || { lat: 47.184434, lng: 28.489772 };
+export const SYS_CENTER = setting('center');
 
 /**
  * The minimum allowed scale for digitization.
