@@ -4,6 +4,23 @@ stages:
   - install
   - sonar
 
+# The runner has no distributed cache, so every cache entry is a zip written to and read from the
+# runner's own disk. The npm cache is around 136MB, and at the default level the runner spends
+# longer deflating it than the download it saves.
+variables:
+  CACHE_COMPRESSION_LEVEL: "fastest"
+
+# Keyed on the lockfile, so it turns over only when a dependency does. There is no webpack cache
+# entry to go with it, as perun-core has: this build has no filesystem cache configured and takes
+# eight seconds, which is less than zipping one would cost.
+.npm_cache: &npm_cache
+  key:
+    files:
+      - package-lock.json
+    prefix: npm
+  paths:
+    - .npm/
+
 before_script:
   - pwd
   - echo $CI_BUILD_REF_NAME
@@ -18,16 +35,18 @@ after_script:
   - git pull origin $CI_BUILD_REF_NAME
 
 npm_test:
+  cache:
+    - *npm_cache
   stage: test
   script:
     - pwd
     - git reset --hard HEAD
-    - rm -rf node_modules
-    - npm install
+    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
     - npm run test
     - npm run build
 
 mvn_test:
+  cache: []
   stage: test
   script:
     - cd backend
@@ -35,13 +54,15 @@ mvn_test:
     - mvn test
 
 prod_install:
+  cache:
+    - <<: *npm_cache
+      policy: pull
   stage: install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
     - git reset --hard HEAD
-    - rm -rf node_modules
-    - npm install
+    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
     - npm run build
     - cd backend
     - pwd
@@ -52,13 +73,15 @@ prod_install:
     - dev
 
 1_perun-core-dev-generate-js:
+  cache:
+    - <<: *npm_cache
+      policy: pull
   stage: dev_install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
     - git reset --hard HEAD
-    - rm -rf node_modules
-    - npm install
+    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
     - rm -rf backend/www/*.js
     - npm run build
     - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
@@ -73,6 +96,7 @@ prod_install:
 
 
 sonarqube_backend:
+  cache: []
   stage: sonar
   script:
     - cd $CI_PROJECT_DIR/
@@ -81,6 +105,7 @@ sonarqube_backend:
   when: manual
 
 sonarqube_backend_publish:
+  cache: []
   stage: sonar
   script:
     - cd $CI_PROJECT_DIR/
@@ -94,6 +119,7 @@ sonarqube_backend_publish:
   when: manual
 
 sonarqube_frontend:
+  cache: []
   stage: sonar
   script:
     - sonar-scanner -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.analysis.mode=preview -Dsonar.login=a02003f1f8f90382d7570b57a85c00c38132f85f -Dsonar.branch=$CI_BUILD_REF_NAME -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
