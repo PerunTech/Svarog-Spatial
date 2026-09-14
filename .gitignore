@@ -10,3 +10,6 @@ backend/src/com/prtech/spatial/resources/conf/*
 /.babelrc
 backend/www/spatial.js.LICENSE.txt
 backend/www/*.png
+
+# npm cache directory, as CI populates it via `npm ci --cache .npm`
+.npm

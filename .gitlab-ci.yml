@@ -42,7 +42,13 @@ npm_test:
     - pwd
     - git reset --hard HEAD
     - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
-    - npm run test
+    # Deliberately not `npm run test`. That script is
+    # `eslint --fix frontend/ || exit 0`: it can never fail a pipeline, and its
+    # fix pass repairs auto-fixable violations before anything can report them,
+    # then after_script's reset throws the repairs away. Two real errors had
+    # been sitting in frontend/ unreported because of it. The script stays in
+    # package.json for local use, where fixing your working tree is the point.
+    - npx eslint frontend/
     - npm run build
 
 mvn_test:
