@@ -25,8 +25,7 @@ export const cut = {
                     // #revise_me
                     const intersect = () => {console.log('to be implemented')}
                     return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
-                } catch (e) {
-                    /* eslint-disable-next-line no-console */
+                } catch (_e) {
                     console.error('You cant cut polygons with self-intersections');
                     return false;
                 }

@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { util, factory, Map, connect } from "../../core";
+import { factory, Map, connect } from "../../core";
 import { MEASURE_CONFIG, getProcessTitle } from '../../config';
 import { draw } from '../../tools';
 import { Button, Icon } from '..';
