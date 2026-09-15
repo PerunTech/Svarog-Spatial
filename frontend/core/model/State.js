@@ -1,5 +1,5 @@
 import { store } from '..'
-import { MAP_CONFIG, MAP_CONTAINER, setting } from '../../config';
+import { MAP_CONTAINER, setting } from '../../config';
 
 /**
  * The application state tree.
@@ -32,9 +32,9 @@ export const state = {
     /* Map properties */
     map: {
         id: MAP_CONTAINER,
-        zoom: MAP_CONFIG.zoom,
-        minZoom: MAP_CONFIG.minZoom,
-        maxZoom: MAP_CONFIG.maxZoom,
+        zoom: setting('zoom'),
+        minZoom: setting('minZoom'),
+        maxZoom: setting('maxZoom'),
         center: setting('center'),
         origin: '',
         bbox: '',

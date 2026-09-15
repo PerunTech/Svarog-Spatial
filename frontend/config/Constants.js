@@ -1,4 +1,4 @@
-import { setting } from './Settings';
+import { getLabel } from '../ui/utils/labels';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -13,28 +13,6 @@ import { setting } from './Settings';
  * @constant
  */
 export const R = 6371000;
-
-/**
- * System bounds - spatial limits of the application.
- * 
- * Represented as simple latitude / longitutde pairs, first element is southwest corner,
- * second element is northeast, i.e. bottomleft and topright. Always represented spherically,
- * as this is what the render engine uses internally, regardless of the CRS of the data.
- * 
- * @constant
- * @deprecated since 4.2.1 — a snapshot taken as this module evaluates. Read
- *             `setting('bounds')` instead, which follows `configure()`.
- */
-export const SYS_BOUNDS = setting('bounds');
-/**
- * System center - a fallback point location for the map to center to. 
- * Represented as simple latitude / longitude pair.
- * 
- * @constant
- * @deprecated since 4.2.1 — a snapshot taken as this module evaluates. Read
- *             `setting('center')` instead, which follows `configure()`.
- */
-export const SYS_CENTER = setting('center');
 
 /**
  * The minimum allowed scale for digitization.
@@ -55,31 +33,21 @@ export const MIN_DIGI_SCALE = 12;
  */
 export const MIN_DIGI_AREA = 100;
 
-/**
- * Descriptor of the local coordinate reference system,
- * to be used in re-projections of assets and spatial operations.
- * 
- * @constant
- */
-export const COORDINATE_REFERENCE_SYSTEM = {
-    code: 'EPSG:4026',
-    def: '+proj=tmerc +lat_0=0 +lon_0=28.4 +k=0.99994 +x_0=200000 +y_0=-5000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs',
-    opt: {
-        distances: [2000000, 1000000, 545000, 273000, 136000, 68000, 34000, 17000, 8521, 4261, 4000, 3000, 2000, 1500, 1000, 500, 300, 100],
-        description: 'MOLDREF99 / Moldova TM',
-    },
-    wkt: 'PROJCS["MOLDREF99 / Moldova TM",GEOGCS["MOLDREF99",DATUM["MOLDREF99",SPHEROID["GRS 1980",6378137,298.257222101],TOWGS84[0,0,0,0,0,0,0]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4023"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",28.4],PARAMETER["scale_factor",0.99994],PARAMETER["false_easting",200000],PARAMETER["false_northing",-5000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","4026"]]'
-}
-
 /** @constant */
 export const MAP_CONTAINER = 'mapContainer';
 
-/** @constant */
+/**
+ * How the map behaves, as opposed to where it is.
+ *
+ * Nothing here describes a deployment. The centre, the zoom and its limits, and
+ * the coordinate reference system are settings, read from `configure()` where
+ * the map is built — see `core/map/Map.js`. Keeping the two apart is the point:
+ * this object is the same everywhere the engine runs, so a value that differs
+ * between two installations does not belong in it.
+ *
+ * @constant
+ */
 export const MAP_CONFIG = {
-    center: SYS_CENTER,
-    zoom: 2,
-    minZoom: 0,
-    maxZoom: 18,
     dragging: true,
     zoomControl: false,
     doubleClickZoom: false,
@@ -151,7 +119,9 @@ export const MEAUSURE_LENGTH = {
         showMeasurements: true,
         metadata: {
             type: 'measurements',
-            name: 'Должина',
+            /* Resolved on read rather than at import: labels arrive with the
+               store, which is later than this module evaluates. */
+            get name () { return getLabel('length'); },
             namePath: 'options.metadata.name'
         }
     }
@@ -171,7 +141,9 @@ export const MEASURE_AREA = {
         showMeasurements: true,
         metadata: {
             type: 'measurements',
-            name: 'Површина',
+            /* Resolved on read rather than at import: labels arrive with the
+               store, which is later than this module evaluates. */
+            get name () { return getLabel('area'); },
             namePath: 'options.metadata.name'
         }
     }

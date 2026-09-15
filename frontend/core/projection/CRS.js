@@ -48,6 +48,27 @@ import { R } from '../../config';
 export function crs (code, def, opt) {
     const options = {..._opt, ...opt};
     const { CRS } = factory;
+
+    /* The defaults below are Web Mercator's, and a national grid's origin is
+       almost never Web Mercator's. A wrong origin is invisible -- the map draws,
+       the coordinates read plausibly -- right up until a tile layer asks for a
+       tile a hundred worlds off its own grid, so say when one is being guessed
+       rather than let it pass for a value someone chose. */
+    if (!opt || !opt.origin) {
+        console.warn(
+            `spatial: crs ${code} was built without an origin, so it falls back to Web Mercator's ` +
+            '(+/- pi*R). Unless that is this projection\'s own top-left corner, everything derived ' +
+            'from it is wrong. Pass opt.origin, in this projection\'s units.'
+        );
+    }
+
+    if (!opt || (!opt.scales && !opt.resolutions && !opt.distances)) {
+        console.warn(
+            `spatial: crs ${code} was built without scales, resolutions or distances, so it falls ` +
+            'back to a generic ladder of 19 steps ending at 50 m. Pass one of them to match the ' +
+            'zoom levels this projection is published at.'
+        );
+    }
     
     return {
         ...CRS,

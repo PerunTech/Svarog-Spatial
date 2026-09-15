@@ -1,6 +1,6 @@
 {
   "name": "spatial",
-  "version": "4.2.1",
+  "version": "5.0.0",
   "description": "Module for spatial data and map visualization.",
   "main": "backend/www/spatial.js",
   "repository": {

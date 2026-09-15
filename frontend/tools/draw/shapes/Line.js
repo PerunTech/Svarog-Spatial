@@ -1,4 +1,4 @@
-import { getDrawTooltip, MAP_CONFIG, MIN_DIGI_SCALE } from '../../../config';
+import { getDrawTooltip, MIN_DIGI_SCALE, setting } from '../../../config';
 import { Map, factory, store } from '../../../core';
 import { snap } from '../..';
 
@@ -103,7 +103,7 @@ export const line = {
         if (!this.enabled) {
             return;
         }
-        store.dispatch({minZoom: MAP_CONFIG.minZoom});
+        store.dispatch({minZoom: setting('minZoom')});
 
         this.enabled = false;
     

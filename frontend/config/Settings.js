@@ -8,44 +8,61 @@
  * right order, once per deployment and once per consuming project, with nothing
  * to validate them against and no way to see what had been applied.
  *
- * Those globals are still read, once, to seed these values, so nothing breaks by
- * upgrading. They are deprecated and will be removed in 5.0.
+ * Since 5.0 that page is out of it entirely: `configure()` is the only way in,
+ * and what it is given comes from the deployment's system parameters. One
+ * source, in the database, read at startup.
  *
  * @example
  *      import { configure } from 'spatial/config';
  *
  *      configure({
+ *          crs: 'EPSG:3857',
  *          center: { lat: 41.99, lng: 21.43 },
  *          bounds: [{ lat: 40.85, lng: 20.45 }, { lat: 42.37, lng: 23.03 }],
  *          measurementSystem: 'metric'
  *      });
  *
- * On timing. `configure()` reaches every setting that is read on demand, which
- * is all of them except `crs`: the map instance is constructed while this bundle
- * evaluates, and Leaflet fixes a map's CRS at construction, so `crs` can only
- * come from the seed. That is the constraint `createMap()` lifts — when it
- * lands, `crs` becomes an ordinary setting and nothing in this file changes.
+ * On timing. Most settings are read on demand, so a later `configure()` simply
+ * reaches their next reader. A few describe something already built — the map's
+ * CRS, its view, its zoom limits — and those are applied to it as they change,
+ * by the appliers registered through `onConfigure()`. Either way the caller does
+ * not have to know which kind it is handing over, and no setting depends on
+ * being set before some other module evaluates.
  */
 
 /**
  * The values a deployment that configures nothing gets.
  *
- * The centre and bounds are Moldova's, which is where this engine started; they
- * are not a sensible default for anywhere else, and a deployment is expected to
- * replace them. `crs: null` selects COORDINATE_REFERENCE_SYSTEM, and
- * `measurementSystem: null` renders no scale bar, both matching the behaviour
- * before this module existed.
+ * All of them describe the whole world on the Web Mercator tile grid, which is
+ * the only defensible default: it is the grid every XYZ basemap is published on,
+ * and it belongs to no country.
+ *
+ * Until 5.0 these were Moldova's — the CRS, the centre and the bounds of the
+ * deployment this engine was first written for. That made a missing
+ * configuration invisible rather than loud: a deployment that configured nothing
+ * drew somebody else's country, and one that configured everything but `crs`
+ * asked its basemap for tiles a hundred worlds off the grid and got a wall of
+ * HTTP 400s with nothing on screen or in the console to name the cause.
+ *
+ * So there is no geography in this file. A deployment's own is a system
+ * parameter and arrives through `configure()`.
  */
 const DEFAULTS = {
     /**
      * 'EPSG:3857', 'EPSG:3395' or 'EPSG:4326', which the engine resolves itself,
      * or { code, def, opt } carrying a proj4 definition for a national grid.
      */
-    crs: null,
-    /** Initial map centre, { lat, lng }. */
-    center: { lat: 47.184434, lng: 28.489772 },
+    crs: 'EPSG:3857',
+    /** Initial map centre, { lat, lng }. Null Island — nowhere in particular. */
+    center: { lat: 0, lng: 0 },
     /** Spatial limits, [{ lat, lng } southwest, { lat, lng } northeast]. */
-    bounds: [{ lat: 45.44, lng: 26.63 }, { lat: 48.47, lng: 30.13 }],
+    bounds: [{ lat: -90, lng: -180 }, { lat: 90, lng: 180 }],
+    /** Initial zoom. 0 is the whole world in a single tile. */
+    zoom: 0,
+    /** How far out a map may be zoomed. */
+    minZoom: 0,
+    /** How far in. 18 is as deep as most basemaps publish. */
+    maxZoom: 18,
     /** 'metric', 'imperial', or null for no scale bar. */
     measurementSystem: null,
     /** Reverse WMS bounding box axis order. */
@@ -53,31 +70,55 @@ const DEFAULTS = {
 };
 
 /**
- * The globals each setting used to be read from, and still is seeded by.
- * @deprecated since 4.2.1
- */
-const LEGACY_GLOBALS = {
-    crs: 'sysCrs',
-    center: 'sysCenter',
-    bounds: 'sysBounds',
-    measurementSystem: 'measurementSystem',
-    switchBboxOrder: 'switchBboxOrder'
-};
-
-/**
  * `switchBboxOrder` arrived as the string 'true' when it came from a page, which
  * is why every read site used to compare strings — and why passing the boolean
  * it looks like threw. Normalising on the way in means both forms work and no
- * reader has to care.
+ * reader has to care. A system parameter is a string too, so this stays.
  */
 const toBoolean = (value) =>
     typeof value === 'boolean' ? value : String(value).trim().toLowerCase() === 'true';
 
-const NORMALISE = { switchBboxOrder: toBoolean };
+const toInteger = (value) => {
+    const number = parseInt(value, 10);
+    return Number.isNaN(number) ? undefined : number;
+};
+
+const NORMALISE = {
+    switchBboxOrder: toBoolean,
+    zoom: toInteger,
+    minZoom: toInteger,
+    maxZoom: toInteger
+};
 
 const normalise = (key, value) => (NORMALISE[key] ? NORMALISE[key](value) : value);
 
 let values = { ...DEFAULTS };
+
+/**
+ * The functions to run when a setting that describes something already built
+ * changes — the map's CRS and its view are the ones that exist today.
+ *
+ * A list rather than a direct call because the map imports this module and not
+ * the other way round; inverting that to apply a setting would be a cycle. So
+ * the thing that owns a value registers how to apply it, and this module stays
+ * the bottom of the dependency graph, which is what lets everything else read a
+ * setting without importing a map.
+ */
+const appliers = [];
+
+/**
+ * Registers an applier.
+ *
+ * Called with the settings as they now stand and a Set of the keys that just
+ * changed, so an applier can ignore a `configure()` that had nothing to do with
+ * it — which matters for the view: re-applying a centre nobody asked to change
+ * would move a map out from under whoever was reading it.
+ *
+ * @param {Function} applier - (settings: Object, changed: Set<string>) => void
+ */
+export const onConfigure = (applier) => {
+    if (typeof applier === 'function') appliers.push(applier);
+};
 
 /**
  * Applies configuration. Merges into what is already set, so partial updates are
@@ -87,6 +128,8 @@ let values = { ...DEFAULTS };
  * @returns {Object} The settings as they now stand.
  */
 export const configure = (next = {}) => {
+    const changed = new Set();
+
     Object.entries(next).forEach(([key, value]) => {
         if (!(key in DEFAULTS)) {
             console.warn(
@@ -95,8 +138,18 @@ export const configure = (next = {}) => {
             return;
         }
         if (value === undefined || value === null || value === '') return;
-        values[key] = normalise(key, value);
+
+        const normalised = normalise(key, value);
+        if (normalised === undefined) {
+            console.warn(`spatial: ignoring "${key}", which is not a value this setting can take: ${JSON.stringify(value)}.`);
+            return;
+        }
+
+        values[key] = normalised;
+        changed.add(key);
     });
+
+    if (changed.size) appliers.forEach(applier => applier(settings(), changed));
 
     return settings();
 };
@@ -106,32 +159,3 @@ export const setting = (key) => values[key];
 
 /** Everything, as a copy — for a console when a deployment is behaving oddly. */
 export const settings = () => ({ ...values });
-
-/**
- * Seeds from the deprecated globals, once, as this module evaluates.
- *
- * Announcing it is the point: every hit is a deployment still configured by
- * hand-edited script tags, and the warning names exactly which ones so that
- * migrating is a matter of reading it rather than searching for it.
- */
-const seedFromGlobals = () => {
-    if (typeof window === 'undefined') return;
-
-    const used = [];
-
-    Object.entries(LEGACY_GLOBALS).forEach(([key, global]) => {
-        const value = window[global];
-        if (value === undefined || value === null || value === '') return;
-        values[key] = normalise(key, value);
-        used.push(`window.${global}`);
-    });
-
-    if (used.length) {
-        console.warn(
-            `spatial: configured from ${used.join(', ')}. These globals are deprecated since 4.2.1 — ` +
-            'call config.configure({ ... }) instead. They are still honoured, and go away in 5.0.'
-        );
-    }
-};
-
-seedFromGlobals();
