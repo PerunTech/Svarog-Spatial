@@ -57,7 +57,30 @@ module.exports = (_, { mode }) => {
                     ],
                 },
                 {
-                    test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+                    /*
+                     * Images reached from CSS, inlined rather than emitted.
+                     *
+                     * `asset/resource` wrote each of these to backend/www under a hashed
+                     * name -- and `.gitignore` carries `backend/www/*.png`, so not one of
+                     * them was ever committed. Only spatial.js, config.js and index.html
+                     * are tracked there. So the layer switcher's icon, Leaflet's marker
+                     * icon and the wind rose have resolved to files that exist on the
+                     * machine that ran the build and nowhere else.
+                     *
+                     * There is no publicPath either, so even a shipped asset would be
+                     * fetched relative to whatever route the host application happens to
+                     * be on rather than relative to this bundle.
+                     *
+                     * Inlining settles both: the bytes travel inside spatial.js, which is
+                     * the one file every consumer actually loads.
+                     */
+                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    type: 'asset/inline',
+                },
+                {
+                    // Fonts stay on disk: none are referenced today, and inlining one
+                    // would put a hundred kilobytes into every consumer's page.
+                    test: /\.(eot|ttf|woff|woff2)$/i,
                     type: 'asset/resource',
                 },
             ]

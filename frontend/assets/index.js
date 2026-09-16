@@ -32,6 +32,11 @@ import './css/modules/measurement.css';
 import './css/modules/navigation.css';
 import './css/modules/coordinates.css'
 
+/* Ships with `leaflet.fullscreen`, which `core/service/Factory.js` imports and
+   `ui/Init.js` mounts -- but the stylesheet was never imported, so the control
+   has always rendered as an empty box. It carries the icon. */
+import 'leaflet.fullscreen/Control.FullScreen.css';
+
 /* css.tools */
 import './css/tools/draw.css';
 
