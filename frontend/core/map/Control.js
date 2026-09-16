@@ -59,7 +59,22 @@ export function control (UI, props = {}, opt = _opt) {
             return this.container; // This hook must return HTMLElement.
         },
     
-        onRemove () { /** Think something useful */}
+        /**
+         * Take the React tree off with the control.
+         *
+         * Leaflet calls this and then detaches the container, so without an
+         * unmount the tree carries on running against a node that is no longer
+         * in the document: every `useEffect` cleanup is skipped, which means map
+         * listeners a control registered are never removed and layers it created
+         * are never taken off. The next screen to adopt the map inherits both,
+         * and a control whose cleanup was written correctly still leaks.
+         *
+         * Harmless for the `UI instanceof Element` branch above, which has no
+         * React root -- unmounting a container that never had one returns false.
+         */
+        onRemove () {
+            ReactDOM.unmountComponentAtNode(this.container);
+        }
     });
 
     return new Control({ ..._opt, ...opt }).addTo(Map);
