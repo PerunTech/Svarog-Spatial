@@ -1,0 +1,117 @@
+/* ------------------- */
+/* Coordinates control */
+/* ------------------- */
+/* Class names are set in ui/coordinates/CoordinatesControl.jsx. The control is
+   placed in a map corner, so it carries its own ground: a readout over tiles is
+   unreadable without one, whatever the basemap happens to be. */
+.coordinates-control {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 7px;
+    background-color: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    font-size: 12px;
+    line-height: 1.35;
+    color: #212529;
+    white-space: nowrap;
+}
+
+.coordinates-control__system {
+    max-width: 14ch;
+    padding: 1px 2px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 11px;
+    color: #495057;
+    cursor: pointer;
+}
+
+.coordinates-control__system:focus {
+    outline: none;
+    border-bottom-color: #3399ff;
+}
+
+.coordinates-control__pair {
+    display: inline-flex;
+    gap: 8px;
+}
+
+.coordinates-control__field {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 0;
+}
+
+.coordinates-control__axis {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+}
+
+/* Tabular figures, because this is read while it changes: proportional digits
+   make the whole string shift sideways as the pointer moves. */
+.coordinates-control__value {
+    width: 13ch;
+    padding: 1px 2px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    background: transparent;
+    font-family: monospace;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+}
+
+.coordinates-control__value:focus {
+    outline: none;
+    border-bottom-color: #3399ff;
+}
+
+.coordinates-control__value[aria-invalid='true'] {
+    color: #b02a37;
+    border-bottom-color: #b02a37;
+}
+
+.coordinates-control__copy {
+    padding: 1px 4px;
+    border: none;
+    border-radius: 2px;
+    background: transparent;
+    font-size: 13px;
+    line-height: 1;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.coordinates-control__copy:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.coordinates-control__copy:focus-visible {
+    outline: 2px solid #3399ff;
+    outline-offset: 1px;
+}
+
+/* Above the control rather than below it, since the control itself usually sits
+   at the bottom of the map and a message under it would be off the frame. */
+.coordinates-control__rejected {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background-color: #b02a37;
+    color: #fff;
+    font-size: 11px;
+}

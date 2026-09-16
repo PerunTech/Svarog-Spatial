@@ -65,6 +65,16 @@ const DEFAULTS = {
     maxZoom: 18,
     /** 'metric', 'imperial', or null for no scale bar. */
     measurementSystem: null,
+    /**
+     * The systems the coordinate readout offers, as
+     * [{ code, def, format, label, decimals }] — `format` being 'dd', 'dms' or
+     * 'xy', and `def` a proj4 definition for anything that is not WGS84. Empty
+     * offers degrees, degrees-minutes-seconds and the map's own projected units,
+     * which is the most that can be offered without knowing where a deployment
+     * is. This changes what a position is quoted in and never what the map is
+     * drawn in: see `readout.resolve`.
+     */
+    coordinateSystems: [],
     /** Reverse WMS bounding box axis order. */
     switchBboxOrder: false
 };

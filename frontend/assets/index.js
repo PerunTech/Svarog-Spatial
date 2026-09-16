@@ -29,7 +29,8 @@ import './css/elements/node.css';
 import './css/modules/ellipser.css';
 import './css/modules/scale.css';
 import './css/modules/measurement.css';
-import './css/modules/navigation.css'
+import './css/modules/navigation.css';
+import './css/modules/coordinates.css'
 
 /* css.tools */
 import './css/tools/draw.css';
