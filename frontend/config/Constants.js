@@ -127,6 +127,34 @@ export const MEAUSURE_LENGTH = {
     }
 }
 
+/**
+ * The circle a radius measurement leaves behind.
+ *
+ * `MEASURE_CONFIG` carries no `pathOptions`, and `draw.circle._finishShape`
+ * reads exactly that key -- so a finished circle came out in Leaflet's default
+ * blue while the length and area measurements beside it were amber and dashed.
+ */
+export const MEASURE_RADIUS = {
+    ...MEASURE_CONFIG,
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#FFC400',
+        fillColor: '#FFC400',
+        opacity: 0.9,
+        fillOpacity: 0.15,
+        dashArray: [10, 10],
+        showMeasurements: true,
+        metadata: {
+            type: 'measurements',
+            /* Resolved on read rather than at import: labels arrive with the
+               store, which is later than this module evaluates. */
+            get name () { return getLabel('radius'); },
+            namePath: 'options.metadata.name'
+        }
+    }
+}
+
 export const MEASURE_AREA = {
     ...MEASURE_CONFIG,
     // configuration of the resulting vector, after measurement finished. 

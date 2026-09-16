@@ -119,6 +119,27 @@ export const circle = {
         this._hintline.setLatLngs([latlng, this._hintMarker.getLatLng()]);
     },
     
+    /**
+     * Grow the preview circle to the cursor.
+     *
+     * Bound in `_placeCircleCenter` since this tool was written, and never
+     * defined -- so the handler Leaflet stored was `undefined`, the preview
+     * circle stayed at the radius it was constructed with, and the only thing
+     * that moved was the hintline from the centre to the cursor. Drawing a
+     * circle looked like drawing its radius.
+     *
+     * It also threw. Leaflet keeps `{fn, ctx}` and calls `listener.fn.call(...)`
+     * when the event fires, which on an undefined `fn` is
+     * `Cannot read properties of undefined (reading 'call')` -- once per mouse
+     * move, from the moment the centre was placed.
+     */
+    _syncCircleRadius() {
+        const center = this._centerMarker.getLatLng();
+        const latlng = this._hintMarker.getLatLng();
+
+        this._layer.setRadius(center.distanceTo(latlng));
+    },
+
     _syncHintMarker(e) {
         // move the cursor marker
         this._hintMarker.setLatLng(e.latlng);

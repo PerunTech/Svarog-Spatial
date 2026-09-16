@@ -26,7 +26,11 @@ export const measureCircle = {
     hideMeasurements: function () {
         if (!this._map) return this;
 
-        this._map.on('zoomend', this.updateMeasurements, this);
+        // `on` here until now, which is the opposite of what hiding means: every
+        // show/hide cycle left another zoomend listener bound to a layer whose
+        // measurement group had already been dropped. The line above it in
+        // `showMeasurements` is the one it mirrors.
+        this._map.off('zoomend', this.updateMeasurements, this);
 
         if (!this._measurementLayer) return this;
         this._map.removeLayer(this._measurementLayer);
