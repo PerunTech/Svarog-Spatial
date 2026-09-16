@@ -37,6 +37,8 @@ export { CoordinatesControl } from './coordinates/CoordinatesControl';
 
 export { MeasureControl } from './measure/MeasureControl';
 
+export { LocateControl } from './locate/LocateControl';
+
 export { CRSControl } from './crs/CRSControl';
 
 export { Ellipser } from './loading/Ellipser';
