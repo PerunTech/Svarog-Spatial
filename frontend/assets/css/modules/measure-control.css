@@ -1,0 +1,155 @@
+/* --------------- */
+/* Measure control */
+/* --------------- */
+/* Class names are set in ui/measure/MeasureControl.jsx. The control sits in a
+   map corner under the zoom buttons, so it carries its own ground: a readout
+   over tiles is unreadable without one, whatever the basemap happens to be.
+   Kept apart from measurement.css, which styles the older toolbar's dialog and
+   is scoped to #measure-dialog. */
+.measure-control {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    margin: 10px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #212529;
+}
+
+/* Sits directly under Leaflet's zoom control, which has its own 10px margin --
+   so the gap between them is set here rather than doubled by both. */
+.leaflet-top .measure-control {
+    margin-top: 0;
+}
+
+.measure-control__tools {
+    display: inline-flex;
+    align-items: stretch;
+    background-color: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.measure-control__toggle,
+.measure-control__tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #495057;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.measure-control__toggle {
+    background-color: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.measure-control__toggle:hover,
+.measure-control__tool:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #212529;
+}
+
+.measure-control__toggle:focus-visible,
+.measure-control__tool:focus-visible {
+    outline: 2px solid #3399ff;
+    outline-offset: -2px;
+}
+
+/* The armed tool. A border rather than a fill, so the icon inside keeps the
+   same contrast it has at rest -- these glyphs are strokes, and a solid
+   background under one makes it the hardest button to read of the five. */
+.measure-control__tool.is-active {
+    background-color: #fff3cd;
+    box-shadow: inset 0 0 0 2px #ffc400;
+    color: #212529;
+}
+
+/* The icon is loaded from perun-core's lazy Tabler chunk, so a button may have
+   nothing in it for a moment -- or for good, if the chunk never arrives. The
+   one-character mark beside the icon covers that: it shows only when it is the
+   button's sole child, which is exactly the case where the icon rendered
+   nothing. When the icon is there, the mark is not. */
+.measure-control__fallback {
+    display: none;
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.measure-control__fallback:only-child {
+    display: block;
+}
+
+.measure-control__divider {
+    width: 1px;
+    margin: 4px 0;
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.measure-control__close {
+    font-size: 17px;
+}
+
+/* Tabular figures, because these are read as a column and compared: proportional
+   digits make each row start in a different place. */
+.measure-control__readout {
+    margin: 0;
+    padding: 5px 8px;
+    min-width: 140px;
+    background-color: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    font-variant-numeric: tabular-nums;
+}
+
+.measure-control__line {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.measure-control__line + .measure-control__line {
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* The newest reading is the one being taken; the two under it are there to
+   compare against, and say so by being quieter. */
+.measure-control__line + .measure-control__line dt,
+.measure-control__line + .measure-control__line dd {
+    color: #868e96;
+}
+
+.measure-control__line dt {
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.measure-control__line dd {
+    flex: 1 1 auto;
+    margin: 0;
+    font-family: monospace;
+    text-align: right;
+}

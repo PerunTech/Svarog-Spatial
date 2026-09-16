@@ -35,6 +35,8 @@ export { SimpleForm } from './elements/form/SimpleForm';
 /* ------- */
 export { CoordinatesControl } from './coordinates/CoordinatesControl';
 
+export { MeasureControl } from './measure/MeasureControl';
+
 export { CRSControl } from './crs/CRSControl';
 
 export { Ellipser } from './loading/Ellipser';

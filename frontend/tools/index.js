@@ -19,6 +19,8 @@ export { edit } from './edit/Edit';
 export { measureMarker } from './measure/Marker';
 export { measureLine } from './measure/Line';
 export { measureCircle } from './measure/Circle';
+export { measure } from './measure/Measure';
+export { angleAt, bearing } from './measure/Angle';
 
 // marker points
 export { markerPoints } from './misc/MarkerPoints'

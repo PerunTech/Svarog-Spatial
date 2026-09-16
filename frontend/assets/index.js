@@ -31,6 +31,7 @@ import './css/modules/scale.css';
 import './css/modules/measurement.css';
 import './css/modules/navigation.css';
 import './css/modules/coordinates.css'
+import './css/modules/measure-control.css';
 
 /* Ships with `leaflet.fullscreen`, which `core/service/Factory.js` imports and
    `ui/Init.js` mounts -- but the stylesheet was never imported, so the control
