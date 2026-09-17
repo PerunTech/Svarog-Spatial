@@ -233,23 +233,28 @@ export function MeasureControl ({ tools = ['length', 'area', 'radius', 'angle'],
     if (!open) {
         return (
             <div className='measure-control measure-control--closed'>
-                <button
-                    type='button'
-                    className='measure-control__toggle'
-                    onClick={() => setOpen(true)}
-                    title={label('measure', 'Measure')}
-                    aria-label={label('measure', 'Measure')}
-                    aria-expanded='false'
-                >
-                    <Glyph icon='IconRulerMeasure' mark={GLYPH.measure} />
-                </button>
+                {/* `leaflet-bar` is the look, shared with the zoom and
+                    fullscreen buttons this stacks under. */}
+                <div className='leaflet-bar'>
+                    <button
+                        type='button'
+                        className='measure-control__toggle'
+                        onClick={() => setOpen(true)}
+                        title={label('measure', 'Measure')}
+                        aria-label={label('measure', 'Measure')}
+                        aria-expanded='false'
+                    >
+                        <Glyph icon='IconRulerMeasure' mark={GLYPH.measure} />
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
         <div className='measure-control'>
-            <div className='measure-control__tools' role='group' aria-label={label('measure', 'Measure')}>
+            {/* A bar like the zoom control's, laid out across rather than down. */}
+            <div className='measure-control__tools leaflet-bar' role='group' aria-label={label('measure', 'Measure')}>
                 {offered.map(name => (
                     <button
                         key={name}

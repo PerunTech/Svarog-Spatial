@@ -154,17 +154,22 @@ export function LocateControl ({ maxZoom = 16 }) {
 
     return (
         <div className='locate-control'>
-            <button
-                type='button'
-                className={`locate-control__button${state === 'locating' ? ' is-busy' : ''}${state === 'found' ? ' is-found' : ''}`}
-                onClick={locate}
-                title={label('geolocation', 'Show my position')}
-                aria-label={label('geolocation', 'Show my position')}
-                aria-busy={state === 'locating' || undefined}
-            >
-                <Icon name={icon} size={18} stroke={1.75} aria-hidden='true' />
-                <span className='locate-control__fallback' aria-hidden='true'>&#9678;</span>
-            </button>
+            {/* `leaflet-bar` is the look, shared with the zoom and fullscreen
+                buttons this stacks under. Wrapping only the button, so the
+                message below it does not pick up the bar's shadow. */}
+            <div className='leaflet-bar'>
+                <button
+                    type='button'
+                    className={`locate-control__button${state === 'locating' ? ' is-busy' : ''}${state === 'found' ? ' is-found' : ''}`}
+                    onClick={locate}
+                    title={label('geolocation', 'Show my position')}
+                    aria-label={label('geolocation', 'Show my position')}
+                    aria-busy={state === 'locating' || undefined}
+                >
+                    <Icon name={icon} size={18} stroke={1.75} aria-hidden='true' />
+                    <span className='locate-control__fallback' aria-hidden='true'>&#9678;</span>
+                </button>
+            </div>
 
             {message && (
                 <div className='locate-control__message' role='status'>{message}</div>

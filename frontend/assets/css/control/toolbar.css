@@ -7,16 +7,55 @@
 }
 
 .leaflet-bar a,
-.leaflet-bar a:hover {
+.leaflet-bar button,
+.leaflet-bar a:hover,
+.leaflet-bar button:hover {
 	background-color: #fff;
 	/* border-bottom: 1px solid #ccc; */
 	width: 26px;
 	height: 26px;
-	line-height: 26px;
-	display: block;
 	text-align: center;
 	text-decoration: none;
 	color: black;
+	/*
+	 * Stated rather than inherited, because the touch sizes below put the tap
+	 * target in a transparent border and the two box models then disagree about
+	 * what `width` counts. An anchor defaults to `content-box`, so 36px plus a
+	 * 3px border is 42px across -- but an app that ships a `* { box-sizing:
+	 * border-box }` reset, which every Bootstrap-based one does, silently makes
+	 * it 36px instead. A button takes `border-box` from the UA stylesheet
+	 * whatever the host does. Left to themselves the two come out different
+	 * widths in the same bar, and only in the deployments carrying the reset.
+	 */
+	box-sizing: content-box;
+}
+
+.leaflet-bar a {
+	line-height: 26px;
+	display: block;
+}
+
+/*
+ * A bar built from buttons rather than anchors.
+ *
+ * Same look, because a control that sits in the same column as the zoom buttons
+ * and does not match them reads as something else's chrome that wandered in.
+ * A button rather than an anchor because an anchor with no href is not a control
+ * -- no keyboard activation, no disabled state, nothing for a screen reader --
+ * and the look is a stylesheet's job rather than a reason to pick the wrong
+ * element.
+ *
+ * Centred as a grid: what goes in one of these is an icon, not a character on a
+ * baseline, so there is no line-height to centre it with. The box model is
+ * pinned for both elements in the rule above, for the reason given there.
+ */
+.leaflet-bar button {
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: none;
+	font: inherit;
+	cursor: pointer;
 }
 
 .leaflet-bar a,
@@ -26,7 +65,8 @@
 	display: block;
 }
 
-.leaflet-bar a:hover {
+.leaflet-bar a:hover,
+.leaflet-bar button:hover {
 	background-color: #cecece;
 	/** #f4f4f4 default */
 	border: 1px solid #cecece;
@@ -50,11 +90,15 @@
 	color: #bbb;
 }
 
-.leaflet-touch .leaflet-bar a {
+.leaflet-touch .leaflet-bar a,
+.leaflet-touch .leaflet-bar button {
 	width: 36px;
 	height: 36px;
-	line-height: 31px;
 	border: 3px solid transparent;
+}
+
+.leaflet-touch .leaflet-bar a {
+	line-height: 31px;
 }
 
 .leaflet-control input[type=checkbox] {
