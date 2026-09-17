@@ -94,3 +94,34 @@
     left: 50%;
     transform: translateX(-50%);
 }
+
+/*
+ * Controls in these corners are sized to themselves.
+ *
+ * Leaflet's own stylesheet floats every control, and a float shrink-wraps. This
+ * project does not ship that stylesheet -- the corners above are its
+ * replacement -- so a control here is an ordinary block and stretches to the
+ * width of the corner holding it.
+ *
+ * A corner holding one control never shows that, because the corner is
+ * shrink-to-fit and the two agree on a width. A corner holding two shows it
+ * immediately: the narrower control grows to the width of the wider one, which
+ * is how a collapsed layer switcher ends up as wide as a legend beneath it.
+ */
+.control-topleft > .leaflet-control,
+.control-topright > .leaflet-control,
+.control-bottomleft > .leaflet-control,
+.control-bottomright > .leaflet-control,
+.control-bottomcenter > .leaflet-control {
+    width: fit-content;
+}
+
+/*
+ * The right-hand corners are anchored to the right edge, so a control narrower
+ * than its neighbour has to be pushed back to that edge rather than left where
+ * the block flow puts it.
+ */
+.control-topright > .leaflet-control,
+.control-bottomright > .leaflet-control {
+    margin-left: auto;
+}
