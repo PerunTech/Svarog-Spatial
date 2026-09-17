@@ -105,6 +105,20 @@ factory.Map.prototype._initControlPos = function () {
     ['topleft', 'topright', 'bottomleft', 'bottomright'].map(side => {
         this._controlCorners[side] = stopEventBubble(createElement(this._controlCorners.map, side));
     });
+    /**
+     * Not one of Leaflet's locations, added because the corners answer only one
+     * of the two questions a control can be asking.
+     *
+     * A button belongs in a corner: it acts on the map, and the corner keeps it
+     * out of the way of the map it acts on. A readout describes the map -- where
+     * the pointer is, what the scale is -- and reads as a caption beneath it
+     * rather than as another button someone might try to press. It also leaves
+     * the four corners for the controls that do need them, which on a busy map
+     * are already more than four.
+     */
+    this._controlCorners.bottomcenter = stopEventBubble(
+        createElement(this._controlCorners.map, 'bottomcenter')
+    );
 };
 
 

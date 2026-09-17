@@ -34,6 +34,8 @@ import { factory, Map, Provider } from '..';
  * @param {string} [opt.position] - Rendering position in the map frame. Default is left.
  *        Valid locations are 'top', 'bottom', 'left', 'right'. These are the main control blocks.
  *        Sub-locations include 'topleft', 'topright', 'bottomleft', 'bottomright'. These are map overlay helpers.
+ *        'bottomcenter' is one of these too, centred under the map, for a control that describes it rather
+ *        than acts on it -- a coordinate readout, a scale.
  * @param {string} [opt.className] - The css class of the Control.
  * 
  * @returns Control;
