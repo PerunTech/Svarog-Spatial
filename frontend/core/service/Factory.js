@@ -2,6 +2,15 @@ import { util } from '..';
 import L from 'leaflet';
 import 'leaflet-polylinedecorator';
 import 'leaflet.fullscreen'
+/* Clustering, for point sets too large to draw a marker at a time. Reached as
+   `factory.markerClusterGroup` through the spread below, like the other plugins.
+
+   Order is load-bearing here, and not in the way an import list usually is: this
+   plugin takes no leaflet argument and extends whatever `L` it finds on `window`
+   -- which exists because leaflet assigns it even when it is imported rather
+   than scripted. Imported before leaflet it would throw on a missing global; the
+   line above it is what puts one there. */
+import 'leaflet.markercluster'
 import * as extendedWms from './WMS'
 import * as googleMutant from './google/Leaflet.GoogleMutant'
 

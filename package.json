@@ -11,6 +11,7 @@
     "leaflet": "~1.5.1",
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet.fullscreen": "^3.0.2",
+    "leaflet.markercluster": "^1.5.3",
     "perun-core": "git+https://git@gitlab.prtech.mk/svarog4/perun-core#dev",
     "proj4": "~2.10.0"
   },

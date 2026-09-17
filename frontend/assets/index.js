@@ -42,6 +42,14 @@ import 'leaflet.fullscreen/Control.FullScreen.css';
 /* After the plugin's own sheet, because it corrects it. */
 import './css/modules/fullscreen-control.css';
 
+/* Ships with `leaflet.markercluster`, which `core/service/Factory.js` imports.
+   The first is the plugin working rather than the plugin looking a certain way
+   -- it carries the transitions the cluster and spiderfy animations are drawn
+   with, and without it markers jump. The second is its default green-to-red
+   badge, which a caller replaces by passing `iconCreateFunction`. */
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
 /* css.tools */
 import './css/tools/draw.css';
 
