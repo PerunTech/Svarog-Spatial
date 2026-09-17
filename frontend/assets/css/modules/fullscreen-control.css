@@ -1,0 +1,29 @@
+/* ------------------ */
+/* Fullscreen control */
+/* ------------------ */
+/*
+ * The plugin's icon is one image holding two frames stacked vertically --
+ * "expand" above, "collapse" below -- shipped at a fixed `26px 52px`, which is
+ * a Leaflet button before touch sizing. Nothing scales it with the button, so
+ * on a larger one the frame underneath shows below the frame meant to be
+ * visible and the control renders as both icons at once.
+ *
+ * Sized in percentages instead, so one frame fills the button whatever the
+ * button measures: 200% tall is exactly the two frames, and the two positions
+ * pick between them. That also makes it survive the next change to the button
+ * size, which a pair of pixel offsets would not.
+ *
+ * The selectors carry a class more than they appear to need, because two other
+ * rules have to be outranked. `.leaflet-bar a` in toolbar.css sets
+ * `background-position: 50% 50%` for the controls drawn from a sprite atlas,
+ * which on a two-frame image centres the seam and shows half of each; and the
+ * plugin's own `.leaflet-touch` rules re-state offsets in the 26px geometry.
+ */
+.leaflet-bar a.fullscreen-icon {
+	background-size: 100% 200%;
+	background-position: 0 0;
+}
+
+.leaflet-bar a.fullscreen-icon.leaflet-fullscreen-on {
+	background-position: 0 100%;
+}

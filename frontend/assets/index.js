@@ -39,6 +39,9 @@ import './css/modules/locate-control.css';
    has always rendered as an empty box. It carries the icon. */
 import 'leaflet.fullscreen/Control.FullScreen.css';
 
+/* After the plugin's own sheet, because it corrects it. */
+import './css/modules/fullscreen-control.css';
+
 /* css.tools */
 import './css/tools/draw.css';
 
