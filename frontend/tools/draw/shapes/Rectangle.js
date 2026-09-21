@@ -1,4 +1,4 @@
-import { getDrawTooltip } from '../../../config';
+import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
 import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -9,7 +9,7 @@ export const rectangle = {
     enabled: false,
 
     enable (options) {
-        this.options = options;
+        this.options = { ...DRAW_CONFIG, ...options };
     
         // enable draw mode
         this.enabled = true;

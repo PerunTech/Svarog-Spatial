@@ -1,4 +1,4 @@
-import { getDrawTooltip, MIN_DIGI_SCALE, setting } from '../../../config';
+import { DRAW_CONFIG, getDrawTooltip, MIN_DIGI_SCALE, setting } from '../../../config';
 import { Map, factory, store } from '../../../core';
 import { snap } from '../..';
 
@@ -10,7 +10,7 @@ export const line = {
     _doesSelfIntersect: false,
 
     enable (opt, minZoom, maxZoom, showTooltip) {
-        this.options = opt;
+        this.options = { ...DRAW_CONFIG, ...opt };
         store.dispatch({ minZoom: minZoom || MIN_DIGI_SCALE, ...maxZoom && { maxZoom } });
 
         /* #revise_me, rubbish logic */

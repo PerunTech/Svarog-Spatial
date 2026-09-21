@@ -61,6 +61,36 @@ export const MAP_CONFIG = {
     tapTolerance: 15,
 };
 
+/**
+ * What a draw tool does when the caller has not said.
+ *
+ * Every `enable` merges this underneath the options it is handed, so a caller
+ * names only what it means to differ. The port this code came from did that
+ * through the engine's own option merge against per-shape defaults; here it
+ * became a wholesale `this.options = opt`, and the defaults moved into the
+ * presets below. That holds for exactly as long as every caller passes a whole
+ * preset. The first one to pass a partial object got `snappable: undefined`,
+ * and the snapping behind it never ran -- silently, because the code that would
+ * have snapped is guarded by the very option that was missing.
+ *
+ * Behaviour only. Styles, tooltips and the cursor marker stay the caller's: the
+ * engine does not know a caller's palette, and its tooltips are its own label
+ * codes, which read as `perun.spatial.start_circle` wherever they are not
+ * registered. For those, absence already means off, which is the safe way
+ * round. Absence meaning off for snapping was not.
+ *
+ * @constant
+ */
+export const DRAW_CONFIG = {
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true
+};
+
 /** @constant */
 export const MEASURE_CONFIG = {
     // allow multiple drawn shapes

@@ -1,4 +1,4 @@
-import { getDrawTooltip } from '../../../config';
+import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
 import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -10,7 +10,7 @@ export const marker = {
 
     enable (opt) {
         // change enabled state, assign config.
-        this.options = opt;
+        this.options = { ...DRAW_CONFIG, ...opt };
         this.enabled = true;
     
         // create a marker on click on the map

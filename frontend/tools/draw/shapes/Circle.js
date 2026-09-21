@@ -1,4 +1,4 @@
-import { getDrawTooltip } from '../../../config';
+import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
 import { Map, factory } from '../../../core';
 import { snap } from '../..';
 
@@ -9,7 +9,7 @@ export const circle = {
     enabled: false,
 
     enable (opt) {
-        this.options = opt;
+        this.options = { ...DRAW_CONFIG, ...opt };
         this.options.radius = 0;
     
         // enable draw mode
