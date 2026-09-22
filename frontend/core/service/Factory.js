@@ -15,6 +15,39 @@ import * as extendedWms from './WMS'
 import * as googleMutant from './google/Leaflet.GoogleMutant'
 
 /**
+ * `leaflet.fullscreen` subscribes a handler to the map it is added to and never
+ * takes it off again.
+ *
+ * `onAdd` does `map.on('enterFullscreen exitFullscreen', this._toggleState,
+ * this)`; its `onRemove` unbinds the DOM listeners and leaves that one; and
+ * Leaflet's own `Control.remove` then sets `this._map = null`. The handler is
+ * still on the map, and it reads `this._map._isFullscreen`.
+ *
+ * On a map that is thrown away with its controls this costs nothing. The map
+ * here is `core/map/Map.js`, one instance for the life of the page, so a caller
+ * that adds the control on mount and removes it on unmount leaves one dead
+ * handler behind per cycle -- and the next exit from fullscreen fires the event
+ * at all of them:
+ *
+ *     Uncaught TypeError: Cannot read properties of null (reading '_isFullscreen')
+ *         at e._toggleState / e.fire / e._handleFullscreenChange
+ *
+ * which is the live control firing the event that the dead ones answer. Patched
+ * here rather than forked: this is the whole of what the plugin gets wrong, and
+ * the two lines belong next to the import that brings it in.
+ *
+ * `fullscreenControl` is the same shape of leftover -- `onAdd` hangs the control
+ * off the map for `Map.toggleFullscreen`, and a removed control left there is a
+ * null map waiting for the next caller.
+ */
+const fullScreenOnRemove = L.Control.FullScreen.prototype.onRemove;
+L.Control.FullScreen.prototype.onRemove = function onRemove(map) {
+    fullScreenOnRemove.call(this, map);
+    map.off('enterFullscreen exitFullscreen', this._toggleState, this);
+    if (map.fullscreenControl === this) delete map.fullscreenControl;
+};
+
+/**
  * Class factory.
  * 
  * Mixes local classes with plugin implementations. Hides the lovely word `new`.
