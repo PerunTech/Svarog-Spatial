@@ -46,3 +46,9 @@ which is the grid basemaps are published on and belongs to no country. Before
 
 `settings()` returns everything as it currently stands, for a console when a
 deployment is behaving oddly.
+
+## Third-party code
+
+The drawing, editing and snapping tools are adapted from leaflet-geoman (MIT).
+`NOTICE.md` says which files, what changed from upstream, and lists the other
+files that carry a licence of their own.
