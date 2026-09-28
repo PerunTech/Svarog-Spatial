@@ -1,9 +1,52 @@
 import { factory, Map, store } from '../../core';
+import { toCrs } from '../../core/map/Create';
 
 /* private refs to source methods, to be overriden below. */
 const _initialize = factory.GeoJSON.prototype.initialize,
-    _addData = factory.GeoJSON.prototype.addData,
-    _crs = Map.getCRS();
+    _addData = factory.GeoJSON.prototype.addData;
+
+/**
+ * How a layer reads its stored coordinates, worked out when data is added to it.
+ *
+ * Through the layer's own `crs` if it has one, and otherwise through the page's
+ * map's CRS as it is at that moment. This used to be the page's map's CRS as it
+ * was when this module loaded, and since 5.0 that is always the default,
+ * EPSG:3857, because `configure()` can only run after this bundle evaluates. A
+ * deployment with its map and its data on a national grid had its stored metres
+ * read as Web Mercator, and nothing said so.
+ *
+ * A layer cannot use the map it is on instead: data is usually added before the
+ * layer is on any map. A layer for a map on a CRS of its own says so with `crs`.
+ *
+ * A CRS the back-end declares for its data (`dbCRSCode` in the store) still wins
+ * wherever it differs and is one Leaflet carries, as it always has.
+ *
+ * @param {string|Object} [option] - The layer's `crs` option: any form
+ *     `configure()` takes, or a CRS.
+ * @returns {Function} A `coordsToLatLng` for the layer's options.
+ */
+const coordsToLatLngFor = (option) => {
+    const _crs = toCrs(option) || Map.getCRS();
+    const dbCRSCode = store.getState()?.dbCRSCode?.dbCRS
+    const mapCRSCode = _crs.code?.split(':')[1]
+
+    return function (coords) {
+        const point = factory.point(coords[0], coords[1]);
+        let unprojectedPoint = _crs.projection.unproject(point)
+        // Check if there is a predefined CRS used on the back-end and if it's different than the one the map is using
+        if (dbCRSCode && dbCRSCode !== mapCRSCode) {
+            // Check if it corresponds with one of the defined coordinate reference systems
+            if (dbCRSCode === '3857') {
+                unprojectedPoint = factory.CRS.EPSG3857.unproject(point)
+            } else if (dbCRSCode === '3395') {
+                unprojectedPoint = factory.CRS.EPSG3395.unproject(point)
+            } else if (dbCRSCode === '4326') {
+                unprojectedPoint = factory.CRS.EPSG4326.unproject(point)
+            }
+        }
+        return unprojectedPoint;
+    };
+};
 
 
 /** @extends section */
@@ -25,27 +68,11 @@ factory.GeoJSON.include({
      * @param {*} geojson 
      */
     addData: function (geojson) {
-        const dbCRSCode = store.getState()?.dbCRSCode?.dbCRS
-        if (geojson) {
-            if (_crs !== undefined) {
-                const mapCRSCode = _crs.code?.split(':')[1]
-                this.options.coordsToLatLng = function (coords) {
-                    const point = factory.point(coords[0], coords[1]);
-                    let unprojectedPoint = _crs.projection.unproject(point)
-                    // Check if there is a predefined CRS used on the back-end and if it's different than the one the map is using
-                    if (dbCRSCode && dbCRSCode !== mapCRSCode) {
-                        // Check if it corresponds with one of the defined coordinate reference systems
-                        if (dbCRSCode === '3857') {
-                            unprojectedPoint = factory.CRS.EPSG3857.unproject(point)
-                        } else if (dbCRSCode === '3395') {
-                            unprojectedPoint = factory.CRS.EPSG3395.unproject(point)
-                        } else if (dbCRSCode === '4326') {
-                            unprojectedPoint = factory.CRS.EPSG4326.unproject(point)
-                        }
-                    }
-                    return unprojectedPoint;
-                };
-            }
+        /* Worked out on the call from outside only. The calls the base class makes
+           back into this one, a feature at a time, are the same data, and would
+           otherwise resolve the CRS once per feature. */
+        if (geojson && !this._callLevel) {
+            this.options.coordsToLatLng = coordsToLatLngFor(this.options.crs);
         }
 
         // Base class' addData might call us recursively, but

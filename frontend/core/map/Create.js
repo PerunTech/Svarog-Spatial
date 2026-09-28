@@ -1,5 +1,6 @@
 import { factory, crs } from '..';
 import { MAP_CONFIG, setting } from '../../config';
+import { bboxOf } from './BBox';
 
 /**
  * @override segment. Keep this on top of file.
@@ -67,18 +68,24 @@ const BUILT_IN = {
 };
 
 /**
- * A configured CRS, resolved to one the map can use.
+ * A configured CRS, resolved to one a map or a layer can use.
  *
- * Returns undefined for anything unrecognised, which leaves the map on whatever
- * it already had rather than on a guess. There is no default here on purpose:
- * `DEFAULTS.crs` in the settings is EPSG:3857, so an unconfigured deployment
- * gets the Web Mercator tile grid — the one its basemaps are published on —
- * rather than a national projection belonging to someone else.
+ * Returns undefined for anything unrecognised, which leaves the caller on what
+ * it would have had without it rather than on a guess. There is no default here
+ * on purpose: `DEFAULTS.crs` in the settings is EPSG:3857, so an unconfigured
+ * deployment gets the Web Mercator tile grid — the one its basemaps are
+ * published on — rather than a national projection belonging to someone else.
  *
- * @param {string|Object} configured - An EPSG code, or { code, def, opt }.
+ * A CRS that is already built, such as another map's `getCRS()`, is taken as it
+ * is. One from `crs()` carries its `code` and `def`, so without this it would be
+ * built again from those two, and lose the origin and scales it was built with,
+ * which it keeps as `options` rather than `opt`.
+ *
+ * @param {string|Object} configured - An EPSG code, { code, def, opt }, or a CRS.
  */
-const toCrs = (configured) => {
+export const toCrs = (configured) => {
     if (!configured) return undefined;
+    if (configured.projection) return configured;
 
     /* A proj4 definition means a projection Leaflet does not carry, so build it.
        A code on its own -- in either form -- is one of the three it does. */
@@ -92,7 +99,8 @@ const toCrs = (configured) => {
     console.warn(
         `spatial: cannot resolve crs ${JSON.stringify(configured)}. As a string it must be one of ` +
         `${Object.keys(BUILT_IN).join(', ')}; any other projection needs the { code, def } form, ` +
-        'where def is a proj4 definition. Leaving the map on the CRS it already has.'
+        'where def is a proj4 definition. Ignoring it: the map or layer it was given for keeps ' +
+        'the CRS it would otherwise have.'
     );
     return undefined;
 };
@@ -130,13 +138,7 @@ const extend = (map) => {
             precision);
     };
     map.getBBox = function () {
-        const crs = map.getCRS();
-        const bounds = map.getBounds();
-
-        const psw = crs.projection.project(bounds.getSouthWest())
-        const pne = crs.projection.project(bounds.getNorthEast())
-
-        return psw.x + ',' + psw.y + ',' + pne.x + ',' + pne.y;
+        return bboxOf(map);
     };
 
     /**
@@ -202,7 +204,7 @@ const extend = (map) => {
  * @param {HTMLElement|string} element - The element to build the map in, or its
  *     id. The caller owns it and gives it its size.
  * @param {Object} [options] - Leaflet map options, laid over MAP_CONFIG and the
- *     settings. `crs` takes any form `configure()` takes.
+ *     settings. `crs` takes any form `configure()` takes, or a CRS.
  * @returns {Object} A Leaflet map.
  *
  * @example

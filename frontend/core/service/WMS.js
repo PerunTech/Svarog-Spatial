@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Map } from '../../core';
+import { bboxOf } from '../map/BBox';
 import { util } from '../utils/Util';
 import { setting } from '../../config';
 
@@ -55,7 +55,7 @@ L.TileLayer.ExtendedWMS = L.TileLayer.WMS.extend({
       transparent: this.wmsParams.transparent,
       version: this.wmsParams.version,
       format: this.wmsParams.format,
-      bbox: Map.getBBox(),
+      bbox: bboxOf(this._map),
       height: size.y,
       width: size.x,
       layers: this.wmsParams.layers,
