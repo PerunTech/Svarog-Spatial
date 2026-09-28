@@ -22,6 +22,7 @@ export { projection } from './projection/Projection';
 
 // Map
 export { Map } from './map/Map';
+export { createMap } from './map/Create';
 export { control } from './map/Control';
 export { renderCycle } from './map/RenderCycle';
 export { MapContainer } from './map/Container';
