@@ -1,6 +1,8 @@
 import { React, PropTypes } from 'perun-core';
 import { Step } from '../..';
-import * as style from './Wizard.module.css';
+// The class names webpack's CSS modules generated for this sheet, written out
+// so the Wizard renders as it did without CSS modules in the build.
+import './Wizard.css';
 
 /**
  * A controller for multi-step forms and wizard-like components.
@@ -35,7 +37,7 @@ export function Wizard({ children, nav = null, opt = { initialStep: 0 } }) {
     },
         [activeStep, setActive] = React.useState(opt.initialStep);
 
-    return <div className={opt.className || style['wizard']}>
+    return <div className={opt.className || 'Wizard-module-wizard'}>
         {nav && React.cloneElement(nav, props)}
         {children.map((child, i) => {
             return i === activeStep && <Step key={i} {...props}>{child}</Step>

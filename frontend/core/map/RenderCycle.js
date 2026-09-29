@@ -33,7 +33,7 @@ export const renderCycle = {
 
         /**
          * Containers (containing the className 'leaflet-control') created when the Controls are initially mounted
-         * Check the onAdd method on the Control class in the Control.js file
+         * Check the onAdd method on the Control class in the Control.jsx file
          */
         const controlContainers = document.getElementsByClassName('leaflet-control')
         if (controlContainers) {

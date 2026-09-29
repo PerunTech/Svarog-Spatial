@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import * as style from './Wizard.module.css';
+import './Wizard.css';
 
 /**
  * Internal element of the Wizard. Represents a single unit of content in the body.
@@ -15,7 +15,7 @@ import * as style from './Wizard.module.css';
  * @returns JSX;
  */
 export function Step({ children, ...props }) {
-    return <div className={style['wizard-step']}>
+    return <div className='Wizard-module-wizard-step'>
         {children instanceof Element ? children : React.cloneElement(children, props)}
     </div>
 }

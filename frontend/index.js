@@ -1,5 +1,5 @@
 import proj4 from 'proj4';
-import pkg from '../package.json';
+import { name, version, description } from '../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.
@@ -13,9 +13,9 @@ import * as ui from './ui';
 // Assemble plugin.
 export const spatial = core.util.assemble(
     { // Set instance properties.
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description,
+        name,
+        version,
+        description,
         init: ui.init
     },
     { // Set prototype properties.

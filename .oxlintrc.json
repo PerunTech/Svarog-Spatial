@@ -99,7 +99,7 @@
         "react/jsx-no-target-blank": "error",
         "react/jsx-no-undef": "error",
         // The map mounts its React tree as `<Provider children={<UI/>} />`
-        // in Control.js and Init.js. That is the shape those two call sites
+        // in Control.jsx and Init.jsx. That is the shape those two call sites
         // want -- the child is built from props and handed over, not nested
         // in source -- and rewriting the mount path of a library five
         // projects consume is not worth a stylistic rule. perun-core

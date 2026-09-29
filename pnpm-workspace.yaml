@@ -3,15 +3,12 @@
 # accept it either way. Empty is accurate: there are no sub-packages.
 packages: []
 
-# Subdependencies carrying advisories their parents pin too tightly to fix on
-# their own: monaco-editor, through perun-core, asks for dompurify 3.4.8
-# exactly, and the sockjs webpack-dev-server brings asks for an old uuid.
-# Neither reaches the shipped bundle -- perun-core is external, and the dev
-# server is not in it -- so these clear the audit and protect the dev machine
-# rather than changing what ships.
+# A subdependency carries an advisory its parent pins too tightly to fix on its
+# own: monaco-editor, through perun-core, asks for dompurify 3.4.8 exactly. It
+# does not reach the shipped bundle -- perun-core is external -- so this clears
+# the audit and protects the dev machine rather than changing what ships.
 #
 # pnpm 11 reads overrides from here; pnpm 9 and 10 read them from the "pnpm"
 # field of package.json. Both are declared, and must be kept in step.
 overrides:
   dompurify: ^3.4.15
-  uuid: ^11.1.1

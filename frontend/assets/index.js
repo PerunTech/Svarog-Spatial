@@ -35,7 +35,7 @@ import './css/modules/measure-control.css';
 import './css/modules/locate-control.css';
 
 /* Ships with `leaflet.fullscreen`, which `core/service/Factory.js` imports and
-   `ui/Init.js` mounts -- but the stylesheet was never imported, so the control
+   `ui/Init.jsx` mounts -- but the stylesheet was never imported, so the control
    has always rendered as an empty box. It carries the icon. */
 import 'leaflet.fullscreen/Control.FullScreen.css';
 

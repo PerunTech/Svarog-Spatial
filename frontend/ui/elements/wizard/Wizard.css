@@ -1,17 +1,17 @@
 /** Wizard */
-.wizard {
+.Wizard-module-wizard {
     height: 350px;
     width: 350px;
 }
 
-.wizard-step {
+.Wizard-module-wizard-step {
     opacity: 1;
     pointer-events: inherit;
     position: relative;
     z-index: 1;
 }
 
-.wizard-animated {
+.Wizard-module-wizard-animated {
     -webkit-animation-duration: .8192s;
     animation-duration: .8192s;
     -webkit-animation-fill-mode: backwards;
@@ -19,7 +19,7 @@
     }
     
     /** fadeInRight */
-    @-webkit-keyframes fadeInRight {
+    @-webkit-keyframes Wizard-module-fadeInRight {
       from {
         opacity: 0;
         -webkit-transform: translate3d(100%, 0, 0);
@@ -33,7 +33,7 @@
       }
     }
     
-    @keyframes fadeInRight {
+    @keyframes Wizard-module-fadeInRight {
       from {
         opacity: 0;
         -webkit-transform: translate3d(100%, 0, 0);
@@ -47,13 +47,13 @@
       }
     }
     
-    .fadeInRight {
-      -webkit-animation-name: fadeInRight;
-      animation-name: fadeInRight;
+    .Wizard-module-fadeInRight {
+      -webkit-animation-name: Wizard-module-fadeInRight;
+      animation-name: Wizard-module-fadeInRight;
     }
     
     /** fadeInLeft */
-    @-webkit-keyframes fadeInLeft {
+    @-webkit-keyframes Wizard-module-fadeInLeft {
       from {
         opacity: 0;
         -webkit-transform: translate3d(-100%, 0, 0);
@@ -67,7 +67,7 @@
       }
     }
     
-    @keyframes fadeInLeft {
+    @keyframes Wizard-module-fadeInLeft {
       from {
         opacity: 0;
         -webkit-transform: translate3d(-100%, 0, 0);
@@ -81,13 +81,13 @@
       }
     }
     
-    .fadeInLeft {
-      -webkit-animation-name: fadeInLeft;
-      animation-name: fadeInLeft;
+    .Wizard-module-fadeInLeft {
+      -webkit-animation-name: Wizard-module-fadeInLeft;
+      animation-name: Wizard-module-fadeInLeft;
     }
     
     /** fadeOutRight */
-    @-webkit-keyframes fadeOutRight {
+    @-webkit-keyframes Wizard-module-fadeOutRight {
       from {
         opacity: 1;
       }
@@ -99,7 +99,7 @@
       }
     }
     
-    @keyframes fadeOutRight {
+    @keyframes Wizard-module-fadeOutRight {
       from {
         opacity: 1;
       }
@@ -111,13 +111,13 @@
       }
     }
     
-    .fadeOutRight {
-      -webkit-animation-name: fadeOutRight;
-      animation-name: fadeOutRight;
+    .Wizard-module-fadeOutRight {
+      -webkit-animation-name: Wizard-module-fadeOutRight;
+      animation-name: Wizard-module-fadeOutRight;
     }
     
     /** fadeOutLeft */
-    @-webkit-keyframes fadeOutLeft {
+    @-webkit-keyframes Wizard-module-fadeOutLeft {
       from {
         opacity: 1;
       }
@@ -129,7 +129,7 @@
       }
     }
     
-    @keyframes fadeOutLeft {
+    @keyframes Wizard-module-fadeOutLeft {
       from {
         opacity: 1;
       }
@@ -141,7 +141,7 @@
       }
     }
     
-    .fadeOutLeft {
-      -webkit-animation-name: fadeOutLeft;
-      animation-name: fadeOutLeft;
+    .Wizard-module-fadeOutLeft {
+      -webkit-animation-name: Wizard-module-fadeOutLeft;
+      animation-name: Wizard-module-fadeOutLeft;
     }
