@@ -4,23 +4,6 @@ stages:
   - install
   - sonar
 
-# The runner has no distributed cache, so every cache entry is a zip written to and read from the
-# runner's own disk. The npm cache is around 136MB, and at the default level the runner spends
-# longer deflating it than the download it saves.
-variables:
-  CACHE_COMPRESSION_LEVEL: "fastest"
-
-# Keyed on the lockfile, so it turns over only when a dependency does. There is no webpack cache
-# entry to go with it, as perun-core has: this build has no filesystem cache configured and takes
-# eight seconds, which is less than zipping one would cost.
-.npm_cache: &npm_cache
-  key:
-    files:
-      - package-lock.json
-    prefix: npm
-  paths:
-    - .npm/
-
 before_script:
   - pwd
   - echo $CI_BUILD_REF_NAME
@@ -34,22 +17,23 @@ after_script:
   - git stash
   - git pull origin $CI_BUILD_REF_NAME
 
-npm_test:
-  cache:
-    - *npm_cache
+pnpm_test:
   stage: test
   script:
     - pwd
     - git reset --hard HEAD
-    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
-    # Deliberately not `npm run test`. That script is
+    # `npm ci` emptied node_modules itself; `pnpm install` installs over what is
+    # there, so each job clears it first, here and below.
+    - rm -rf node_modules
+    - pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+    # Deliberately not `pnpm run test`. That script is
     # `eslint --fix frontend/ || exit 0`: it can never fail a pipeline, and its
     # fix pass repairs auto-fixable violations before anything can report them,
     # then after_script's reset throws the repairs away. Two real errors had
     # been sitting in frontend/ unreported because of it. The script stays in
     # package.json for local use, where fixing your working tree is the point.
-    - npx eslint frontend/
-    - npm run build
+    - pnpm exec eslint frontend/
+    - pnpm run build
 
 mvn_test:
   cache: []
@@ -60,16 +44,14 @@ mvn_test:
     - mvn test
 
 prod_install:
-  cache:
-    - <<: *npm_cache
-      policy: pull
   stage: install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
     - git reset --hard HEAD
-    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
-    - npm run build
+    - rm -rf node_modules
+    - pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+    - pnpm run build
     - cd backend
     - pwd
     - mvn clean deploy -DskipTests
@@ -79,17 +61,15 @@ prod_install:
     - dev
 
 1_perun-core-dev-generate-js:
-  cache:
-    - <<: *npm_cache
-      policy: pull
   stage: dev_install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
     - git reset --hard HEAD
-    - npm ci --cache .npm --prefer-offline --ignore-scripts --no-audit --no-fund
+    - rm -rf node_modules
+    - pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
     - rm -rf backend/www/*.js
-    - npm run build
+    - pnpm run build
     - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
     - git remote set-url origin "https://gitlab-ci-token:${K8S_SECRET_GITLABCI_TOKEN}@${url_host}"
     - git remote -v

@@ -34,7 +34,11 @@ export default [
             },
         },
         settings: {
-            react: { version: 'detect' },
+            // Not 'detect': that resolves `react` from this package, and React
+            // is perun-core's, found only while npm hoisted it. pnpm does not,
+            // detection falls back to the newest React, and no-deprecated
+            // then reports every ReactDOM.render. perun-core ships 16.14.
+            react: { version: '16.14' },
         },
         rules: {
             ...react.configs.recommended.rules,
