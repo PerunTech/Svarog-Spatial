@@ -1,0 +1,14 @@
+# pnpm 9 reads this file as a workspace definition alone and refuses it without
+# a packages list. pnpm 10 and 11, which also read their settings from here,
+# accept it either way. Empty is accurate: there are no sub-packages.
+packages: []
+
+# A subdependency carries an advisory its parent pins too tightly to fix on its
+# own: monaco-editor, through perun-core, asks for dompurify 3.4.8 exactly. It
+# does not reach the shipped bundle -- perun-core is external -- so this clears
+# the audit and protects the dev machine rather than changing what ships.
+#
+# pnpm 11 reads overrides from here; pnpm 9 and 10 read them from the "pnpm"
+# field of package.json. Both are declared, and must be kept in step.
+overrides:
+  dompurify: ^3.4.15

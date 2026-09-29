@@ -47,6 +47,21 @@ which is the grid basemaps are published on and belongs to no country. Before
 `settings()` returns everything as it currently stands, for a console when a
 deployment is behaving oddly.
 
+## Building
+
+Node 22.12 or newer, and pnpm.
+
+```sh
+pnpm install
+pnpm run build     # backend/www/spatial.js, which is committed with each change
+pnpm run dev       # the same, then again on every save
+pnpm run lint      # what CI asks; lint:fix repairs your working tree instead
+```
+
+`spatial.js` is one UMD file publishing `window.spatial`, with perun-core left
+to the shell's global. Its stylesheets travel inside it and are added to
+`<head>` as it loads.
+
 ## Third-party code
 
 The drawing, editing and snapping tools are adapted from leaflet-geoman (MIT).
