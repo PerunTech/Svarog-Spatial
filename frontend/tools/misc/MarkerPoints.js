@@ -1,6 +1,7 @@
 import { util, factory, Map } from '../../core';
 import { snap } from '..';
 import { markerLimits } from '../edit/util/MarkerLimits'
+import { mapOf } from '../edit/util/MapOf';
 
 export const markerPoints = {
   ...snap,
@@ -10,6 +11,7 @@ export const markerPoints = {
 
   enable (layer, opt) {
     this._layer = layer;
+    this._map = mapOf(layer, Map);
     this.options = opt;
 
     // init markers
@@ -61,7 +63,7 @@ export const markerPoints = {
     this.filterMarkerGroup();
 
     // add markerGroup to map
-    Map.addLayer(this._markerGroup);
+    this._map.addLayer(this._markerGroup);
   },
 
   // creates initial markers for coordinates
@@ -84,7 +86,7 @@ export const markerPoints = {
     }
 
     const latlng = this._calcMiddleLatLng(
-      Map,
+      this._map,
       leftM.getLatLng(),
       rightM.getLatLng()
     );

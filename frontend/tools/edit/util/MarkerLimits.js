@@ -1,5 +1,3 @@
-import { Map } from '../../../core';
-
 export const markerLimits = {
     filterMarkerGroup() {
         // don't do it if the option is disabled
@@ -26,12 +24,12 @@ export const markerLimits = {
           // The reason is that syncing this cache with a removed marker was impossible to do
             this._layer.on('pm:vertexremoved', this._initMarkers, this)
         
-            Map.on('mousemove', this.applyLimitFilters, this);
+            this._map.on('mousemove', this.applyLimitFilters, this);
         }
     },
 
     _removeMarkerLimitEvents() {
-        Map.off('mousemove', this.applyLimitFilters, this);
+        this._map.off('mousemove', this.applyLimitFilters, this);
         this._layer.off('pm:edit', this.createCache, this)
         this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
         this._layer.off('pm:vertexremoved', this._initMarkers, this)

@@ -1,4 +1,5 @@
 import { drag, snap } from '../..';
+import { mapOf } from '../util/MapOf';
 
 export const marker = {
     ...snap,
@@ -16,6 +17,7 @@ export const marker = {
 
         // init layer to be edited.
         this._layer = layer
+        this._map = mapOf(layer, this._ownMap);
         this._layer.on('dragend', this._onDragEnd, this);
 
         // merge init edit options.

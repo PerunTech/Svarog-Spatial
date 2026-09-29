@@ -1,4 +1,4 @@
-import { factory, Map, util } from '../../core';
+import { factory, util } from '../../core';
 
 export const drag = {
     enableLayerDrag() {
@@ -19,7 +19,7 @@ export const drag = {
             : this._layer._renderer._container;
         factory.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
-        this._originalMapDragState = Map.dragging._enabled;
+        this._originalMapDragState = this._map.dragging._enabled;
 
         // can we reliably save the map's draggable state?
         // (if the mouse up event happens outside the container, then the map can become undraggable)
@@ -55,17 +55,17 @@ export const drag = {
 
         // re-enable map drag
         if (this._originalMapDragState) {
-            Map.dragging.enable();
+            this._map.dragging.enable();
         }
 
       // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
         this._safeToCacheDragState = true;
 
         // clear up mousemove event
-        Map.off('mousemove', this._dragMixinOnMouseMove, this);
+        this._map.off('mousemove', this._dragMixinOnMouseMove, this);
 
         // clear up mouseup event
-        Map.off('mouseup', this._dragMixinOnMouseUp, this);
+        this._map.off('mouseup', this._dragMixinOnMouseUp, this);
 
         // if no drag happened, don't do anything
         if (!this._dragging) {
@@ -104,7 +104,7 @@ export const drag = {
             
             // disbale map drag
             if (this._originalMapDragState) {
-                Map.dragging.disable();
+                this._map.dragging.disable();
             }
 
             // fire pm:dragstart event
@@ -121,7 +121,7 @@ export const drag = {
         }
         // save current map dragging state
         if (this._safeToCacheDragState) {
-            this._originalMapDragState = Map.dragging._enabled;
+            this._originalMapDragState = this._map.dragging._enabled;
             
             // don't cache the state again until another mouse up is registered
             this._safeToCacheDragState = false;
@@ -130,11 +130,11 @@ export const drag = {
         // save for delta calculation
         this._tempDragCoord = e.latlng;
 
-        Map.on('mouseup', this._dragMixinOnMouseUp, this);
+        this._map.on('mouseup', this._dragMixinOnMouseUp, this);
 
         // listen to mousemove on map (instead of polygon),
         // otherwise fast mouse movements stop the drag
-        Map.on('mousemove', this._dragMixinOnMouseMove, this);
+        this._map.on('mousemove', this._dragMixinOnMouseMove, this);
     },
 
     dragging() {

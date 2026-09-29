@@ -1,4 +1,4 @@
-import { factory, store } from '../../core';
+import { factory, store, Map } from '../../core';
 
 const { Marker, marker, Layer, DomUtil } = factory;
 
@@ -10,9 +10,6 @@ export const measureMarker = {
     initialize: function (latlng, measurement, title, rotation, options) {
         factory.setOptions(this, options);
 
-        if (title === 'Total length') { store.dispatch({totalLength: measurement}) }
-        if (title === 'Total area') { store.dispatch({totalArea: measurement}) }
-        
         this._latlng = latlng;
         this._measurement = measurement;
         this._title = title;
@@ -26,6 +23,16 @@ export const measureMarker = {
 
     onAdd: function (map) {
         this._map = map;
+
+        /* The running totals the page's measurement dialogs show. Written when
+           the label is added rather than built, which is the first moment it
+           knows its map, and only on the page's map: the dialogs measure there,
+           and a total from a created map would replace theirs. */
+        if (map === Map) {
+            if (this._title === 'Total length') { store.dispatch({totalLength: this._measurement}) }
+            if (this._title === 'Total area') { store.dispatch({totalArea: this._measurement}) }
+        }
+
         let pane = this.getPane ? this.getPane() : map.getPanes().markerPane;
         let className = 'leaflet-measure-path-measurement';
         let el = this._element = DomUtil.create('div', 'leaflet-zoom-animated ' + className, pane);

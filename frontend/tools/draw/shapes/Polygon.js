@@ -1,5 +1,5 @@
 import { getDrawTooltip } from '../../../config';
-import { factory, Map } from '../../../core';
+import { factory } from '../../../core';
 import { line } from './Line';
 
 export const polygon = {
@@ -30,13 +30,13 @@ export const polygon = {
             // Leaflet creates an extra node with double click
             coords.splice(coords.length - 1, 1);
         }
-        const polygonLayer = factory.polygon(coords, this.options.pathOptions).addTo(Map);
+        const polygonLayer = factory.polygon(coords, this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
     
         // fire the new_shape event and pass shape and layer
-        Map.fire('new_shape', {
+        this._map.fire('new_shape', {
             shape: this.shape,
             layer: polygonLayer,
         });

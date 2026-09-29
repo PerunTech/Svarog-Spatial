@@ -11,7 +11,13 @@ export const line = {
 
     enable (opt, minZoom, maxZoom, showTooltip) {
         this.options = { ...DRAW_CONFIG, ...opt };
-        store.dispatch({ minZoom: minZoom || MIN_DIGI_SCALE, ...maxZoom && { maxZoom } });
+
+        /* The digitising scale, as a minZoom in the store. MapContainer is what
+           applies it, and only to the page's map, so a tool on any other map
+           would leave its own map as it was and change the page's. The page's
+           tools only. */
+        this._map === Map
+            && store.dispatch({ minZoom: minZoom || MIN_DIGI_SCALE, ...maxZoom && { maxZoom } });
 
         /* #revise_me, rubbish logic */
         if (this.options.finishOnDoubleClick && !this.options.finishOn) {
@@ -24,7 +30,7 @@ export const line = {
         // create a new layergroup
         this._layerGroup = new factory.LayerGroup();
         this._layerGroup._pmTempLayer = true;
-        this._layerGroup.addTo(Map);
+        this._layerGroup.addTo(this._map);
     
         // this is the polyLine that'll make up the polygon
         this._layer = factory.polyline([], this.options.templineStyle);
@@ -37,7 +43,7 @@ export const line = {
         this._layerGroup.addLayer(this._hintline);
     
         // this is the hintmarker on the mouse cursor
-        this._hintMarker = factory.marker(Map.getCenter(), {
+        this._hintMarker = factory.marker(this._map.getCenter(), {
             icon: factory.divIcon({ className: 'marker-icon cursor-marker' }),
         });
         this._hintMarker._pmTempLayer = true;
@@ -60,34 +66,34 @@ export const line = {
         }
     
         // change map cursor
-        Map._container.style.cursor = 'crosshair';
+        this._map._container.style.cursor = 'crosshair';
     
         // create a polygon-point on click
-        Map.on('click', this._createVertex, this);
+        this._map.on('click', this._createVertex, this);
     
         // finish on layer event
         // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
         if (this.options.finishOn) {
-            Map.on(this.options.finishOn, this._finishShape, this);
+            this._map.on(this.options.finishOn, this._finishShape, this);
         }
     
         // prevent zoom on double click if finishOn is === dblclick
         if (this.options.finishOn === 'dblclick') {
-            this.tempMapDoubleClickZoomState = Map.doubleClickZoom._enabled;
+            this.tempMapDoubleClickZoomState = this._map.doubleClickZoom._enabled;
     
             if (this.tempMapDoubleClickZoomState) {
-                Map.doubleClickZoom.disable();
+                this._map.doubleClickZoom.disable();
             }
         }
     
         // sync hint marker with mouse cursor
-        Map.on('mousemove', this._syncHintMarker, this);
+        this._map.on('mousemove', this._syncHintMarker, this);
     
         // sync the hintline with hint marker
         this._hintMarker.on('move', this._syncHintLine, this);
     
         // fire draw_start event
-        Map.fire('draw_start', {
+        this._map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
             hintLayer: this._hintline,
@@ -103,28 +109,28 @@ export const line = {
         if (!this.enabled) {
             return;
         }
-        store.dispatch({minZoom: setting('minZoom')});
+        this._map === Map && store.dispatch({minZoom: setting('minZoom')});
 
         this.enabled = false;
     
         // reset cursor
-        Map._container.style.cursor = '';
+        this._map._container.style.cursor = '';
     
         // unbind listeners
-        Map.off('click', this._createVertex, this).off('mousemove', this._syncHintMarker, this);
+        this._map.off('click', this._createVertex, this).off('mousemove', this._syncHintMarker, this);
         if (this.options.finishOn) {
-            Map.off(this.options.finishOn, this._finishShape, this);
+            this._map.off(this.options.finishOn, this._finishShape, this);
         }
     
         if (this.tempMapDoubleClickZoomState) {
-            Map.doubleClickZoom.enable();
+            this._map.doubleClickZoom.enable();
         }
     
         // remove layer
-        Map.removeLayer(this._layerGroup);
+        this._map.removeLayer(this._layerGroup);
     
         // fire draw_end event
-        Map.fire('draw_end', { shape: this.shape });
+        this._map.fire('draw_end', { shape: this.shape });
     
         // cleanup snapping
         if (this.options.snappable) {
@@ -296,14 +302,14 @@ export const line = {
         }
     
         // create the leaflet shape and add it to the map
-        const polylineLayer = factory.polyline(coords, this.options.pathOptions).addTo(Map);
+        const polylineLayer = factory.polyline(coords, this.options.pathOptions).addTo(this._map);
     
         /* Disable drawing. Keep this line above the 'create' event fire,
         callers that listen to the event may re-enable drawing. */
         this.disable();
     
         // fire the new_shape event and pass shape and layer
-        Map.fire('new_shape', {
+        this._map.fire('new_shape', {
             shape: this.shape,
             layer: polylineLayer,
         });

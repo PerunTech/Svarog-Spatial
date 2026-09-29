@@ -1,6 +1,7 @@
-import { util, factory, Map } from '../../../core';
+import { util, factory } from '../../../core';
 import { drag, snap } from '../..';
 import { markerLimits } from '../util/MarkerLimits';
+import { mapOf } from '../util/MapOf';
 
 export const line = {
     ...snap,
@@ -22,6 +23,7 @@ export const line = {
         this.enabled && this.disable();
 
         this._layer = layer;
+        this._map = mapOf(layer, this._ownMap);
         this.enabled= true;
         this.options = opt;
 
@@ -105,7 +107,7 @@ export const line = {
         this.filterMarkerGroup();
     
         // add markerGroup to map
-        Map.addLayer(this._markerGroup);
+        this._map.addLayer(this._markerGroup);
     },
 
     // creates initial markers for coordinates
@@ -138,7 +140,7 @@ export const line = {
         }
 
         const latlng = this._calcMiddleLatLng(
-            Map,
+            this._map,
             leftM.getLatLng(),
             rightM.getLatLng()
         );
@@ -393,14 +395,14 @@ export const line = {
     
         marker._middleMarkerNext 
             && marker._middleMarkerNext.setLatLng(this._calcMiddleLatLng(
-                Map,
+                this._map,
                 markerLatLng,
                 nextMarkerLatLng
             ));
     
         marker._middleMarkerPrev 
             && marker._middleMarkerPrev.setLatLng(this._calcMiddleLatLng(
-                Map,
+                this._map,
                 markerLatLng,
                 prevMarkerLatLng
             ));

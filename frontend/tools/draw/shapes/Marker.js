@@ -1,5 +1,5 @@
 import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
-import { Map, factory } from '../../../core';
+import { factory } from '../../../core';
 import { snap } from '../..';
 
 export const marker = {
@@ -14,12 +14,12 @@ export const marker = {
         this.enabled = true;
     
         // create a marker on click on the map
-        Map.on('click', this._createMarker, this);
+        this._map.on('click', this._createMarker, this);
     
         // this is the hintmarker on the mouse cursor
         this._hintMarker = factory.marker([0, 0], this.options.markerStyle);
         this._hintMarker._pmTempLayer = true;
-        this._hintMarker.addTo(Map);
+        this._hintMarker.addTo(this._map);
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
@@ -34,17 +34,17 @@ export const marker = {
         this._layer = this._hintMarker;
     
         // sync hint marker with mouse cursor
-        Map.on('mousemove', this._syncHintMarker, this);
+        this._map.on('mousemove', this._syncHintMarker, this);
     
         // fire draw_start event
-        Map.fire('draw_start', {
+        this._map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
         });
     
         // enable edit mode for existing markers
         // This iteration is unacceptable, `#revise_me`
-        Map.eachLayer(layer => 
+        this._map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
     
@@ -55,21 +55,21 @@ export const marker = {
         }
     
         // undbind click event, don't create a marker on click anymore
-        Map.off('click', this._createMarker, this);
+        this._map.off('click', this._createMarker, this);
     
         // remove hint marker
         this._hintMarker.remove();
     
         // remove event listener to sync hint marker
-        Map.off('mousemove', this._syncHintMarker, this);
+        this._map.off('mousemove', this._syncHintMarker, this);
     
         // disable dragging and removing for all markers
         // This iteration is unacceptable, `#revise_me`
-        Map.eachLayer(layer => 
+        this._map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.disable());
     
         // fire draw_end event
-        Map.fire('draw_end', { shape: this.shape });
+        this._map.fire('draw_end', { shape: this.shape });
     
         // cleanup snapping
         this.options.snappable && this._cleanupSnapping();
@@ -103,13 +103,13 @@ export const marker = {
         const marker = new factory.Marker(latlng, this.options.markerStyle);
     
         // add marker to the map
-        marker.addTo(Map);
+        marker.addTo(this._map);
     
         // enable editing for the marker
         marker.pm.enable();
     
         // fire the new_shape event and pass shape and marker
-        Map.fire('new_shape', {
+        this._map.fire('new_shape', {
             shape: this.shape,
             marker, // DEPRECATED
             layer: marker,

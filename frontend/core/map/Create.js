@@ -106,6 +106,28 @@ export const toCrs = (configured) => {
 };
 
 /**
+ * How to build each set of tools a map carries, by the name it is read as.
+ *
+ * `tools` fills this in when it loads: `draw` and `edit`. core cannot import
+ * the tools itself. Every tool imports core, and this file runs while core is
+ * still loading, so they would be evaluated against a core that has no map
+ * yet. A getter reads this on first use, which is always after `tools` has
+ * loaded.
+ */
+const toolsets = {};
+
+/**
+ * Registers how to build one set of tools for a map. Called by `tools`, and
+ * not exported from core.
+ *
+ * @param {string} name - `draw` or `edit`: what the set is read as on a map.
+ * @param {Function} build - Given a map, returns a new set of tools for it.
+ */
+export const provideToolset = (name, build) => {
+    toolsets[name] = build;
+};
+
+/**
  * What spatial adds to a Leaflet map, attached to one map.
  *
  * Each method is a closure over the map it was attached to rather than a
@@ -188,6 +210,19 @@ const extend = (map) => {
         return map;
     };
 
+    /* `map.draw` and `map.edit`: this map's own tools, built the first time
+       each is read and the same set on every read after. A map whose tools
+       are never read never builds them. The page's map is first read by `tools`
+       itself, which exports that set as the module-level `draw` and `edit`. */
+    ['draw', 'edit'].forEach(name => {
+        let set;
+        Object.defineProperty(map, name, {
+            get: () => set || (set = toolsets[name] && toolsets[name](map)),
+            enumerable: true,
+            configurable: true
+        });
+    });
+
     return map;
 };
 
@@ -205,7 +240,8 @@ const extend = (map) => {
  *     id. The caller owns it and gives it its size.
  * @param {Object} [options] - Leaflet map options, laid over MAP_CONFIG and the
  *     settings. `crs` takes any form `configure()` takes, or a CRS.
- * @returns {Object} A Leaflet map.
+ * @returns {Object} A Leaflet map, with its own drawing and editing tools as
+ *     `map.draw` and `map.edit`.
  *
  * @example
  *      const map = createMap(container, { center: { lat: 41.99, lng: 21.43 }, zoom: 9 });

@@ -1,4 +1,4 @@
-import { util, factory, Map } from '../../core';
+import { util, factory } from '../../core';
 import { prioritiseSort } from './Util';
 
 export const snap = {
@@ -44,12 +44,12 @@ export const snap = {
         delete this._snapList;
 
         if (this.throttledList) {
-            Map.off('layeradd', this.throttledList, this);
+            this._map.off('layeradd', this.throttledList, this);
             this.throttledList = undefined;
         }
 
         // remove map event
-        Map.off('pm:remove', this._handleSnapLayerRemoval, this);
+        this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
 
         if (this.debugIndicatorLines) {
             this.debugIndicatorLines.forEach(line => {
@@ -92,8 +92,8 @@ export const snap = {
             this._createSnapList();
 
             // re-create the snaplist again when a layer is added during draw
-            Map.off('layeradd', this.throttledList, this);
-            Map.on('layeradd', this.throttledList, this);
+            this._map.off('layeradd', this.throttledList, this);
+            this._map.on('layeradd', this.throttledList, this);
         }
 
         // if there are no layers to snap to, stop here
@@ -188,7 +188,7 @@ export const snap = {
     // we got the point we want to snap to (C), but we need to check if a coord of the polygon
     // receives priority over C as the snapping point. Let's check this here
     _checkPrioritiySnapping(closestLayer) {
-        const map = Map;
+        const map = this._map;
 
         // A and B are the points of the closest segment to P (the marker position we want to snap)
         const A = closestLayer.segment[0];
@@ -237,7 +237,7 @@ export const snap = {
     _createSnapList() {
         let layers = [];
         const debugIndicatorLines = [];
-        const map = Map;
+        const map = this._map;
 
         map.off('pm:remove', this._handleSnapLayerRemoval, this);
         map.on('pm:remove', this._handleSnapLayerRemoval, this);
@@ -284,7 +284,7 @@ export const snap = {
     },
 
     _calcClosestLayer(latlng, layers) {
-        const map = Map;
+        const map = this._map;
         // the closest polygon to our dragged marker latlng
         let closestLayers = [];
         let closestLayer = {};
@@ -357,7 +357,7 @@ export const snap = {
     },
 
     _calcLayerDistances(latlng, layer) {
-        const map = Map;
+        const map = this._map;
 
         // is this a marker?
         const isMarker = layer instanceof factory.Marker || layer instanceof factory.CircleMarker;

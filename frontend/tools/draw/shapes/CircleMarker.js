@@ -1,5 +1,5 @@
 import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
-import { factory, Map } from '../../../core';
+import { factory } from '../../../core';
 import { marker } from './Marker';
 
 export const circleMarker = {
@@ -14,12 +14,12 @@ export const circleMarker = {
         this.enabled = true;
     
         // create a marker on click on the map
-        Map.on('click', this._createMarker, this);
+        this._map.on('click', this._createMarker, this);
     
         // this is the hintmarker on the mouse cursor
         this._hintMarker = factory.circleMarker([0, 0], this.options.templineStyle);
         this._hintMarker._pmTempLayer = true;
-        this._hintMarker.addTo(Map);
+        this._hintMarker.addTo(this._map);
     
         // add tooltip to hintmarker
         this.options.tooltips && this._hintMarker
@@ -34,17 +34,17 @@ export const circleMarker = {
         this._layer = this._hintMarker;
     
         // sync hint marker with mouse cursor
-        Map.on('mousemove', this._syncHintMarker, this);
+        this._map.on('mousemove', this._syncHintMarker, this);
     
         // fire draw_start event
-        Map.fire('draw_start', {
+        this._map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
         });
     
         // enable edit mode for existing markers
         // This iteration is unacceptable, `#revise_me`
-        Map.eachLayer(layer => 
+        this._map.eachLayer(layer => 
             this.isRelevantMarker(layer) && layer.pm.enable());
     },
 
@@ -72,13 +72,13 @@ export const circleMarker = {
         const marker = factory.circleMarker(latlng, this.options.pathOptions);
     
         // add marker to the map
-        marker.addTo(Map);
+        marker.addTo(this._map);
     
         // enable editing for the marker
         marker.pm.enable();
     
         // fire the new_shape event and pass shape and marker
-        Map.fire('new_shape', {
+        this._map.fire('new_shape', {
             shape: this._shape,
             marker, // DEPRECATED
             layer: marker,

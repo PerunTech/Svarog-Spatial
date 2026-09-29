@@ -1,4 +1,4 @@
-import { Map, factory } from '../../../core';
+import { factory } from '../../../core';
 import { polygon } from './Polygon';
 
 export const cut = {
@@ -7,7 +7,7 @@ export const cut = {
     
     // #revise_me, dreadful name. cut._cut() is unacceptable.
     _cut(layer) {
-        const all = Map._layers;
+        const all = this._map._layers;
     
         // find all layers that intersect with `layer`, the just drawn cutting layer, #revise_me
         const layers = Object.keys(all)
@@ -39,7 +39,7 @@ export const cut = {
             const diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
     
             // the resulting layer after the cut
-            const resultingLayer = factory.geoJSON(diff, l.options).addTo(Map);
+            const resultingLayer = factory.geoJSON(diff, l.options).addTo(this._map);
     
             // give the new layer the original options
             resultingLayer.pm.enable(this.options);
@@ -54,7 +54,7 @@ export const cut = {
             layer.remove();
     
             if (resultingLayer.getLayers().length === 0) {
-                Map.pm.removeLayer({ target: resultingLayer });
+                this._map.pm.removeLayer({ target: resultingLayer });
             }
     
             // fire cut_shape on the cutted layer
@@ -65,7 +65,7 @@ export const cut = {
             });
     
             // fire cut_shape on the map
-            Map.fire('cut_shape', {
+            this._map.fire('cut_shape', {
                 shape: this.shape,
                 layer: resultingLayer,
                 originalLayer: l,

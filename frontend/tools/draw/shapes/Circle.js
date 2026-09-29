@@ -1,5 +1,5 @@
 import { DRAW_CONFIG, getDrawTooltip } from '../../../config';
-import { Map, factory } from '../../../core';
+import { factory } from '../../../core';
 import { snap } from '../..';
 
 export const circle = {
@@ -18,7 +18,7 @@ export const circle = {
         // create a new layergroup
         this._layerGroup = new factory.LayerGroup();
         this._layerGroup._pmTempLayer = true;
-        this._layerGroup.addTo(Map);
+        this._layerGroup.addTo(this._map);
     
         // this is the circle we want to draw
         this._layer = factory.circle([0, 0], this.options.templineStyle);
@@ -61,16 +61,16 @@ export const circle = {
         this._layerGroup.addLayer(this._hintline);
     
         // change map cursor
-        Map._container.style.cursor = 'crosshair';
+        this._map._container.style.cursor = 'crosshair';
     
         // create a polygon-point on click
-        Map.on('click', this._placeCenterMarker, this);
+        this._map.on('click', this._placeCenterMarker, this);
     
         // sync hint marker with mouse cursor
-        Map.on('mousemove', this._syncHintMarker, this);
+        this._map.on('mousemove', this._syncHintMarker, this);
     
         // fire draw_start event
-        Map.fire('draw_start', {
+        this._map.fire('draw_start', {
             shape: this.shape,
             workLayer: this._layer,
         });
@@ -86,18 +86,18 @@ export const circle = {
         }
     
         // reset cursor
-        Map._container.style.cursor = '';
+        this._map._container.style.cursor = '';
     
         // unbind listeners
-        Map.off('click', this._finishShape, this);
-        Map.off('click', this._placeCenterMarker, this);
-        Map.off('mousemove', this._syncHintMarker, this);
+        this._map.off('click', this._finishShape, this);
+        this._map.off('click', this._placeCenterMarker, this);
+        this._map.off('mousemove', this._syncHintMarker, this);
     
         // remove helping layers
-        Map.removeLayer(this._layerGroup);
+        this._map.removeLayer(this._layerGroup);
     
         // fire draw_end event
-        Map.fire('draw_end', { shape: this.shape });
+        this._map.fire('draw_end', { shape: this.shape });
     
         // cleanup snapping
         if (this.options.snappable) {
@@ -164,8 +164,8 @@ export const circle = {
     
         this._centerMarker.setLatLng(latlng);
     
-        Map.off('click', this._placeCenterMarker, this);
-        Map.on('click', this._finishShape, this);
+        this._map.off('click', this._placeCenterMarker, this);
+        this._map.on('click', this._finishShape, this);
     
         this._placeCircleCenter();
     },
@@ -204,13 +204,13 @@ export const circle = {
         const options = { ...this.options.pathOptions, radius };
     
         // create the final circle layer
-        const circleLayer = factory.circle(center, options).addTo(Map);
+        const circleLayer = factory.circle(center, options).addTo(this._map);
     
         // disable drawing
         this.disable();
     
         // fire the new_shape event and pass shape and layer
-        Map.fire('new_shape', {
+        this._map.fire('new_shape', {
             shape: this.shape,
             layer: circleLayer,
         });
