@@ -22,17 +22,30 @@ pnpm_test:
   script:
     - pwd
     - git reset --hard HEAD
+    # The floor is stated once, in package.json's `engines`, and read back here.
+    # It is checked rather than merely declared: oxlint's native binding is an
+    # optional dependency, one per platform, and a runner below the floor
+    # installs without complaint and then fails inside oxlint with a
+    # missing-module trace that names neither node nor the version. perun-atlas
+    # met the same with vitest's bindings on its first pipeline.
+    - |
+      floor=$(node -p "require('./package.json').engines.node.replace(/[^0-9.]/g,'')")
+      have=$(node -p "process.versions.node")
+      if [ "$(printf '%s\n%s\n' "$floor" "$have" | sort -V | head -1)" != "$floor" ]; then
+        echo "This runner has node $have; this package needs $floor or newer."
+        echo "Upgrade node on the runner rather than changing anything here."
+        exit 1
+      fi
+      echo "ok - node $have meets the floor of $floor"
     # `npm ci` emptied node_modules itself; `pnpm install` installs over what is
     # there, so each job clears it first, here and below.
     - rm -rf node_modules
     - pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
-    # Deliberately not `pnpm run test`. That script is
-    # `eslint --fix frontend/ || exit 0`: it can never fail a pipeline, and its
-    # fix pass repairs auto-fixable violations before anything can report them,
-    # then after_script's reset throws the repairs away. Two real errors had
-    # been sitting in frontend/ unreported because of it. The script stays in
-    # package.json for local use, where fixing your working tree is the point.
-    - pnpm exec eslint frontend/
+    # `test` used to be `eslint --fix frontend/ || exit 0`, which could never
+    # fail a pipeline and repaired every auto-fixable violation before a strict
+    # run could see it -- so CI called eslint directly and said why. `lint` is
+    # the strict run now, and the fix pass kept its own name: `lint:fix`.
+    - pnpm run lint
     - pnpm run build
 
 mvn_test:

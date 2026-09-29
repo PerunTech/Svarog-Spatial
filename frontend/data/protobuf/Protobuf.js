@@ -444,6 +444,9 @@ function writeBigVarint(val, pbf) {
         }
     }
 
+    // 2^64, which a double holds exactly. oxlint reports any hex literal wider
+    // than 64 bits as losing precision; the same value in decimal passes.
+    // eslint-disable-next-line no-loss-of-precision
     if (val >= 0x10000000000000000 || val < -0x10000000000000000) {
         throw new Error('Given varint doesn\'t fit into 10 bytes');
     }
