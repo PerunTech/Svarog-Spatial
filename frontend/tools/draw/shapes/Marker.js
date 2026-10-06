@@ -41,11 +41,6 @@ export const marker = {
             shape: this.shape,
             workLayer: this._layer,
         });
-    
-        // enable edit mode for existing markers
-        // This iteration is unacceptable, `#revise_me`
-        this._map.eachLayer(layer => 
-            this.isRelevantMarker(layer) && layer.pm.enable());
     },
     
     disable () {
@@ -63,11 +58,6 @@ export const marker = {
         // remove event listener to sync hint marker
         this._map.off('mousemove', this._syncHintMarker, this);
     
-        // disable dragging and removing for all markers
-        // This iteration is unacceptable, `#revise_me`
-        this._map.eachLayer(layer => 
-            this.isRelevantMarker(layer) && layer.pm.disable());
-    
         // fire draw_end event
         this._map.fire('draw_end', { shape: this.shape });
     
@@ -78,8 +68,6 @@ export const marker = {
         this.enabled = false;
         this.options = {}
     },
-
-    isRelevantMarker: layer => layer instanceof factory.Marker && layer.pm && !layer._pmTempLayer,
 
     isEnabled () { return this.enabled; },
 
@@ -104,9 +92,6 @@ export const marker = {
     
         // add marker to the map
         marker.addTo(this._map);
-    
-        // enable editing for the marker
-        marker.pm.enable();
     
         // fire the new_shape event and pass shape and marker
         this._map.fire('new_shape', {

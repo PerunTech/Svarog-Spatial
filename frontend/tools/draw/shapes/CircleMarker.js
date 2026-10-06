@@ -41,19 +41,8 @@ export const circleMarker = {
             shape: this.shape,
             workLayer: this._layer,
         });
-    
-        // enable edit mode for existing markers
-        // This iteration is unacceptable, `#revise_me`
-        this._map.eachLayer(layer => 
-            this.isRelevantMarker(layer) && layer.pm.enable());
     },
 
-    isRelevantMarker: layer => 
-        layer instanceof factory.CircleMarker 
-        && !(layer instanceof factory.Circle) 
-        && layer.pm 
-        && !layer._pmTempLayer,
-    
     _createMarker(e) {
         if (!e.latlng) {
             return;
@@ -74,12 +63,9 @@ export const circleMarker = {
         // add marker to the map
         marker.addTo(this._map);
     
-        // enable editing for the marker
-        marker.pm.enable();
-    
         // fire the new_shape event and pass shape and marker
         this._map.fire('new_shape', {
-            shape: this._shape,
+            shape: this.shape,
             marker, // DEPRECATED
             layer: marker,
         });
