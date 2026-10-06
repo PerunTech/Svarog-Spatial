@@ -1,4 +1,5 @@
 import { getLabel } from '../ui/utils/labels';
+import { onConfigure, setting } from './Settings';
 
 /**
  * Mean Earth Radius = 6371000 m, as recommended for use by
@@ -37,13 +38,37 @@ export const MIN_DIGI_AREA = 100;
 export const MAP_CONTAINER = 'mapContainer';
 
 /**
+ * The settings' centre and bounds, under the names they had in 4.2.0.
+ *
+ * They went when the geography left the engine, and are back because a bundle
+ * built against 4.2.0 still reads them, from whatever spatial.js its deployment
+ * serves. lpis centres the page's map on `SYS_CENTER` before it builds anything
+ * else, and without it threw at startup. Each follows `configure()`: a bundle
+ * that reads one after the deployment has configured gets its value, and one
+ * that reads earlier gets the default.
+ *
+ * @deprecated since 4.2.1. Read `setting('center')` and `setting('bounds')`.
+ */
+export let SYS_CENTER = setting('center');
+export let SYS_BOUNDS = setting('bounds');
+onConfigure((settings, changed) => {
+    if (changed.has('center')) SYS_CENTER = settings.center;
+    if (changed.has('bounds')) SYS_BOUNDS = settings.bounds;
+});
+
+/**
  * How the map behaves, as opposed to where it is.
  *
  * Nothing here describes a deployment. The centre, the zoom and its limits, and
  * the coordinate reference system are settings, read from `configure()` where
- * the map is built — see `core/map/Map.js`. Keeping the two apart is the point:
- * this object is the same everywhere the engine runs, so a value that differs
- * between two installations does not belong in it.
+ * the map is built — see `core/map/Create.js`. Keeping the two apart is the
+ * point: this object is the same everywhere the engine runs, so a value that
+ * differs between two installations does not belong in it.
+ *
+ * `minZoom` and `maxZoom` are the exception, and only read through: 4.2.0 had
+ * them here, and lpis puts them back into the store when it stops digitising.
+ * They answer with the settings, which `createMap` lays over this object
+ * anyway, so they change nothing a map is built with.
  *
  * @constant
  */
@@ -59,6 +84,10 @@ export const MAP_CONFIG = {
     keyboardPanDelta: 80,
     tap: false,
     tapTolerance: 15,
+    /** @deprecated since 4.2.1. Read `setting('minZoom')`. */
+    get minZoom () { return setting('minZoom'); },
+    /** @deprecated since 4.2.1. Read `setting('maxZoom')`. */
+    get maxZoom () { return setting('maxZoom'); },
 };
 
 /**

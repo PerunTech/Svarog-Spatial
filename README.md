@@ -52,7 +52,9 @@ Nothing is read from the page. The `window.sysCrs`, `window.sysCenter`,
 `window.sysBounds`, `window.measurementSystem` and `window.switchBboxOrder`
 globals were removed in 4.2.1; a deployment on svarog keeps these values as
 `SPATIAL_*` system parameters, and perun-atlas resolves them and calls
-`configure()` at startup.
+`configure()` at startup. `config.SYS_CENTER`, `config.SYS_BOUNDS` and
+`MAP_CONFIG.minZoom` and `maxZoom` are still there for bundles built against
+4.2.0, and answer with the settings; new code reads `setting()`.
 
 Configure nothing and you get the whole world on the Web Mercator tile grid,
 which is the grid basemaps are published on and belongs to no country. Before
