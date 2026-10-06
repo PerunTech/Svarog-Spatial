@@ -2,6 +2,20 @@
 
 Module for spatial data and map visualization.
 
+## Engine and components
+
+spatial is a map engine: it configures, builds, projects, reads and draws on
+maps. That is `config`; from `core`, the factory with its Leaflet plugins,
+`http`, `util`, the store, `crs`, `projection`, `Map` and `createMap`; all of
+`data`, the layer switcher included; and all of `tools`.
+
+Its React components are frozen: all of `ui`, and from `core`, `control()`,
+`renderCycle`, `MapContainer`, `connect` and `Provider`. They keep working on
+the page's map as they do now and get a fix when something breaks, but nothing
+new, and nothing teaches them about a second map. A later release removes them,
+once nothing that loads `spatial.js` uses them. A new component, or a change to
+one, belongs in perun-atlas, whose controls read the map they are on.
+
 ## Configuration
 
 Everything that differs between two installations — the coordinate reference
@@ -36,22 +50,80 @@ will not be right.
 
 Nothing is read from the page. The `window.sysCrs`, `window.sysCenter`,
 `window.sysBounds`, `window.measurementSystem` and `window.switchBboxOrder`
-globals were removed in 5.0; a deployment on svarog keeps these values as
+globals were removed in 4.2.1; a deployment on svarog keeps these values as
 `SPATIAL_*` system parameters, and perun-atlas resolves them and calls
 `configure()` at startup.
 
 Configure nothing and you get the whole world on the Web Mercator tile grid,
 which is the grid basemaps are published on and belongs to no country. Before
-5.0 you got Moldova's projection, centre and bounds instead.
+4.2.1 you got Moldova's projection, centre and bounds instead.
 
 `settings()` returns everything as it currently stands, for a console when a
 deployment is behaving oddly.
 
-## Removing a map
+## Maps
 
-`core.createMap(element, options)` builds a map in an element you own, from the
-settings as they stand when it is called. When whatever built it goes, call
-`map.remove()`. It takes with it everything the engine added:
+`core.Map` is the page's map, built when `spatial.js` loads.
+`core.createMap(element, options)` builds another each time it is called:
+
+```js
+const { createMap } = spatial.core;
+
+const map = createMap(container, { center: { lat: 41.99, lng: 21.43 }, zoom: 9 });
+```
+
+`element` is the element to build the map in, or its id. You own it and give it
+its size, and nothing else on the page is touched. `options` are Leaflet map
+options, laid over the engine's own and over the settings as they stand at the
+call: `crs`, `center`, `zoom`, `minZoom` and `maxZoom`. `crs` takes any form
+`configure()` takes, or a CRS. An option given as `undefined` leaves the setting
+under it in place. A later `configure()` moves only the page's map; a created
+map is yours, and you move it with `setCRS`, `setView` and the zoom limits.
+
+Every map, the page's included, has `getCRS()`, `setCRS(crs)`,
+`transform(latlng)`, `untransform(point)`, `getBBox()` and `setCursor(type)`.
+Each works on the map it belongs to, and still does when passed on unbound.
+
+### Drawing and editing
+
+`map.draw` and `map.edit` are the map's own drawing and editing tools, the same
+tools `tools.draw` and `tools.edit` hold. Each set is built the first time it is
+read. A drawing tool draws on its own map, and its events fire there:
+
+```js
+map.on('new_shape', ({ shape, layer }) => { /* ... */ });
+map.draw.polygon.enable();
+```
+
+An editing tool works on the map of the layer it is given, and snapping snaps
+to the layers on that map only. The module-level `tools.draw` and `tools.edit`
+are the page's map's sets (`tools.draw === Map.draw`). Only what is drawn on
+the page's map writes the store, the digitising `minZoom` and the measurement
+totals; tools on a created map leave it alone.
+
+### GeoJSON on a map of its own
+
+A GeoJSON layer reads its stored coordinates through the page's map's CRS, as it
+stands when data is added. A layer for a created map on another CRS says so:
+
+```js
+factory.geoJSON(data, { crs: map.getCRS() }).addTo(map);
+```
+
+`crs` takes any form `configure()` takes, or a CRS. A `dbCRSCode` in the store
+still wins wherever it names one of the three CRSs Leaflet carries.
+
+### What stays on the page's map
+
+These work on the page's map only, as they always have: `Map.render` and the
+app builder `ui.init`; the render cycle and `MapContainer`, with the store's
+`map` slice that it applies; every control added through `control()`; the older
+measurement toolbar in `ui/measurement`; and `tools.limits`.
+
+### Removing a map
+
+When whatever built a map goes, call `map.remove()`. It takes with it
+everything the engine added:
 
 - the drawing and editing tools in `map.draw` and `map.edit`, turned off first
   if any is on, including a drawing tool told `repeatable`;
@@ -61,6 +133,30 @@ settings as they stand when it is called. When whatever built it goes, call
 What you put on something outside the map is still yours to take off: a
 listener on a layer you keep, on `document`, on `window`, or on another map.
 A layer you keep outlives the map and can be added to another one.
+
+## Versions
+
+The version is the one in `backend/pom.xml`: the OSGi bundle svarog runs, with
+`spatial.js` inside it, carries it as its `Bundle-Version`. `package.json` has
+the same version, `-SNAPSHOT` included, and `spatial.version` reports it at
+runtime.
+
+A release drops the `-SNAPSHOT` from both, rebuilds `spatial.js`, and is tagged
+with its number, as a lightweight tag (`4.2.1`). The next commit moves both to
+the next snapshot. Push the release commit on its own first: CI deploys only
+the commit at the head of a push, so pushed together with the snapshot it would
+never be deployed.
+
+A consumer depends on releases by tag:
+
+```json
+"spatial": "git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#semver:^4.2.1"
+```
+
+pnpm takes the newest tag in the range, and the lockfile records its commit.
+`#4.2.1` pins one release. The tags have to stay lightweight: for an annotated
+tag pnpm 9 and 10 record the tag's own hash and pnpm 11 the commit's, and
+pnpm 11 then refuses a lockfile the others wrote.
 
 ## Building
 

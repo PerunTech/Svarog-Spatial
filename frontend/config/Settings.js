@@ -8,7 +8,7 @@
  * right order, once per deployment and once per consuming project, with nothing
  * to validate them against and no way to see what had been applied.
  *
- * Since 5.0 that page is out of it entirely: `configure()` is the only way in,
+ * Now that page is out of it entirely: `configure()` is the only way in,
  * and what it is given comes from the deployment's system parameters. One
  * source, in the database, read at startup.
  *
@@ -37,7 +37,7 @@
  * the only defensible default: it is the grid every XYZ basemap is published on,
  * and it belongs to no country.
  *
- * Until 5.0 these were Moldova's — the CRS, the centre and the bounds of the
+ * Until 4.2.1 these were Moldova's — the CRS, the centre and the bounds of the
  * deployment this engine was first written for. That made a missing
  * configuration invisible rather than loud: a deployment that configured nothing
  * drew somebody else's country, and one that configured everything but `crs`

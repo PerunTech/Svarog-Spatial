@@ -10,10 +10,10 @@ const _initialize = factory.GeoJSON.prototype.initialize,
  *
  * Through the layer's own `crs` if it has one, and otherwise through the page's
  * map's CRS as it is at that moment. This used to be the page's map's CRS as it
- * was when this module loaded, and since 5.0 that is always the default,
- * EPSG:3857, because `configure()` can only run after this bundle evaluates. A
- * deployment with its map and its data on a national grid had its stored metres
- * read as Web Mercator, and nothing said so.
+ * was when this module loaded. Once `configure()` became the only way to set a
+ * CRS, that was always the default, EPSG:3857, because `configure()` can only
+ * run after this bundle evaluates. A deployment with its map and its data on a
+ * national grid had its stored metres read as Web Mercator, and nothing said so.
  *
  * A layer cannot use the map it is on instead: data is usually added before the
  * layer is on any map. A layer for a map on a CRS of its own says so with `crs`.

@@ -10,11 +10,14 @@ built from their mixins) are adapted from
 (October 2019 to March 2020), with the snapping priority sort back-ported from
 2.8.0 later.
 
-The code is not a drop-in copy. Geoman's classes are plain object singletons
-here, with the snap mixin spread in; `this._map` is the engine's module-level
-map, and `L.*` is `factory.*`. `L.PM.js`, which builds `layer.pm`, was not
-brought across, so `.pm` is referenced in three files and created in none.
-Upstream fixes therefore have to be ported by hand; they cannot be merged.
+The code is not a drop-in copy. Geoman's classes are plain objects here, with
+the snap mixin spread in, and `L.*` is `factory.*`. Each object is a template:
+every map gets its own copy of each tool, with `this._map` set to that map
+(`drawFor` in `draw/Draw.js`, `editFor` in `edit/Edit.js`). An editing tool
+keeps its map as `_ownMap` and works on the map of the layer it is given.
+`L.PM.js`, which builds `layer.pm`, was not brought across, so `.pm` is created
+nowhere; `draw/shapes/Cut.js` still refers to it. Upstream fixes therefore have
+to be ported by hand; they cannot be merged.
 
 leaflet-geoman is distributed under this licence:
 
