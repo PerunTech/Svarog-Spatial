@@ -1,4 +1,4 @@
-import { factory, store } from '../../core';
+import { factory, store, Map } from '../../core';
 
 const { Control, Util, Browser, DomEvent, DomUtil } = factory
 
@@ -81,8 +81,6 @@ export const LayerControl = Control.extend({
 				this._addLayer(overlays[o][n], n, o, true);
 			}
 		}
-
-		store.dispatch({ layerControl: this })
 	},
 
 	onAdd: function (map) {
@@ -91,6 +89,11 @@ export const LayerControl = Control.extend({
 
 		this._map = map;
 		map.on('zoomend', this._checkDisabledLayers, this);
+
+		/* The store's `app.layerControl` is the page's map's switcher, which lpis
+		   reads to open and close it. A switcher on any other map would take its
+		   place there, and keep its map's layers alive after the map was gone. */
+		map === Map && store.dispatch({ layerControl: this });
 
 		for (var i = 0; i < this._layers.length; i++) {
 			this._layers[i].layer.on('add remove', this._onLayerChange, this);
@@ -107,6 +110,11 @@ export const LayerControl = Control.extend({
 
 	onRemove: function () {
 		this._map.off('zoomend', this._checkDisabledLayers, this);
+
+		/* Subscribed in `_initLayout` when collapsed, and left on the map by
+		   Leaflet's own `Control.Layers`: one more per switcher on a map that
+		   stays, each collapsing a switcher no longer on it. */
+		this._map.off('click', this.collapse, this);
 
 		for (var i = 0; i < this._layers.length; i++) {
 			this._layers[i].layer.off('add remove', this._onLayerChange, this);

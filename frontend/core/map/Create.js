@@ -213,15 +213,40 @@ const extend = (map) => {
     /* `map.draw` and `map.edit`: this map's own tools, built the first time
        each is read and the same set on every read after. A map whose tools
        are never read never builds them. The page's map is first read by `tools`
-       itself, which exports that set as the module-level `draw` and `edit`. */
+       itself, which exports that set as the module-level `draw` and `edit`.
+       The sets built so far are kept here, so `remove` can reach them without
+       reading the getters, which would build them. */
+    const built = {};
     ['draw', 'edit'].forEach(name => {
-        let set;
         Object.defineProperty(map, name, {
-            get: () => set || (set = toolsets[name] && toolsets[name](map)),
+            get: () => built[name] || (built[name] = toolsets[name] && toolsets[name](map)),
             enumerable: true,
             configurable: true
         });
     });
+
+    /**
+     * Destroys the map, and turns its tools off first.
+     *
+     * Leaflet's `remove` takes the map's layers and handlers with it, and, once
+     * the map has had a view, fires `unload`, which takes every control off.
+     * What it cannot reach is a tool that is still on. An editing tool listens
+     * on the layer it edits, which is the caller's and can outlive the map, and
+     * through that listener the tool, and the map it keeps, would stay alive
+     * as long as the layer does. A drawing tool told `repeatable` would also
+     * turn itself back on when it was turned off, so it is told not to.
+     *
+     * Whatever the caller put on something outside the map -- a listener on a
+     * layer it keeps, on `document`, on another map -- is still the caller's
+     * to take off.
+     */
+    const remove = map.remove;
+    map.remove = function () {
+        Object.values(built).forEach(set => set && Object.values(set).forEach(tool => {
+            tool.enabled && tool.disable(true);
+        }));
+        return remove.call(map);
+    };
 
     return map;
 };
@@ -256,6 +281,12 @@ export const createMap = (element, options = {}) => {
        so an unresolved CRS is left out rather than passed. */
     const resolved = toCrs(requested) || toCrs(setting('crs'));
 
+    /* The same for the caller's other options: one given as undefined leaves the
+       setting under it in place. A `center` or `zoom` of undefined would
+       otherwise build a map with no view, and Leaflet fires `unload` only on a
+       map that has had one, so its `remove` would leave every control on. */
+    const given = Object.fromEntries(Object.entries(rest).filter(([, value]) => value !== undefined));
+
     return extend(factory.map(element, {
         ...MAP_CONFIG,
         ...resolved && { crs: resolved },
@@ -263,6 +294,6 @@ export const createMap = (element, options = {}) => {
         zoom: setting('zoom'),
         minZoom: setting('minZoom'),
         maxZoom: setting('maxZoom'),
-        ...rest
+        ...given
     }));
 };

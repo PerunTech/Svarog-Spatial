@@ -43,6 +43,12 @@ export const marker = {
     
         this._layer.off('contextmenu', this._removeMarker, this);
         this._layer.off('dragstart', this._onPinnedMarkerDragStart, this);
+
+        /* And what `enable` put on it. The marker is the caller's and can
+           outlive the map, and this tool, which keeps the map, is the
+           listeners' context. */
+        this._layer.off('dragend', this._onDragEnd, this);
+        this._disableSnapping();
         this._layer.fire('pm:disable');
     
         this._layerEdited && this._layer.fire('pm:update', {});

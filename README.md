@@ -47,6 +47,21 @@ which is the grid basemaps are published on and belongs to no country. Before
 `settings()` returns everything as it currently stands, for a console when a
 deployment is behaving oddly.
 
+## Removing a map
+
+`core.createMap(element, options)` builds a map in an element you own, from the
+settings as they stand when it is called. When whatever built it goes, call
+`map.remove()`. It takes with it everything the engine added:
+
+- the drawing and editing tools in `map.draw` and `map.edit`, turned off first
+  if any is on, including a drawing tool told `repeatable`;
+- every control on the map, the layer switcher and fullscreen included;
+- every layer, and the listeners the engine and its tools put on them.
+
+What you put on something outside the map is still yours to take off: a
+listener on a layer you keep, on `document`, on `window`, or on another map.
+A layer you keep outlives the map and can be added to another one.
+
 ## Building
 
 Node 22.12 or newer, and pnpm.

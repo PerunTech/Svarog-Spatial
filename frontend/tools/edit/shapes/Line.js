@@ -55,6 +55,10 @@ export const line = {
         // remove onRemove listener
         this._layer.off('remove', this._onLayerRemove, this);
     
+        /* And the snapping one. The layer is the caller's and can outlive the
+           map, and this tool, which keeps the map, is the listener's context. */
+        this._disableSnapping();
+
         // remove draggable class
         const el = this._layer._path || this._layer._renderer._container;
         factory.DomUtil.removeClass(el, 'leaflet-pm-draggable');
