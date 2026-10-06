@@ -139,26 +139,35 @@ A layer you keep outlives the map and can be added to another one.
 ## Versions
 
 The version is the one in `backend/pom.xml`: the OSGi bundle svarog runs, with
-`spatial.js` inside it, carries it as its `Bundle-Version`. `package.json` has
-the same version, `-SNAPSHOT` included, and `spatial.version` reports it at
-runtime.
+`spatial.js` inside it, carries it as its `Bundle-Version`. Between releases the
+pom names the next one with `-SNAPSHOT`, as Maven expects.
 
-A release drops the `-SNAPSHOT` from both, rebuilds `spatial.js`, and is tagged
-with its number, as a lightweight tag (`4.2.1`). The next commit moves both to
-the next snapshot. Push the release commit on its own first: CI deploys only
-the commit at the head of a push, so pushed together with the snapshot it would
-never be deployed.
+`package.json` names the last version cut, a release or a release candidate,
+and `spatial.version` reports it at runtime. Each is tagged with its number, as
+a lightweight tag, on the commit whose `package.json` says it.
 
-A consumer depends on releases by tag:
+- A candidate sets `package.json` to the pom's number with `-rc.N`
+  (`4.2.1-rc.1`), rebuilds `spatial.js`, and is tagged. The pom keeps its
+  `-SNAPSHOT`, so nothing is released to Maven.
+- A release drops the `-SNAPSHOT` from the pom, sets `package.json` to the same
+  number, rebuilds, and is tagged (`4.2.1`). The next commit moves the pom to
+  the next snapshot, and `package.json` stays until the next candidate. Push the
+  release commit on its own first: CI deploys only the commit at the head of a
+  push, so pushed together with the snapshot it would never be deployed.
+
+Push each tag by name (`git push origin 4.2.1`); `--follow-tags` skips
+lightweight tags. A consumer depends on releases by tag:
 
 ```json
 "spatial": "git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#semver:^4.2.1"
 ```
 
 pnpm takes the newest tag in the range, and the lockfile records its commit.
-`#4.2.1` pins one release. The tags have to stay lightweight: for an annotated
-tag pnpm 9 and 10 record the tag's own hash and pnpm 11 the commit's, and
-pnpm 11 then refuses a lockfile the others wrote.
+`#4.2.1` pins one release. `^4.2.1` skips candidates; `#semver:^4.2.1-rc.1`
+takes them too, and once 4.2.1 is tagged, `pnpm update spatial` moves it there.
+The tags have to stay lightweight: for an annotated tag pnpm 9 and 10 record
+the tag's own hash and pnpm 11 the commit's, and pnpm 11 then refuses a lockfile
+the others wrote.
 
 ## Building
 
