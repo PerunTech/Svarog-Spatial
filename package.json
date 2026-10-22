@@ -31,10 +31,5 @@
     "lint:fix": "oxlint --fix frontend/"
   },
   "author": "Perun Tech",
-  "license": "ISC",
-  "pnpm": {
-    "overrides": {
-      "dompurify": "^3.4.15"
-    }
-  }
+  "license": "ISC"
 }
