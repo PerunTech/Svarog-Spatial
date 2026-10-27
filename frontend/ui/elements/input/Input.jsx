@@ -27,7 +27,7 @@ import { util } from '../../../core';
  * 
  * @returns JSX;
  */
-export function Input ({type, id, prefix, className, size, plaintext, readOnly, isValid, isInvalid,  ...props}) {
+export function Input ({type = 'text', id = 'input', prefix = 'form-control', className, size = 'sm', plaintext, readOnly = false, isValid, isInvalid,  ...props}) {
     const { as: Component = 'input' } = props,
         typeClass = () => {
             return plaintext
@@ -46,13 +46,6 @@ export function Input ({type, id, prefix, className, size, plaintext, readOnly, 
         readOnly={readOnly} />;
 }
 
-Input.defaultProps = {
-    type: 'text',
-    id: 'input',
-    prefix: 'form-control',
-    size: 'sm',  
-    readOnly: false
-}
 Input.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,

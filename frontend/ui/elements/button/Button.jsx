@@ -24,7 +24,7 @@ import { Anchor } from '../..';
  * 
  * @returns JSX;
  */
-export function Button ({className, prefix, variant, type, size, block, active, as, ...props }) {
+export function Button ({className, prefix = 'btn', variant = 'light', type = 'button', size = 'sm', block, active = false, as, ...props }) {
     const {disabled, href} = props,
         style = util.buildClassname(
             className,
@@ -44,14 +44,6 @@ export function Button ({className, prefix, variant, type, size, block, active, 
         : <Component {...props} className={style} />;
 }
 
-Button.defaultProps = {
-    prefix: 'btn',
-    variant: 'light',
-    active: false,
-    disabled: false,
-    type: 'button',
-    size: 'sm'
-};
 Button.propTypes = {
     className: PropTypes.string,
     prefix: PropTypes.string,
