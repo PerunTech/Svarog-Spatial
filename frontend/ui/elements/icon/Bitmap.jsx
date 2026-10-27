@@ -21,7 +21,7 @@ import { React, PropTypes} from 'perun-core';
  * 
  * @returns JSX;
  */
-export function Bitmap ({name, size, style, ...props}) {
+export function Bitmap ({name, size = '24px', style, ...props}) {
     const _style = {
         ...style,
         width: size,
@@ -31,7 +31,6 @@ export function Bitmap ({name, size, style, ...props}) {
     return <i id={name} {...props} style={_style} className={name} />;
 }
 
-Bitmap.defaultProps = { size: '24px' };
 Bitmap.propTypes = {
     name: PropTypes.string.isRequired,
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

@@ -19,18 +19,14 @@ import { SVG, Bitmap } from '../..';
  * 
  * @returns JSX;
  */
-export function Icon ({name, vector, ...props}) {
+export function Icon ({name, vector = true, size = '24px', ...props}) {
     return <>
         {vector
-            ? <SVG name={name} {...props} /> 
-            : <Bitmap name={name} {...props} />}
+            ? <SVG name={name} size={size} {...props} /> 
+            : <Bitmap name={name} size={size} {...props} />}
     </>;
 }
 
-Icon.defaultProps = {
-    size: '24px',
-    vector: true
-};
 Icon.propTypes = {
     name: PropTypes.string.isRequired,
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

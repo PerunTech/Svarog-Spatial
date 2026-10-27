@@ -19,7 +19,7 @@ import { util } from '../../../core';
  * 
  * @returns JSX;
  */
-export function ButtonGroup ({className, prefix, size, vertical, toggle, ...props}) {
+export function ButtonGroup ({className, prefix = 'btn-group', size = 'sm', vertical = false, toggle = false, role = 'group', ...props}) {
     const { as: Component = 'div' } = props,
         style = util.buildClassname(
             className,
@@ -29,16 +29,9 @@ export function ButtonGroup ({className, prefix, size, vertical, toggle, ...prop
             toggle && `${prefix}-toggle`,
         );
 
-    return <Component {...props} className={style} />
+    return <Component {...props} role={role} className={style} />
 }
 
-ButtonGroup.defaultProps = {
-    prefix: 'btn-group',
-    size: 'sm',
-    vertical: false,
-    toggle: false,
-    role: 'group'
-}
 ButtonGroup.propTypes = {
     className: PropTypes.string,
     prefix: PropTypes.string,

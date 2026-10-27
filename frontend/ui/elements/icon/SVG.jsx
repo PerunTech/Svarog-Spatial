@@ -23,9 +23,9 @@ import { registry } from '../../../assets';
  * 
  * @returns JSX;
  */
-export function SVG ({name, size, style, ...props}) {
+export function SVG ({name, size = 24, style = {}, viewBox = '0 0 512 512', preserveAspectRatio = 'xMidYMid meet', ...props}) {
     const {path, ...opt} = registry.getSVG(name),
-        _props = { ...props, ...opt },
+        _props = { viewBox, preserveAspectRatio, ...props, ...opt },
         _style = {   
             // Use CSS instead of the width / height attr. in order to support non-pixel units.
             // style.width overrides svg.width attribute by design, height as well,
@@ -41,12 +41,6 @@ export function SVG ({name, size, style, ...props}) {
     return <svg id={name} {..._props} style={_style} >{path}</svg>;
 }
 
-SVG.defaultProps = {
-    size: 24,
-    style: {},
-    viewBox: '0 0 512 512',
-    preserveAspectRatio: 'xMidYMid meet'
-};
 SVG.propTypes = {
     name: PropTypes.string.isRequired,
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

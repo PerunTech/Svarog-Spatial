@@ -4,7 +4,7 @@ import { Input } from '../..';
 import { getLabel } from '../../utils/labels';
 
 export function Coordinates({ coordinates, onChange, ...props }) {
-    const { projected, validated, onBlur, ...inputProps } = props;
+    const { projected = true, validated = true, onBlur, ...inputProps } = props;
 
     const format = React.useCallback(e => {
         return e.target.value = Array.from(e.target.value).filter(c =>
@@ -28,8 +28,3 @@ export function Coordinates({ coordinates, onChange, ...props }) {
         </div>
     })
 }
-
-Coordinates.defaultProps = {
-    projected: true,
-    validated: true
-};
