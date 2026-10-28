@@ -1,5 +1,5 @@
-import { ReactDOM } from 'perun-core';
 import { util, store, Map } from '..';
+import { removeControls } from './Control';
 
 export const renderCycle = {
     /**
@@ -31,25 +31,9 @@ export const renderCycle = {
         /* Containers embedded in the map, used as placeholders for UI elements (controls). */
         const controlNodes = Object.values(Map._controlCorners);
 
-        /**
-         * Containers (containing the className 'leaflet-control') created when the Controls are initially mounted
-         * Check the onAdd method on the Control class in the Control.jsx file
-         */
-        const controlContainers = document.getElementsByClassName('leaflet-control')
-        if (controlContainers) {
-            // Generate an array from the above HTMLCollection
-            const controlContainersArr = Array.from(controlContainers)
-            // Iterate over every container containing the className 'leaflet-control'
-            controlContainersArr.map(container => {
-                // Fixes virtual DOM of React.
-                ReactDOM.unmountComponentAtNode(container)
-            })
-        }
+        removeControls();
 
         controlNodes.map(el => {
-            // Fixes virtual DOM of React.
-            ReactDOM.unmountComponentAtNode(el);
-
             // Removes all plain HTML elements attached to our control container,
             // which are not HTML containers themselves.
             [...el.children].map(child =>
