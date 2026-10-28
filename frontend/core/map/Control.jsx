@@ -1,5 +1,8 @@
-import { React, ReactDOM} from 'perun-core';
+import { React, createRoot } from 'perun-core';
 import { factory, Map, Provider } from '..';
+
+/* Every control `control()` has on a map, for `removeControls()`. */
+const _controls = new Set();
 
 /**
  * Render embedded user interface in the map frame. 
@@ -50,14 +53,20 @@ export function control (UI, props = {}, opt = _opt) {
     const Control = factory.Control.extend({
         initialize: function (opt) {
             this.options = opt;
-            this.container = factory.DomUtil.create('div', this.options.className);
         },
         
         onAdd () {
-            UI instanceof Element // `#revise_me`, need to test this.
-                ? this.container.appendChild(UI)
-                : ReactDOM.render(<Provider children={<UI {...props} />} />, this.container)
-            
+            // A new container on each add, so it never holds a root that is still unmounting.
+            this.container = factory.DomUtil.create('div', this.options.className);
+
+            if (UI instanceof Element) { // `#revise_me`, need to test this.
+                this.container.appendChild(UI);
+            } else {
+                this.root = createRoot(this.container);
+                this.root.render(<Provider children={<UI {...props} />} />);
+            }
+            _controls.add(this);
+
             return this.container; // This hook must return HTMLElement.
         },
     
@@ -70,17 +79,25 @@ export function control (UI, props = {}, opt = _opt) {
          * listeners a control registered are never removed and layers it created
          * are never taken off. The next screen to adopt the map inherits both,
          * and a control whose cleanup was written correctly still leaks.
-         *
-         * Harmless for the `UI instanceof Element` branch above, which has no
-         * React root -- unmounting a container that never had one returns false.
          */
         onRemove () {
-            ReactDOM.unmountComponentAtNode(this.container);
+            const root = this.root;
+            this.root = null;
+            _controls.delete(this);
+            // Removal can come from inside a React commit, where another root can't unmount synchronously.
+            root && queueMicrotask(() => root.unmount());
         }
     });
 
     return new Control({ ..._opt, ...opt }).addTo(Map);
 }
+
+/**
+ * Takes every control added with `control()` off its map, unmounting its React tree.
+ *
+ * @function removeControls (): void
+ */
+export const removeControls = () => [..._controls].forEach(c => c.remove());
 
 const _opt = {
     position: 'left', // Default is data panel, left side menu block.
