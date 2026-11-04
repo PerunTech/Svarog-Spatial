@@ -1,0 +1,15 @@
+signing:
+  active: ALWAYS
+  armored: true
+
+deploy:
+  maven:
+    # GeoTools is only on OSGeo, so the pom keeps a <repositories> block, which strict mode rejects.
+    pomchecker:
+      strict: false
+    mavenCentral:
+      sonatype:
+        active: RELEASE
+        url: https://central.sonatype.com/api/v1/publisher
+        stagingRepositories:
+          - target/staging-deploy
